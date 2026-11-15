@@ -1,7 +1,7 @@
 {
   "name": "emma-desktop",
   "productName": "EMMA",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "EMMA — monitorizacion autonoma de salud para misiones de larga duracion",
   "author": "EMMA — NASA Space Apps 2026",
   "license": "AGPL-3.0-or-later",

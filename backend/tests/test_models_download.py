@@ -96,8 +96,9 @@ def serve(router: respx.Router, folder: Path, *, ranges: bool = True) -> None:
         data = path.read_bytes()
         header = request.headers.get("Range")
         if ranges and header:
-            start = int(header.removeprefix("bytes=").rstrip("-"))
-            return httpx.Response(206, content=data[start:])
+            first, _, last = header.removeprefix("bytes=").partition("-")
+            end = int(last) + 1 if last else len(data)
+            return httpx.Response(206, content=data[int(first):end])
         return httpx.Response(200, content=data)
 
     router.get(url__startswith=BASE).mock(side_effect=handler)
@@ -320,3 +321,58 @@ def test_the_installer_choice_downloads_everything_on_first_start(
     assert fresh.snapshot()["job"]["state"] == "done"
     # Con algo ya instalado, al arrancar otra vez no vuelve a bajar.
     assert models_pack.autostart(settings) is False
+
+
+def test_big_parts_come_in_ranges_at_once_and_resume_each(
+    tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Cada trozo en tramos (`Range`) a la vez: lo que hace la descarga 10 veces más rápida."""
+    from app import models_download
+
+    monkeypatch.setattr(models_download, "SEGMENT_MIN", 1)
+    index = json.loads((published / "emma-modelos-partes.json").read_text(encoding="utf-8"))
+    first = index["components"]["voice"]["parts"][0]
+    # Un tramo ya empezado de una vez anterior: se sigue por donde iba.
+    staging = tmp_path / "EMMA-modelos.descarga" / "partes"
+    staging.mkdir(parents=True)
+    begun = (published / first["name"]).read_bytes()[:100]
+    (staging / (first["name"] + ".tramo0")).write_bytes(begun)
+    asked: list[str] = []
+    settings = settings_for(tmp_path)
+    with respx.mock as router:
+        def handler(request: httpx.Request) -> httpx.Response:
+            name = request.url.path.rsplit("/", 1)[-1]
+            data = (published / name).read_bytes()
+            header = request.headers.get("Range")
+            if name == first["name"] and header:
+                asked.append(header)
+            if header:
+                a, _, b = header.removeprefix("bytes=").partition("-")
+                return httpx.Response(206, content=data[int(a):int(b) + 1 if b else len(data)])
+            return httpx.Response(200, content=data)
+
+        router.get(url__startswith=BASE).mock(side_effect=handler)
+        job = run(settings, ["voice"])
+    assert job["state"] == "done", job
+    step = -(-first["size"] // models_download.SEGMENTS_PER_PART)
+    assert sorted(asked) == sorted(
+        [f"bytes=100-{step - 1}"]
+        + [f"bytes={s}-{min(s + step, first['size']) - 1}"
+           for s in range(step, first["size"], step)]
+    )
+    assert (tmp_path / "EMMA-modelos" / "voice" / "python.exe").read_bytes() == b"py" * 10
+    assert job["done_bytes"] == job["total_bytes"]
+
+
+def test_a_server_without_ranges_is_not_taken_for_a_whole_part(
+    tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app import models_download
+
+    monkeypatch.setattr(models_download, "SEGMENT_MIN", 1)
+    settings = settings_for(tmp_path)
+    with respx.mock as router:
+        serve(router, published, ranges=False)
+        job = run(settings, ["voice"])
+    assert job["state"] == "error" and job["error"] == "network"
+    assert not (tmp_path / "EMMA-modelos" / "voice").exists()
