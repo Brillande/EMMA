@@ -123,6 +123,14 @@
   --span-mid: 6;
 }
 
+/* Lote «plegar» (decisión del usuario, 2026-11-15): la comprobación de proyecciones va plegada bajo la
+   raya de lo secundario. Sin ella en la fila, las proyecciones toman su sitio (10 junto a las 2 de las
+   notas; en el intermedio, todo el ancho) en vez de dejar un hueco de 5 columnas. */
+:where(.app[data-look="reference"]) #ground-panel-received:not(:has([data-ui="forecast-check"])) > .slot:has(> .slot-body > [data-ui="predictions"]) {
+  --span: 10;
+  --span-mid: 12;
+}
+
 @container board (min-width: 64.01rem) {
   :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received .panel[data-ui="received-state"] > .domains {
     grid-template-columns: repeat(5, minmax(0, 1fr));

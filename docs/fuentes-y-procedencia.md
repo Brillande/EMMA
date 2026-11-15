@@ -1189,7 +1189,8 @@ Licencia del paquete: `AGPL-3.0-or-later` (`desktop/package.json`).
 - Dentro del backend congelado: los núcleos SPICE comprobados, los datos de la rama 16 y los datos
   de Polaris que leen sus herramientas (`peripheries.json`, `normas.json`,
   `polaris_estado.checklist.json`, `orquestadores.json`).
-- **No viajan:** TotalSegmentator, Whisper, la capa NER ni las herramientas de prueba.
+- **No viajan:** TotalSegmentator, Whisper, la capa NER ni las herramientas de prueba. Ollama,
+  Whisper, TotalSegmentator y Tesseract van en el **paquete de modelos**, aparte (ver «Modelos de IA»).
 
 ### Marca
 
@@ -1330,6 +1331,74 @@ lector de pantalla.
 - Los corpus CC BY-SA obligan a compartir con la misma licencia si se modifican.
 - ~~El texto de licencias de las dependencias de Marplanner~~ **Resuelto el 2026-11-14**: la compilación deja `desktop/build/marplanner/server/THIRD_PARTY_LICENSES.txt`, y `build/marplanner` viaja entero en `extraResources`. (Texto anterior:) depende de su compilación
   (`THIRD_PARTY_LICENSES.txt`). No se comprobó que el instalador de EMMA lo lleve.
+
+---
+
+## Modelos de IA: de dónde se descargó cada uno (vista transversal, 2026-11-15)
+
+Reúne en un sitio lo que las ramas 9-12, 16, 18 y 19 dicen por separado. Sale de los scripts de
+instalación, de los `ORIGEN.txt`/`MODELO.json` y de lo que había instalado en el portátil de
+desarrollo el 2026-11-15 (`ollama list`, `~/.totalsegmentator`, los `.venv-*`).
+
+**Dónde vive cada uno no es casual.** Solo van en git los modelos pequeños que la aplicación
+necesita siempre y que tienen una licencia que permite redistribuirlos. Los pesados u opcionales
+quedan fuera a propósito (`CLAUDE.md`: «lo que depende de ellos tiene que declararse no disponible
+cuando faltan, no romper el arranque»), y se reinstalan con su script o con `ollama pull`.
+
+### En git, y viajan en el instalador
+
+| Modelo | Para qué | Descargado de | Dónde | Huella | Licencia |
+|--------|----------|---------------|-------|--------|----------|
+| `intfloat/multilingual-e5-small`, ONNX int8 + tokenizer, revisión `614241f6…` | Búsqueda semántica (`kb_embed` de Polaris) | `https://huggingface.co/intfloat/multilingual-e5-small/resolve/<rev>/onnx/…` con `scripts/install_kb_embed.py` | `backend/app/data/kb-model/` | SHA-256 en `MODELO.json` | MIT |
+| MediaPipe Face Landmarker float16 v1 | Vista que sigue la cara (demostración) | `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task` (2026-11-03) | `frontend/public/mediapipe/` | `ORIGEN.txt`, comprobado por `faceModel.test.ts` | Apache-2.0 |
+| Vosk `vosk-model-small-es-0.42` | Palabra de activación del asistente | `https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip` (2026-11-03), reempaquetado en `.tar.gz` | `frontend/public/vosk/` | comprobado por `voskModel.test.ts` | Apache-2.0 |
+
+### Fuera de git: programas externos opcionales (no viajan; sin ellos, «no disponible»)
+
+| Modelo | Para qué | Descargado de | Dónde | Licencia |
+|--------|----------|---------------|-------|----------|
+| Whisper `base` (`openai-whisper==20250625`) | Transcripción de voz | `https://openaipublic.azureedge.net/main/whisper/models/ed3a0b6b…/base.pt` (URL fijada en el paquete `whisper`, que comprueba el SHA-256) con `scripts/install_voice.py`. PyTorch CPU de `https://download.pytorch.org/whl/cpu` | `backend/.venv-voice/cache/whisper/base.pt` | **Sin anotar** (pesos) |
+| `BSC-NLP4BIA/bsc-bio-ehr-es-contacto-anon`, revisión `83db1112…` | Des-identificación NER de informes | Hugging Face (`snapshot_download`) con `scripts/install_deid_ner.py`; revisión y SHA-256 de los pesos fijados en `polaris/tools/deid_ner.py` | Caché de `backend/.venv-deid` | **Sin anotar**: el repo no es público (401) |
+| TotalSegmentator 2.18.0: tareas Dataset291-295, 297, 298 (`total`, 3 mm, 6 mm), 570 `liver_segments`, 591 `liver_lesions` y 008 `HepaticVessel` | Segmentación de TAC/RM | Los descarga el propio TotalSegmentator (paquete de PyPI instalado en `.venv-seg`) | `~/.totalsegmentator/nnunet/results/` | Apache-2.0 (rama 9) |
+| Tesseract `eng`, `osd`, `spa` (`tessdata_fast`) | OCR de informes escaneados | `https://github.com/tesseract-ocr/tessdata_fast` (`spa` añadido el 2026-11-14) | `C:\Program Files\Tesseract-OCR\tessdata\` | Apache-2.0 |
+
+### Fuera de git: Ollama (registro `ollama.com`, `ollama pull`; servidor local en loopback)
+
+Configurados en `app/core/config.py`: `gemma4:e4b` (redactor y voz, `llm_model`),
+`gemma4:12b-it-qat` (verificador, `llm_verifiers`) y `qwen3.5:9b` (asistente, `assistant_model`).
+Instalados para comparativas, sin uso fijo: `qwen3.5:4b`, `gemma4:e2b`, `ministral-3:8b`,
+`qwen3-vl:4b-instruct`, `qwen3-vl:8b-instruct`. Todos Apache-2.0 según `ollama show --license`
+(rama 11). **`emma-qwen3.5-9b-v2`**: derivado local; su origen no consta en el repo.
+
+### Fuera de git: solo en desarrollo (no lo usa la aplicación)
+
+| Modelo | Para qué | Descargado de | Dónde | Licencia |
+|--------|----------|---------------|-------|----------|
+| Real-ESRGAN `RealESRGAN_x4plus.pth` | Ampliar ×4 la maqueta del cuerpo de «Inicio» (solo viaja la imagen ya calcada) | `https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth` | `data/upscale/` | Código BSD-3; pesos sin licencia aparte (rama 19) |
+
+### El paquete de modelos (decisión del usuario, 2026-11-15)
+
+Los modelos de fuera de git se instalan con EMMA como un **paquete aparte**, desde disco o USB y
+sin red. Lo construye `backend/packaging/models_pack.py` con lo que está probado en la máquina que
+lo crea (no descarga nada): `ollama/` (programa sin la aplicación de bandeja, y solo los modelos
+configurados más los pedidos con `--ollama-model`), `voice/`, `segmentation/` y `tesseract/`.
+Whisper y TotalSegmentator van sobre una **copia de Python** aislada con `python312._pth`, porque
+un venv lleva escrita la ruta del Python de la máquina que lo creó. El script arranca cada pieza
+ya copiada antes de dar el paquete por bueno, y escribe `MANIFIESTO.json` (tamaño y SHA-256 de
+cada fichero, versión, origen y licencia por pieza).
+
+`instalar.cmd` copia el paquete a `%LOCALAPPDATA%\EMMA-modelos` (o `-Destino`), comprueba cada
+huella ya en el destino y solo entonces escribe `instalado.json`. La aplicación de escritorio
+(`desktop/main.cjs`, `modelsEnv`) solo usa un paquete con esa marca: arranca su Ollama en un puerto
+propio de loopback y pasa al backend las rutas de cada pieza. Sin paquete, todo sigue «no
+disponible» como antes.
+
+**No va en el paquete** la capa NER del BSC: sin licencia que permita redistribuirla.
+
+### Pendiente
+
+- El origen de `emma-qwen3.5-9b-v2`, y anotarlo.
+- La licencia de los pesos de Whisper `base` y la del modelo NER del BSC.
 
 ---
 

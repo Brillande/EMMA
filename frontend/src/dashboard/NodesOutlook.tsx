@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { Command } from "../components/Command";
 import { DomainName } from "../components/DomainName";
 import { IndicatorName } from "../components/IndicatorName";
@@ -83,6 +84,8 @@ export interface NodesOutlookProps {
   profileId?: string | null | undefined;
   /** Si la pestaña está a la vista: oculta, no pide nada. */
   active?: boolean | undefined;
+  /** La decisión sobre la recomendación de «Escenarios» (la consola de tripulación); sin ella, solo se lee. */
+  decide?: BoardDecisions | undefined;
 }
 
 /** La correlación del tripulante, pedida con la referencia del estado y releída como mucho cada diez minutos. */
@@ -111,9 +114,9 @@ export function useCorrelations(home: HomeData, active = true): Fetched<Correlat
 }
 
 /** Las tres tarjetas, con su petición. Lo coloca la consola en la pestaña «Distancia y nodos». */
-export function NodesOutlook({ home, links, profileId, active = true }: NodesOutlookProps) {
+export function NodesOutlook({ home, links, profileId, active = true, decide }: NodesOutlookProps) {
   const correlations = useCorrelations(home, active);
-  return <NodesOutlookView home={home} links={links} profileId={profileId} correlations={correlations} />;
+  return <NodesOutlookView home={home} links={links} profileId={profileId} correlations={correlations} decide={decide} />;
 }
 
 /** Las tarjetas sin peticiones: se pintan con lo recibido (así se prueban sin red ni DOM). */
@@ -122,13 +125,14 @@ export function NodesOutlookView({
   links,
   profileId,
   correlations,
+  decide,
 }: NodesOutlookProps & { correlations: Fetched<Correlations> }) {
   const profile = shownProfile(home, profileId);
   return (
     <>
       <DistanceRisks home={home} links={links} profile={profile} />
       <VariableCorrelations correlations={correlations} profile={profile} />
-      <Scenarios home={home} links={links} profile={profile} />
+      <Scenarios home={home} links={links} profile={profile} decide={decide} />
     </>
   );
 }
@@ -558,7 +562,17 @@ function signed(value: number, decimals: number): string {
   return `${value > 0 ? "+" : ""}${formatNumber(value, decimals)}`;
 }
 
-function Scenarios({ home, links, profile }: { home: HomeData; links?: HomeLinks | undefined; profile: Profile | null }) {
+function Scenarios({
+  home,
+  links,
+  profile,
+  decide,
+}: {
+  home: HomeData;
+  links?: HomeLinks | undefined;
+  profile: Profile | null;
+  decide?: BoardDecisions | undefined;
+}) {
   const { status } = home;
   const rows = scenarioRows(status.predictions);
   const projection = status.radiation.projection ?? null;
@@ -642,6 +656,13 @@ function Scenarios({ home, links, profile }: { home: HomeData; links?: HomeLinks
             <span className="ref-clamp-2">{recommendation.action}</span>
           </Mark>
         </p>
+      )}
+      {/* La misma decisión que en «Peligros y alertas», firmada en el ledger por las mismas rutas. */}
+      {recommendation !== null && decide !== undefined && (
+        <>
+          <AdoptControls item={recommendation} decide={decide} />
+          <BoardOperator items={[recommendation]} decide={decide} />
+        </>
       )}
       {toHazards !== null && (
         <div className="ref-quick-links no-open">

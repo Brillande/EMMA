@@ -59,6 +59,19 @@ def find(configured: str | None = None) -> str | None:
     return None
 
 
+def command_prefix(executable: str) -> list[str]:
+    """Cómo se llama a TotalSegmentator: su lanzador, o un Python que lleva el paquete.
+
+    El paquete de modelos (`backend/packaging/models_pack.py`) trae una copia de Python, no un
+    venv: el `TotalSegmentator.exe` de un venv lleva escrita la ruta del Python de la máquina que
+    lo instaló y en otra no arranca. Con un intérprete se entra por el mismo `main()` del lanzador
+    (`totalsegmentator.bin.TotalSegmentator`, su `entry_points.txt`).
+    """
+    if Path(executable).stem.lower().startswith("python"):
+        return [executable, "-m", "totalsegmentator.bin.TotalSegmentator"]
+    return [executable]
+
+
 def telemetry_off(executable: str) -> bool:
     """True si la telemetría está apagada. Polaris aborta si no: un TAC no genera avisos de uso.
 
@@ -188,7 +201,7 @@ class TaskFailed(SegmenterUnavailable):
 def _task(executable: str, ct_path: Path, task_dir: Path, task: str, subset: tuple[str, ...] | None,
           device: str, needed: float | None) -> None:
     """Una tarea de TotalSegmentator en un dispositivo; sus máscaras quedan en `task_dir`."""
-    command = [executable, "-i", str(ct_path), "-o", str(task_dir), "-ta", task,
+    command = [*command_prefix(executable), "-i", str(ct_path), "-o", str(task_dir), "-ta", task,
                "-d", device, "-q"]
     if subset:
         command += ["--roi_subset", *subset]

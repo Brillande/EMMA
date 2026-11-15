@@ -57,12 +57,23 @@ GUARDED = {
     # La lectura IA de las correlaciones (2026-11-15): cuerpo JSON validado, pero pone a trabajar al
     # modelo local; otra página del navegador no debe poder pedirla.
     "/api/correlations/reading",
+    # «Descargar modelos» (2026-11-15): consultar y bajar salen a internet y escriben en disco;
+    # otra página del navegador no debe poder lanzarlo.
+    "/api/models-pack/check",
+    "/api/models-pack/download",
+    "/api/models-pack/cancel",
 }
 # Las cubiertas que no llevan cuerpo (las demás de `GUARDED` lo leen tal cual).
-BODYLESS = {"/api/simulate", "/api/comms/preload", "/api/dossier/ntrs/refresh"}
+BODYLESS = {
+    "/api/simulate", "/api/comms/preload", "/api/dossier/ntrs/refresh",
+    "/api/models-pack/check", "/api/models-pack/cancel",
+}
 # Las cubiertas con cuerpo JSON validado: no las ejecuta una petición simple, pero su contrato
 # pide la cabecera igual (el inventario firmado, 2026-11-14).
-JSON_GUARDED = {"/api/inventory/count", "/api/inventory/resupply", "/api/correlations/reading"}
+JSON_GUARDED = {
+    "/api/inventory/count", "/api/inventory/resupply", "/api/correlations/reading",
+    "/api/models-pack/download",
+}
 # Los POST sin cuerpo declarado en OpenAPI que una petición simple ejecuta y esta unidad no cubre,
 # todos fuera de `api/routes.py`: sin cuerpo, o con un cuerpo leído tal cual que OpenAPI no declara.
 # Decisión del usuario pendiente (§5.39.23). Un POST nuevo sin cuerpo y sin la cabecera hace fallar

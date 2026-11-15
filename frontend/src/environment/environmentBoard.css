@@ -35,6 +35,8 @@
   .env-home .env-header,
   .env-home .env-gravity { grid-column: span 12; }
   .env-home .env-station { display: none; }
+  /* La raya plegable (2026-11-15) ocupa la fila entera: la regla de arriba le ganaría a la suya. */
+  .env-home > .ref-divider { grid-column: 1 / -1; }
 }
 
 @media (max-width: 900px) {
@@ -83,7 +85,8 @@
   gap: 0.4rem;
 }
 
-.env-chips li {
+/* Cada bloque es un botón que lleva a su panel; la caja de la maqueta va en el botón. */
+.env-chips button {
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -91,7 +94,16 @@
   border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent);
   border-radius: 0.45rem;
   background: color-mix(in srgb, var(--acc) 10%, transparent);
+  color: inherit;
+  font: inherit;
   font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.env-chips button:hover,
+.env-chips button:focus-visible {
+  background: color-mix(in srgb, var(--acc) 22%, transparent);
+  text-decoration: underline;
 }
 
 .env-chips svg { width: 1.1rem; height: 1.1rem; color: var(--acc); }

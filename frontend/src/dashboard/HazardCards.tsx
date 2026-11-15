@@ -43,6 +43,24 @@ import { LevelPill, Segments, levelToken } from "./HomeCharts";
 
 const RIDGE_ORDER = ["radiation", "isolation", "distance", "gravity", "environment"];
 
+/**
+ * La pestaña propia de cada peligro en la consola de tripulación. Antes toda letra R/I/D/G/E de
+ * «Inicio» abría «Peligros y alertas», aunque cada peligro tiene la suya (lo pidió el usuario,
+ * 2026-11-15: «que si pulso el botón pasen cosas»). La distancia vive en «Distancia y nodos».
+ */
+const HAZARD_TABS: ReadonlyMap<string, string> = new Map([
+  ["radiation", "radiation"],
+  ["isolation", "isolation"],
+  ["distance", "nodes"],
+  ["gravity", "gravity"],
+  ["environment", "environment"],
+]);
+
+/** La clave de la pestaña del peligro, o `null` si la interfaz no le conoce una propia. */
+export function tabForHazard(hazard: string): string | null {
+  return HAZARD_TABS.get(hazard) ?? null;
+}
+
 export interface HazardGroup {
   hazard: string;
   display: string;

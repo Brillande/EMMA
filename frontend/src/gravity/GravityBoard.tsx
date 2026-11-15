@@ -1,9 +1,11 @@
-import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useState } from "react";
+import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useId, useState } from "react";
 
+import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { AvatarSwitch } from "../components/AvatarSwitch";
 import { Command } from "../components/Command";
 import { MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
+import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import type { PictogramName } from "../icons/registry";
@@ -14,7 +16,7 @@ import { tr } from "../lib/i18n";
 import { LEVEL_ORDER, isLevel, levelStyle } from "../lib/levels";
 import { MISSING_MARK, OK_MARK, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
 import { cssVar } from "../lib/palette";
-import { type Fetched, type HomeData, type HomeLinks, HomeCrew, HomeQuickHazards, sectionLink } from "../dashboard/HomeBoard";
+import { type Fetched, type HomeData, type HomeLinks, HomeCrew, HomeQuickHazards } from "../dashboard/HomeBoard";
 import { ImpactBar, MultiTrend, type Reading, Ring, levelToken } from "../dashboard/HomeCharts";
 import { capitalized } from "../dashboard/HazardCards";
 import { BodyBonesArt, BodyMuscleArt, BodyVesselsArt } from "../dashboard/HomeArt";
@@ -467,7 +469,11 @@ export function GravMusculo({ grav }: Piece) {
   ];
   // «Detalle / visualización» de la maqueta: qué capas se ven. Presentación pura, sin guardar.
   const [show, setShow] = useState({ muscle: true, bone: true, sites: true });
-  const marks = show.sites ? zones.filter((zone) => readingsFor(grav, zone.key).length > 0).map((zone) => zone.mark) : [];
+  const measured = zones.filter((zone) => readingsFor(grav, zone.key).length > 0).map((zone) => zone.mark);
+  const marks = show.sites ? measured : [];
+  // Sin densitometría de columna ni de cadera la capa no tiene nada que pintar: se apaga y lo dice.
+  const reasonId = useId();
+  const noSites = tr("Sin densitometría de columna lumbar ni de cadera: no hay zonas que marcar.", "No lumbar spine or hip densitometry: there are no sites to mark.");
   const toggle = (key: keyof typeof show) => setShow((now) => ({ ...now, [key]: !now[key] }));
   return (
     <section data-ui="grav-musculo" className="ref-card grav-musculo" aria-label={tr("Sistema musculoesquelético", "Musculoskeletal system")}>
@@ -524,12 +530,20 @@ export function GravMusculo({ grav }: Piece) {
                   ["bone", tr("Esqueleto", "Skeleton")],
                   ["sites", tr("Densidad ósea (DXA)", "Bone density (DXA)")],
                 ] as const
-              ).map(([key, label]) => (
-                <label key={key}>
-                  <input type="checkbox" checked={show[key]} onChange={() => toggle(key)} />
-                  <span>{label}</span>
-                </label>
-              ))}
+              ).map(([key, label]) => {
+                const off = key === "sites" && measured.length === 0;
+                return (
+                  <label key={key} data-disabled={off ? "" : undefined} title={off ? noSites : undefined}>
+                    <input type="checkbox" checked={off ? false : show[key]} disabled={off} onChange={() => toggle(key)} aria-describedby={off ? reasonId : undefined} />
+                    <span>{label}</span>
+                  </label>
+                );
+              })}
+              {measured.length === 0 && (
+                <p id={reasonId} className="secondary grav-layers-reason">
+                  {noSites}
+                </p>
+              )}
             </fieldset>
             <AvatarSwitch className="grav-avatar" />
             <p className="secondary iso-note" title={tr("Los anillos del esqueleto marcan dónde hay medida de densitometría, no cómo está.", "The rings on the skeleton mark where there is a densitometry measurement, not its condition.")}>
@@ -603,7 +617,7 @@ export function GravCardio({ grav }: Piece) {
 }
 
 /** Las pruebas de la maqueta que EMMA tiene en su catálogo, con la edad de la última. */
-export function GravTests({ grav, links }: Piece & { links: HomeLinks | undefined }) {
+export function GravTests({ grav }: Piece) {
   const tests: GravityKey[] = [
     "imtp-peak-force",
     "grip-strength-right",
@@ -642,22 +656,29 @@ export function GravTests({ grav, links }: Piece & { links: HomeLinks | undefine
           })}
         </ul>
       )}
-      <GoLinks links={links} />
+      <GoLinks />
     </section>
   );
 }
 
-/** «Ver pruebas / resultados» y «Plan de contramedidas» de la maqueta: abren las secciones que ya lo tienen. */
-function GoLinks({ links }: { links: HomeLinks | undefined }) {
-  const go = [
-    { link: sectionLink(links, "log"), text: tr("Ver pruebas / resultados", "View tests / results"), icon: "chart-line" as const },
-    { link: sectionLink(links, "library"), text: tr("Plan de contramedidas", "Countermeasures plan"), icon: "dumbbell" as const },
-  ].filter((item): item is { link: NonNullable<ReturnType<typeof sectionLink>>; text: string; icon: "chart-line" | "dumbbell" } => item.link !== null);
-  if (go.length === 0) return null;
+/**
+ * «Ver pruebas / resultados» y «Plan de contramedidas» de la maqueta. Antes abrían «Registro» y
+ * «Biblioteca», pestañas apartadas de esta versión, y no salían nunca: ahora llevan a los paneles
+ * de esta misma pestaña que lo tienen (las pruebas y los ejercicios), así que siempre están.
+ */
+const GO: readonly { target: string; text: string; icon: "chart-line" | "dumbbell" }[] = [
+  { target: "grav-tests", text: tr("Ver pruebas / resultados", "View tests / results"), icon: "chart-line" },
+  { target: "grav-exercises", text: tr("Plan de contramedidas", "Countermeasures plan"), icon: "dumbbell" },
+];
+
+function GoLinks() {
+  const go = (target: string) => {
+    document.querySelector(`[data-ui="${target}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+  };
   return (
     <div className="grav-go">
-      {go.map((item) => (
-        <Command key={item.text} concept="detail" type="button" onClick={item.link.open} aria-label={tr(`Abrir ${item.link.name}: ${item.text}`, `Open ${item.link.name}: ${item.text}`)}>
+      {GO.map((item) => (
+        <Command key={item.target} concept="detail" type="button" onClick={() => go(item.target)}>
           <Pictogram name={item.icon} />
           <span>{item.text}</span>
         </Command>
@@ -869,9 +890,14 @@ export function GravPrediction({ grav }: Piece) {
   );
 }
 
-/** Las recomendaciones del backend para estos dominios; sin ninguna, las contramedidas de la biblioteca. */
-export function GravExercises({ grav }: Piece) {
+/**
+ * Las recomendaciones del backend para estos dominios; sin ninguna, las contramedidas de la biblioteca.
+ * Con `decide`, cada recomendación lleva «Adoptar» y «No adoptar» (como en «Peligros y alertas»); las
+ * de la biblioteca no: el backend solo acepta adoptar lo que estaba recomendado.
+ */
+export function GravExercises({ grav, decide }: Piece & { decide?: BoardDecisions | undefined }) {
   const items = grav.home.status.recommendations.filter((item) => (GRAVITY_DOMAINS as readonly string[]).includes(item.domain));
+  const shown = items.slice(0, 5);
   const library = grav.risks.state === "ready" ? grav.risks.value.flatMap((risk) => risk.countermeasures.items) : [];
   return (
     <section data-ui="grav-exercises" className="ref-card grav-exercises" aria-label={tr("Ejercicios y contramedidas", "Exercises and countermeasures")}>
@@ -879,14 +905,18 @@ export function GravExercises({ grav }: Piece) {
         {items.length > 0 ? tr("Recomendaciones (EMMA)", "Recommendations (EMMA)") : tr("Contramedidas (biblioteca)", "Countermeasures (library)")}
       </PanelTitle>
       {items.length > 0 ? (
-        <ul className="iso-checks">
-          {items.slice(0, 5).map((item) => (
-            <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
-              <Pictogram name="check" />
-              <span className="ref-clamp">{item.action}</span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="iso-checks">
+            {shown.map((item) => (
+              <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
+                <Pictogram name="check" />
+                <span className="ref-clamp">{item.action}</span>
+                {decide !== undefined && <AdoptControls item={item} decide={decide} />}
+              </li>
+            ))}
+          </ul>
+          {decide !== undefined && <BoardOperator items={shown} decide={decide} />}
+        </>
       ) : grav.risks.state !== "ready" ? (
         <Pending item={grav.risks} />
       ) : library.length === 0 ? (
@@ -908,8 +938,11 @@ export function GravExercises({ grav }: Piece) {
   );
 }
 
+/** La raya de lo secundario de «Gravedad»: su elección se guarda en `emma.fold.crew.gravity`. */
+const FOLD_ID = "crew.gravity";
+
 /** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
-export function gravityPanels(grav: GravityData, active: boolean, links: HomeLinks | undefined): ReactNode[] {
+export function gravityPanels(grav: GravityData, active: boolean, links: HomeLinks | undefined, decide?: BoardDecisions): ReactNode[] {
   const home = grav.home;
   return [
     <NodesFit active={active} fixed />,
@@ -919,12 +952,33 @@ export function gravityPanels(grav: GravityData, active: boolean, links: HomeLin
     <GravRisk grav={grav} />,
     <GravMusculo grav={grav} />,
     <GravCardio grav={grav} />,
-    <GravTests grav={grav} links={links} />,
+    <GravTests grav={grav} />,
     <HomeQuickHazards home={home} links={links} />,
-    <GravTraining grav={grav} />,
-    <GravFields grav={grav} />,
-    <GravTransitionRisks grav={grav} />,
-    <GravPrediction grav={grav} />,
-    <GravExercises grav={grav} />,
+    // Lo secundario se pliega con la raya de «Inicio», plegado de inicio (decisión del usuario,
+    // 2026-11-15). Arriba queda lo que dice el estado: exposición, transición, tripulación, el riesgo
+    // (nunca se pliega), cuerpo, pruebas y los peligros. Debajo, el detalle que lo amplía. Cada panel
+    // va envuelto por separado para que plegado no ocupe celda en la rejilla.
+    <FoldDivider
+      id={FOLD_ID}
+      what={tr(
+        "Entrenamiento, campos gravitatorios, riesgos por transición, predicción y contramedidas",
+        "Training, gravity fields, transition risks, prediction and countermeasures",
+      )}
+    />,
+    <Folded id={FOLD_ID}>
+      <GravTraining grav={grav} />
+    </Folded>,
+    <Folded id={FOLD_ID}>
+      <GravFields grav={grav} />
+    </Folded>,
+    <Folded id={FOLD_ID}>
+      <GravTransitionRisks grav={grav} />
+    </Folded>,
+    <Folded id={FOLD_ID}>
+      <GravPrediction grav={grav} />
+    </Folded>,
+    <Folded id={FOLD_ID}>
+      <GravExercises grav={grav} decide={decide} />
+    </Folded>,
   ];
 }

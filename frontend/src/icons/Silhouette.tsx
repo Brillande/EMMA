@@ -306,19 +306,41 @@ function outline(): string {
 /** El `d` del contorno, exportado para su prueba (`silhouette.test.ts`). */
 export const BODY_OUTLINE = outline();
 
+/** La zona de la figura en que cayó un clic (su `<g data-region>`), o `null` fuera de toda zona. */
+export function zoneOf(target: EventTarget | null): SitedRegion | null {
+  const element = target as { closest?: (selector: string) => { getAttribute(name: string): string | null } | null } | null;
+  const region = element?.closest?.("g.zone[data-region]")?.getAttribute("data-region") ?? null;
+  return region !== null && isSitedRegion(region) ? region : null;
+}
+
 export function Silhouette({
   zoneClassName,
   selected = null,
   className,
+  onZone,
 }: {
   /** La clase `c-<token>` de cada zona (el color de su nivel), o `undefined` para heredar. */
   zoneClassName?: ((region: SitedRegion) => string | undefined) | undefined;
   /** La región elegida en el modo anatómico, si la hay. */
   selected?: string | null | undefined;
   className?: string | undefined;
+  /**
+   * Pulsar una zona con el puntero. Es un atajo: el dibujo sigue oculto al lector de pantalla y
+   * cada región tiene su botón con nombre (`BodySilhouette`); en «Inicio» y «Radiación», donde esos
+   * rótulos no se ven, la zona era lo único que había que pulsar (2026-11-15).
+   */
+  onZone?: ((region: SitedRegion) => void) | undefined;
 }) {
   return (
     <svg
+      onClick={
+        onZone === undefined
+          ? undefined
+          : (event) => {
+              const region = zoneOf(event.target);
+              if (region !== null) onZone(region);
+            }
+      }
       className={className === undefined ? "silhouette" : `silhouette ${className}`}
       viewBox={SILHOUETTE_VIEWBOX}
       aria-hidden="true"

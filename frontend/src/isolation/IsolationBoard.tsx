@@ -1,8 +1,12 @@
-import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
+import { type CSSProperties, type ReactNode, useCallback, useEffect, useState } from "react";
 
+import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { Command } from "../components/Command";
+import { FieldLabel } from "../components/FieldLabel";
 import { MarkOf } from "../components/Mark";
+import { OperatorInput } from "../components/OperatorInput";
 import { PanelTitle } from "../components/PanelTitle";
+import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import type { PictogramName } from "../icons/registry";
@@ -22,7 +26,7 @@ import {
 import { displayUnit, formatAge, formatNumber, formatUtc } from "../lib/format";
 import { language, tr } from "../lib/i18n";
 import { LEVEL_ORDER, isLevel, levelStyle } from "../lib/levels";
-import { MISSING_MARK, OK_MARK, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
+import { MISSING_MARK, OK_MARK, type RequestOutcome, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
 import { type CorrelationReading, type CorrelationSearch, outlookApi } from "../lib/outlookApi";
 import { cssVar } from "../lib/palette";
 import { type Fetched, type HomeData, type HomeLinks, sectionLink } from "../dashboard/HomeBoard";
@@ -31,6 +35,10 @@ import { ImpactBar, MultiTrend, Radar, type Reading, Ring, Sparkline, levelToken
 import { capitalized } from "../dashboard/HazardCards";
 import { CrewTriangleArt, LightBellArt } from "../dashboard/HomeArt";
 import { NodesFit } from "../dashboard/NodesFit";
+import type { AlertActions } from "../dashboard/AlertRow";
+import type { Alert } from "../lib/alerts";
+import { PvtPanel } from "../pvt/PvtPanel";
+import { CognitionPanel } from "../cognition/CognitionPanel";
 import "../dashboard/referenceDashboard.css";
 import "./isolationBoard.css";
 
@@ -92,6 +100,8 @@ export interface IsolationData {
   /** El resumen del planificador que ve Tierra: mensajes, ocio y recordatorios de 7 días. */
   planner: Fetched<GroundSummary>;
   links: HomeLinks | undefined;
+  /** Vuelve a pedir lo de la sección: tras registrar una prueba desde «Pruebas cognitivas». */
+  reload: () => void;
 }
 
 function fetched<T>(promise: Promise<T>, alive: () => boolean, set: (next: Fetched<T>) => void): void {
@@ -124,6 +134,8 @@ export function useIsolationData(home: HomeData, active: boolean, links?: HomeLi
   const [habitat, setHabitat] = useState<Fetched<HabitatState>>({ state: "loading" });
   const [planner, setPlanner] = useState<Fetched<GroundSummary>>({ state: "loading" });
   const until = status.data.reference_time;
+  // Cada prueba registrada desde la tarjeta suma uno: las lecturas y las sesiones se vuelven a pedir.
+  const [round, setRound] = useState(0);
 
   useEffect(() => {
     if (!active) return undefined;
@@ -139,6 +151,8 @@ export function useIsolationData(home: HomeData, active: boolean, links?: HomeLi
     };
   }, [active]);
 
+  // Lo que una prueba registrada cambia (las lecturas conductuales y la última sesión): también con
+  // `round`, sin volver a pedir el resto de la sección.
   useEffect(() => {
     if (!active) return undefined;
     let current = true;
@@ -152,12 +166,21 @@ export function useIsolationData(home: HomeData, active: boolean, links?: HomeLi
       alive,
       setSeries,
     );
+    fetched(cognitionApi.sessions(status.subject, 1), alive, setSessions);
+    return () => {
+      current = false;
+    };
+  }, [active, status.subject, until, round]);
+
+  useEffect(() => {
+    if (!active) return undefined;
+    let current = true;
+    const alive = () => current;
     fetched(
       api.observations("energy-intake-daily", 200, status.subject, until).then((body) => readingsOf(body.observations)),
       alive,
       setEnergy,
     );
-    fetched(cognitionApi.sessions(status.subject, 1), alive, setSessions);
     fetched(nutritionApi.foodAcceptability(status.subject), alive, setFood);
     fetched(api.habitat(new Date(until)), alive, setHabitat);
     fetched(groundSummary(until, 7), alive, setPlanner);
@@ -167,7 +190,8 @@ export function useIsolationData(home: HomeData, active: boolean, links?: HomeLi
     };
   }, [active, status.subject, until]);
 
-  return { home, series, energy, protocol, sessions, food, correlations, risk, habitat, planner, links };
+  const reload = useCallback(() => setRound((count) => count + 1), []);
+  return { home, series, energy, protocol, sessions, food, correlations, risk, habitat, planner, links, reload };
 }
 
 type Piece = { iso: IsolationData };
@@ -833,9 +857,17 @@ export function IsoNutrition({ iso }: Piece) {
   );
 }
 
-/** Las pruebas de la batería Cognition, en su orden, con si la última sesión las trae. */
+/**
+ * Las pruebas de la batería Cognition, en su orden, con si la última sesión las trae. Cada casilla
+ * abre debajo su consola de registro, la de la pestaña apartada «Diario y pruebas»: la PVT, la suya
+ * (`PvtPanel`); las demás, el formulario de la batería (`CognitionPanel`). Lo firmado va por sus
+ * APIs al ledger, y al quedar registrado se vuelve a pedir la sección para que la casilla lo diga.
+ */
 export function IsoTests({ iso }: Piece) {
   const pvtLast = readingsFor(iso, "pvt-mean-rt").at(-1);
+  // La prueba abierta debajo de la rejilla (su sigla, y si es la PVT), o ninguna.
+  const [open, setOpen] = useState<{ sigla: string; pvt: boolean } | null>(null);
+  const subject = iso.home.status.subject;
   return (
     <section data-ui="iso-tests" className="ref-card iso-tests" aria-label={tr("Pruebas cognitivas", "Cognitive tests")}>
       <PanelTitle concept="pvt" className="ref-h">
@@ -857,22 +889,48 @@ export function IsoTests({ iso }: Piece) {
             const accuracy = session?.values.find((item) => item.key === accuracyKey)?.value_text ?? null;
             return (
               <li key={test.abbrev} title={test.measures?.quote ?? test.measures_note ?? test.name} data-done={done ? "" : undefined}>
-                <Pictogram name={TEST_ICON[test.sigla] ?? "square-outline"} />
-                <span className="iso-test-name">
-                  <span className="ref-clamp-2">{test.name}</span>
-                  <small className="secondary">{test.sigla}</small>
-                </span>
-                <span className="iso-test-mark">
-                  {done ? (
-                    <MarkOf mark={OK_MARK}>{accuracy ?? tr("registrada", "recorded")}</MarkOf>
-                  ) : (
-                    <MarkOf mark={MISSING_MARK}>{tr("sin registro", "no record")}</MarkOf>
-                  )}
-                </span>
+                <button
+                  type="button"
+                  className="iso-test-open"
+                  aria-expanded={open?.sigla === test.sigla}
+                  aria-label={
+                    test.recorded_here
+                      ? tr(`Registrar la batería Cognition: ${test.name} (${test.sigla})`, `Record the Cognition battery: ${test.name} (${test.sigla})`)
+                      : tr(`Hacer la prueba ${test.sigla}: ${test.name}`, `Take the ${test.sigla} test: ${test.name}`)
+                  }
+                  // Solo abre: cerrar es «Cerrar». Un toque de más en la rejilla no tira una prueba a
+                  // medias; pasar de una casilla de la batería a otra deja montado el mismo formulario.
+                  onClick={() => setOpen({ sigla: test.sigla, pvt: !test.recorded_here })}
+                >
+                  <Pictogram name={TEST_ICON[test.sigla] ?? "square-outline"} />
+                  <span className="iso-test-name">
+                    <span className="ref-clamp-2">{test.name}</span>
+                    <small className="secondary">{test.sigla}</small>
+                  </span>
+                  <span className="iso-test-mark">
+                    {done ? (
+                      <MarkOf mark={OK_MARK}>{accuracy ?? tr("registrada", "recorded")}</MarkOf>
+                    ) : (
+                      <MarkOf mark={MISSING_MARK}>{tr("sin registro", "no record")}</MarkOf>
+                    )}
+                  </span>
+                </button>
               </li>
             );
           })}
         </ul>
+      )}
+      {open !== null && (
+        <div className="iso-test-run">
+          <Command concept="cancel" type="button" onClick={() => setOpen(null)}>
+            {tr("Cerrar", "Close")}
+          </Command>
+          {open.pvt ? (
+            <PvtPanel subject={subject} onRecorded={iso.reload} />
+          ) : (
+            <CognitionPanel subject={subject} onRecorded={iso.reload} />
+          )}
+        </div>
       )}
     </section>
   );
@@ -1070,9 +1128,14 @@ export function IsoRisk({ iso }: Piece) {
   );
 }
 
-/** Las recomendaciones del backend; sin ninguna, las contramedidas conductuales de la biblioteca. */
-export function IsoRecommendations({ iso }: Piece) {
+/**
+ * Las recomendaciones del backend; sin ninguna, las contramedidas conductuales de la biblioteca. Con
+ * `decide`, cada recomendación lleva «Adoptar» y «No adoptar» (como en «Peligros y alertas»); las de
+ * la biblioteca no: el backend solo acepta adoptar lo que estaba recomendado.
+ */
+export function IsoRecommendations({ iso, decide }: Piece & { decide?: BoardDecisions | undefined }) {
   const items = iso.home.status.recommendations.filter((item) => item.domain === BEHAVIORAL);
+  const shown = items.slice(0, 4);
   const library = iso.risk.state === "ready" && iso.risk.value !== null ? iso.risk.value.countermeasures.items : [];
   return (
     <section data-ui="iso-recommendations" className="ref-card iso-recommendations" aria-label={tr("Recomendaciones", "Recommendations")}>
@@ -1080,14 +1143,18 @@ export function IsoRecommendations({ iso }: Piece) {
         {items.length > 0 ? tr("Recomendaciones (EMMA)", "Recommendations (EMMA)") : tr("Contramedidas (biblioteca)", "Countermeasures (library)")}
       </PanelTitle>
       {items.length > 0 ? (
-        <ul className="iso-checks">
-          {items.slice(0, 4).map((item) => (
-            <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
-              <Pictogram name="check" />
-              <span className="ref-clamp">{item.action}</span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="iso-checks">
+            {shown.map((item) => (
+              <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
+                <Pictogram name="check" />
+                <span className="ref-clamp">{item.action}</span>
+                {decide !== undefined && <AdoptControls item={item} decide={decide} />}
+              </li>
+            ))}
+          </ul>
+          {decide !== undefined && <BoardOperator items={shown} decide={decide} />}
+        </>
       ) : iso.risk.state !== "ready" ? (
         <Pending item={iso.risk} />
       ) : library.length === 0 ? (
@@ -1116,10 +1183,60 @@ export function IsoRecommendations({ iso }: Piece) {
   );
 }
 
+/** Lo que hace falta para firmar desde la sección: las acciones de la consola y quién firma. */
+export interface IsoAlertControl {
+  actions: AlertActions;
+  operator: string;
+  /** Cambia quien firma: el `setOperator` de la consola, el mismo de «Peligros». */
+  onOperator: (value: string) => void;
+  /** Modo privacidad de la consola: el campo del nombre va `inert` (`OperatorInput`). */
+  privacy: boolean;
+}
+
+/**
+ * «Reconocer» una alerta conductual sin ir a «Peligros»: la misma acción que `AlertRow` (escribe en
+ * el ledger y vuelve a pedir el estado), con el mismo requisito de nombre de quien firma.
+ */
+function IsoAcknowledge({ alert, control }: { alert: Alert; control: IsoAlertControl }) {
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<RequestOutcome | null>(null);
+  const by = control.operator.trim();
+  const acknowledge = () => {
+    // Un clic, un asiento: mientras la firma va y vuelve, el botón no firma otra vez.
+    setSending(true);
+    setError(null);
+    control.actions
+      .acknowledge(alert, by)
+      .catch((cause: unknown) => setError(requestOutcome(cause)))
+      .finally(() => setSending(false));
+  };
+  return (
+    <>
+      <Command concept="acknowledge" type="button" disabled={sending || by.length === 0} onClick={acknowledge}>
+        {tr("Reconocer", "Acknowledge")}
+      </Command>
+      {error !== null && (
+        <MarkOf mark={error.mark}>{tr("No se pudo completar: ", "Could not complete: ")}{error.text}</MarkOf>
+      )}
+    </>
+  );
+}
+
+/** La alerta de la consola a partir de su estado: dominio y nivel, que es lo que se firma. */
+function alertOf(state: { id: string; domain: string; level: string }): Alert | null {
+  if (!isLevel(state.level) || state.level === "nominal") return null;
+  return { id: state.id, domain: state.domain, level: state.level, drivers: [] };
+}
+
 /** Las alertas activas del dominio conductual, con su nivel. */
-export function IsoAlerts({ iso }: Piece) {
+export function IsoAlerts({ iso, control }: Piece & { control?: IsoAlertControl | undefined }) {
   const alerts = iso.home.status.alerts.filter((item) => item.domain === BEHAVIORAL);
   const worst = alerts[0]?.level ?? null;
+  // Como en `AlertRow`: una alerta silenciada (suprimida o inhibida) no ofrece «Reconocer»; lo suyo
+  // es «Habilitar…», que se hace en «Peligros».
+  const signable = (alert: (typeof alerts)[number]) =>
+    control !== undefined && !alert.acknowledged && (alert.annunciation ?? "normal") === "normal" ? alertOf(alert) : null;
+  const unsigned = control !== undefined && control.operator.trim().length === 0 && alerts.slice(0, 3).some((item) => signable(item) !== null);
   return (
     <section data-ui="iso-alerts" className="ref-card iso-alerts" aria-label={tr("Alertas y acciones", "Alerts and actions")} style={tint(worst)}>
       <PanelTitle concept="alerts" className="ref-h">
@@ -1133,6 +1250,7 @@ export function IsoAlerts({ iso }: Piece) {
         <ul className="iso-alert-list">
           {alerts.slice(0, 3).map((alert) => {
             const style = isLevel(alert.level) ? levelStyle(alert.level) : null;
+            const toSign = signable(alert);
             return (
               <li key={alert.id} style={tint(alert.level)}>
                 <Pictogram name={style?.pictogram ?? UNKNOWN_PICTOGRAM} />
@@ -1143,10 +1261,23 @@ export function IsoAlerts({ iso }: Piece) {
                   )}
                   {alert.acknowledged && <span className="secondary"> · {tr("reconocida", "acknowledged")}</span>}
                 </span>
+                {control !== undefined && toSign !== null && (
+                  <span className="iso-alert-act">
+                    <IsoAcknowledge alert={toSign} control={control} />
+                  </span>
+                )}
               </li>
             );
           })}
         </ul>
+      )}
+      {unsigned && control !== undefined && (
+        // El mismo campo que «Peligros» (`OperatorInput`, el mismo estado de la consola): escribir
+        // aquí el nombre habilita «Reconocer» sin cambiar de pestaña.
+        <FieldLabel concept="person" className="operator">
+          {tr("Para reconocer hace falta el nombre de quien firma:", "Acknowledging needs the name of who signs:")}{" "}
+          <OperatorInput value={control.operator} onChange={control.onOperator} privacy={control.privacy} />
+        </FieldLabel>
       )}
       <HazardsLink iso={iso} />
     </section>
@@ -1176,8 +1307,11 @@ function DayBars({ readings, reference, days, label }: { readings: readonly Read
   );
 }
 
+/** La raya de lo secundario de esta pestaña (su elección se guarda en `emma.fold.crew.isolation`). */
+const FOLD = "crew.isolation";
+
 /** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
-export function isolationPanels(iso: IsolationData, active: boolean): ReactNode[] {
+export function isolationPanels(iso: IsolationData, active: boolean, decide?: BoardDecisions, control?: IsoAlertControl): ReactNode[] {
   return [
     // Cabe en la ventana, como la maqueta: el ajuste de «Distancia y nodos», siempre puesto y sin
     // botón («el botón ajustar a pantalla no lo queremos», 2026-11-15).
@@ -1185,18 +1319,31 @@ export function isolationPanels(iso: IsolationData, active: boolean): ReactNode[
     <IsoHeader iso={iso} />,
     <IsoGlobal iso={iso} />,
     <IsoIndicators iso={iso} />,
-    <IsoTrend iso={iso} />,
-    <IsoFactors iso={iso} />,
-    <IsoMood iso={iso} />,
-    <IsoInteractions iso={iso} />,
-    <IsoSleep iso={iso} />,
-    <IsoLight iso={iso} />,
-    <IsoNutrition iso={iso} />,
-    <IsoTests iso={iso} />,
-    <IsoProgress iso={iso} />,
-    <IsoCorrelations iso={iso} />,
+    // El riesgo y las alertas suben junto a los indicadores: nunca se pliega un aviso de riesgo ni
+    // una alerta activa (decisión del usuario, 2026-11-15, lote «plegar»).
     <IsoRisk iso={iso} />,
-    <IsoRecommendations iso={iso} />,
-    <IsoAlerts iso={iso} />,
+    <IsoAlerts iso={iso} control={control} />,
+    // Lo secundario, plegado por defecto como en «Inicio»: el detalle que explica el estado de
+    // arriba sin cambiarlo. Cada panel se envuelve aparte para que `personal()` siga siendo por panel.
+    <FoldDivider
+      id={FOLD}
+      what={tr(
+        "Tendencia, factores, sueño, luz, nutrición, pruebas, progreso, correlaciones y recomendaciones",
+        "Trend, factors, sleep, light, nutrition, tests, progress, correlations and recommendations",
+      )}
+    />,
+    ...[
+      <IsoTrend iso={iso} />,
+      <IsoFactors iso={iso} />,
+      <IsoMood iso={iso} />,
+      <IsoInteractions iso={iso} />,
+      <IsoSleep iso={iso} />,
+      <IsoLight iso={iso} />,
+      <IsoNutrition iso={iso} />,
+      <IsoTests iso={iso} />,
+      <IsoProgress iso={iso} />,
+      <IsoCorrelations iso={iso} />,
+      <IsoRecommendations iso={iso} decide={decide} />,
+    ].map((panel) => <Folded id={FOLD}>{panel}</Folded>),
   ];
 }

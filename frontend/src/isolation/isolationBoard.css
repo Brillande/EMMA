@@ -12,7 +12,15 @@
 
 .iso-home { --acc: var(--acc-isolation); }
 
-/* Reparto, como la maqueta: la cabecera y el estado global arriba, este alto a la derecha. */
+/*
+ * Reparto, como la maqueta: la cabecera y el estado global arriba, este alto a la derecha. Con la raya
+ * de lo secundario (2026-11-15, decisión del usuario: plegado por defecto) lo principal es la cabecera,
+ * el estado global, los indicadores, el riesgo y las alertas; riesgo y alertas suben a la segunda fila
+ * (3 + 3 + 3 junto al estado global) porque nunca se pliegan. Debajo de la raya, filas de 12:
+ * tendencia, factores, ánimo, interacciones / sueño, luz, nutrición, progreso / pruebas,
+ * correlaciones, recomendaciones. La raya (`.ref-divider`, `grid-column: 1 / -1`) va dentro de un
+ * `.slot` en `display: contents`, así que ninguna regla de abajo sobre `.iso-home > …` la alcanza.
+ */
 
 .iso-home .iso-header { grid-column: span 9; }
 .iso-home .iso-global { grid-column: span 3; grid-row: span 2; }
@@ -26,8 +34,8 @@
 .iso-home .iso-nutrition { grid-column: span 3; }
 .iso-home .iso-tests { grid-column: span 6; }
 .iso-home .iso-progress { grid-column: span 3; }
-.iso-home .iso-correlations { grid-column: span 4; }
-.iso-home .iso-risk { grid-column: span 2; }
+.iso-home .iso-correlations { grid-column: span 3; }
+.iso-home .iso-risk { grid-column: span 3; }
 .iso-home .iso-recommendations { grid-column: span 3; }
 .iso-home .iso-alerts { grid-column: span 3; }
 
@@ -226,6 +234,37 @@
 }
 
 .iso-test-sigla { font-weight: 700; color: var(--c-text); }
+
+/* Cada casilla es un botón que abre su consola de registro debajo: sin aspecto propio de botón,
+   la casilla sigue siendo la de la maqueta. */
+.iso-test-grid .iso-test-open {
+  display: grid;
+  gap: 0.15rem;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  align-content: start;
+  cursor: pointer;
+}
+
+.iso-test-grid .iso-test-open[aria-expanded="true"] .iso-test-name { text-decoration: underline; }
+
+.iso-test-run {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+  margin-top: 0.5rem;
+}
+
+.iso-test-run > section { width: 100%; }
+
+.iso-alert-list .iso-alert-act { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; }
 
 @media (max-width: 1100px) {
   .iso-test-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

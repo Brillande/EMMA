@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { CrewOverview, CrewStatus, LinkSync, Sharing } from "../lib/api";
 import type { Distances } from "../lib/distanceApi";
@@ -9,7 +9,17 @@ import { formatNumber } from "../lib/format";
 import { LINK_DOWN_MARK } from "../lib/linkSync";
 import { LOADING_MARK, MISSING_MARK, UNAVAILABLE_MARK } from "../lib/marks";
 import type { Fetched } from "./HomeBoard";
-import { HomeDistance, commsNodes, formatKm, formatLightTime, isCrewPlace, linkFigure, workMode } from "./HomeDistance";
+import {
+  HomeDistance,
+  type LinkControl,
+  commsNodes,
+  declareLink,
+  formatKm,
+  formatLightTime,
+  isCrewPlace,
+  linkFigure,
+  workMode,
+} from "./HomeDistance";
 
 /**
  * «Distancia y comunicaciones» y «Sincronización y datos» (lote «reservas», unidad 4): se adaptan al
@@ -187,5 +197,78 @@ describe("el tablero pintado", () => {
     const html = render(null, null);
     expect(html).toContain("Sin perfil de misión declarado ni ubicación elegida.");
     expect(html).toContain("no recibido");
+  });
+});
+
+describe("el mando del enlace con Tierra (lote «botones»)", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const control = (operator: string, onDeclared: () => Promise<void> = async () => undefined): LinkControl => ({
+    operator,
+    setOperator: () => undefined,
+    privacy: false,
+    onDeclared,
+  });
+  const render = (sync: LinkSync | null, linkControl?: LinkControl) =>
+    renderToStaticMarkup(
+      createElement(HomeDistance, { profileId: "mars-transit", status: status(), sync, ...(linkControl ? { linkControl } : {}) }),
+    );
+  const button = (html: string) => /<button[^>]*class="command"[^>]*>.*?<\/button>/.exec(html)?.[0] ?? "";
+
+  it("sin mando prestado (p. ej. Tierra), solo el estado; con él, el botón del cambio contrario", () => {
+    expect(render(SYNC)).not.toContain("Declarar");
+    const up = button(render(SYNC, control("Ellande")));
+    expect(up).toContain("Declarar caído");
+    expect(up).not.toContain("disabled");
+    const down = { ...SYNC, state: "down", state_display: "caído" } as LinkSync;
+    expect(button(render(down, control("Ellande")))).toContain("Declarar restablecido");
+  });
+
+  it("sin nombre no se firma: el botón queda deshabilitado; sin enlace recibido, no hay mando", () => {
+    expect(button(render(SYNC, control("  ")))).toContain("disabled");
+    expect(render(null, control("Ellande"))).not.toContain("Declarar");
+  });
+
+  it("declarar firma el contrario por POST /api/link-sync con quién y el instante, y después relee", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ ...SYNC, state: "down", ledger_index: 9 }), { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const order: string[] = [];
+    const onDeclared = vi.fn(async () => {
+      order.push("releer");
+    });
+    await declareLink(SYNC, "2026-12-10T23:00:00Z", 6, " Ellande ", onDeclared);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("/api/link-sync");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toEqual({
+      state: "down",
+      at: "2026-12-10T17:00:00.000Z",
+      note: "",
+      declared_by: "Ellande",
+    });
+    expect(onDeclared).toHaveBeenCalledTimes(1);
+    expect(order).toEqual(["releer"]);
+  });
+
+  it("un rechazo del backend (409) no relee: el fallo sube al mando", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({ detail: "el enlace ya está caído" }), { status: 409 })),
+    );
+    const onDeclared = vi.fn(async () => undefined);
+    await expect(declareLink({ state: "down" }, null, 0, "Ellande", onDeclared)).rejects.toBeDefined();
+    expect(onDeclared).not.toHaveBeenCalled();
+  });
+
+  it("tras releer, el estado enseñado es el nuevo", () => {
+    const before = render(SYNC, control("Ellande"));
+    const after = render({ ...SYNC, state: "down", state_display: "caído" } as LinkSync, control("Ellande"));
+    expect(before).toContain("restablecido");
+    expect(before).toContain("(simulado, declarado)");
+    expect(after).toContain("caído");
+    expect(after).not.toContain("(simulado, declarado)");
   });
 });

@@ -20,8 +20,11 @@ cambios AGPL §5a, docs/polaris-divergencias.md):
     emparejados: "doi:10.1234/abcd(12)" → "10.1234/abcd(12". Lo demuestra
     `test_classify_as_polaris_does[doi:10.1234/abcd(12)-...]`.
   * Las comprobaciones con red usan httpx con un cliente inyectable, no `curl`: así se prueban
-    sin red (invariante 3). La que sí sale a la red la ejecuta `tests/test_citations_live.py`
-    (marcado `live`), nunca la aplicación. Sin arXiv: `verify()` devuelve un identificador de
+    sin red (invariante 3). En las pruebas, la que sí sale a la red es
+    `tests/test_citations_live.py` (marcado `live`). En la aplicación sale una sola vía: firmar un
+    borrador que cita una fuente (`api/imaging.py`, `_source_check`), con el cliente de
+    `egress.client(..., "citations")`; en modo sin red no sale y la fuente queda no comprobable,
+    y la comprobación nunca bloquea la firma. Sin arXiv: `verify()` devuelve un identificador de
     arXiv como no comprobable. EMMA cita un solo preprint, junto a la radiación y rotulado como
     tal (`lowe-2025-sep-nowcasting-mars`, `evidence/radiation_read.py`); su ficha lleva el DOI
     que arXiv le da (10.48550), que se comprueba como cualquier DOI.

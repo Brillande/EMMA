@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { FollowupsPanel } from "../advisor/FollowupsPanel";
 import { ANATOMY_PANEL_ID, AnatomyPanel } from "../anatomy/AnatomyPanel";
 import { useAnatomyState } from "../anatomy/useAnatomyState";
 import { HabitatPanel } from "../habitat/HabitatPanel";
 import { RecommendationList } from "../advisor/RecommendationList";
+import type { BoardDecisions } from "../components/AdoptControls";
 import { BoardOnly } from "../components/BoardOnly";
 import { type ConsoleSection, ConsoleTabs, personal, useStoredSection, visibleSections } from "../components/ConsoleTabs";
 import { useDisplayModes } from "../components/DisplayControls";
@@ -24,6 +25,7 @@ import { NodesFit } from "./NodesFit";
 import { NodesOutlook } from "./NodesOutlook";
 import "./nodesBoard.css";
 import { FieldLabel } from "../components/FieldLabel";
+import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { LevelBadge } from "../components/LevelBadge";
 import { Mark, MarkOf } from "../components/Mark";
 import { OperatorInput } from "../components/OperatorInput";
@@ -165,6 +167,17 @@ export function CrewConsole({
       .map((item) => item.countermeasure.id),
   );
   const decides = alerts.length > 0 || recommendations.length > 0 || status.followups.length > 0;
+  // Las listas compactas de los tableros (Radiación, Aislamiento, Gravedad, Distancia y nodos) ofrecen
+  // la misma decisión que «Qué hacer», con el mismo firmante y las mismas rutas.
+  const decide: BoardDecisions = {
+    subject: status.subject,
+    operator,
+    setOperator,
+    privacy: modes.privacy,
+    following,
+    adopt: countermeasureActions.adopt,
+    decline: countermeasureActions.decline,
+  };
   // La calidad del dato: el detalle en «Calidad del dato»; lo dudoso por dominio lo calcula
   // `DomainsPanel`.
   const quality = status.data.quality;
@@ -252,6 +265,23 @@ export function CrewConsole({
       return visibleNames.get(key) ?? null;
     },
     essential: () => update({ essential: true }),
+    // La bitácora y «Próximas acciones» escriben desde «Inicio» (2026-11-15): con el mismo nombre que
+    // firma en «Peligros y alertas» y el mismo cierre que tenía «Rutinas y notas».
+    operator,
+    setOperator,
+    privacy: modes.privacy,
+    essentialMode: modes.essential,
+    closeFollowup: countermeasureActions.close,
+  };
+  // La ubicación de arriba de cada pestaña (lote «botones», 2026-11-15): elegir un perfil enseña, en
+  // las pestañas que no lo leen, el aspecto del perfil elegido que toca a esa pestaña, con acceso a
+  // «Distancia y nodos»; la sububicación declara el módulo en el ledger con la firma de la consola.
+  // Se monta con `<HomePlaces {...places} />` en cada sección: el inventario del asistente lee dónde
+  // se monta cada panel en la tabla (`assistant/uiScan.ts`).
+  const places = {
+    home,
+    links: homeLinks,
+    declare: { onDeclare: declareEvent, operator, setOperator, privacy: modes.privacy },
   };
   const chooseMomentFromChronicle = (key: string) => {
     setMoment(key);
@@ -270,6 +300,15 @@ export function CrewConsole({
     await onProfileDeclared?.();
   };
 
+  // «Qué hacer» de «Peligros y alertas» va plegado bajo su raya (decisión del usuario, 2026-11-15):
+  // es apoyo a la decisión, no una alerta. Pero una recomendación de urgencia inmediata es lo que hay
+  // que hacer con la alerta que la provoca, y su lista completa, con adoptar y no adoptar, solo vive
+  // aquí («Inicio» enseña tres y sin mandos). Con una así no hay raya y el bloque queda a la vista,
+  // sin que una elección guardada lo pueda esconder: nunca se pliega lo que pide actuar ya.
+  const urgentAdvice = recommendations.some((item) => item.urgency === "immediate");
+  const foldAdvice = (panel: ReactNode) =>
+    urgentAdvice ? panel : <Folded id="crew.hazards">{panel}</Folded>;
+
   // La tabla de la consola: sección → paneles, en el orden en que se ven (§5.40). Un panel nuevo es
   // una línea en la lista de su sección; `personal(…)` lo tapa en modo privacidad aunque su
   // sección quede a la vista. Los paneles no cambian: solo dónde se montan.
@@ -286,7 +325,9 @@ export function CrewConsole({
       shared: true,
       className: "ref-home",
       panels: [
-        <HomePlaces home={home} />,
+        // Con lo secundario plegado, las rutas que siguen al perfil elegido no se ven: la ubicación
+        // dice el retardo de comunicaciones del elegido, como en «Aislamiento».
+        <HomePlaces {...places} aspect={homeSecondary ? undefined : "comm_delay"} />,
         personal(<HomeGlobal home={home} links={homeLinks} />),
         personal(<HomeCrewColumn home={home} links={homeLinks} />),
         <HomeRiskColumn home={home} links={homeLinks} />,
@@ -307,7 +348,7 @@ export function CrewConsole({
       label: tr("Radiación", "Radiation"),
       pictogram: uiPictogram("radiation"),
       className: "ref-home rad-home",
-      panels: [<HomePlaces home={home} />, ...radiationPanels(radiation)],
+      panels: [<HomePlaces {...places} aspect="radiation_environment" />, ...radiationPanels(radiation, homeLinks, decide)],
     },
     {
       // La maqueta «Panel de Aislamiento y Salud Psicosocial ISS» (2026-11-14), con el estilo de
@@ -317,7 +358,7 @@ export function CrewConsole({
       label: tr("Aislamiento", "Isolation"),
       pictogram: "ridge-isolation",
       className: "ref-home iso-home",
-      panels: [<HomePlaces home={home} />, ...isolationPanels({ ...isolation, links: homeLinks }, section === "isolation").map((panel) => personal(panel))],
+      panels: [<HomePlaces {...places} aspect="comm_delay" />, ...isolationPanels({ ...isolation, links: homeLinks }, section === "isolation", decide, { actions, operator, onOperator: setOperator, privacy: modes.privacy }).map((panel) => personal(panel))],
     },
     {
       // La maqueta «Panel EMMA: Salud Gravitacional de la Tripulación» (2026-11-15), con el estilo de
@@ -327,7 +368,7 @@ export function CrewConsole({
       label: tr("Gravedad", "Gravity"),
       pictogram: "ridge-gravity",
       className: "ref-home grav-home",
-      panels: [<HomePlaces home={home} />, ...gravityPanels(gravity, section === "gravity", homeLinks).map((panel) => personal(panel))],
+      panels: [<HomePlaces {...places} aspect="gravity_regime" />, ...gravityPanels(gravity, section === "gravity", homeLinks, decide).map((panel) => personal(panel))],
     },
     {
       // La maqueta «Panel ambiental EMMA en la ISS» (2026-11-15), con el estilo de «Inicio»: las
@@ -337,7 +378,7 @@ export function CrewConsole({
       label: tr("Entorno", "Environment"),
       pictogram: "ridge-environment",
       className: "ref-home env-home",
-      panels: [<HomePlaces home={home} />, ...environmentPanels(environment, section === "environment").map((panel) => personal(panel))],
+      panels: [<HomePlaces {...places} aspect="day_night_cycle" />, ...environmentPanels(environment, section === "environment").map((panel) => personal(panel))],
     },
     {
       // La maqueta «Panel médico espacial EMMA para la ISS» (lote «reservas», 2026-11-14): su pestaña
@@ -348,7 +389,8 @@ export function CrewConsole({
       pictogram: uiPictogram("habitat"),
       className: "ref-home nodes-home",
       panels: [
-        <HomePlaces home={home} />,
+        // Aquí todo lo de abajo sigue al perfil elegido: sin aspecto propio.
+        <HomePlaces {...places} />,
         // «Ajustar a pantalla»: la pestaña cabe en la ventana, como la maqueta (`NodesFit`).
         <NodesFit active={onNodes} />,
         // Arriba, como en la maqueta: el marco global compacto, el tripulante y el riesgo
@@ -357,7 +399,13 @@ export function CrewConsole({
         personal(<HomeCrewColumn home={home} links={homeLinks} />),
         <HomeRiskColumn home={home} links={homeLinks} notices />,
         // Distancia y comunicaciones + sincronización, según el perfil elegido arriba.
-        <HomeDistance profileId={home.shownRoute} status={status} sync={sync} active={onNodes} />,
+        <HomeDistance
+          profileId={home.shownRoute}
+          status={status}
+          sync={sync}
+          active={onNodes}
+          linkControl={{ operator, setOperator, privacy: modes.privacy, onDeclared: onLinkDeclared }}
+        />,
         // El diagnóstico no se pliega («el diagnóstico no se oculta», «el botón sobra»).
         personal(<HomeDiagnostics home={home} links={homeLinks} profileId={home.shownRoute} active={onNodes} />),
         // «Ayuda urgente» al lado del diagnóstico, como «Respuesta a emergencias» en la maqueta.
@@ -376,7 +424,7 @@ export function CrewConsole({
           <HomeReserves profileId={home.shownRoute} subject={status.subject} reference={home.reference} active={onNodes} v2 />
         ),
         // La última fila de la maqueta: riesgos de la distancia, correlaciones y escenarios.
-        personal(<NodesOutlook home={home} links={homeLinks} profileId={home.shownRoute} active={onNodes} />),
+        personal(<NodesOutlook home={home} links={homeLinks} profileId={home.shownRoute} active={onNodes} decide={decide} />),
       ],
     },
     {
@@ -440,6 +488,16 @@ export function CrewConsole({
             ))
           )}
         </section>,
+        // Bajo la raya: el resumen, los peligros y las alertas activas quedan siempre arriba.
+        !urgentAdvice && (
+          <FoldDivider
+            id="crew.hazards"
+            name={tr("las recomendaciones", "the recommendations")}
+            what={tr("Qué hacer: recomendaciones y contramedidas", "What to do: recommendations and countermeasures")}
+            pictogram={uiPictogram("recommendations")}
+          />
+        ),
+        foldAdvice(
         <section data-ui="recommendations" className="panel" aria-label={tr("Recomendaciones", "Recommendations")}>
           <PanelTitle concept="recommendations">{tr("Qué hacer", "What to do")}</PanelTitle>
           {/* Tablero (2026-11-07): cuántas recomendaciones hay y cuántos seguimientos siguen abiertos
@@ -481,6 +539,7 @@ export function CrewConsole({
             </div>
           )}
         </section>,
+        ),
       ],
     },
     {

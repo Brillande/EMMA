@@ -78,6 +78,12 @@ ALLOWLIST: dict[str, frozenset[str]] = {
     # usuario, 2026-11-12: datos que entran, sí; con red y nunca en modo sin red).
     "planner-quotes": frozenset({"zenquotes.io"}),
     "planner-onthisday": frozenset({"en.wikipedia.org", "es.wikipedia.org"}),
+    # «Descargar modelos» (`app/models_download.py`): el paquete de modelos publicado como
+    # ficheros de una versión de GitHub. Solo sale la URL del fichero; GitHub redirige cada
+    # descarga a su almacén de ficheros, y la puerta autoriza también esa segunda petición.
+    "models-pack": frozenset({
+        "github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com",
+    }),
 }
 RETRY_TRIES = 3
 RETRY_BASE_S = 0.25

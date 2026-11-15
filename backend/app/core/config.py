@@ -85,8 +85,26 @@ class Settings(BaseSettings):
     tesseract_cmd: str | None = None
 
     # TotalSegmentator para la segmentación de volúmenes (`app/volumes/`, visor 3D de Polaris).
-    # Programa externo con PyTorch y pesos preinstalados; no se empaqueta. None: se busca en PATH.
+    # Programa externo con PyTorch y pesos preinstalados; no va en el instalador (sí en el paquete
+    # de modelos, `packaging/models_pack.py`). Vale su lanzador o un `python.exe` que lleve el
+    # paquete `totalsegmentator` (`volumes/segment.py: command_prefix`). None: se busca en PATH.
     totalseg_cmd: str | None = None
+
+    # El paquete de modelos (`packaging/models_pack.py`). `models_dir` es donde se instala: la
+    # misma carpeta que mira la aplicación de escritorio (`EMMA_MODELS_DIR`, o
+    # `%LOCALAPPDATA%\EMMA-modelos` si no se da; `app/models_download.py: models_dir`).
+    # `models_url` es de dónde lo baja «Descargar modelos»: la carpeta (sin la barra final) donde
+    # están publicados `emma-modelos-partes.json`, `MANIFIESTO.json` y los trozos que deja
+    # `packaging/models_parts.py`. Sale por `core/egress.py` (propósito `models-pack`), así que
+    # en modo sin red o con el modo seguro no se descarga nada.
+    models_dir: Path | None = None
+    # Una etiqueta fija (`modelos-1`), no `latest`: una versión de la aplicación publicada después
+    # pasaría a ser la `latest` y la descarga dejaría de encontrar los trozos.
+    models_url: str = "https://github.com/Brillande/EMMA/releases/download/modelos-1"
+    # Bajar el paquete entero al arrancar si no hay nada instalado. Lo enciende la aplicación de
+    # escritorio cuando en el instalador se marcó «Descargar también los modelos de IA»
+    # (`desktop/installer.nsh`, `desktop/main.cjs`). Sin red no sale igualmente (`egress.py`).
+    models_autodownload: bool = False
 
     # Modelo de lenguaje LOCAL para el borrador de interpretacion (app/interpret/). Solo
     # loopback: el cliente rechaza cualquier otra direccion. El modelo es configurable y no

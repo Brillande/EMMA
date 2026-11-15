@@ -65,7 +65,7 @@
 
 /* Compacto como la maqueta: la sububicación y la capacidad médica en una línea (el texto entero sigue
    en su `title`), y las notas del visor, más apretadas. */
-.nodes-home .ref-subplace .ref-select-like {
+.nodes-home .ref-subplace .ref-module-now {
   display: block;
   white-space: nowrap;
   overflow: hidden;

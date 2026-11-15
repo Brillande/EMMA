@@ -79,7 +79,16 @@ def venv() -> Path:
 
 
 def _python() -> Path:
-    return venv() / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+    """El intérprete del entorno: el de un venv o, si no lo hay, el de una copia de Python.
+
+    El paquete de modelos (`backend/packaging/models_pack.py`) no lleva un venv —apunta al Python
+    de la máquina que lo creó y no funciona en otra—, sino una copia entera de Python con
+    `python.exe` en su raíz.
+    """
+    if os.name != "nt":
+        return venv() / "bin/python"
+    in_venv = venv() / "Scripts/python.exe"
+    return in_venv if in_venv.is_file() else venv() / "python.exe"
 
 
 def ready() -> bool:

@@ -2,6 +2,7 @@ import { type ReactNode, Suspense, lazy, useEffect, useState } from "react";
 
 import { Mark, MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
+import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import {
@@ -14,8 +15,8 @@ import {
   type HabitatSystems,
   api,
 } from "../lib/api";
-import { displayUnit, formatAge, formatNumber, formatUtc } from "../lib/format";
 import { tr } from "../lib/i18n";
+import { displayUnit, formatAge, formatNumber, formatUtc } from "../lib/format";
 import { isLevel, levelStyle } from "../lib/levels";
 import { MISSING_MARK, OK_MARK, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
 import { type CorrelationSearch, outlookApi } from "../lib/outlookApi";
@@ -242,6 +243,11 @@ const GROUP_CHIPS: readonly { key: string; label: string; params: readonly strin
   { key: "microbiology", label: tr("Microbios", "Microbes"), params: ["air-microbial", "surface-microbial"] },
 ];
 
+/** Lleva al panel de la pestaña con ese `data-ui` (cada bloque `key` tiene su `env-key`). */
+function goToPanel(target: string) {
+  document.querySelector(`[data-ui="${target}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
 /** La franja de la maqueta: título, hora de los datos y los bloques con su estado. */
 export function EnvHeader({ env }: Piece) {
   const { status } = env.home;
@@ -265,13 +271,16 @@ export function EnvHeader({ env }: Piece) {
           const out = chip.params.filter((key) => activeFor(env, key) !== undefined);
           return (
             <li key={chip.key} data-chip={chip.key}>
-              <Pictogram name={parameterPictogram(chip.params[0] ?? "")} />
-              <span>{chip.label}</span>
-              {habitat === null ? null : measured.length === 0 ? (
-                <MarkOf mark={MISSING_MARK}>{tr("sin lectura", "no reading")}</MarkOf>
-              ) : out.length > 0 ? (
-                <MarkOf mark={limitMark(activeFor(env, out[0] ?? "")?.kind ?? "")}>{tr(`${formatNumber(out.length)} fuera`, `${formatNumber(out.length)} outside`)}</MarkOf>
-              ) : null}
+              {/* Ancla de la maqueta: lleva a su panel, como las de «Radiación» (`RadNav`). */}
+              <button type="button" onClick={() => goToPanel(`env-${chip.key}`)} title={tr(`Ir a ${chip.label}`, `Go to ${chip.label}`)}>
+                <Pictogram name={parameterPictogram(chip.params[0] ?? "")} />
+                <span>{chip.label}</span>
+                {habitat === null ? null : measured.length === 0 ? (
+                  <MarkOf mark={MISSING_MARK}>{tr("sin lectura", "no reading")}</MarkOf>
+                ) : out.length > 0 ? (
+                  <MarkOf mark={limitMark(activeFor(env, out[0] ?? "")?.kind ?? "")}>{tr(`${formatNumber(out.length)} fuera`, `${formatNumber(out.length)} outside`)}</MarkOf>
+                ) : null}
+              </button>
             </li>
           );
         })}
@@ -913,8 +922,18 @@ export function EnvCorrelations({ env }: Piece) {
   );
 }
 
-/** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
+const FOLD = "crew.environment";
+
+/**
+ * Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio».
+ *
+ * Bajo la raya plegable (decisión del usuario, 2026-11-15: lo secundario de cada pestaña, plegado
+ * como en «Inicio») van los bloques de detalle. Arriba queda todo lo que avisa: la franja con sus
+ * chips y el «Estado ambiental global» nombran cada lectura fuera de límite, y las salidas de 72 h
+ * no se pliegan nunca; así, plegar el detalle no esconde ningún aviso que no se vea ya arriba.
+ */
 export function environmentPanels(env: EnvironmentData, active: boolean): ReactNode[] {
+  const folded = (panel: ReactNode) => <Folded id={FOLD}>{panel}</Folded>;
   return [
     <NodesFit active={active} fixed />,
     <EnvHeader env={env} />,
@@ -923,14 +942,15 @@ export function environmentPanels(env: EnvironmentData, active: boolean): ReactN
     <EnvStation />,
     <EnvTrend env={env} />,
     <EnvRisk env={env} />,
-    <EnvAir env={env} />,
-    <EnvThermal env={env} />,
-    <EnvLight env={env} />,
-    <EnvNoise env={env} />,
-    <EnvWater env={env} />,
-    <EnvMicrobiology env={env} />,
-    <EnvGravity env={env} />,
-    <EnvSystems env={env} />,
-    <EnvCorrelations env={env} />,
+    <FoldDivider id={FOLD} what={tr("Aire, temperatura, luz, ruido, agua, microbios, gravedad, sistemas y correlaciones", "Air, temperature, light, noise, water, microbes, gravity, systems and correlations")} />,
+    folded(<EnvAir env={env} />),
+    folded(<EnvThermal env={env} />),
+    folded(<EnvLight env={env} />),
+    folded(<EnvNoise env={env} />),
+    folded(<EnvWater env={env} />),
+    folded(<EnvMicrobiology env={env} />),
+    folded(<EnvGravity env={env} />),
+    folded(<EnvSystems env={env} />),
+    folded(<EnvCorrelations env={env} />),
   ];
 }

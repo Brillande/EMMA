@@ -298,6 +298,59 @@
   height: 1.6rem;
 }
 
+/* El desplegable de la sububicación es un `<select>` de verdad con el aspecto de la maqueta. */
+select.ref-select-like {
+  display: block;
+  width: 100%;
+  background: color-mix(in srgb, var(--c-raised) 80%, transparent);
+  color: var(--c-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* El módulo vigente, leído: sin filete de desplegable (no lo es). */
+.ref-module-now {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0 0 0.35rem;
+}
+
+.ref-module-now .pictogram {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.ref-module-pick .inline-form {
+  margin-top: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* Lo que el perfil elegido dice del aspecto de la pestaña, en una línea (la frase entera, en `title`). */
+.ref-place-aspect {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0;
+  min-width: 0;
+}
+
+.ref-place-aspect > .ref-ellipsis {
+  flex: 1;
+}
+
+.ref-place-more {
+  flex: none;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--c-text);
+  font: inherit;
+  cursor: pointer;
+}
+
 /* Marco global. */
 
 .ref-updated {
@@ -1860,32 +1913,35 @@
  * los vitales, la bitácora, las próximas acciones y el cuerpo. Desplegado, todo vuelve a su tamaño.
  * Solo con la rejilla ancha (> 1400 px): por debajo las columnas se apilan en otras filas y la
  * página se desplaza igualmente. Nada cambia de color ni de texto: solo de tamaño.
+ *
+ * Solo la raya que mide (`data-fill`): las de los tableros (Radiación, Aislamiento…, lote «plegar»,
+ * 2026-11-15) también van dentro de `.ref-home` y no deben cambiar sus filas ni sus trazos.
  */
 @media (min-width: 1401px) {
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) {
     min-height: var(--home-fill, auto);
     /* Ubicación, marco global, RIDGE, la raya y el modo esencial a lo ancho. */
     grid-template-rows: auto 1fr auto auto auto;
   }
 
   /* Los vitales: la lista ocupa la tarjeta y cada línea, con su trazo, se reparte el alto. */
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-vitals {
     display: flex;
     flex-direction: column;
   }
 
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals > ul {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-vitals > ul {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
   }
 
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals li {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-vitals li {
     align-items: center;
   }
 
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-spark {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-spark {
     height: clamp(1.2rem, 4.5vh, 2.6rem);
   }
 
@@ -1893,13 +1949,13 @@
      contenedor no empuja la fila (`size`): la fila ya crece por `1fr`, y la figura se ajusta a ella.
      Sigue el lienzo de siempre: la columna limita el ancho y apenas se amplía, y el vectorial
      cambiaba los colores del calco (visto el 2026-11-14). */
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-body-figure {
     container-type: size;
     --silhouette-height: min(94cqh, 190cqw);
   }
 
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure .body-silhouette,
-  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure .body-silhouette-figure {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-body-figure .body-silhouette,
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-fill="true"][data-open="false"]) .ref-body-figure .body-silhouette-figure {
     --silhouette-height: min(94cqh, 190cqw);
   }
 }
@@ -2499,4 +2555,28 @@
 :where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now strong {
   font-size: clamp(0.75rem, calc(15cqi - 0.45rem), 1.1rem);
   white-space: nowrap;
+}
+
+/* «Inicio» escribe (2026-11-15): la anotación rápida de la bitácora y el cierre de un seguimiento,
+   dentro de su tarjeta y a lo ancho de ella. Sin color propio: el del mobiliario. */
+.ref-quick-diary,
+.ref-next li.ref-closing .inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+  gap: 0.3rem 0.5rem;
+  align-items: center;
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+}
+
+.ref-next li.ref-closing {
+  flex-wrap: wrap;
+}
+
+.ref-quick-diary input,
+.ref-quick-diary select,
+.ref-next li.ref-closing input {
+  min-width: 0;
+  max-width: 100%;
 }

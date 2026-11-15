@@ -1,9 +1,11 @@
 import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useState } from "react";
 
+import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { LevelBadge } from "../components/LevelBadge";
 import { Mark, MarkOf } from "../components/Mark";
 import { ObservationTypeBadge } from "../components/ObservationTypeBadge";
 import { PanelTitle } from "../components/PanelTitle";
+import { FoldDivider, Folded, setFoldOpen } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import {
@@ -26,9 +28,9 @@ import { LEVEL_ORDER, isLevel, levelStyle } from "../lib/levels";
 import { LOADING_MARK, MISSING_MARK, OK_MARK, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
 import { type Token, cssVar } from "../lib/palette";
 import { uiPictogram } from "../lib/uiMarks";
-import { type Fetched, type HomeData, letterOf } from "../dashboard/HomeBoard";
+import { type Fetched, type HomeData, type HomeLinks, letterOf, sectionLink } from "../dashboard/HomeBoard";
 import { LabArt, PlanetThumb, RouteArt, ShipArt, SpectrumWave } from "../dashboard/HomeArt";
-import { BodySilhouette } from "../anatomy/BodySilhouette";
+import { RegionFigure } from "../dashboard/RegionPopover";
 import { Ring, type Reading, Segments, Sparkline, levelToken } from "../dashboard/HomeCharts";
 import { capitalized } from "../dashboard/HazardCards";
 import "../dashboard/referenceDashboard.css";
@@ -727,8 +729,27 @@ export function RadEffects({ rad }: Piece) {
   );
 }
 
+/**
+ * La pestaña de cada peligro RIDGE. Las letras de «Tripulante» parecían botones y no hacían nada
+ * (lote «botones», 2026-11-15): cada una abre la pestaña de su peligro; la distancia vive en
+ * «Nodos». Si esa pestaña no está a la vista (modo esencial), se cae a «Peligros».
+ */
+const HAZARD_TAB: Record<string, string> = {
+  radiation: "radiation",
+  isolation: "isolation",
+  distance: "nodes",
+  gravity: "gravity",
+  environment: "environment",
+};
+
+/** El acceso de un peligro: su pestaña, o «Peligros» si no está a la vista; `null` sin consola. */
+export function hazardLink(links: HomeLinks | undefined, hazard: string): ReturnType<typeof sectionLink> {
+  const own = HAZARD_TAB[hazard];
+  return (own === undefined ? null : sectionLink(links, own)) ?? sectionLink(links, "hazards");
+}
+
 /** El tripulante y sus letras RIDGE, como en «Inicio»: la R destacada. */
-export function RadCrew({ rad }: Piece) {
+export function RadCrew({ rad, links }: Piece & { links?: HomeLinks | undefined }) {
   const { status, groups } = rad.home;
   const member = rad.crew.state === "ready" ? rad.crew.value.crew.find((item) => item.subject === status.subject) : undefined;
   return (
@@ -742,14 +763,32 @@ export function RadCrew({ rad }: Piece) {
           <Suspense fallback={<Loading />}>
             <ReferenceBody />
           </Suspense>
-          <BodySilhouette view={rad.home.anatomy} selected={rad.home.region} onSelect={rad.home.setRegion} />
+          {/* Pulsar una región abre aquí su ficha (la cadena del backend), como en «Inicio». */}
+          <RegionFigure view={rad.home.anatomy} region={rad.home.region} setRegion={rad.home.setRegion} status={status} />
         </article>
         <div className="rad-crew-side">
       <ul className="rad-ridge">
         {groups.map((group) => {
           const levels = group.domains.map((domain) => status.domains[domain]?.level);
+          const link = hazardLink(links, group.hazard);
+          const what = capitalized(group.display);
           return (
-            <li key={group.hazard} data-acc={group.hazard} data-current={group.hazard === RADIATION ? "true" : undefined}>
+            <li
+              key={group.hazard}
+              data-acc={group.hazard}
+              data-current={group.hazard === RADIATION ? "true" : undefined}
+              className={link === null ? undefined : "ref-linked"}
+            >
+              {/* El botón transparente de «Inicio» (`.ref-go`): la fila no cambia de aspecto. */}
+              {link !== null && (
+                <button
+                  type="button"
+                  className="ref-go"
+                  aria-label={tr(`Abrir ${link.name}: ${what}`, `Open ${link.name}: ${what}`)}
+                  title={tr(`Abrir ${link.name}: ${what}`, `Open ${link.name}: ${what}`)}
+                  onClick={link.open}
+                />
+              )}
               <span className="ref-chip-letter" aria-hidden="true">
                 {letterOf(group.hazard)}
               </span>
@@ -834,12 +873,25 @@ export function RadTests({ rad }: Piece) {
 
 // ---------------------------------------------------------------- fila 5: ruta, historial, gestión
 
-/** La ruta del perfil y la dosis: lo integrado hasta hoy (inferido) y lo proyectado al fin (PREDICHO). */
+/**
+ * La ruta del perfil y la dosis: lo integrado hasta hoy (inferido) y lo proyectado al fin (PREDICHO).
+ *
+ * «Ruta: …» parecía un desplegable y no lo era (lote «botones», 2026-11-15): ahora elige la ruta
+ * enseñada, la misma de «Ubicación» y «Rutas espaciales» de «Inicio» (`home.setRoute`). La
+ * proyección de dosis del backend solo existe para el perfil declarado: con otra ruta elegida la
+ * tabla no cambia y se dice con palabras, y de la ruta elegida se enseña lo que la matriz de perfiles
+ * ya trae de ella (su entorno de radiación, frase del backend). No se inventa ninguna cifra.
+ */
 export function RadRoute({ rad }: Piece) {
-  const { status, matrix } = rad.home;
+  const { status, matrix, shownRoute, setRoute } = rad.home;
   const { mission, projection } = status.radiation;
-  const profile = matrix?.profiles.find((item) => item.declared) ?? null;
-  const target = profile === null ? (status.mission.profile?.display ?? "—") : (PROFILE_SHORT[profile.id] ?? capitalized(profile.display));
+  const declared = matrix?.profiles.find((item) => item.declared) ?? null;
+  const profile = matrix?.profiles.find((item) => item.id === shownRoute) ?? declared;
+  const nameOf = (item: { id: string; display: string }) => PROFILE_SHORT[item.id] ?? capitalized(item.display);
+  const target = profile === null ? (status.mission.profile?.display ?? "—") : nameOf(profile);
+  const chosenOther = profile !== null && !profile.declared;
+  const declaredName = declared === null ? (status.mission.profile?.display ?? null) : nameOf(declared);
+  const environment = profile?.cells.find((cell) => cell.key === "radiation_environment") ?? null;
   return (
     <section data-ui="rad-route" className="ref-frame rad-route" aria-label={tr("Ruta espacial y exposición estimada", "Space route and estimated exposure")}>
       <PanelTitle concept="compare" className="ref-h ref-frame-h">
@@ -854,7 +906,21 @@ export function RadRoute({ rad }: Piece) {
       </ol>
       <div className="rad-route-grid">
         <div className="rad-route-art">
-          <span className="ref-select-like">{tr("Ruta:", "Route:")} {target}</span>
+          {matrix === null || matrix.profiles.length === 0 ? (
+            <span className="ref-select-like">{tr("Ruta:", "Route:")} {target}</span>
+          ) : (
+            <label className="ref-select-like">
+              {tr("Ruta:", "Route:")}
+              <select value={profile?.id ?? ""} onChange={(event) => setRoute(event.target.value)}>
+                {profile === null && <option value="">—</option>}
+                {matrix.profiles.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.declared ? tr(`${nameOf(item)} (declarado)`, `${nameOf(item)} (declared)`) : nameOf(item)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <RouteArt target={target} targetId={profile?.id ?? status.mission.profile?.id ?? "leo"} />
         </div>
         <table className="rad-table">
@@ -903,6 +969,24 @@ export function RadRoute({ rad }: Piece) {
           </tbody>
         </table>
       </div>
+      {chosenOther && (
+        <p className="secondary ref-clamp-2" data-route-note="other">
+          {declaredName === null
+            ? tr(
+                `La dosis de la tabla es la de la misión en curso; EMMA no proyecta dosis para ${target}.`,
+                `The dose in the table is that of the current mission; EMMA does not project a dose for ${target}.`,
+              )
+            : tr(
+                `La dosis de la tabla es la del perfil declarado (${declaredName}); EMMA no proyecta dosis para ${target}.`,
+                `The dose in the table is that of the declared profile (${declaredName}); EMMA does not project a dose for ${target}.`,
+              )}
+        </p>
+      )}
+      {environment !== null && (
+        <p className="secondary ref-clamp-2" title={environment.text}>
+          <strong>{capitalized(environment.label)}:</strong> {environment.text}
+        </p>
+      )}
     </section>
   );
 }
@@ -1133,9 +1217,13 @@ export function RadShielding({ rad }: Piece) {
   );
 }
 
-/** Las recomendaciones del estado para el dominio de radiación, tal cual. */
-export function RadRecommendations({ rad }: Piece) {
+/**
+ * Las recomendaciones del estado para el dominio de radiación, tal cual. Con `decide` (la consola de
+ * tripulación) cada fila lleva «Adoptar» y «No adoptar», firmados como en «Peligros y alertas».
+ */
+export function RadRecommendations({ rad, decide }: Piece & { decide?: BoardDecisions | undefined }) {
   const items = rad.home.status.recommendations.filter((item) => item.domain === RADIATION);
+  const shown = items.slice(0, 4);
   return (
     <section data-ui="rad-recommendations" className="ref-frame rad-recommendations" aria-label={tr("Recomendaciones de EMMA", "EMMA recommendations")}>
       <PanelTitle concept="recommendations" className="ref-h ref-frame-h">
@@ -1146,14 +1234,18 @@ export function RadRecommendations({ rad }: Piece) {
           <MarkOf mark={OK_MARK}>{tr("Sin recomendaciones de radiación: nada requiere acción.", "No radiation recommendations: nothing requires action.")}</MarkOf>
         </p>
       ) : (
-        <ul className="rad-checks">
-          {items.slice(0, 4).map((item) => (
-            <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
-              <Pictogram name="check" />
-              <span className="ref-clamp">{item.action}</span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="rad-checks">
+            {shown.map((item) => (
+              <li key={`${item.action}-${item.urgency}`} title={item.rationale}>
+                <Pictogram name="check" />
+                <span className="ref-clamp">{item.action}</span>
+                {decide !== undefined && <AdoptControls item={item} decide={decide} />}
+              </li>
+            ))}
+          </ul>
+          {decide !== undefined && <BoardOperator items={shown} decide={decide} />}
+        </>
       )}
       <span className="rad-ai" aria-hidden="true">
         AI
@@ -1236,7 +1328,16 @@ const NAV: { label: string; target: string }[] = [
 export function RadNav({ rad }: Piece) {
   const { mission } = rad.home.status;
   const go = (target: string) => {
-    document.querySelector(`[data-ui="${target}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+    const find = () => document.querySelector(`[data-ui="${target}"]`);
+    const panel = find();
+    if (panel !== null) {
+      panel.scrollIntoView({ block: "start", behavior: "smooth" });
+      return;
+    }
+    // El ancla apunta a un panel plegado bajo la raya (2026-11-15): pedirlo es querer verlo, así que
+    // se despliega lo secundario y se va a él cuando ya está pintado.
+    setFoldOpen(RAD_FOLD, true);
+    requestAnimationFrame(() => find()?.scrollIntoView({ block: "start", behavior: "smooth" }));
   };
   return (
     <section data-ui="rad-nav" className="ref-card rad-nav" aria-label={tr("Apartados de radiación", "Radiation sections")}>
@@ -1298,28 +1399,61 @@ export function WeekBars({ rad }: Piece) {
   );
 }
 
-/** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
-export function radiationPanels(rad: RadiationData): ReactNode[] {
+/** La raya de lo secundario de esta sección; la usan los paneles y las anclas de `RadNav`. */
+const RAD_FOLD = "crew.radiation";
+
+/**
+ * Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio».
+ *
+ * Arriba de la raya, lo que el tripulante mira de un vistazo (decisión del usuario, 2026-11-15:
+ * cada pestaña pliega lo secundario como «Inicio», plegado de entrada): el nivel y las alertas, el
+ * aviso a bordo y el evento solar, el entorno ahora, la dosis frente a sus límites, el refugio y las
+ * recomendaciones. Nada de eso se pliega nunca, porque ahí aparece lo vigente (alerta, refugio con
+ * evento, acción pedida). Debajo, el fondo: espectro, efectos y pruebas de la ficha, el tripulante,
+ * la ruta, las contramedidas, el historial y las series de 24 h. Cada panel plegado va envuelto por
+ * separado para que no ocupe celda; el reparto de columnas de ambos lados está en la CSS.
+ */
+export function radiationPanels(rad: RadiationData, links?: HomeLinks, decide?: BoardDecisions): ReactNode[] {
   return [
     <RadNav rad={rad} />,
-    <RadSpectrum />,
     <RadSources rad={rad} />,
     <div className="ref-col rad-status-col">
       <RadNow rad={rad} />
       <RadLevels rad={rad} />
     </div>,
     <RadWeatherNow rad={rad} />,
-    <RadExposure rad={rad} />,
     <RadDosimetry rad={rad} />,
+    <RadExposure rad={rad} />,
     <RadLimits rad={rad} />,
-    <RadEffects rad={rad} />,
-    <RadCrew rad={rad} />,
-    <RadTests rad={rad} />,
-    <RadRoute rad={rad} />,
-    <RadHistory rad={rad} />,
-    <RadManagement rad={rad} />,
-    <RadSpaceWeather rad={rad} />,
     <RadShielding rad={rad} />,
-    <RadRecommendations rad={rad} />,
+    <RadRecommendations rad={rad} decide={decide} />,
+    <FoldDivider
+      id={RAD_FOLD}
+      what={tr("Espectro, efectos, pruebas, ruta, historial y series de 24 h", "Spectrum, effects, tests, route, history and 24 h series")}
+    />,
+    <Folded id={RAD_FOLD}>
+      <RadSpectrum />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadEffects rad={rad} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadTests rad={rad} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadCrew rad={rad} links={links} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadRoute rad={rad} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadManagement rad={rad} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadHistory rad={rad} />
+    </Folded>,
+    <Folded id={RAD_FOLD}>
+      <RadSpaceWeather rad={rad} />
+    </Folded>,
   ];
 }

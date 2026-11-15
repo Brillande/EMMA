@@ -1,0 +1,58 @@
+/* Los mandos de adoptar y no adoptar en las listas compactas de los tableros (`AdoptControls.tsx`).
+   Sin colores propios: los de `.command` y las marcas; aquí solo tamaño y sitio. */
+
+.adopt-controls {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+  font-size: 0.75rem;
+  min-width: 0;
+}
+
+.adopt-controls .command {
+  padding: 0.1rem 0.45rem;
+  font-size: 0.75rem;
+}
+
+.adopt-controls .inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.adopt-controls input {
+  min-width: 0;
+  flex: 1 1 8rem;
+  font-size: 0.75rem;
+}
+
+.adopt-note {
+  flex-basis: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adopt-operator {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+/* En «Radiación» la insignia «AI» va abajo a la derecha (`.rad-ai`, absoluta): el campo no se mete debajo. */
+.rad-recommendations .adopt-operator {
+  margin-right: 2.2rem;
+}
+
+.adopt-operator input {
+  min-width: 0;
+  flex: 1 1 6rem;
+  font-size: 0.75rem;
+}

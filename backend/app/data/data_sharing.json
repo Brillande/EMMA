@@ -343,6 +343,12 @@
         "what": "Las efemérides «tal día como hoy» de la hoja diaria del planificador (Marplanner); solo con red.",
         "carries": "El mes y el día de hoy, y el idioma de la hoja (inglés o español).",
         "hosts": ["en.wikipedia.org", "es.wikipedia.org"]
+      },
+      {
+        "purpose": "models-pack",
+        "what": "«Descargar modelos»: el paquete de modelos (Ollama, Whisper, TotalSegmentator, Tesseract) publicado en GitHub, solo cuando la persona lo pide y nunca en modo sin red.",
+        "carries": "La dirección de cada fichero del paquete.",
+        "hosts": ["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"]
       }
     ],
     "http_clients": [

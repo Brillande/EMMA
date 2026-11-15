@@ -254,6 +254,8 @@
 .grav-layers legend { padding: 0; }
 .grav-layers label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; }
 .grav-layers input { accent-color: var(--acc); margin: 0; }
+.grav-layers label[data-disabled] { cursor: not-allowed; }
+.grav-layers-reason { margin: 0; font-size: 0.72rem; }
 .grav-go { margin-top: auto; display: grid; gap: 0.25rem; padding-top: 0.3rem; }
 .grav-go .command { display: flex; align-items: center; gap: 0.4rem; justify-content: flex-start; padding: 0.2rem 0.5rem; font-size: 0.8rem; }
 .grav-go svg { width: 1rem; height: 1rem; }
@@ -498,3 +500,68 @@
 /* Bucle 4, vuelta 3: el cristal del esqueleto, casi opaco: al 55 % el azul de la maqueta se quedaba gris. */
 .grav-figure[data-look="bone"] .ref-body-canvas,
 .grav-figure[data-look="bone"] .ref-body-vector { opacity: 0.88; }
+/* Bucle 4, vuelta 5: corazón con volumen (degradado radial), borde claro y surco tenue. */
+.grav-vessels .grav-heart-hi { stop-color: color-mix(in srgb, var(--c-yellow) 50%, var(--c-red)); }
+.grav-vessels .grav-heart-mid { stop-color: oklch(from var(--c-red) calc(l - 0.12) calc(c + 0.1) calc(h + 10)); }
+.grav-vessels .grav-heart-lo { stop-color: oklch(from var(--c-red) calc(l - 0.34) calc(c + 0.03) h); }
+.grav-vessels .grav-heart { stroke: color-mix(in srgb, var(--c-yellow) 65%, var(--c-text)); stroke-width: 0.45; }
+.grav-vessels .grav-atrium { fill: oklch(from var(--c-red) calc(l - 0.16) calc(c + 0.1) calc(h + 6)); }
+.grav-vessels .grav-heart-line { opacity: 0.55; stroke-width: 0.5; }
+.grav-vessels .grav-heart-shade { fill: transparent; }
+/* Bucle 4, vuelta 6: peroné tan blanco como la tibia (era una raya gris) y rótula con contorno para leerse sobre los cóndilos. */
+.grav-bones path.grav-longbone.thin { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 84%, transparent); }
+.grav-bones .grav-patella { stroke: color-mix(in srgb, var(--c-bg) 45%, var(--c-blue)); stroke-width: 0.5; }
+/* Bucle 4, vuelta 10: cuencas más oscuras, como las del cráneo de la maqueta. */
+.grav-bones .grav-socket:not(.grav-obturator) { fill: color-mix(in srgb, color-mix(in srgb, var(--c-bg) 80%, var(--c-blue)) 92%, transparent); }
+/* Bucle 4, vuelta 15: vasos algo más finos (a 4x se veían como cables de grosor parejo hasta los dedos) y halo del
+   corazón más tenue (se leía como un disco). */
+.grav-vessels .grav-artery path { stroke-width: 1.8; }
+.grav-vessels .grav-artery path.grav-trunk { stroke-width: 2.7; }
+.grav-vessels .grav-vein path { stroke-width: 1.4; }
+.grav-vessels .grav-heart-glow { fill: color-mix(in srgb, oklch(from var(--c-red) calc(l - 0.1) calc(c + 0.1) calc(h + 12)) 20%, transparent); }
+/* Bucle 4, vuelta 21: comparado lado a lado con la maqueta, el esqueleto salía macizo, de dibujo. Allí es más fino,
+   blanco azulado y brillante, con los huecos oscuros: huesos más delgados (en HomeArt), costillas finas y pelvis
+   algo translúcida con sus huecos bien oscuros. (Probado más translúcido: quedaba gris y plano; deshecho.) */
+.grav-bones path.grav-longbone,
+.grav-bones path.grav-longbone.thin,
+.grav-bones .grav-joint { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 86%, var(--c-blue)) 93%, transparent); stroke: none; }
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 86%, var(--c-blue)) 93%, transparent); stroke: none; }
+.grav-bones .grav-inlet,
+.grav-bones .grav-obturator { fill: color-mix(in srgb, color-mix(in srgb, var(--c-bg) 75%, var(--c-blue)) 85%, transparent); }
+.grav-bones .grav-rib path { stroke: color-mix(in srgb, var(--c-text) 90%, var(--c-blue)); stroke-width: 1.6; }
+.grav-bones .grav-skull,
+.grav-bones .grav-jaw { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 86%, var(--c-blue)) 88%, transparent); }
+/* Bucle 4, vuelta 22: lado a lado con la maqueta, allí mandan las arterias y las venas apenas se ven; los vasos de
+   los miembros son más finos que la aorta. */
+.grav-vessels .grav-artery path { stroke-width: 1.5; }
+.grav-vessels .grav-artery path.grav-trunk { stroke-width: 2.6; }
+.grav-vessels .grav-vein path { stroke-width: 1; opacity: 0.8; }
+/* Bucle 4, vuelta 26: en la maqueta la figura de circulación va más grande y encuadrada de la cabeza a medio muslo
+   (se ven mejor el corazón y los vasos del tronco). Aquí igual: la caja recorta por abajo, con un fundido. */
+/* La caja conserva su alto (el lienzo y el dibujo de los vasos se colocan respecto a ella: al acortarla, el dibujo
+   encogía y el cuerpo no, y dejaban de casar); lo de abajo se desvanece con la máscara y el hueco se recupera con
+   el margen negativo. */
+.grav-home .grav-cardio .grav-figure-box { zoom: 1.15; margin-bottom: -102px; -webkit-mask-image: linear-gradient(to bottom, var(--c-bg) 58%, transparent 67%); mask-image: linear-gradient(to bottom, var(--c-bg) 58%, transparent 67%); }
+/* Bucle 4, vuelta 27: el corazón de la maqueta es más anaranjado y claro que rojo oscuro. */
+.grav-vessels .grav-heart-mid { stop-color: oklch(from var(--c-red) calc(l - 0.07) calc(c + 0.09) calc(h + 20)); }
+.grav-vessels .grav-heart-lo { stop-color: oklch(from var(--c-red) calc(l - 0.24) calc(c + 0.07) calc(h + 8)); }
+.grav-vessels .grav-heart-hi { stop-color: color-mix(in srgb, var(--c-yellow) 45%, var(--c-text)); }
+.grav-vessels .grav-atrium { fill: oklch(from var(--c-red) calc(l - 0.12) calc(c + 0.1) calc(h + 14)); }
+/* Bucle 4, vuelta 29: costillas como bandas (en la maqueta el hueco entre dos es como una costilla) y dientes discretos. */
+.grav-bones .grav-rib path { stroke-width: 1.9; }
+.grav-bones .grav-tooth { opacity: 0.3; }
+/* Bucle 4, vuelta 37: aire de radiografía en los huesos largos: interior algo más azulado y filo blanco. */
+.grav-bones path.grav-longbone,
+.grav-bones path.grav-longbone.thin { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 76%, var(--c-blue)) 90%, transparent); stroke: var(--c-text); stroke-width: 0.45; }
+/* Bucle 5, vuelta 1 (petición: «las manos y los hombros están raros»): clavícula con cuerpo, escápula insinuada,
+   pulgar y dedos algo más finos hacia la punta. */
+.grav-bones .grav-clavicle { stroke-width: 2.4; stroke: color-mix(in srgb, var(--c-text) 90%, var(--c-blue)); opacity: 1; }
+.grav-bones .grav-scapula { fill: color-mix(in srgb, var(--c-text) 14%, transparent); stroke: color-mix(in srgb, var(--c-text) 38%, transparent); stroke-width: 0.4; }
+.grav-bones .grav-smallbones line { stroke-width: 1.15; }
+.grav-bones .grav-thumb line { stroke-width: 1.3; }
+/* Bucle 5, vuelta 7: escápula como pala clara sin contorno (la masa del hombro de la maqueta). */
+.grav-bones .grav-scapula { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 80%, var(--c-blue)) 27%, transparent); stroke: none; }
+/* Bucle 5, vuelta 14: mano de perfil, como la del cuerpo (petición del usuario). */
+.grav-bones .grav-sidehand line { stroke: color-mix(in srgb, var(--c-text) 90%, var(--c-blue)); stroke-linecap: round; }
+.grav-bones .grav-sidehand .back line { opacity: 0.55; }
+.grav-bones .grav-sidehand .thumb line { opacity: 0.9; }

@@ -8,6 +8,7 @@ import { FieldLabel } from "../components/FieldLabel";
 import { Fold } from "../components/Fold";
 import { Mark, MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
+import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { StatTile } from "../components/StatTile";
 import { MatrixCell } from "../ground/MissionProfilesPanel";
 import type { PictogramName } from "../icons/registry";
@@ -63,8 +64,9 @@ import { markTint } from "./TimelinePieces";
  * con la palabra y la marca del backend, a la vista; la frase leída, lo buscado y «Frases leídas»
  * van detrás de su «Ver detalle», y las notas de la matriz y las páginas leídas, detrás de otro al
  * final. «Perfil declarado», la nota de alcance de la matriz («descriptivo…»), el texto de un perfil
- * desconocido y el mando de declarar no se pliegan.
- * En la clásica, todo como antes.
+ * desconocido y el mando de declarar no se pliegan. Las notas y las páginas leídas pasaron después
+ * (2026-11-15) a la raya de lo secundario, plegada de partida en las dos conchas.
+ * En la clásica, todo como antes salvo esa raya.
  */
 
 /** Firma la declaración de un entorno; lanza lo que diga el backend para pintar su marca. */
@@ -97,6 +99,9 @@ export function useProfileMatrix(refreshKey?: string, until?: Date): MatrixLoad 
 }
 
 export const ENVIRONMENTS_GROUP = tr("Entornos", "Environments");
+
+/** La raya de lo secundario, compartida por todas las pestañas de entorno de las dos consolas. */
+export const ENV_FOLD = "env";
 
 function environmentPictogram(id: string): PictogramName {
   return profilePictogram(id) ?? UNKNOWN_PICTOGRAM;
@@ -216,20 +221,31 @@ export function EnvironmentView({
           );
         })}
       </dl>
-      <BoardDetail label={tr("notas de la matriz y páginas leídas", "matrix notes and pages read")} className="environment-notes">
-        <p className="secondary">{matrix.declared_note}</p>
-        <p className="secondary">{matrix.reused_note}</p>
-        <p className="secondary">{matrix.medical_note}</p>
-        <p className="secondary">
-          {tr("Páginas leídas:", "Pages read:")}{" "}
-          {matrix.pages_read.map((page, index) => (
-            <span key={page.title}>
-              {index > 0 && " · "}
-              <Source title={page.title} url={page.url} /> (<ReadDates dates={page.read_on} />)
-            </span>
-          ))}
-        </p>
-      </BoardDetail>
+      {/* Lo secundario de la pestaña, bajo la raya de «Inicio» y plegado de partida (decisión del
+          usuario, 2026-11-15: «reducir los componentes en interfaz con un botón desplegable como el
+          que hay en Inicio en el resto de pestañas»). La pestaña es un solo panel, así que la raya
+          va dentro, encima de lo único secundario: las notas de la matriz y las páginas leídas, que
+          antes iban detrás de su «Ver detalle» (no se pliegan dos veces). Son de la matriz entera,
+          iguales en cada entorno y en las dos consolas: por eso una sola raya, `env`, para todas;
+          plegar una pestaña de entorno las pliega todas. Arriba siguen el estado de cada aspecto,
+          «Perfil declarado», la nota de alcance, el perfil desconocido y el mando de declarar. */}
+      <FoldDivider id={ENV_FOLD} what={tr("Notas de la matriz y páginas leídas", "Matrix notes and pages read")} />
+      <Folded id={ENV_FOLD}>
+        <div className="environment-notes">
+          <p className="secondary">{matrix.declared_note}</p>
+          <p className="secondary">{matrix.reused_note}</p>
+          <p className="secondary">{matrix.medical_note}</p>
+          <p className="secondary">
+            {tr("Páginas leídas:", "Pages read:")}{" "}
+            {matrix.pages_read.map((page, index) => (
+              <span key={page.title}>
+                {index > 0 && " · "}
+                <Source title={page.title} url={page.url} /> (<ReadDates dates={page.read_on} />)
+              </span>
+            ))}
+          </p>
+        </div>
+      </Folded>
     </section>
   );
 }

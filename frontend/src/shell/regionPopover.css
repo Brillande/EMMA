@@ -1,0 +1,94 @@
+/* La ficha de una región junto a la silueta de «Inicio» y «Radiación» (`dashboard/RegionPopover.tsx`,
+   2026-11-15). Colores solo de la paleta. */
+
+/* Con la ficha abierta, la tarjeta del cuerpo deja salir la ficha y queda por encima de sus vecinas. */
+.ref-body-figure:has(> .region-popover) {
+  overflow: visible;
+  z-index: 30;
+}
+
+.region-popover {
+  position: absolute;
+  z-index: 30;
+  top: 0;
+  left: calc(100% + 0.5rem);
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: min(36rem, 80vh);
+  overflow: auto;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--c-bg) 80%, transparent);
+}
+
+.region-popover[data-side="left"] {
+  left: auto;
+  right: calc(100% + 0.5rem);
+}
+
+.region-popover[data-side="below"] {
+  top: calc(100% + 0.5rem);
+  left: 0;
+}
+
+.region-popover:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}
+
+.region-popover-head {
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  top: -0.6rem;
+  z-index: 1;
+  margin: -0.6rem -0.75rem 0.25rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--c-surface);
+}
+
+/* Las zonas de la figura se pulsan (el puntero); los rótulos de «Inicio» y «Radiación» están ocultos
+   a la vista (`referenceDashboard.css`), pero siguen al alcance del teclado y del lector de pantalla:
+   escondidos sin `display: none`, y a la vista cuando tienen el foco. */
+.ref-body-figure .silhouette .zone {
+  cursor: pointer;
+}
+
+.ref-body-figure .body-silhouette .body-silhouette-foot,
+.ref-body-figure .body-silhouette .body-silhouette-foot > li {
+  display: contents;
+}
+
+.ref-body-figure .body-silhouette button.site {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ref-body-figure .body-silhouette button.site:focus-visible {
+  top: auto !important;
+  right: auto;
+  bottom: 0.3rem;
+  left: 0.3rem;
+  transform: none;
+  z-index: 2;
+  width: auto;
+  height: auto;
+  max-width: calc(100% - 0.6rem);
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  padding: 0.2rem 0.4rem;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  outline: 2px solid var(--c-text);
+}

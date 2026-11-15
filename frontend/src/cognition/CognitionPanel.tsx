@@ -58,7 +58,8 @@ import { type Draft, check, prepare } from "./draft";
  * entero para el lector de pantalla, el rango siempre a la vista— y lo que se lee (qué es la batería,
  * qué mide cada prueba, con qué se firma) en dos «Ver detalle». La clásica conserva su orden.
  */
-export function CognitionPanel({ subject }: { subject: string }) {
+/** `onRecorded`: como en `PvtPanel`, avisa a quien la monta de que la sesión quedó en el registro. */
+export function CognitionPanel({ subject, onRecorded }: { subject: string; onRecorded?: () => void }) {
   const [protocol, setProtocol] = useState<CognitionProtocol | null>(null);
   // `null` hasta que el registro se ha leído: una lista vacía es «no hay sesiones».
   const [sessions, setSessions] = useState<CognitionRecordedSession[] | null>(null);
@@ -123,6 +124,8 @@ export function CognitionPanel({ subject }: { subject: string }) {
     cognitionApi
       .submit(body)
       .then((result) => {
+        // Quedó en el registro aunque el panel ya se haya cerrado: quien lo montó lo relee igual.
+        onRecorded?.();
         if (!mine()) return;
         setSubmitted(result);
         setDraft({});

@@ -505,6 +505,13 @@
   font-size: 0.84rem;
 }
 
+/* «Ruta: …» es un desplegable de verdad (2026-11-15): cabe en la caja de la maqueta. */
+.rad-route-art .ref-select-like select {
+  min-width: 0;
+  max-width: 100%;
+  font: inherit;
+}
+
 .rad-route-art svg {
   width: 100%;
   max-height: 4.6rem;
@@ -1139,4 +1146,24 @@
   justify-self: center;
   width: auto;
   height: 3.6rem;
+}
+
+/*
+ * Lo secundario plegado bajo la raya (decisión del usuario, 2026-11-15). El orden de la rejilla
+ * cambió: arriba lo de un vistazo, abajo el fondo. Estos repartos hacen que cada lado sume 12 por
+ * fila sin depender del otro, porque con la raya plegada lo de abajo no existe. La raya ocupa su fila
+ * entera (`.ref-divider`, `grid-column: 1 / -1`); a ≤900 px la regla `> *` le da también las 12.
+ */
+
+@media (min-width: 1401px) {
+  /* Arriba: fuentes 3 + estado 2 + ahora 3 + dosis 4 | exposición 5 + límites 3 + refugio 4 | recomendaciones. */
+  .rad-home .rad-recommendations { grid-column: span 12; }
+  /* Abajo: espectro 4 + efectos 5 + pruebas 3 | tripulante 4 + ruta 5 + gestión 3 | historial 4 + series 8. */
+  .rad-home .rad-space-weather { grid-column: span 8; }
+}
+
+@media (max-width: 1400px) {
+  /* Por parejas en el nuevo orden: fuentes 7 + estado 5 … y abajo espectro 5 + efectos 7. */
+  .rad-home .rad-sources { grid-column: span 7; }
+  .rad-home .rad-spectrum { grid-column: span 5; }
 }

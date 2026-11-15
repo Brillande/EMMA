@@ -11,6 +11,7 @@ import {
   HomeRiskColumn,
   sectionLink,
 } from "./HomeBoard";
+import { tabForHazard } from "./HazardCards";
 
 /**
  * Los accesos de «Inicio» (lote de arreglos, 2026-11-09: «Inicio no enlaza con accesos directos a
@@ -96,7 +97,12 @@ const home = {
   ridge: { state: "ready", value: {} },
   groups: [
     { hazard: "radiation", display: "radiación", domains: ["radiation"] },
+    { hazard: "isolation", display: "aislamiento", domains: [] },
+    { hazard: "distance", display: "distancia", domains: [] },
     { hazard: "gravity", display: "campos de gravedad", domains: ["cardiovascular"] },
+    { hazard: "environment", display: "entorno hostil", domains: [] },
+    // Un peligro que la interfaz no conoce no tiene pestaña propia: va a «Peligros y alertas».
+    { hazard: "unknown", display: "otro peligro", domains: [] },
   ],
   indicators: { state: "ready", value: [] },
   catalog: new Map(),
@@ -119,23 +125,31 @@ const home = {
   elapsed: 0,
 } as unknown as HomeData;
 
+// Las secciones a la vista en esta versión: «Rutinas y notas», «Cuerpo», «Misión y hábitat»,
+// «Calidad y sensores» y «Diario y pruebas» están apartadas (`setAside`, 2026-11-15) y
+// `visibleSections` no las da, así que su nombre es `null` como en la consola.
 const NAMES: Record<string, string> = {
   hazards: "Peligros y alertas",
-  routines: "Rutinas y notas",
-  body: "Cuerpo",
-  mission: "Misión y hábitat",
-  data: "Calidad y sensores",
-  log: "Diario y pruebas",
+  radiation: "Radiación",
+  isolation: "Aislamiento",
+  nodes: "Distancia y nodos",
+  gravity: "Gravedad",
+  environment: "Entorno",
 };
 const ESSENTIAL = new Set(["home", "hazards"]);
 
-function links(essential = false): { links: HomeLinks; opened: string[] } {
+function links(
+  essential = false,
+  hidden: ReadonlySet<string> = new Set(),
+  names: Record<string, string> = NAMES,
+): { links: HomeLinks; opened: string[] } {
   const opened: string[] = [];
   return {
     opened,
     links: {
       openSection: vi.fn((key: string) => opened.push(key)),
-      sectionName: (key) => (essential && !ESSENTIAL.has(key) ? null : (NAMES[key] ?? null)),
+      sectionName: (key) =>
+        (essential && !ESSENTIAL.has(key)) || hidden.has(key) ? null : (names[key] ?? null),
     },
   };
 }
@@ -161,30 +175,82 @@ function clickAll(essential = false): Map<string, string> {
 }
 
 describe("accesos de «Inicio»", () => {
-  it("cada tarjeta o fila abre su sección por la clave, y su rótulo dice adónde", () => {
+  it("cada tarjeta o fila abre una sección a la vista, y su rótulo dice adónde", () => {
+    // Con las secciones de antes apartadas, cada acceso lleva a una visible (2026-11-15): el estado
+    // de la misión a «Peligros y alertas»; los vitales y los indicadores a «Gravedad»; los datos
+    // brutos a «Distancia y nodos». El seguimiento y el «+» de la bitácora escriben en su sitio
+    // (`HomeBoard.write.test.ts`): sus piezas tienen estado y este recorrido las salta.
     const opened = clickAll();
     expect(Object.fromEntries(opened)).toEqual({
-      "Abrir Misión y hábitat: estado de la misión": "mission",
-      "Abrir Peligros y alertas: Radiación": "hazards",
-      "Abrir Peligros y alertas: Campos de gravedad": "hazards",
-      "Abrir Cuerpo: signos vitales": "body",
-      "Abrir Cuerpo: tendencia de 24 horas": "body",
+      "Abrir Peligros y alertas: estado de la misión": "hazards",
+      "Abrir Radiación: Radiación": "radiation",
+      "Abrir Aislamiento: Aislamiento": "isolation",
+      "Abrir Distancia y nodos: Distancia": "nodes",
+      "Abrir Gravedad: Campos de gravedad": "gravity",
+      "Abrir Entorno: Entorno hostil": "environment",
+      "Abrir Peligros y alertas: Otro peligro": "hazards",
+      "Abrir Gravedad: signos vitales": "gravity",
+      "Abrir Gravedad: tendencia de 24 horas": "gravity",
       "Abrir Peligros y alertas: estado de riesgo": "hazards",
-      "Abrir Rutinas y notas: Ejercicio de resistencia": "routines",
       "Abrir Peligros y alertas: Revisar el blindaje del refugio": "hazards",
-      "Escribir en el diario": "log",
-      "Ver indicadores en detalle": "body",
-      "Datos brutos / fuente": "data",
+      "Ver indicadores en detalle": "gravity",
+      "Datos brutos / fuente": "nodes",
     });
   });
 
-  it("los peligros se abren desde las barras globales, las letras y el acceso rápido", () => {
-    const { links: given } = links();
-    const count = (piece: ReactNode) =>
-      buttons(piece).filter((button) => button.label === "Abrir Peligros y alertas: Radiación").length;
-    expect(count(HomeGlobal({ home, links: given }))).toBe(1);
-    expect(count(HomeCrewColumn({ home, links: given }))).toBe(1);
-    expect(count(HomeQuickHazards({ home, links: given }))).toBe(1);
+  it("cada peligro abre su pestaña desde las barras globales, las letras y el acceso rápido", () => {
+    for (const [piece, render] of [
+      ["barras globales", HomeGlobal],
+      ["letras", HomeCrewColumn],
+      ["acceso rápido", HomeQuickHazards],
+    ] as const) {
+      const { links: given, opened } = links();
+      const clicked = new Map<string, string>();
+      for (const button of buttons(render({ home, links: given }))) {
+        button.click();
+        clicked.set(button.label, opened[opened.length - 1] ?? "");
+      }
+      expect(clicked.get("Abrir Radiación: Radiación"), piece).toBe("radiation");
+      expect(clicked.get("Abrir Aislamiento: Aislamiento"), piece).toBe("isolation");
+      expect(clicked.get("Abrir Distancia y nodos: Distancia"), piece).toBe("nodes");
+      expect(clicked.get("Abrir Gravedad: Campos de gravedad"), piece).toBe("gravity");
+      expect(clicked.get("Abrir Entorno: Entorno hostil"), piece).toBe("environment");
+      expect(clicked.get("Abrir Peligros y alertas: Otro peligro"), piece).toBe("hazards");
+    }
+  });
+
+  it("si la pestaña del peligro no está a la vista, el peligro abre «Peligros y alertas»", () => {
+    const { links: given, opened } = links(false, new Set(["gravity", "nodes"]));
+    const clicked = new Map<string, string>();
+    for (const button of buttons(pieces(given))) {
+      button.click();
+      clicked.set(button.label, opened[opened.length - 1] ?? "");
+    }
+    expect(clicked.get("Abrir Peligros y alertas: Campos de gravedad")).toBe("hazards");
+    expect(clicked.get("Abrir Peligros y alertas: Distancia")).toBe("hazards");
+    expect(clicked.get("Abrir Radiación: Radiación")).toBe("radiation");
+    expect(clicked.has("Abrir Gravedad: Campos de gravedad")).toBe(false);
+  });
+
+  it("`tabForHazard` da la pestaña de cada peligro RIDGE y nada a uno desconocido", () => {
+    expect(["radiation", "isolation", "distance", "gravity", "environment"].map(tabForHazard)).toEqual([
+      "radiation",
+      "isolation",
+      "nodes",
+      "gravity",
+      "environment",
+    ]);
+    expect(tabForHazard("unknown")).toBeNull();
+    expect(tabForHazard("toString")).toBeNull();
+  });
+
+  it("si una sección apartada vuelve, su acceso vuelve a ella", () => {
+    const { links: given, opened } = links(false, new Set(), { ...NAMES, body: "Cuerpo", mission: "Misión y hábitat", data: "Calidad y sensores" });
+    const found = new Map(buttons(pieces(given)).map((button) => [button.label, button.click]));
+    found.get("Abrir Cuerpo: signos vitales")?.();
+    found.get("Abrir Misión y hábitat: estado de la misión")?.();
+    found.get("Datos brutos / fuente")?.();
+    expect(opened).toEqual(["body", "mission", "data"]);
   });
 
   it("con el teclado, cada peligro se abre una vez: desde el acceso rápido", () => {
@@ -192,7 +258,7 @@ describe("accesos de «Inicio»", () => {
     const tabbable = buttons(pieces(given))
       .filter((button) => button.tabbable)
       .map((button) => button.label);
-    expect(tabbable.filter((label) => label === "Abrir Peligros y alertas: Radiación")).toHaveLength(1);
+    expect(tabbable.filter((label) => label === "Abrir Radiación: Radiación")).toHaveLength(1);
     const quick = buttons(HomeQuickHazards({ home, links: given })).find((button) => button.label.endsWith("Radiación"));
     expect(quick?.tabbable).toBe(true);
   });
@@ -203,10 +269,14 @@ describe("accesos de «Inicio»", () => {
   });
 
   it("en modo esencial solo quedan los que llevan a una sección esencial", () => {
+    // Los vitales y los datos brutos no tienen sección esencial que los enseñe: no se ofrecen, en
+    // vez de llevar a «Peligros y alertas» con un rótulo que promete otra cosa.
     const opened = clickAll(true);
     expect(new Set(opened.values())).toEqual(new Set(["hazards"]));
+    expect(opened.get("Abrir Peligros y alertas: estado de la misión")).toBe("hazards");
     expect([...opened.keys()]).not.toContain("Ver indicadores en detalle");
-    expect([...opened.keys()]).not.toContain("Escribir en el diario");
+    expect([...opened.keys()]).not.toContain("Datos brutos / fuente");
+    expect([...opened.keys()].some((label) => label.endsWith("signos vitales"))).toBe(false);
   });
 
   it("`sectionLink` necesita las dos cosas: cómo abrir y el nombre de la sección", () => {
@@ -214,5 +284,18 @@ describe("accesos de «Inicio»", () => {
     expect(sectionLink({ sectionName: () => "Cuerpo" }, "body")).toBeNull();
     expect(sectionLink({ openSection: () => undefined, sectionName: () => null }, "body")).toBeNull();
     expect(sectionLink({ openSection: () => undefined, sectionName: () => "Cuerpo" }, "body")?.name).toBe("Cuerpo");
+  });
+
+  it("`sectionLink` toma la primera de la lista que esté a la vista", () => {
+    const opened: string[] = [];
+    const given: HomeLinks = {
+      openSection: (key) => opened.push(key),
+      sectionName: (key) => (key === "hazards" ? "Peligros y alertas" : null),
+    };
+    const link = sectionLink(given, "body", "gravity", "hazards");
+    expect(link?.name).toBe("Peligros y alertas");
+    link?.open();
+    expect(opened).toEqual(["hazards"]);
+    expect(sectionLink(given, "body", "gravity")).toBeNull();
   });
 });

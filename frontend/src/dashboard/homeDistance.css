@@ -191,3 +191,18 @@
   text-align: left;
   margin-bottom: 0.2rem;
 }
+
+/* El mando del enlace bajo su estado (lote «botones», 2026-11-15): quién, desde cuándo y el botón,
+   en una línea que parte si no cabe; sin colores propios (los del mando y las marcas de su tabla). */
+.dist-link-declare {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem 0.4rem;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+}
+
+.dist-link-declare input { width: 8rem; max-width: 100%; }
+.dist-link-declare p { flex-basis: 100%; margin: 0; }

@@ -53,9 +53,10 @@ const RAMPS: Readonly<Record<Exclude<BodyLook, "thermal">, readonly (readonly [n
   // Calibrada contra el cristal de la maqueta entre vasos (mediana): muslo (12, 102, 171), abdomen (8, 76, 130): azul verdoso, casi sin rojo.
   vessels: [
     [0, [2, 8, 26]],
-    [0.45, [6, 44, 92]],
-    [0.75, [12, 84, 150]],
-    [1, [160, 214, 248]],
+    [0.45, [5, 48, 98]],
+    [0.75, [12, 100, 166]],
+    [0.9, [36, 136, 202]],
+    [1, [110, 190, 235]],
   ],
 };
 
@@ -170,10 +171,10 @@ function rampAt(look: Exclude<BodyLook, "thermal">, t: number): Rgb {
 }
 
 /** Cómo trata cada estilo el relieve, el borde y las líneas de barrido. */
-const FINISH: Readonly<Record<Exclude<BodyLook, "thermal">, { detail: number; rim: Rgb; rimGain: number; scan: number; light: number; core: number }>> = {
-  muscle: { detail: 1.7, rim: [214, 238, 255], rimGain: 0.6, scan: 0, light: 2.2, core: 0 },
-  bone: { detail: 0.5, rim: [150, 235, 255], rimGain: 1.4, scan: 0, light: 0.6, core: 0.6 },
-  vessels: { detail: 1.8, rim: [150, 240, 255], rimGain: 1.5, scan: 0.12, light: 1.2, core: 0.35 },
+const FINISH: Readonly<Record<Exclude<BodyLook, "thermal">, { detail: number; rim: Rgb; rimGain: number; scan: number; light: number; core: number; halo: number }>> = {
+  muscle: { detail: 1.7, rim: [214, 238, 255], rimGain: 0.6, scan: 0, light: 2.2, core: 0, halo: 0 },
+  bone: { detail: 0.5, rim: [150, 235, 255], rimGain: 1.4, scan: 0, light: 0.6, core: 0.8, halo: 0.3 },
+  vessels: { detail: 1.5, rim: [150, 240, 255], rimGain: 1.5, scan: 0, light: 1.2, core: 0.28, halo: 0.55 },
 };
 
 /**
@@ -281,6 +282,12 @@ function paintStyled(data: BodyArtData, look: Exclude<BodyLook, "thermal">): HTM
       r *= core;
       g *= core;
       b *= core;
+      // Halo ancho hacia dentro desde el contorno: en la maqueta los flancos del tronco y los miembros se aclaran en
+      // un azul vivo, no solo el filo. (Oscurecer más el centro, probado, lo dejaba gris: deshecho.)
+      const halo = Math.min(1, Math.max(0, 1 - deep[i]!) * 2) * finish.halo;
+      r += (36 - r) * halo;
+      g += (140 - g) * halo;
+      b += (210 - b) * halo;
       const scan = finish.scan > 0 && Math.floor(y / k) % 3 === 0 ? 1 - finish.scan : 1;
       px[i * 4] = Math.round(r * scan);
       px[i * 4 + 1] = Math.round(g * scan);

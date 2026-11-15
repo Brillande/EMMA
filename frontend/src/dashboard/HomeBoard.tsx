@@ -1,7 +1,7 @@
-import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type FormEvent, type ReactNode, Suspense, lazy, useEffect, useRef, useState } from "react";
 
-import { BodySilhouette } from "../anatomy/BodySilhouette";
 import type { useAnatomyState } from "../anatomy/useAnatomyState";
+import { RegionFigure } from "./RegionPopover";
 import { Command } from "../components/Command";
 import { DomainName } from "../components/DomainName";
 import { FieldLabel } from "../components/FieldLabel";
@@ -14,9 +14,12 @@ import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import {
   type CrewStatus,
+  type DiaryCatalog,
   type DiaryEntry,
   type FhirObservation,
+  type Followup,
   type Framework,
+  type HabitatModules,
   type Indicator,
   api,
   diaryApi,
@@ -24,11 +27,13 @@ import {
   helpRequestsApi,
 } from "../lib/api";
 import { displayUnit, formatAge, formatMet, formatMinutes, formatNumber, formatUtc, missionElapsedSeconds } from "../lib/format";
-import { tr } from "../lib/i18n";
+import { language, tr } from "../lib/i18n";
 import { LEVEL_ORDER, domainLabel, isLevel, levelStyle } from "../lib/levels";
 import {
   LOADING_MARK,
   MISSING_MARK,
+  OK_MARK,
+  REFUSED_MARK,
   UNAVAILABLE_MARK,
   UNKNOWN_PICTOGRAM,
   type RequestOutcome,
@@ -41,11 +46,16 @@ import { HELP_REQUESTED_EVENT, type HelpRequestedDetail } from "../lib/help";
 import { useOperator } from "../lib/operator";
 import { uiPictogram } from "../lib/uiMarks";
 import { LocationLine } from "../habitat/LocationSource";
+import { OperatorInput } from "../components/OperatorInput";
+import { type Outcome, type Prepared, canSubmit, operatorName, prepare, submitAll } from "../diary/entry";
+import { RequestWarning } from "../advisor/RequestWarning";
 import { useProfileMatrix } from "./Environments";
-import { capitalized, hazardGroups, hazardLetter } from "./HazardCards";
+import { capitalized, hazardGroups, hazardLetter, tabForHazard } from "./HazardCards";
 import { AstronautArt, Chevron, PlanetThumb, RouteArt, ShelterArt, StationArt } from "./HomeArt";
 import { Ring, type Reading, Segments as ToneSegments, Sparkline, TrendSvg, levelToken } from "./HomeCharts";
-import { profilePictogram } from "./missionPictograms";
+import { aspectPictogram, profilePictogram } from "./missionPictograms";
+import type { DeclareEvent } from "./MissionTimeline";
+import { AspectStatus } from "./MissionProfileView";
 import { type RouteFigures, routeFigures } from "./missionProfile";
 import { dataKeyOf } from "./useConsoleData";
 import "./referenceDashboard.css";
@@ -196,6 +206,19 @@ export interface HomeLinks {
   sectionName?: (key: string) => string | null;
   /** Enciende el modo esencial (los mandos de «Pantalla»). */
   essential?: () => void;
+  /**
+   * Quien teclea en la consola, el mismo nombre que firma en «Peligros y alertas» (`useOperator` de
+   * la consola): la bitácora y el cierre de un seguimiento lo firman. Sin él no se escribe desde
+   * «Inicio» (fuera de la consola de tripulación no se anota nada).
+   */
+  operator?: string;
+  setOperator?: (value: string) => void;
+  /** El modo privacidad: el nombre de quien teclea no se lee ni se enseña (`OperatorInput`). */
+  privacy?: boolean;
+  /** Si el modo esencial está encendido: entonces «Inicio» no ofrece formularios (ni diario ni cierres). */
+  essentialMode?: boolean;
+  /** Cierra un seguimiento en el registro (`countermeasureActions.close` de la consola). */
+  closeFollowup?: (adoptionIndex: number, by: string, reason: string) => Promise<void>;
 }
 
 /** Un acceso a una sección que ahora se puede abrir: su nombre y cómo abrirla. */
@@ -204,13 +227,42 @@ interface SectionLink {
   open: () => void;
 }
 
-/** El acceso a `key`, o `null` si el tablero no está en la consola o la sección no está a la vista. */
-export function sectionLink(links: HomeLinks | undefined, key: string): SectionLink | null {
+/**
+ * El acceso a la primera de `key` y `fallbacks` que esté a la vista, o `null` si el tablero no está
+ * en la consola o no lo está ninguna. Las de reserva existen porque varias secciones están apartadas
+ * de esta versión (`setAside` en `CrewConsole`, 2026-11-15): un acceso que llevaba a una de ellas
+ * desaparecía sin decir nada, y el usuario pidió que lleve a algo visible (2026-11-15). Se nombra
+ * primero la de siempre: si vuelve, el acceso vuelve a ella sin tocar nada aquí.
+ */
+export function sectionLink(links: HomeLinks | undefined, key: string, ...fallbacks: string[]): SectionLink | null {
   const open = links?.openSection;
-  const name = links?.sectionName?.(key) ?? null;
-  if (open === undefined || name === null) return null;
-  return { name, open: () => open(key) };
+  if (open === undefined) return null;
+  for (const candidate of [key, ...fallbacks]) {
+    const name = links?.sectionName?.(candidate) ?? null;
+    if (name !== null) return { name, open: () => open(candidate) };
+  }
+  return null;
 }
+
+/**
+ * El acceso a la pestaña propia de un peligro RIDGE (`tabForHazard`); si esa pestaña no está a la
+ * vista (modo esencial) o el peligro no tiene una, el de «Peligros y alertas», como antes.
+ */
+export function hazardLink(links: HomeLinks | undefined, hazard: string): SectionLink | null {
+  const tab = tabForHazard(hazard);
+  return (tab === null ? null : sectionLink(links, tab)) ?? sectionLink(links, "hazards");
+}
+
+/**
+ * Adónde llevan los accesos cuya sección está apartada (decisión del usuario, 2026-11-15). Los signos
+ * vitales y su tendencia, a «Gravedad», cuya tarjeta «Sistema cardiovascular y fluidos» enseña la
+ * frecuencia cardiaca con su curva de días, la presión arterial y el ortostatismo. En modo esencial,
+ * donde «Gravedad» no está, no se enseñan (como antes): «Peligros y alertas» no tiene los vitales, y
+ * un acceso que dice «signos vitales» no debe llevar a otra cosa. El estado de la misión, a
+ * «Peligros y alertas»: el resumen del backend con su nivel y el recuento por dominio.
+ */
+const VITALS_FALLBACKS = ["gravity"] as const;
+const MISSION_FALLBACKS = ["hazards"] as const;
 
 /**
  * Inicio no enlazaba sus tarjetas con las partes del programa (lo pidió el usuario, 2026-11-09): un
@@ -409,8 +461,31 @@ export function useHomeData(status: CrewStatus, { anatomy, region, setRegion, ac
 
 type Piece = { home: HomeData; links?: HomeLinks | undefined };
 
-/** Ubicación: los perfiles de misión del backend, con su miniatura; el declarado, marcado. Y el módulo del estado. */
-export function HomePlaces({ home }: Piece) {
+/**
+ * Lo que hace falta para declarar el módulo desde la «Sububicación»: la declaración de la consola
+ * (`declareEvent`, al ledger y relee el estado) y quién firma. Sin ella (fuera de la consola de
+ * tripulación) el módulo se enseña y no se declara.
+ */
+export interface ModuleDeclare {
+  onDeclare: DeclareEvent;
+  operator: string;
+  setOperator: (value: string) => void;
+  /** Con la privacidad, el nombre de quien firma ni se ve ni se lee (`OperatorInput`). */
+  privacy: boolean;
+}
+
+/**
+ * Ubicación: los perfiles de misión del backend, con su miniatura; el declarado, marcado. Y el módulo del estado.
+ *
+ * Elegir un perfil cambiaba solo el anillo fuera de «Inicio» y «Distancia y nodos» (lote «botones»,
+ * 2026-11-15: «que si pulso el botón pasen cosas»): lo elegido lo leen las rutas de «Inicio» y los
+ * bloques de «Distancia y nodos», y en las demás pestañas nada. Con `aspect`, la tarjeta dice debajo
+ * qué es ese aspecto en el perfil elegido —la casilla de la matriz de perfiles, frase del backend,
+ * sin cifra propia— y lleva a «Distancia y nodos», donde lo elegido mueve todo. Así el mando hace lo
+ * mismo en todas partes (elige la ruta que se compara) y se ve dónde se pulsa. Los paneles de cada
+ * pestaña siguen diciendo la misión en curso: un perfil elegido para comparar no es el estado.
+ */
+export function HomePlaces({ home, links, aspect, declare }: Piece & { aspect?: string | undefined; declare?: ModuleDeclare | undefined }) {
   const { matrix, matrixFailure, shownRoute, setRoute, declaredShort } = home;
   return (
     <>
@@ -440,17 +515,208 @@ export function HomePlaces({ home }: Piece) {
             ))}
           </div>
         )}
+        {aspect !== undefined && <PlaceAspect home={home} links={links} aspect={aspect} />}
       </section>
 
       <section data-ui="home-module" className="ref-card ref-subplace" aria-label={tr("Sububicación", "Sub-location")}>
         <PanelTitle concept="habitat" className="ref-h">
           {tr("Sububicación", "Sub-location")}{declaredShort !== null && <span className="secondary"> ({declaredShort})</span>}
         </PanelTitle>
-        <p className="ref-select-like" title={home.status.mission.location_basis}>
+        {/* Antes, un `<p>` con aire de desplegable y sin mando. El módulo vigente se lee aquí; el
+            desplegable de debajo es de verdad y lo declara (2026-11-15). */}
+        <p className="ref-module-now" title={home.status.mission.location_basis}>
           <ModuleLine mission={home.status.mission} reference={home.status.data.reference_time} />
         </p>
+        {declare !== undefined && <ModulePicker status={home.status} declare={declare} />}
       </section>
     </>
+  );
+}
+
+/**
+ * Qué es el aspecto `aspect` en el perfil elegido arriba: la casilla de la matriz de perfiles con su
+ * etiqueta, su estado (cian si está sin verificar) y su frase, todo del backend. Sin casilla, la
+ * frase del backend para lo que no tiene fuente. Lleva a «Distancia y nodos» si se puede abrir.
+ */
+function PlaceAspect({ home, links, aspect }: Piece & { aspect: string }) {
+  const { matrix, shownRoute } = home;
+  if (matrix === null) return null;
+  const profile = matrix.profiles.find((item) => item.id === shownRoute) ?? null;
+  const label = matrix.aspects.find((item) => item.key === aspect)?.label ?? null;
+  if (profile === null || label === null) return null;
+  const cell = profile.cells.find((item) => item.key === aspect) ?? null;
+  const toNodes = sectionLink(links, "nodes");
+  const name = PROFILE_SHORT[profile.id] ?? capitalized(profile.display);
+  return (
+    <p className="ref-place-aspect" aria-live="polite" title={cell?.text ?? matrix.no_source}>
+      <span className="ref-ellipsis">
+        <Mark pictogram={aspectPictogram(aspect) ?? UNKNOWN_PICTOGRAM}>
+          <strong>
+            {capitalized(label)} · {name}
+            {profile.declared ? tr(" (declarado)", " (declared)") : ""}:
+          </strong>
+        </Mark>{" "}
+        {cell === null ? (
+          <MarkOf mark={UNAVAILABLE_MARK}>{matrix.no_source}</MarkOf>
+        ) : (
+          <>
+            {cell.status !== "read" && (
+              <>
+                <AspectStatus status={cell.status}>{cell.status_text}</AspectStatus>{" "}
+              </>
+            )}
+            <span className="secondary">{cell.text}</span>
+          </>
+        )}
+      </span>
+      {toNodes !== null && (
+        <button
+          type="button"
+          className="ref-place-more"
+          aria-label={tr(`Abrir ${toNodes.name}: rutas`, `Open ${toNodes.name}: routes`)}
+          onClick={toNodes.open}
+        >
+          {tr("Ver rutas", "See routes")}
+        </button>
+      )}
+    </p>
+  );
+}
+
+/** Las duraciones que ofrece la declaración rápida del módulo, en horas: se elige una, no viene puesta. */
+export const MODULE_DECLARE_HOURS = [1, 2, 4, 8, 12] as const;
+
+/**
+ * La declaración del módulo de la «Sububicación», la misma que la del formulario de eventos de
+ * «Misión» (`EventForm`): una ubicación firmada en el ledger, de este tripulante, en un módulo de la
+ * lista del backend. Empieza en el instante de referencia del estado —el que enseña la línea de
+ * arriba— y dura las horas elegidas, contadas desde ahora si los datos van atrasados. Sin módulo,
+ * horas, firma o instante válido no se declara nada (`null`).
+ */
+export function declareModule(
+  declare: Pick<ModuleDeclare, "onDeclare" | "operator">,
+  status: Pick<CrewStatus, "subject" | "data">,
+  module: string,
+  hours: number,
+  now: number = Date.now(),
+): Promise<void> | null {
+  const who = declare.operator.trim();
+  const start = Date.parse(status.data.reference_time);
+  if (module === "" || who === "" || !Number.isFinite(start) || !(hours > 0)) return null;
+  return declare.onDeclare(
+    "location",
+    new Date(start).toISOString(),
+    // Las horas cuentan desde ahora si los datos van atrasados (dato caducado, simulador detrás del
+    // reloj): si no, la ventana firmada podría estar ya cerrada al declararla.
+    new Date(Math.max(start, now) + hours * 3_600_000).toISOString(),
+    // Sin descripción: el backend firma la ubicación con el nombre del módulo.
+    "",
+    who,
+    { subject: status.subject, module },
+  );
+}
+
+/**
+ * El desplegable de la «Sububicación»: los módulos del backend (`/habitat/modules`), ninguno elegido
+ * (declarar por inercia sería firmar algo que nadie ha mirado, como en `EventForm`). Elegido uno,
+ * aparecen la duración, quién firma y «Declarar»; al firmar, la consola relee el estado y la línea
+ * de arriba dice el módulo nuevo como «declarada».
+ */
+function ModulePicker({ status, declare }: { status: CrewStatus; declare: ModuleDeclare }) {
+  const [modules, setModules] = useState<Fetched<HabitatModules>>({ state: "loading" });
+  const [module, setModule] = useState("");
+  const [hours, setHours] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<RequestOutcome | null>(null);
+  useEffect(() => {
+    let current = true;
+    fetched(api.habitatModules(), () => current, setModules);
+    return () => {
+      current = false;
+    };
+  }, []);
+  // Otro tripulante en la consola: lo elegido para el anterior no se declara para este.
+  useEffect(() => {
+    setModule("");
+    setHours("");
+    setError(null);
+  }, [status.subject]);
+  const who = declare.operator.trim();
+  const at = status.data.reference_time;
+  const valid = Number.isFinite(Date.parse(at));
+  const met = valid ? formatMet(missionElapsedSeconds(status.mission.start, new Date(at))) : "—";
+  // El tripulante de la consola ahora: una declaración que vuelve tras cambiar de tripulante no
+  // escribe su resultado (ni su error) en el desplegable del nuevo.
+  const subjectNow = useRef(status.subject);
+  useEffect(() => {
+    subjectNow.current = status.subject;
+  }, [status.subject]);
+  const submit = () => {
+    const pending = declareModule(declare, status, module, Number(hours));
+    if (pending === null) return;
+    const subject = status.subject;
+    const same = () => subjectNow.current === subject;
+    setBusy(true);
+    setError(null);
+    pending
+      .then(() => {
+        if (!same()) return;
+        setModule("");
+        setHours("");
+      })
+      .catch((cause: unknown) => {
+        if (same()) setError(requestOutcome(cause));
+      })
+      .finally(() => setBusy(false));
+  };
+  return (
+    <div className="ref-module-pick">
+      <select
+        className="ref-select-like"
+        value={module}
+        disabled={modules.state !== "ready" || busy}
+        aria-label={tr("Declarar el módulo del tripulante", "Declare the crew member's module")}
+        onChange={(event) => setModule(event.target.value)}
+      >
+        <option value="">
+          {modules.state === "loading" ? tr("Cargando…", "Loading…") : tr("Declarar módulo…", "Declare module…")}
+        </option>
+        {(modules.state === "ready" ? modules.value.modules : []).map((place) => (
+          <option key={place.key} value={place.key} title={place.description}>
+            {place.display}
+          </option>
+        ))}
+      </select>
+      {modules.state === "failed" && <MarkOf mark={modules.outcome.mark}>{modules.outcome.text}</MarkOf>}
+      {module !== "" && (
+        <div className="inline-form">
+          <select
+            value={hours}
+            disabled={busy}
+            aria-label={tr("Durante cuánto tiempo", "For how long")}
+            onChange={(event) => setHours(event.target.value)}
+          >
+            <option value="">{tr("durante…", "for…")}</option>
+            {MODULE_DECLARE_HOURS.map((item) => (
+              <option key={item} value={String(item)}>
+                {formatNumber(item)} h
+              </option>
+            ))}
+          </select>
+          <FieldLabel concept="person">
+            {tr("Firma", "Signed by")}{" "}
+            <OperatorInput value={declare.operator} onChange={declare.setOperator} privacy={declare.privacy} />
+          </FieldLabel>
+          <Command concept="declare" disabled={busy || !valid || who === "" || hours === ""} onClick={submit}>
+            {tr("Declarar", "Declare")}
+          </Command>
+          <span className="secondary">
+            {tr("desde", "from")} <span className="num">{met}</span>
+          </span>
+        </div>
+      )}
+      {error !== null && <MarkOf mark={error.mark}>{error.text}</MarkOf>}
+    </div>
   );
 }
 
@@ -477,9 +743,8 @@ export function ModuleLine({ mission, reference }: { mission: CrewStatus["missio
 export function HomeGlobal({ home, links }: Piece) {
   const { status, reference, ridge, groups, indicators, catalog, seriesOf, readingsFor, declaredShort } = home;
   const { anatomy, region, setRegion, lowest, atLowest, domainCount, overall, overallStyle } = home;
-  const toMission = sectionLink(links, "mission");
-  const toHazards = sectionLink(links, "hazards");
-  const toBody = sectionLink(links, "body");
+  const toMission = sectionLink(links, "mission", ...MISSION_FALLBACKS);
+  const toBody = sectionLink(links, "body", ...VITALS_FALLBACKS);
   return (
     <section data-ui="home-global" className="ref-frame ref-global" aria-label={tr("Panel global de la tripulación", "Crew global panel")}>
       <PanelTitle concept="identity" className="ref-h ref-frame-h">
@@ -519,15 +784,17 @@ export function HomeGlobal({ home, links }: Piece) {
             </div>
             <Pending item={ridge} />
             <ul className="ref-hazard-bars">
-              {groups.map((group) => (
+              {groups.map((group) => {
+                const toHazard = hazardLink(links, group.hazard);
+                return (
                 <li
                   key={group.hazard}
-                  className={linked(toHazards)}
-                  title={toHazards === null ? capitalized(group.display) : undefined}
+                  className={linked(toHazard)}
+                  title={toHazard === null ? capitalized(group.display) : undefined}
                   data-acc={group.hazard}
                 >
                   <GoTo
-                    link={toHazards}
+                    link={toHazard}
                     what={capitalized(group.display)}
                     detail={domainLevels(group.domains, status)}
                     pointerOnly
@@ -542,7 +809,8 @@ export function HomeGlobal({ home, links }: Piece) {
                   <Segments domains={group.domains} status={status} />
                   <span className="num">{formatNumber(group.domains.length)}</span>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         </article>
@@ -617,7 +885,8 @@ export function HomeGlobal({ home, links }: Piece) {
           <Suspense fallback={<Loading />}>
             <ReferenceBody />
           </Suspense>
-          <BodySilhouette view={anatomy} selected={region} onSelect={setRegion} />
+          {/* Pulsar una región abre aquí su ficha (la cadena del backend), junto al cuerpo. */}
+          <RegionFigure view={anatomy} region={region} setRegion={setRegion} status={status} />
         </article>
       </div>
     </section>
@@ -659,7 +928,6 @@ export function HomeCrew({ home }: Piece) {
 /** Los peligros RIDGE del tripulante, por letra, con el nivel de cada dominio. */
 export function HomeHazardLetters({ home, links }: Piece) {
   const { status, ridge, groups } = home;
-  const toHazards = sectionLink(links, "hazards");
   return (
     <section data-ui="home-ridge-individual" className="ref-card ref-letters" aria-label={tr("Peligros RIDGE del tripulante", "Crew member's RIDGE hazards")}>
       <PanelTitle concept="hazards" className="ref-h">
@@ -667,15 +935,17 @@ export function HomeHazardLetters({ home, links }: Piece) {
       </PanelTitle>
       <Pending item={ridge} />
       <ul className="ref-letter-row">
-        {groups.map((group) => (
+        {groups.map((group) => {
+          const toHazard = hazardLink(links, group.hazard);
+          return (
           <li
             key={group.hazard}
-            className={linked(toHazards)}
+            className={linked(toHazard)}
             data-acc={group.hazard}
-            title={toHazards === null ? capitalized(group.display) : undefined}
+            title={toHazard === null ? capitalized(group.display) : undefined}
           >
             <GoTo
-              link={toHazards}
+              link={toHazard}
               what={capitalized(group.display)}
               detail={domainLevels(group.domains, status)}
               pointerOnly
@@ -685,27 +955,100 @@ export function HomeHazardLetters({ home, links }: Piece) {
             <span className="num">{formatNumber(group.domains.length)}</span>
             <span className="sr-only">{capitalized(group.display)}</span>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );
 }
 
-/** Las últimas notas del diario del tripulante. */
+/**
+ * Las últimas notas del diario del tripulante, y su «+». El «+» llevaba a «Diario y pruebas», que
+ * está apartada de esta versión, y desapareció sin decir nada; ahora abre aquí mismo un formulario
+ * corto (`QuickDiary`) que anota por la ruta del diario, firmada y en el ledger (invariante 4), y
+ * relee la lista al terminar (decisión del usuario, 2026-11-15). Solo dentro de la consola de
+ * tripulación, que es quien da el nombre de quien teclea (`links.operator`).
+ */
 export function HomeLogbook({ home, links }: Piece) {
-  const { status, diary } = home;
-  // «Diario y pruebas» no es esencial: en modo esencial el «+» no se enseña (antes devolvía a «Inicio»).
-  const toLog = sectionLink(links, "log");
+  const subject = home.status.subject;
+  const [writing, setWriting] = useState(false);
+  // Lo releído tras anotar, del mismo tripulante: se ve al momento, sin esperar a la relectura del
+  // estado. En cuanto el tablero trae su diario otra vez, manda el suyo.
+  // Se compara por la entrada más reciente, no por cualquier cambio del tablero: una petición del
+  // tablero que salió antes de anotar no tapa la relectura que ya trae la nota nueva.
+  const [fresh, setFresh] = useState<{ subject: string; entries: DiaryEntry[] } | null>(null);
+  const useFresh =
+    fresh !== null &&
+    fresh.subject === subject &&
+    (home.diary.state !== "ready" || newestOf(home.diary.value) < newestOf(fresh.entries));
+  const diary: Fetched<DiaryEntry[]> = useFresh ? { state: "ready", value: fresh.entries } : home.diary;
+  const operator = links?.operator;
+  const setOperator = links?.setOperator;
+  // En modo esencial no se anota desde aquí: «Diario y pruebas» no es esencial (como antes).
+  const canWrite = operator !== undefined && setOperator !== undefined && links?.essentialMode !== true;
+  const reread = () => {
+    diaryApi
+      .entries(subject, 2)
+      .then((body) => setFresh({ subject, entries: body.entries }))
+      // Si la relectura falla, la lista se queda como estaba hasta la del tablero: lo anotado ya
+      // está firmado, y el formulario ya lo ha dicho.
+      .catch(() => undefined);
+  };
+  return (
+    <HomeLogbookView
+      status={home.status}
+      diary={diary}
+      writing={canWrite && writing}
+      onWrite={canWrite ? () => setWriting((open) => !open) : null}
+    >
+      {canWrite && writing && (
+        // Con su tripulante en la clave: al cambiar de tripulante, lo tecleado no se firma para otro.
+        <QuickDiary
+          key={subject}
+          subject={subject}
+          operator={operator}
+          setOperator={setOperator}
+          privacy={links?.privacy ?? false}
+          onSaved={reread}
+          onCancel={() => setWriting(false)}
+        />
+      )}
+    </HomeLogbookView>
+  );
+}
+
+/** El instante de la entrada más reciente de una lista del diario (`-Infinity` si no hay ninguna). */
+function newestOf(entries: readonly DiaryEntry[]): number {
+  return entries.reduce((newest, entry) => Math.max(newest, Date.parse(entry.effective) || -Infinity), -Infinity);
+}
+
+/** La bitácora sin estado propio: lo que se pinta con lo recibido (así se prueba sin DOM). */
+export function HomeLogbookView({
+  status,
+  diary,
+  writing,
+  onWrite,
+  children,
+}: {
+  status: CrewStatus;
+  diary: Fetched<DiaryEntry[]>;
+  writing: boolean;
+  /** Abre o cierra el formulario; `null` si desde aquí no se puede anotar. */
+  onWrite: (() => void) | null;
+  /** El formulario, cuando está abierto. */
+  children?: ReactNode;
+}) {
   return (
     <section data-ui="home-logbook" className="ref-card ref-notes" aria-label={tr("Bitácora", "Logbook")}>
       <PanelTitle concept="diary" className="ref-h">
         {tr("Notas / bitácora (", "Notes / logbook (")}{status.subject})
-        {toLog !== null && (
-          <Command concept="add" className="ref-plus" type="button" onClick={toLog.open}>
+        {onWrite !== null && (
+          <Command concept="add" className="ref-plus" type="button" aria-expanded={writing} onClick={onWrite}>
             <span className="sr-only">{tr("Escribir en el diario", "Write in the diary")}</span>
           </Command>
         )}
       </PanelTitle>
+      {children}
       {diary.state !== "ready" ? (
         <Pending item={diary} />
       ) : diary.value.length === 0 ? (
@@ -723,6 +1066,170 @@ export function HomeLogbook({ home, links }: Piece) {
         </ul>
       )}
     </section>
+  );
+}
+
+/**
+ * Lo que el «+» de la bitácora enviaría: una sola anotación, con las mismas reglas que el diario
+ * entero (`diary/entry.ts`: el rango del catálogo, quién teclea, el alimento donde se pide). Ni
+ * fuente, ni tipo, ni hora: los pone el backend.
+ */
+export function quickDiaryEntry(
+  catalog: DiaryCatalog,
+  subject: string,
+  key: string,
+  text: string,
+  operator: string,
+  food = "",
+): Prepared {
+  const indicator = catalog.indicators.find((item) => item.key === key);
+  const only: DiaryCatalog = { ...catalog, indicators: indicator === undefined ? [] : [indicator] };
+  return prepare(only, subject, { [key]: text }, operator, { [key]: food });
+}
+
+/** Envía lo preparado por la ruta del diario, firmada y en el ledger (`POST /api/diary/entries`). */
+export function sendQuickDiary(prepared: Prepared): Promise<Outcome> {
+  return submitAll(prepared.bodies, diaryApi.record);
+}
+
+/**
+ * El formulario corto de la bitácora: qué se anota (del catálogo del diario), la cifra y quién la
+ * teclea. Sin valor por defecto en ningún campo (`diary/entry.ts`): nada se anota sin decirlo.
+ */
+function QuickDiary({
+  subject,
+  operator,
+  setOperator,
+  privacy,
+  onSaved,
+  onCancel,
+}: {
+  subject: string;
+  operator: string;
+  setOperator: (value: string) => void;
+  privacy: boolean;
+  onSaved: () => void;
+  onCancel: () => void;
+}) {
+  const [catalog, setCatalog] = useState<Fetched<DiaryCatalog>>({ state: "loading" });
+  const [key, setKey] = useState("");
+  const [text, setText] = useState("");
+  const [food, setFood] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ saved: boolean; failure: RequestOutcome | null } | null>(null);
+  useEffect(() => {
+    let current = true;
+    fetched(diaryApi.catalog(), () => current, setCatalog);
+    return () => {
+      current = false;
+    };
+  }, []);
+  if (catalog.state !== "ready") return <Pending item={catalog} />;
+  const indicator = catalog.value.indicators.find((item) => item.key === key);
+  const prepared = quickDiaryEntry(catalog.value, subject, key, text, operator, food);
+  const problem = prepared.problems[0]?.reason ?? null;
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!canSubmit(prepared)) return;
+    setBusy(true);
+    setResult(null);
+    sendQuickDiary(prepared)
+      .then((outcome) => {
+        setResult({ saved: outcome.failed === null, failure: outcome.failed?.outcome ?? null });
+        if (outcome.failed === null) {
+          setText("");
+          setFood("");
+          onSaved();
+        }
+      })
+      .finally(() => setBusy(false));
+  };
+  return (
+    <form className="inline-form ref-quick-diary" onSubmit={submit} aria-label={tr("Escribir en el diario", "Write in the diary")}>
+      <label>
+        {tr("Qué se anota", "What to record")}{" "}
+        <select
+          autoFocus
+          value={key}
+          onChange={(event) => {
+            // Otro indicador, campos vacíos: una cifra tecleada para uno no se firma para otro.
+            setKey(event.target.value);
+            setText("");
+            setFood("");
+            setResult(null);
+          }}
+        >
+          <option value="">{tr("— elegir —", "— choose —")}</option>
+          {catalog.value.indicators.map((item) => (
+            <option key={item.key} value={item.key}>
+              {language() === "es" ? item.display_es : item.display} ({item.unit_display})
+            </option>
+          ))}
+        </select>
+      </label>
+      {indicator !== undefined && (
+        <>
+          <label>
+            {tr("Valor", "Value")}{" "}
+            <input
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              className="num"
+              value={text}
+              aria-invalid={problem !== null}
+              onChange={(event) => setText(event.target.value)}
+            />{" "}
+            <span className="secondary">
+              {tr("Rango: ", "Range: ")}
+              <span className="num">{indicator.range_text}</span>
+            </span>
+          </label>
+          {indicator.food_item && (
+            <label>
+              {indicator.food_item.label}{" "}
+              <input
+                type="text"
+                autoComplete="off"
+                maxLength={indicator.food_item.max_length}
+                value={food}
+                onChange={(event) => setFood(event.target.value)}
+              />
+            </label>
+          )}
+        </>
+      )}
+      <FieldLabel concept="person" className="operator">
+        {catalog.value.recorded_by.label} <OperatorInput value={operator} onChange={setOperator} privacy={privacy} />
+      </FieldLabel>
+      {problem !== null && (
+        <p role="status">
+          <MarkOf mark={REFUSED_MARK}>{problem}</MarkOf>
+        </p>
+      )}
+      {prepared.unnamed && (
+        <p className="secondary">
+          {tr("Falta el nombre de quien anota: sin él no se registra nada.", "The name of who records is missing: nothing is recorded without it.")}
+        </p>
+      )}
+      <span className="measure-actions">
+        <Command concept="register" type="submit" disabled={busy || !canSubmit(prepared)}>
+          {busy ? tr("Registrando…", "Recording…") : tr("Registrar", "Record")}
+        </Command>
+        <Command concept="cancel" type="button" onClick={onCancel}>
+          {tr("Cerrar", "Close")}
+        </Command>
+      </span>
+      {result !== null && (
+        <p role="status">
+          {result.failure !== null ? (
+            <MarkOf mark={result.failure.mark}>{result.failure.text}</MarkOf>
+          ) : (
+            <MarkOf mark={OK_MARK}>{tr("Anotado en el registro firmado.", "Recorded in the signed ledger.")}</MarkOf>
+          )}
+        </p>
+      )}
+    </form>
   );
 }
 
@@ -800,10 +1307,12 @@ export function HomeNextActions({ home, links }: Piece) {
 /** Acceso rápido por peligro: cada dominio con su nivel, sin agregar; y los accesos a otras secciones. */
 export function HomeQuickHazards({ home, links }: Piece) {
   const { status, ridge, groups } = home;
-  const toHazards = sectionLink(links, "hazards");
-  // «Cuerpo» y «Calidad y sensores» no son esenciales: en modo esencial sus accesos no se enseñan.
-  const toBody = sectionLink(links, "body");
-  const toData = sectionLink(links, "data");
+  // «Cuerpo» y «Calidad y sensores» están apartadas de esta versión: los indicadores llevan a donde
+  // se ven los vitales (`VITALS_FALLBACKS`), y los datos brutos a «Distancia y nodos», cuyo bloque
+  // de sincronización dice el registro firmado (íntegro o no), las lecturas analizadas, la última y
+  // lo pendiente de enviar. En modo esencial ninguna de las dos está a la vista y no se enseñan.
+  const toBody = sectionLink(links, "body", ...VITALS_FALLBACKS);
+  const toData = sectionLink(links, "data", "nodes");
   return (
     <section data-ui="home-ridge-quick" className="ref-frame ref-quick" aria-label={tr("Peligros RIDGE: acceso rápido", "RIDGE hazards: quick access")}>
       <PanelTitle concept="radiation" className="ref-h ref-frame-h">
@@ -813,17 +1322,18 @@ export function HomeQuickHazards({ home, links }: Piece) {
       <div className="ref-quick-row">
         {groups.map((group) => {
           const levels = domainLevels(group.domains, status);
+          const toHazard = hazardLink(links, group.hazard);
           // `tile-acc` (R5-2): el mosaico de color común de la concha (`shell/board.css`), con el acento de
           // su letra RIDGE; adorno §2.5, el texto en `--c-text` a ≥ 6:1. Los segmentos de nivel van
           // encima con su color real, como antes.
           return (
             <article
               key={group.hazard}
-              className={linked(toHazards, `ref-hazard tile-acc acc-${group.hazard}`)}
+              className={linked(toHazard, `ref-hazard tile-acc acc-${group.hazard}`)}
               data-acc={group.hazard}
               aria-label={capitalized(group.display)}
             >
-              <GoTo link={toHazards} what={capitalized(group.display)} detail={levels} />
+              <GoTo link={toHazard} what={capitalized(group.display)} detail={levels} />
               <Pictogram name={prefixedPictogram("ridge", group.hazard)} />
               <span className="ref-hazard-text">
                 <span className="ref-letter" aria-hidden="true">
@@ -1120,7 +1630,7 @@ export function HomeDivider({
     };
   }, [open, fill]);
   return (
-    <div ref={ref} className="ref-divider" data-open={open ? "true" : "false"}>
+    <div ref={ref} className="ref-divider" data-open={open ? "true" : "false"} data-fill={fill ? "true" : undefined}>
       <span className="ref-divider-line" aria-hidden="true" />
       <Command
         pictogram={pictogram}
@@ -1296,27 +1806,16 @@ function Segments({ domains, status }: { domains: readonly string[]; status: Cre
 }
 
 /**
- * Cada acción lleva adonde se trabaja: un seguimiento abierto, a «Rutinas y notas» (allí se cierra,
- * `FollowupsPanel`); una recomendación, a «Peligros y alertas» («Qué hacer», donde se adopta).
+ * Cada acción hace algo al pulsarla. Un seguimiento abierto se cierra aquí mismo (`FollowupItem`):
+ * se cerraba en «Rutinas y notas» (`FollowupsPanel`), apartada de esta versión, y el acceso
+ * desaparecía (decisión del usuario, 2026-11-15); sin el cierre de la consola, lleva a «Peligros y
+ * alertas». Una recomendación, a «Peligros y alertas» («Qué hacer», donde se adopta).
  */
 function NextActions({ status, links }: { status: CrewStatus; links?: HomeLinks | undefined }) {
   const open = status.followups.filter((item) => item.state !== "closed");
-  const toRoutines = sectionLink(links, "routines");
   const toHazards = sectionLink(links, "hazards");
   const items: ReactNode[] = [
-    ...open.map((item) => (
-      <li
-        key={`f-${item.adoption_index}`}
-        className={linked(toRoutines)}
-        title={toRoutines === null ? tr(`Hasta ${metOf(status, item.window_ends)}`, `Until ${metOf(status, item.window_ends)}`) : undefined}
-      >
-        <GoTo link={toRoutines} what={item.countermeasure.action} detail={tr(`Hasta ${metOf(status, item.window_ends)}`, `Until ${metOf(status, item.window_ends)}`)} />
-        <span className="ref-box" aria-hidden="true" />
-        <Mark pictogram={null} color={item.state === "due" ? "yellow" : null}>
-          <span className="ref-clamp-2">{item.countermeasure.action}</span>
-        </Mark>
-      </li>
-    )),
+    ...open.map((item) => <FollowupItem key={`f-${item.adoption_index}`} item={item} status={status} links={links} />),
     ...status.recommendations.slice(0, 3).map((item, index) => (
       <li key={`r-${index}`} className={linked(toHazards)} title={toHazards === null ? domainLabel(item.domain) : undefined}>
         <GoTo link={toHazards} what={item.action} detail={domainLabel(item.domain)} />
@@ -1329,4 +1828,178 @@ function NextActions({ status, links }: { status: CrewStatus; links?: HomeLinks 
   ].slice(0, 3);
   if (items.length === 0) return <p className="secondary">{tr("Sin seguimientos ni recomendaciones abiertas.", "No open follow-ups or recommendations.")}</p>;
   return <ul>{items}</ul>;
+}
+
+/** Lo que pide cerrar un seguimiento desde «Inicio»: el cierre de la consola y quién teclea. */
+export type FollowupCloser = {
+  close: (adoptionIndex: number, by: string, reason: string) => Promise<void>;
+  operator: string;
+  setOperator: (value: string) => void;
+  privacy: boolean;
+};
+
+/**
+ * Lo que se envía al cerrar un seguimiento desde «Inicio» (índice de adopción, quién, por qué), o
+ * `null` si falta quién o por qué: el backend lo exige igual; aquí ahorra el viaje.
+ */
+export function followupClosure(item: Followup, operator: string, reason: string): [number, string, string] | null {
+  // El nombre con la regla del backend (al menos una letra o cifra), la misma que el diario.
+  const by = operatorName(operator);
+  const why = reason.trim();
+  return by === null || why === "" ? null : [item.adoption_index, by, why];
+}
+
+/** El cierre de la consola, si el tablero lo tiene (solo dentro de la consola de tripulación). */
+function closerOf(links: HomeLinks | undefined): FollowupCloser | null {
+  const close = links?.closeFollowup;
+  const operator = links?.operator;
+  const setOperator = links?.setOperator;
+  // En modo esencial no hay formularios en «Inicio»: el seguimiento lleva a «Peligros y alertas».
+  if (close === undefined || operator === undefined || setOperator === undefined || links?.essentialMode === true) return null;
+  return { close, operator, setOperator, privacy: links?.privacy ?? false };
+}
+
+/**
+ * Un seguimiento abierto de «Próximas acciones». Pulsarlo despliega el cierre: el motivo y quién lo
+ * firma, como en `FollowupsPanel`; el cierre va al registro firmado (`countermeasureActions.close`)
+ * y la consola relee el estado, así que la fila se va sola cuando el backend lo tiene cerrado.
+ */
+function FollowupItem({ item, status, links }: { item: Followup; status: CrewStatus; links?: HomeLinks | undefined }) {
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<RequestOutcome | null>(null);
+  const closer = closerOf(links);
+  const submit = () => {
+    if (closer === null) return;
+    const args = followupClosure(item, closer.operator, reason);
+    if (args === null) return;
+    setBusy(true);
+    setError(null);
+    closer
+      .close(...args)
+      .then(() => {
+        setReason("");
+        setOpen(false);
+      })
+      .catch((cause: unknown) => setError(requestOutcome(cause)))
+      .finally(() => setBusy(false));
+  };
+  return (
+    <FollowupItemView
+      item={item}
+      status={status}
+      links={links}
+      closer={closer}
+      open={open}
+      onToggle={() => setOpen((shown) => !shown)}
+      reason={reason}
+      onReason={setReason}
+      busy={busy}
+      error={error}
+      onSubmit={submit}
+    />
+  );
+}
+
+/** La fila sin estado propio (así se prueba sin DOM): con el cierre, su mando; sin él, el acceso. */
+export function FollowupItemView({
+  item,
+  status,
+  links,
+  closer,
+  open,
+  onToggle,
+  reason,
+  onReason,
+  busy,
+  error,
+  onSubmit,
+}: {
+  item: Followup;
+  status: CrewStatus;
+  links?: HomeLinks | undefined;
+  closer: FollowupCloser | null;
+  open: boolean;
+  onToggle: () => void;
+  reason: string;
+  onReason: (value: string) => void;
+  busy: boolean;
+  error: RequestOutcome | null;
+  onSubmit: () => void;
+}) {
+  const until = tr(`Hasta ${metOf(status, item.window_ends)}`, `Until ${metOf(status, item.window_ends)}`);
+  const text = (
+    <>
+      <span className="ref-box" aria-hidden="true" />
+      <Mark pictogram={null} color={item.state === "due" ? "yellow" : null}>
+        <span className="ref-clamp-2">{item.countermeasure.action}</span>
+      </Mark>
+    </>
+  );
+  if (closer === null) {
+    // Fuera de la consola o sin su cierre: a donde se ve el seguimiento con su recomendación.
+    const link = sectionLink(links, "routines", "hazards");
+    return (
+      <li className={linked(link)} title={link === null ? until : undefined}>
+        <GoTo link={link} what={item.countermeasure.action} detail={until} />
+        {text}
+      </li>
+    );
+  }
+  const label = tr(`Cerrar seguimiento: ${item.countermeasure.action}`, `Close follow-up: ${item.countermeasure.action}`);
+  if (!open) {
+    return (
+      <li className="ref-linked">
+        <button
+          type="button"
+          className="ref-go"
+          aria-label={label}
+          aria-expanded={false}
+          title={`${label}\n${until}`}
+          onClick={onToggle}
+        />
+        {text}
+      </li>
+    );
+  }
+  const ready = followupClosure(item, closer.operator, reason) !== null;
+  return (
+    <li className="ref-closing">
+      {text}
+      <form
+        className="inline-form"
+        aria-label={label}
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
+      >
+        {/* El foco pasa al motivo: el botón que lo abrió ya no está (teclado). */}
+        <input
+          autoFocus
+          value={reason}
+          maxLength={500}
+          onChange={(event) => onReason(event.target.value)}
+          placeholder={tr("motivo del cierre", "reason for closing")}
+          aria-label={tr("Motivo del cierre", "Reason for closing")}
+        />
+        <FieldLabel concept="person" className="operator">
+          {tr("Quién lo firma", "Signed by")}{" "}
+          <OperatorInput value={closer.operator} onChange={closer.setOperator} privacy={closer.privacy} />
+        </FieldLabel>
+        <Command concept="closeFollowUp" type="submit" disabled={busy || !ready}>
+          {tr("Cerrar seguimiento", "Close follow-up")}
+        </Command>
+        <Command concept="cancel" type="button" aria-expanded={true} onClick={onToggle}>
+          {tr("Cancelar", "Cancel")}
+        </Command>
+        {error !== null && (
+          <span role="status">
+            <RequestWarning outcome={error} />
+          </span>
+        )}
+      </form>
+    </li>
+  );
 }

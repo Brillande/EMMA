@@ -106,8 +106,7 @@ describe("«Diagnóstico integrado» en inglés", () => {
       "Lab tests (blood/urine)",
       "no reports",
       "Other tests (PVT, cognition, pain)",
-      'aria-label="Open Imaging and reports: Ultrasound"',
-      'title="Open Body"',
+      'title="Show what is on record"',
       'aria-label="Open Hazards and alerts: analysis detail"',
       "View detail",
       "no lab tests in the last 30 days",
@@ -139,7 +138,6 @@ describe("«Diagnóstico integrado» en inglés", () => {
     const html = render({ volumes: { state: "ready", value: [study({ dataset: "public" } as never)] } });
     expect(html).toContain("No segmentation: the volume is recorded and signed.");
     expect(html).toContain("Real CT from a public dataset, not from this crew member.");
-    expect(html).toContain('aria-label="Open Imaging and reports: full viewer"');
     expect(html).toContain("Open volumes");
     expect(html).not.toMatch(/Sin segmentación|dataset público|Abrir volúmenes/);
   });
@@ -166,5 +164,21 @@ describe("«Diagnóstico integrado» en inglés", () => {
     expect(html).toMatch(/ago<\/small>/);
     expect(html).toContain('title="Age of the last reading relative to the status reference"');
     expect(html).not.toMatch(/hace /);
+  });
+
+  it("una prueba desplegada sin registro y la ventana del visor, en inglés", () => {
+    const empty = { state: "ready" as const, value: { subject: "crew-01", count: 0, reference_time: null, sessions: [] } };
+    const detail = renderToStaticMarkup(
+      createElement(HomeDiagnosticsView, {
+        home,
+        data: data({ others: { pvt: empty, cognition: empty, pain: { state: "ready", value: [] } } }),
+        ui: { test: "other", viewer: true },
+      }),
+    );
+    expect(detail).toContain("no record");
+    expect(detail).toContain("Cognition");
+    expect(detail).toContain('role="dialog"');
+    expect(detail).toContain("Close");
+    expect(detail).not.toMatch(/sin registro|Cognición|Cerrar/);
   });
 });

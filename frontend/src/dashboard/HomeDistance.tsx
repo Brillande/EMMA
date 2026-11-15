@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 
+import { Command } from "../components/Command";
 import { FieldLabel } from "../components/FieldLabel";
 import { Mark, MarkOf } from "../components/Mark";
+import { OperatorInput } from "../components/OperatorInput";
 import { PanelTitle } from "../components/PanelTitle";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { type CrewOverview, type CrewStatus, type LinkSync, type Sharing, api, sharingApi } from "../lib/api";
@@ -9,11 +11,12 @@ import { commsMark, commsStatusOf } from "../lib/commsStatus";
 import { type BodyDistance, type Distances, type EarthLink, type IssOrbit, distanceApi, epochOf } from "../lib/distanceApi";
 import { formatMinutes, formatNumber, formatUtc } from "../lib/format";
 import { tr } from "../lib/i18n";
-import { LINK_DOWN_MARK, backlogMark } from "../lib/linkSync";
+import { LINK_DOWN_MARK, LINK_OFFSETS_HOURS, backlogMark, linkChange, linkInstant } from "../lib/linkSync";
 import {
   LOADING_MARK,
   MISSING_MARK,
   OK_MARK,
+  type RequestOutcome,
   type StateMark,
   UNAVAILABLE_MARK,
   requestOutcome,
@@ -317,6 +320,113 @@ function NodeDelay({ delay }: { delay: CommsNode["delay"] }) {
 }
 
 /**
+ * Lo que la consola de a bordo presta al mando del enlace: quién está en ella (el mismo campo que el
+ * de «Alertas activas», `useOperator`), si la privacidad lo oculta y qué releer tras firmar.
+ */
+export interface LinkControl {
+  operator: string;
+  setOperator: (value: string) => void;
+  privacy: boolean;
+  /** Tras firmar: relee el estado, y con él el enlace y el corte de Tierra. */
+  onDeclared: () => Promise<void>;
+}
+
+/**
+ * Firma el cambio contrario al vigente (`POST /api/link-sync`, un asiento del registro con el nombre
+ * de quien lo declara) desde `hoursAgo` horas antes de la última lectura de a bordo, y relee. Es la
+ * misma petición que la del panel apartado (`components/LinkSync.tsx`), sin nota.
+ */
+export async function declareLink(
+  sync: Pick<LinkSync, "state">,
+  referenceTime: string | null,
+  hoursAgo: number,
+  operator: string,
+  onDeclared: () => Promise<void>,
+  now: Date = new Date(),
+): Promise<void> {
+  await api.setLinkSync(linkChange(sync, linkInstant(referenceTime, hoursAgo, now), operator, ""));
+  await onDeclared();
+}
+
+/**
+ * El mando compacto del enlace en «Sincronización y datos» (lote «botones», 2026-11-15): quién,
+ * desde cuándo y el botón de declararlo caído o restablecido. El enlace es simulado y lo declara una
+ * persona; no mueve el riesgo ni las alertas (`api/link_sync.py`). La frase de un fallo (un 409 si
+ * el cambio va hacia atrás o repite el estado) es la del backend.
+ */
+function LinkDeclare({
+  sync,
+  referenceTime,
+  control,
+}: {
+  sync: LinkSync;
+  referenceTime: string | null;
+  control: LinkControl;
+}) {
+  const [hoursAgo, setHoursAgo] = useState<number>(0);
+  const [error, setError] = useState<RequestOutcome | null>(null);
+  // Mientras va un cambio no se pide otro: un doble clic cruzaba dos peticiones (como el panel).
+  const [sending, setSending] = useState(false);
+  const down = sync.state === "down";
+  const unnamed = control.operator.trim() === "";
+
+  const declare = async () => {
+    setError(null);
+    setSending(true);
+    try {
+      await declareLink(sync, referenceTime, hoursAgo, control.operator, control.onDeclared);
+      setHoursAgo(0);
+    } catch (failure) {
+      setError(requestOutcome(failure));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="dist-link-declare">
+      <FieldLabel concept="person">
+        {tr("Quién", "Who")}{" "}
+        <OperatorInput value={control.operator} onChange={control.setOperator} privacy={control.privacy} />
+      </FieldLabel>
+      <FieldLabel concept="time">
+        {tr("Desde", "Since")}{" "}
+        <select value={hoursAgo} onChange={(event) => setHoursAgo(Number(event.target.value))}>
+          {LINK_OFFSETS_HOURS.map((hours) => (
+            <option key={hours} value={hours}>
+              {hours === 0
+                ? tr("la última lectura", "the last reading")
+                : tr(`${formatNumber(hours, 0)} h antes`, `${formatNumber(hours, 0)} h before`)}
+            </option>
+          ))}
+        </select>
+      </FieldLabel>
+      <Command
+        concept="declare"
+        type="button"
+        disabled={sending || unnamed}
+        title={
+          unnamed
+            ? tr("Escribe quién lo declara: queda firmado en el registro.", "Enter who declares it: it is signed in the record.")
+            : tr(
+                "Enlace simulado: se firma en el registro con tu nombre. No cambia el riesgo ni las alertas.",
+                "Simulated link: signed in the record with your name. It does not change the risk or the alerts.",
+              )
+        }
+        onClick={() => void declare()}
+      >
+        {down ? tr("Declarar restablecido", "Declare restored") : tr("Declarar caído", "Declare down")}
+      </Command>
+      {error !== null && (
+        <p>
+          <MarkOf mark={error.mark}>{error.text}</MarkOf>
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
  * Las dos tarjetas: «Distancia y comunicaciones» (cuerpos, retardo, nodos) y «Sincronización y datos».
  * `sync` es el enlace simulado que la consola ya pide para el corte de Tierra (`null`: no llegó).
  */
@@ -325,12 +435,15 @@ export function HomeDistance({
   status,
   sync,
   active = true,
+  linkControl,
 }: {
   profileId: string | null;
   status: CrewStatus;
   sync: LinkSync | null;
   /** Oculto (otra sección abierta), no se pide nada; al volver, se relee. */
   active?: boolean;
+  /** El mando para declarar el enlace; sin él, solo se enseña el estado. */
+  linkControl?: LinkControl;
 }) {
   const [distances, setDistances] = useState<Fetched<Distances>>({ state: "loading" });
   const [orbit, setOrbit] = useState<Fetched<IssOrbit> | null>(null);
@@ -506,6 +619,9 @@ export function HomeDistance({
                   <>
                     {sync.state_display} <small className="secondary">{tr("(simulado, declarado)", "(simulated, declared)")}</small>
                   </>
+                )}
+                {sync !== null && linkControl !== undefined && (
+                  <LinkDeclare sync={sync} referenceTime={status.data.reference_time} control={linkControl} />
                 )}
               </dd>
               <FieldLabel as="dt" concept="waiting">

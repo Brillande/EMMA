@@ -110,3 +110,19 @@ def test_a_transcription_cut_for_memory_says_so(
     response = client.post("/api/pain/voice", content=OGG)
     assert response.status_code == 503 and "se cortó" in response.json()["detail"]
 
+
+
+@pytest.mark.skipif(voice.os.name != "nt", reason="la copia de Python del paquete es de Windows")
+def test_a_python_copy_from_the_models_pack_is_found(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """El paquete de modelos trae una copia de Python (`python.exe` en la raíz), no un venv."""
+    monkeypatch.setenv("BTP_VENV_VOICE", str(tmp_path))
+    (tmp_path / "python.exe").write_bytes(b"")
+    (tmp_path / "voice-ok.json").write_text("{}", encoding="utf-8")
+    assert voice._python() == tmp_path / "python.exe"
+    assert voice.ready()
+    # Con un venv, manda el venv.
+    (tmp_path / "Scripts").mkdir()
+    (tmp_path / "Scripts" / "python.exe").write_bytes(b"")
+    assert voice._python() == tmp_path / "Scripts" / "python.exe"

@@ -1,4 +1,5 @@
 import { Fold } from "./components/Fold";
+import { ModelsPack } from "./components/ModelsPack";
 import { tr } from "./lib/i18n";
 
 /**
@@ -27,6 +28,8 @@ export function About() {
           )}
         </p>
       </Fold>
+      {/* El paquete de modelos: lo instalado y «Descargar modelos» (2026-11-15). */}
+      <ModelsPack />
     </footer>
   );
 }

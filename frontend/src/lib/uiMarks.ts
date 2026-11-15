@@ -60,6 +60,8 @@ export const UI_PICTOGRAMS = {
   evidence: "sheet-lines",
   received: "tray-arrow-down",
   export: "tray-arrow-down",
+  // «Modelos de IA» (`components/ModelsPack.tsx`): el paquete de modelos que se baja a este equipo.
+  modelsPack: "tray-arrow-down",
   trends: "chart-line",
   change: "chart-line",
   signedLedger: "lock",
@@ -225,7 +227,10 @@ export const UI_SYNONYMS: readonly { readonly concepts: readonly UiConcept[]; re
   { concepts: ["comparison", "compare"], why: "comparar y su resultado" },
   { concepts: ["followUp", "searchedNotFound", "search"], why: "buscar con la lupa" },
   { concepts: ["evidence", "document"], why: "una hoja escrita" },
-  { concepts: ["received", "export"], why: "lo que llega a la bandeja: recibido y exportado a un fichero" },
+  {
+    concepts: ["received", "export", "modelsPack"],
+    why: "lo que llega a la bandeja: recibido, exportado a un fichero y los modelos descargados",
+  },
   { concepts: ["trends", "change"], why: "la línea de una serie en el tiempo" },
   { concepts: ["docs", "sourceText", "source"], why: "lo leído en la fuente" },
   { concepts: ["forecastCheck", "history", "previous"], why: "mirar atrás" },

@@ -129,6 +129,7 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "license": "../LICENSE",
+      "include": "build/installer.nsh",
       "deleteAppDataOnUninstall": true
     },
     "electronFuses": {

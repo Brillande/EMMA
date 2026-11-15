@@ -338,6 +338,21 @@ las pruebas de cada hoja: encogida, la letra queda en unos 12,6 px (de 14) como 
 - **Riesgo que se asume:** en una consola de a bordo, con vibración o a distancia, 12,6 px cuestan algo más que 14.
   Para eso está el interruptor; las demás pestañas no se encogen.
 
+### 2.7 Lo secundario, plegado en todas las pestañas
+
+Decisión del usuario (2026-11-15, «reducir los componentes en interfaz con un botón desplegable como
+el que hay en Inicio en el resto de pestañas»; elegido plegado por defecto, en las dos consolas): cada
+pestaña montada lleva la raya de «Inicio» (`components/SecondaryFold.tsx` sobre `HomeDivider`) entre lo
+principal y lo secundario. Esconder información de una consola de vuelo es lo que F.5 pide vigilar, así
+que el pliegue tiene tres límites:
+
+- **Nunca se pliega una alerta, un aviso de riesgo activo, un estado clínico activo ni un fallo de
+  integridad del registro.** En «Peligros y alertas» solo se pliegan las recomendaciones, y si alguna es
+  inmediata la raya desaparece y se ven siempre. En «Estado recibido» las predicciones quedan arriba.
+- **Nombra lo que esconde:** el propio mando dice qué hay debajo (`what`), en los dos idiomas.
+- **Reversible y recordado por equipo** (`emma.fold.<pestaña>`); plegar no cambia ningún dato. Los
+  accesos que llevan a un panel plegado (navegación de «Radiación») lo despliegan antes de ir.
+
 ## 3. Los referentes
 
 ### NASA Orion (Artemis II)

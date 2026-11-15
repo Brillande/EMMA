@@ -130,7 +130,15 @@ function Figure({
     <>
       <div className="body-silhouette-figure" ref={figure}>
         {backdrop}
-        <Silhouette zoneClassName={zoneClassName} selected={selected} />
+        {/* La zona también se pulsa: en «Inicio» y «Radiación» los rótulos no se ven (solo con el
+            teclado) y era lo único a mano. Solo las regiones que llegaron del backend. */}
+        <Silhouette
+          zoneClassName={zoneClassName}
+          selected={selected}
+          onZone={(key) => {
+            if (sited.has(key)) onSelect(selected === key ? null : key);
+          }}
+        />
         {!listed &&
           [...sited].map(([key, region]) => (
             <Site key={key} region={region} anchor={anchorOf(key)} selected={selected} onSelect={onSelect} />

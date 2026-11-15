@@ -52,6 +52,7 @@ EXIT_NAMES: dict[str, str] = {
     "datasets": "la descarga de conjuntos de validación (Zenodo)",
     "planner-quotes": "la cita del día del planificador (ZenQuotes)",
     "planner-onthisday": "las efemérides del planificador (Wikipedia)",
+    "models-pack": "la descarga del paquete de modelos (GitHub)",
 }
 i18n.en_many(
     {

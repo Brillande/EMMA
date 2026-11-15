@@ -94,7 +94,11 @@ const browserClock: Clock = {
   clearTimer: (handle) => window.clearTimeout(handle as number),
 };
 
-export function PvtPanel({ subject }: { subject: string }) {
+/**
+ * `onRecorded`: tras firmarse una prueba en el registro, para que quien la monta (la tarjeta de
+ * pruebas de «Aislamiento») vuelva a leer lo suyo. No toca la prueba ni lo que se envía.
+ */
+export function PvtPanel({ subject, onRecorded }: { subject: string; onRecorded?: () => void }) {
   const [protocol, setProtocol] = useState<PvtProtocol | null>(null);
   // `null` hasta que el registro se ha leído: una lista vacía es «no hay pruebas», no «aún no se sabe».
   const [sessions, setSessions] = useState<PvtRecordedSession[] | null>(null);
@@ -152,6 +156,8 @@ export function PvtPanel({ subject }: { subject: string }) {
       pvtApi
         .submit(body)
         .then((result) => {
+          // Quedó en el registro aunque el panel ya se haya cerrado: quien lo montó lo relee igual.
+          onRecorded?.();
           if (mine()) setSubmitted(result);
         })
         // El rechazo del backend se enseña tal cual; lo que quedó o no en el registro lo dice
@@ -164,7 +170,7 @@ export function PvtPanel({ subject }: { subject: string }) {
           if (mine()) loadSessions();
         });
     },
-    [subject, operator, loadSessions],
+    [subject, operator, loadSessions, onRecorded],
   );
 
   const start = () => {

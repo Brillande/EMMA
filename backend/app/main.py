@@ -45,6 +45,8 @@ from app.api.mission import mission_router
 from app.api.mission_mode import mission_mode_router
 from app.api.mission_profile import mission_profile_router
 from app.api.mission_profiles import mission_profiles_router
+from app.api.models_pack import autostart as models_autostart
+from app.api.models_pack import models_pack_router
 from app.api.ntrs import ntrs_router
 from app.api.nutrition import nutrition_router
 from app.api.orbit import orbit_router
@@ -185,6 +187,7 @@ app.include_router(reports_router, prefix="/api")
 app.include_router(volumes_router, prefix="/api")
 app.include_router(polaris_router, prefix="/api")
 app.include_router(safe_mode_router, prefix="/api")
+app.include_router(models_pack_router, prefix="/api")
 app.include_router(link_sync_router, prefix="/api")
 app.include_router(mission_mode_router, prefix="/api")
 app.include_router(mission_profile_router, prefix="/api")
@@ -282,3 +285,6 @@ def mount_frontend(target: FastAPI, dist: Path | None) -> bool:
 
 
 mount_frontend(app, get_settings().frontend_dist)
+# «Descargar también los modelos de IA», marcado en el instalador (`desktop/installer.nsh`): la
+# descarga empieza sola en segundo plano y se ve en «Modelos de IA».
+models_autostart(get_settings())

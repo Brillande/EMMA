@@ -2187,3 +2187,13 @@ def test_a_skeleton_cut_for_memory_says_so(
 def test_free_memory_is_read_from_the_system() -> None:
     free = segment.free_ram_gb()
     assert free is None or free > 0
+
+
+def test_totalsegmentator_can_be_called_through_a_python_copy() -> None:
+    """El paquete de modelos no lleva el lanzador del venv (con la ruta de otra máquina escrita)."""
+    assert segment.command_prefix(r"C:\m\seg\python.exe") == [
+        r"C:\m\seg\python.exe", "-m", "totalsegmentator.bin.TotalSegmentator"
+    ]
+    assert segment.command_prefix(r"C:\v\Scripts\TotalSegmentator.exe") == [
+        r"C:\v\Scripts\TotalSegmentator.exe"
+    ]

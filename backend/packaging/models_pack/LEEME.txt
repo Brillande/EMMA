@@ -1,0 +1,19 @@
+Paquete de modelos de EMMA
+==========================
+
+Lo que el instalador de EMMA no lleva, para instalarlo sin red: el servidor de modelos de lenguaje
+(Ollama) con los modelos que usa EMMA, la transcripción de voz (Whisper), la segmentación de TAC
+(TotalSegmentator) y el OCR de informes (Tesseract).
+
+Instalar: doble clic en instalar.cmd. Copia el paquete a %LOCALAPPDATA%\EMMA-modelos y comprueba
+cada fichero contra MANIFIESTO.json antes de activarlo. Para otra carpeta:
+    instalar.cmd -Destino D:\EMMA-modelos
+y abre EMMA con la variable EMMA_MODELS_DIR apuntando a esa carpeta.
+
+EMMA funciona sin este paquete: lo que depende de él se muestra como «no disponible».
+
+MANIFIESTO.json dice la versión, el origen y la licencia de cada pieza. No incluye la capa de
+des-identificación por NER del BSC: no hay una licencia que permita redistribuirla.
+
+Ninguna pieza sale a internet: Ollama arranca solo en 127.0.0.1 y sin su aplicación de bandeja
+(la que busca actualizaciones), y TotalSegmentator va con la telemetría apagada.

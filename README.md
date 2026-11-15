@@ -15,6 +15,26 @@ consulta en vivo con el cirujano de vuelo. El software tiene que decidir solo.
 
 ---
 
+## Descargar e instalar (Windows)
+
+**[Instalador de EMMA para Windows](https://github.com/Brillande/EMMA/releases/latest)** —
+descarga `EMMA.Setup.x.y.z.exe` de la última versión y ejecútalo. No necesita Python, Node ni nada
+más: lleva el backend, la interfaz y el planificador.
+
+- **Modelos de IA.** El instalador pregunta «Also download the AI models (about 33 GB)», marcado
+  por defecto. Si se deja marcado, la primera vez que se abre EMMA descarga sola los modelos
+  (modelos de lenguaje con Ollama, transcripción de voz con Whisper, segmentación de TAC con
+  TotalSegmentator y lectura de informes con Tesseract) desde la versión
+  [`modelos-1`](https://github.com/Brillande/EMMA/releases/tag/modelos-1), comprueba cada fichero
+  con su SHA-256 y los instala en `%LOCALAPPDATA%\EMMA-modelos`. El progreso se ve en
+  «AI models», al pie de la pantalla; se usan al volver a abrir EMMA. También se pueden bajar
+  más tarde desde ese mismo panel, pieza a pieza, o instalar sin red desde un USB con
+  `instalar.cmd` (ver las notas de `modelos-1`).
+- **Sin modelos EMMA funciona igual:** constantes, análisis, alertas y recomendaciones no
+  dependen de ellos; lo que sí, se muestra como «no disponible».
+- **Sin firma de código.** Windows SmartScreen avisará: «Más información» → «Ejecutar de todas
+  formas».
+
 ## Estado
 
 | | |
@@ -23,7 +43,7 @@ consulta en vivo con el cirujano de vuelo. El software tiene que decidir solo.
 | Pruebas | **5522** en la suite normal del backend · 10 `live`, de contrato contra APIs reales y modelos locales · **42 de validación externa** |
 | Calidad | `ruff` limpio · `mypy --strict` limpio |
 | Interfaz | Consola de tripulación y consola de Tierra · **1768 pruebas**, entre ellas las reglas de pantalla de NASA-STD-3001 Vol 2 |
-| Escritorio | Instalador de Windows (Electron), funciona sin red · **sin firma de código** |
+| Escritorio | [Instalador de Windows](https://github.com/Brillande/EMMA/releases/latest) (Electron), funciona sin red · modelos de IA descargables desde el instalador · **sin firma de código** |
 | API | 95 rutas de lectura · 51 de escritura: ingesta, firmas y decisiones de la tripulación, gestión de alertas, enmienda y supresión. La lista viva está en `/docs` |
 
 Cifras medidas el 3 de noviembre de 2026 sobre el commit `f8276ea` (la última suite completa del
@@ -332,6 +352,8 @@ EMMA es software libre bajo la **GNU Affero General Public License v3.0 o poster
 ([`LICENSE`](LICENSE)). Titular y código de terceros incorporado: [`NOTICE`](NOTICE). Los datos de
 terceros que viajan con la aplicación conservan su propia licencia (CC BY 4.0 las ecografías de
 ejemplo; ver [`compliance/imaging-data-provenance.md`](compliance/imaging-data-provenance.md)).
+La licencia de cada dependencia, modelo y dato que usa el repositorio, en una sola página:
+[`LICENCIAS.md`](LICENCIAS.md).
 
 ---
 

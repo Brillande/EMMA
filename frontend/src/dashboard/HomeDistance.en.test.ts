@@ -127,4 +127,15 @@ describe("las palabras de la lógica en inglés", () => {
     expect(workMode(sharing(false)).word).toBe("Online");
     expect(workMode({ state: "loading" }).word).toBe("Loading…");
   });
+
+  it("el mando del enlace", () => {
+    const linkControl = { operator: "", setOperator: () => undefined, privacy: false, onDeclared: async () => undefined };
+    const html = renderToStaticMarkup(
+      createElement(HomeDistance, { profileId: "mars-transit", status: status(), sync: SYNC, linkControl }),
+    );
+    for (const text of ["Who", "Since", "the last reading", "Declare down", "Enter who declares it: it is signed in the record."]) {
+      expect(html).toContain(text);
+    }
+    expect(html).not.toMatch(/Quién|Desde|Declarar|la última lectura/);
+  });
 });

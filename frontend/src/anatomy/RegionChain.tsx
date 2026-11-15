@@ -116,7 +116,8 @@ export function RegionChain({
   operator: string;
   /** Contramedidas con seguimiento abierto: no se vuelven a ofrecer para adoptar. */
   following: ReadonlySet<string>;
-  onAdopt: (countermeasureId: string, by: string) => Promise<void>;
+  /** Sin él, la cadena es de solo lectura: la ficha de la silueta (`RegionPopover`) no adopta. */
+  onAdopt?: ((countermeasureId: string, by: string) => Promise<void>) | undefined;
   /** El instante del estado si es el de un momento pasado; `null`, el de ahora. */
   pastUntil?: string | null;
 }) {
@@ -415,7 +416,7 @@ export function RegionChain({
           operator={operator}
           following={following}
           past={pastUntil !== null}
-          {...(pastUntil === null ? { onAdopt } : {})}
+          {...(pastUntil === null && onAdopt !== undefined ? { onAdopt } : {})}
         />
       </section>
 

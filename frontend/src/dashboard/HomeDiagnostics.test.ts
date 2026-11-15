@@ -8,9 +8,15 @@ import { describe, expect, it } from "vitest";
 import type { CrewStatus, Indicator, ProfileMatrix, VolumeSegmentation, VolumeStudy } from "../lib/api";
 import { type Token, cssVar, palette } from "../lib/palette";
 import type { HomeData, HomeLinks } from "./HomeBoard";
+import { FAILURE_MARK } from "../lib/marks";
 import {
+  DIAGNOSTICS_CLOSED,
+  type DiagnosticsAction,
   type DiagnosticsData,
+  type DiagnosticsUi,
   HomeDiagnosticsView,
+  diagnosticsReducer,
+  viewerKeyAction,
   type LabSeries,
   TREND_ROWS,
   TREND_WINDOW_MS,
@@ -230,13 +236,15 @@ describe("la vista", () => {
     expect(render({})).toMatch(/c-cyan[^>]*>.*sin analíticas en los últimos 30 días/);
   });
 
-  it("con los accesos de la consola, cada prueba lleva a su sección; sin ellos, ningún botón", () => {
-    const html = render({ links });
-    expect(html).toContain('aria-label="Abrir Imagen e informes: Ecografía / ultrasonido"');
-    expect(html).toContain('aria-label="Abrir Cuerpo: Biomarcadores"');
-    expect(html).toContain('aria-label="Abrir Diario y pruebas: Otras pruebas (PVT, cognición, dolor)"');
-    expect(html).toContain('aria-label="Abrir Peligros y alertas: detalle del análisis"');
-    expect(render({})).not.toContain("<button");
+  it("cada prueba es un mando que se despliega, haya o no accesos de la consola", () => {
+    for (const html of [render({}), render({ links })]) {
+      for (const key of ["ultrasound", "biomarkers", "lab-reports", "other"]) {
+        expect(html).toMatch(new RegExp(`data-test="${key}"><button type="button" class="dx-test" aria-expanded="false"`));
+      }
+      // Ya no llevan a las pestañas apartadas de esta versión.
+      expect(html).not.toMatch(/Abrir (Imagen e informes|Cuerpo|Diario y pruebas)/);
+    }
+    expect(render({ links })).toContain('aria-label="Abrir Peligros y alertas: detalle del análisis"');
   });
 
   it("los recuentos dicen lo que hay o que no hay nada", () => {
@@ -246,14 +254,199 @@ describe("la vista", () => {
   });
 });
 
+/** Pulsar: la acción que manda el mando, por el reductor, y la vista con lo que queda abierto. */
+const press = (ui: DiagnosticsUi, action: DiagnosticsAction) => diagnosticsReducer(ui, action);
+const renderOpen = (ui: DiagnosticsUi, over: Partial<DiagnosticsData> = {}) =>
+  renderToStaticMarkup(createElement(HomeDiagnosticsView, { home: home(), data: data(over), ui }));
+
+/** El trozo de una prueba: desde su `<li>` hasta la prueba siguiente o el final de la tarjeta. */
+const detailOf = (html: string, key: string) =>
+  html.split(`data-test="${key}"`)[1]?.split(/data-test="|<\/article>/)[0] ?? "";
+
+const sessions = (values: { effective: string; text: string }[]) => ({
+  state: "ready" as const,
+  value: {
+    subject: "crew-01",
+    count: values.length,
+    reference_time: null,
+    sessions: values.map(({ effective, text }) => ({
+      effective,
+      values: [{ key: "k", display: "Mean", display_es: "Media", value: 1, value_text: text }],
+    })),
+  } as never,
+});
+
+describe("las pruebas se despliegan", () => {
+  it("pulsar una la abre, pulsar otra cambia, pulsar la misma la pliega", () => {
+    let ui = press(DIAGNOSTICS_CLOSED, { type: "toggle-test", test: "ultrasound" });
+    expect(ui.test).toBe("ultrasound");
+    ui = press(ui, { type: "toggle-test", test: "other" });
+    expect(ui.test).toBe("other");
+    ui = press(ui, { type: "toggle-test", test: "other" });
+    expect(ui.test).toBeNull();
+  });
+
+  it("cerrada no enseña detalle; abierta, `aria-expanded` y la lista con su id", () => {
+    expect(render({})).not.toContain("dx-detail");
+    const html = renderOpen({ test: "ultrasound", viewer: false });
+    const part = detailOf(html, "ultrasound");
+    expect(part).toContain('aria-expanded="true"');
+    const id = part.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(id).toBeDefined();
+    expect(part).toContain(`id="${id}"`);
+  });
+
+  it("ecografía: los estudios con el nombre de protocolo del backend, el más reciente primero", () => {
+    const studies = [
+      { ledger_index: 1, recorded: "2026-11-01T08:00:00Z", protocol: "lung", frames: 1 },
+      { ledger_index: 2, recorded: "2026-11-12T08:00:00Z", protocol: "fast", frames: 40, synthetic: true },
+    ] as never;
+    const protocols = { state: "ready" as const, value: { protocols: [{ key: "fast", display: "FAST del backend" }] } as never };
+    const part = detailOf(renderOpen({ test: "ultrasound", viewer: false }, { ultrasound: { state: "ready", value: studies }, protocols }), "ultrasound");
+    expect(part.indexOf("FAST del backend")).toBeLessThan(part.indexOf("lung"));
+    expect(part).toContain("fotogramas");
+    expect(part).toContain("fantoma simulado");
+    expect(part).toMatch(/<span class="num">1<\/span> fotograma</);
+  });
+
+  it("sin nada registrado lo dice en gris, prueba a prueba", () => {
+    expect(detailOf(renderOpen({ test: "ultrasound", viewer: false }), "ultrasound")).toMatch(
+      /class="secondary dx-detail-empty".*sin registro de ecografía/,
+    );
+    expect(detailOf(renderOpen({ test: "biomarkers", viewer: false }), "biomarkers")).toContain("sin registro en 30 d");
+    expect(detailOf(renderOpen({ test: "lab-reports", viewer: false }), "lab-reports")).toContain("sin registro de analíticas");
+  });
+
+  it("biomarcadores: todas las series de 30 días con su cifra del catálogo, sin el tope de las tendencias", () => {
+    const keys = ["a", "b", "c", "d", "e", "f"];
+    const catalog = new Map(keys.map((key) => [key, indicator(key)]));
+    const series = keys.map((key, index) => ({ key, readings: [{ at: REF_MS - (index + 1) * DAY, value: index + 10 }] }));
+    const html = renderToStaticMarkup(
+      createElement(HomeDiagnosticsView, {
+        home: home({ catalog }),
+        data: data({ labs: { state: "ready", value: series } }),
+        ui: { test: "biomarkers", viewer: false },
+      }),
+    );
+    const part = detailOf(html, "biomarkers");
+    expect((part.match(/data-detail-row/g) ?? []).length).toBe(5);
+    expect(part).toMatch(/y <span class="num">1<\/span> más/);
+    expect(part).toContain("U/L");
+    // Las tendencias siguen con su tope.
+    expect((html.match(/data-lab="/g) ?? []).length).toBe(TREND_ROWS);
+  });
+
+  it("analíticas: solo los informes que son analíticas, con páginas y cifras leídas", () => {
+    const reports = [
+      { ledger_index: 1, recorded: "2026-11-10T08:00:00Z", kind: "analitica", pages: 2, lab_readings: { date: null, readings: [{}, {}, {}] } },
+      { ledger_index: 2, recorded: "2026-11-11T08:00:00Z", kind: "alta", pages: 9 },
+    ] as never;
+    const part = detailOf(renderOpen({ test: "lab-reports", viewer: false }, { reports: { state: "ready", value: reports } }), "lab-reports");
+    expect((part.match(/data-detail-row/g) ?? []).length).toBe(1);
+    expect(part).toMatch(/<span class="num">2<\/span> páginas/);
+    expect(part).toMatch(/<span class="num">3<\/span> cifras leídas/);
+  });
+
+  it("otras pruebas: lo último de PVT, cognición y dolor con las palabras del backend; lo que falta, en gris", () => {
+    const others = {
+      pvt: sessions([
+        { effective: "2026-11-01T08:00:00Z", text: "vieja" },
+        { effective: "2026-11-12T08:00:00Z", text: "312 ms del backend" },
+      ]),
+      cognition: sessions([]),
+      pain: { state: "ready" as const, value: [{ effective: "2026-11-13T08:00:00Z", intensity: 4, zones: [{}, {}] }] as never },
+    };
+    const part = detailOf(renderOpen({ test: "other", viewer: false }, { others }), "other");
+    expect(part).toContain("Media: 312 ms del backend");
+    expect(part).not.toContain("vieja");
+    expect(part).toMatch(/data-other="cognition">.*sin registro/);
+    expect(part).toMatch(/intensidad máxima <span class="num">4<\/span>/);
+    expect(part).toMatch(/<span class="num">2<\/span> zonas/);
+    // Sin pedir todavía: cargando, no «sin registro».
+    expect(detailOf(renderOpen({ test: "other", viewer: false }), "other")).toContain("Cargando");
+  });
+
+  it("una fecha ilegible del backend no tumba el bloque: «sin fecha» en cian", () => {
+    const reports = [{ ledger_index: 1, recorded: "", kind: "analitica", pages: 1 }] as never;
+    const part = detailOf(renderOpen({ test: "lab-reports", viewer: false }, { reports: { state: "ready", value: reports } }), "lab-reports");
+    expect(part).toMatch(/c-cyan[^>]*>.*sin fecha/);
+  });
+
+  it("una petición que falla lo dice con su motivo, no como vacío", () => {
+    const failed = { state: "failed" as const, outcome: { mark: FAILURE_MARK, text: "motivo del backend", detail: null } as never };
+    const part = detailOf(renderOpen({ test: "lab-reports", viewer: false }, { reports: failed }), "lab-reports");
+    expect(part).toContain("motivo del backend");
+    expect(part).not.toContain("sin registro");
+  });
+});
+
+describe("la ventana del visor completo", () => {
+  const withLiver = data({ volumes: { state: "ready", value: [study({ segmentations: [segmentation()] })] } });
+
+  it("abrir y Escape: el reductor la abre y la tecla Escape (y solo ella) la cierra", () => {
+    const open = press(DIAGNOSTICS_CLOSED, { type: "open-viewer" });
+    expect(open.viewer).toBe(true);
+    const escape = viewerKeyAction("Escape");
+    expect(escape).toEqual({ type: "close-viewer" });
+    expect(press(open, escape as DiagnosticsAction).viewer).toBe(false);
+    expect(viewerKeyAction("Enter")).toBeNull();
+    expect(viewerKeyAction("a")).toBeNull();
+  });
+
+  it("el mando «Abrir visor completo» está, sin depender de las pestañas apartadas", () => {
+    const html = render({ data: withLiver });
+    expect(html).toContain("Abrir visor completo");
+    expect(html).toContain('aria-haspopup="dialog"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(render({ data: data({ volumes: { state: "ready", value: [study()] } }) })).toContain("Abrir volúmenes");
+    // Sin volúmenes no hay nada que abrir.
+    expect(render({})).not.toMatch(/Abrir volúmenes|Abrir visor/);
+  });
+
+  it("abierta con el hígado: el visor de Polaris (su iframe), el título, «Cerrar» y la salvedad", () => {
+    const html = renderToStaticMarkup(createElement(HomeDiagnosticsView, { home: home(), data: withLiver, ui: { test: null, viewer: true } }));
+    expect(html).toMatch(/role="dialog" aria-modal="true" aria-labelledby="[^"]+" tabindex="-1"/);
+    expect(html).toContain("<iframe");
+    expect(html).toContain("/api/volumes/segmentations/20/polaris/index.html");
+    expect(html).toContain("Cerrar");
+    expect(html.split('role="dialog"')[1]).toContain("No es un diagnóstico a bordo.");
+  });
+
+  it("abierta sin volúmenes: lo dice y da el «no disponible» del backend, sin visor", () => {
+    const html = renderOpen({ test: null, viewer: true });
+    const dialog = html.split('role="dialog"')[1] ?? "";
+    expect(dialog).toContain("Sin volúmenes registrados.");
+    expect(dialog).toMatch(/c-gray[^>]*>.*Motivo del backend: no hay segmentador\./);
+    expect(dialog).not.toContain("<iframe");
+  });
+
+  it("abierta con un volumen sin segmentar: la lista de volúmenes y que no hay segmentación", () => {
+    const dialog =
+      renderOpen({ test: null, viewer: true }, { volumes: { state: "ready", value: [study()] } }).split('role="dialog"')[1] ?? "";
+    expect(dialog).toContain("Sin segmentación: el volumen está registrado y firmado.");
+    expect(dialog).toContain('data-volume="10"');
+    expect(dialog).toContain("512×512×100");
+  });
+
+  it("un preset que Polaris no pinta va al visor propio, cargado a demanda (mientras, «Cargando…»)", () => {
+    const eyes = data({ volumes: { state: "ready", value: [study({ segmentations: [segmentation({ preset: "ojos", preset_nombre: "Ojos" })] })] } });
+    const dialog =
+      renderToStaticMarkup(createElement(HomeDiagnosticsView, { home: home(), data: eyes, ui: { test: null, viewer: true } })).split(
+        'role="dialog"',
+      )[1] ?? "";
+    expect(dialog).not.toContain("<iframe");
+    expect(dialog).toContain("Cargando");
+  });
+});
+
 describe("el módulo y su hoja", () => {
   const source = readFileSync(fileURLToPath(new URL("./HomeDiagnostics.tsx", import.meta.url)), "utf8");
   const css = readFileSync(fileURLToPath(new URL("./homeDiagnostics.css", import.meta.url)), "utf8");
 
-  it("no trae el visor pesado ni nada del borrador de interpretación", () => {
-    expect(source).not.toMatch(/from "[^"]*(PolarisViewer|VolumeViewer|interpret)/);
-    // Ni perezoso: «Inicio» no carga el visor ni a demanda.
-    expect(source).not.toMatch(/import\(/);
+  it("nada del borrador de interpretación; el visor pesado (NiiVue) solo a demanda", () => {
+    expect(source).not.toMatch(/from "[^"]*interpret|import\("[^"]*interpret/);
+    expect(source).not.toMatch(/from "[^"]*VolumeViewer"/);
+    expect([...source.matchAll(/import\("([^"]+)"\)/g)].map((match) => match[1])).toEqual(["../volumes/VolumeViewer"]);
   });
 
   it("solo usa colores de la paleta", () => {

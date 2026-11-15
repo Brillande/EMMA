@@ -288,7 +288,7 @@
         "location",
         "where the crew is"
       ],
-      "about": "The backend's mission profiles with their thumbnail; the declared one is marked. Choosing one changes the route the dashboard shows."
+      "about": "The backend's mission profiles; the declared one is marked. Choosing one changes the dashboard's route; on other tabs, the card says that tab's aspect in the chosen profile."
     },
     "home-module": {
       "label": "Sublocation",
@@ -297,7 +297,7 @@
         "dashboard module",
         "crew module"
       ],
-      "about": "The crew member's module and since when: the one the console declared or the one estimated by the spacecraft's module anchors, marked as estimated."
+      "about": "The crew member's module and since when: declared by the console or estimated by the module anchors. Its drop-down declares the module, signed in the record."
     },
     "home-global": {
       "label": "Overall crew status",
@@ -1853,6 +1853,159 @@
         "planner summary"
       ],
       "about": "For Ground, with the delay: per person and day, tasks done and streak, calendar events and leisure, messages, pastimes from their sheet and reminders. Descriptive figures only."
+    },
+    "cognition": {
+      "label": "Cognition battery (NASA)",
+      "aliases": [
+        "cognition battery nasa",
+        "cognition battery",
+        "cognition form"
+      ],
+      "about": "NASA's Cognition battery: copy the scores of a cognitive test session and record them signed; shows the recorded sessions and the limits of the record."
+    },
+    "cognition-source": {
+      "label": "The battery, as read",
+      "aliases": [
+        "the battery as read",
+        "battery source"
+      ],
+      "about": "Shows what each test of the Cognition battery measures according to what was read in its source, with the quote."
+    },
+    "cognition-figures": {
+      "label": "What each figure is (Cognition)",
+      "aliases": [
+        "what each figure is cognition",
+        "what each figure is"
+      ],
+      "about": "Explains what each figure of a Cognition battery test is, with the sentence from its source."
+    },
+    "pvt": {
+      "label": "PVT test",
+      "aliases": [
+        "pvt test",
+        "pvt",
+        "psychomotor vigilance test",
+        "reaction time test"
+      ],
+      "about": "Psychomotor vigilance test, of reflexes and reaction time: taken here with the keyboard or by touching the screen, with its score and the tests already recorded."
+    },
+    "pvt-published": {
+      "label": "What is published and what EMMA does (PVT)",
+      "aliases": [
+        "what is published and what emma does pvt",
+        "what is published and what emma does"
+      ],
+      "about": "What the published sources say for each parameter of the reflex test and where the value EMMA uses differs. Read only."
+    },
+    "pvt-divergences": {
+      "label": "Divergences from what is published (PVT)",
+      "aliases": [
+        "divergences from what is published pvt",
+        "divergences"
+      ],
+      "about": "Where EMMA counts the reflex test differently from the published source, for example the lapses. Read only."
+    },
+    "region-function": {
+      "label": "Function (region)",
+      "aliases": [
+        "function region",
+        "function of the region"
+      ],
+      "about": "Explains what the chosen organ or body region is for, with its sources."
+    },
+    "region-state": {
+      "label": "State (region)",
+      "aliases": [
+        "state region",
+        "state of the region"
+      ],
+      "about": "Shows the state of the chosen body region, with its level or no data if there are no readings; for the bones, the skeleton figure."
+    },
+    "region-variables": {
+      "label": "Variables (region)",
+      "aliases": [
+        "variables region",
+        "variables of the region"
+      ],
+      "about": "Lists the measured variables of the chosen region, with their deviation from the baseline and their trend if it is concerning."
+    },
+    "region-unmeasured": {
+      "label": "No reading (region)",
+      "aliases": [
+        "no reading region",
+        "no reading"
+      ],
+      "about": "Lists the indicators of the chosen region that do not have any reading yet."
+    },
+    "region-evidence": {
+      "label": "Evidence (region)",
+      "aliases": [
+        "evidence region",
+        "evidence of the region"
+      ],
+      "about": "Shows the evidence for the chosen region: for each domain, how it aligns with NASA risks and the records cited."
+    },
+    "region-research": {
+      "label": "Research evidence (region)",
+      "aliases": [
+        "research evidence region",
+        "research evidence"
+      ],
+      "about": "Shows what was observed in studies with other people or with animals for the chosen region, not measured in this crew member, with its population and record."
+    },
+    "region-trend": {
+      "label": "Trend (region)",
+      "aliases": [
+        "trend region",
+        "trend of the region"
+      ],
+      "about": "Shows the trend of the chosen region's variables; lets you pick a variable to see its series over time."
+    },
+    "region-risk": {
+      "label": "Risk (region)",
+      "aliases": [
+        "risk region",
+        "risk of the region"
+      ],
+      "about": "Shows the risk of the chosen region: its RIDGE hazard, the risk record and what is known about its uncertainty."
+    },
+    "region-countermeasure": {
+      "label": "Countermeasure (region)",
+      "aliases": [
+        "countermeasure region",
+        "countermeasure of the region"
+      ],
+      "about": "Shows the countermeasures recommended for the chosen body region; in anatomy mode, in the current state, they can be adopted; in the card next to the silhouette they are read only."
+    },
+    "region-external-context": {
+      "label": "External context (region)",
+      "aliases": [
+        "external context region",
+        "external context of the region"
+      ],
+      "about": "Shows what changed around the mission and environment for the chosen region, warning that coinciding in time is not being the cause."
+    },
+    "skeleton-no-voxels": {
+      "label": "Bones without voxels",
+      "aliases": [
+        "bones without voxels"
+      ],
+      "about": "Lists the bones that do not appear in the skeleton image because the study does not include them."
+    },
+    "skeleton-cut-bones": {
+      "label": "Bones cut by the edge of the study",
+      "aliases": [
+        "bones cut by the edge of the study",
+        "cut bones"
+      ],
+      "about": "Lists the skeleton bones that are cut by the edge of the imaging study."
+    },
+    "skeleton-marked-bones": {
+      "label": "Marked bones",
+      "aliases": [
+        "marked bones"
+      ],
+      "about": "Lists all the bones marked with a dot on the skeleton figure."
     }
   }
 }

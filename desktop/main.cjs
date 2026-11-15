@@ -348,6 +348,75 @@ function stopPlanner() {
   }
 }
 
+// --- El paquete de modelos ---------------------------------------------------------------------
+//
+// Decisión del usuario (2026-11-15): los modelos se instalan con EMMA como un paquete aparte, desde
+// disco o USB y sin red (`backend/packaging/models_pack.py`, que deja `instalar.cmd` dentro). Aquí
+// solo se usa si su instalador terminó de comprobarlo (`instalado.json`); sin él, cada función que
+// depende de un modelo se declara no disponible, como sin paquete.
+
+/** @type {import("node:child_process").ChildProcess | null} */
+let ollama = null;
+
+/** Dónde se instala el paquete: `EMMA_MODELS_DIR` o `%LOCALAPPDATA%\EMMA-modelos`. */
+function modelsDir() {
+  if (process.env.EMMA_MODELS_DIR) return process.env.EMMA_MODELS_DIR;
+  const local = process.env.LOCALAPPDATA ?? path.join(app.getPath("home"), "AppData", "Local");
+  return path.join(local, "EMMA-modelos");
+}
+
+/**
+ * Lo que el backend necesita para usar cada pieza del paquete que esté instalada. Función pura
+ * sobre lo que hay en disco (`exists`): las rutas son las que deja `models_pack.py`.
+ */
+function modelsEnv(dir, exists = fs.existsSync) {
+  if (!exists(path.join(dir, "instalado.json"))) return null;
+  const env = {
+    // Las copias de Python del paquete no deben ver los paquetes del usuario.
+    PYTHONNOUSERSITE: "1",
+  };
+  const voice = path.join(dir, "voice");
+  if (exists(path.join(voice, "python.exe"))) env.BTP_VENV_VOICE = voice;
+  const seg = path.join(dir, "segmentation");
+  if (exists(path.join(seg, "python.exe"))) {
+    env.EMMA_TOTALSEG_CMD = path.join(seg, "python.exe");
+    env.TOTALSEG_HOME_DIR = path.join(seg, "home");
+  }
+  const tesseract = path.join(dir, "tesseract", "tesseract.exe");
+  if (exists(tesseract)) env.EMMA_TESSERACT_CMD = tesseract;
+  const server = path.join(dir, "ollama", "ollama.exe");
+  return { env, ollama: exists(server) ? server : null, models: path.join(dir, "ollama", "models") };
+}
+
+/**
+ * El Ollama del paquete, solo en loopback y en un puerto propio: no choca con otro Ollama que
+ * tenga el equipo. Solo el servidor (`serve`); la aplicación de bandeja no viaja en el paquete.
+ */
+function startOllama(setup, port) {
+  const logDir = path.join(app.getPath("userData"), "logs");
+  fs.mkdirSync(logDir, { recursive: true });
+  const log = fs.createWriteStream(path.join(logDir, "ollama.log"), { flags: "a" });
+  log.write(`\n--- ${new Date().toISOString()} puerto ${port}\n`);
+  ollama = spawn(setup.ollama, ["serve"], {
+    windowsHide: true,
+    stdio: ["ignore", "pipe", "pipe"],
+    env: { ...process.env, OLLAMA_HOST: `${LOOPBACK}:${port}`, OLLAMA_MODELS: setup.models },
+  });
+  ollama.stdout?.on("data", (data) => log.write(data));
+  ollama.stderr?.on("data", (data) => log.write(data));
+  ollama.on("exit", (code) => log.write(`--- ollama terminado con codigo ${code}\n`));
+  ollama.on("error", (err) => log.write(`--- ollama no arranco: ${err.message}\n`));
+}
+
+function stopOllama() {
+  if (ollama === null || ollama.exitCode !== null || ollama.pid === undefined) return;
+  if (process.platform === "win32") {
+    execFile("taskkill", ["/pid", String(ollama.pid), "/T", "/F"], { windowsHide: true });
+  } else {
+    ollama.kill("SIGTERM");
+  }
+}
+
 function lockDown(origin) {
   // Ningun permiso del navegador (ni notificaciones ni ningun otro) salvo `sensors` y el `media`
   // acotado de mas abajo. `sensors`:
@@ -547,7 +616,24 @@ async function main() {
   const plannerSetupInfo = plannerSetup();
   const plannerPort = plannerSetupInfo === null ? 0 : await freePort();
   const summaryPort = plannerSetupInfo === null ? 0 : await freePort();
-  startBackend(port, plannerBackendEnv(plannerSetupInfo, plannerPort, summaryPort));
+  const models = modelsEnv(modelsDir());
+  const modelsBackendEnv = models === null ? {} : { ...models.env };
+  if (models !== null && models.ollama !== null) {
+    const ollamaPort = await freePort();
+    startOllama(models, ollamaPort);
+    // El backend lo comprueba en cada petición: si aún no responde, la función sale «no disponible».
+    modelsBackendEnv.EMMA_LLM_URL = `http://${LOOPBACK}:${ollamaPort}`;
+  }
+  // «Descargar también los modelos de IA», marcado en el instalador (`installer.nsh` deja la marca
+  // junto al ejecutable). Mientras no haya paquete instalado, el backend lo baja al arrancar
+  // (`app/api/models_pack.py: autostart`); una vez instalado, la marca ya no cuenta.
+  if (models === null && fs.existsSync(path.join(path.dirname(app.getPath("exe")), "descargar-modelos"))) {
+    modelsBackendEnv.EMMA_MODELS_AUTODOWNLOAD = "true";
+  }
+  startBackend(port, {
+    ...modelsBackendEnv,
+    ...plannerBackendEnv(plannerSetupInfo, plannerPort, summaryPort),
+  });
 
   if (!(await waitForBackend(port))) {
     if (!quitting) {
@@ -559,6 +645,7 @@ async function main() {
     }
     quitting = true;
     stopBackend();
+    stopOllama();
     app.quit();
     return;
   }
@@ -580,6 +667,7 @@ app.on("before-quit", () => {
   quitting = true;
   stopPlanner();
   stopBackend();
+  stopOllama();
 });
 
 app.on("window-all-closed", () => app.quit());

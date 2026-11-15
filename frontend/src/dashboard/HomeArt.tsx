@@ -856,6 +856,14 @@ interface BodyFrame {
   y: { shoulder: number; elbow: number; wrist: number; hip: number; knee: number; ankle: number; pelvis: number };
 }
 
+/** Perfiles (t, medio ancho) del húmero y de los dos huesos del antebrazo. A ojo sobre la maqueta: adorno. */
+const HUMERUS = [[-0.01, 1.4], [0.02, 2.6], [0.08, 2.5], [0.18, 1.6], [0.7, 1.35], [0.88, 1.8], [0.96, 2.6], [1.01, 2]] as const;
+const FOREARM = [[-0.01, 0.6], [0.03, 1.15], [0.1, 0.9], [0.55, 0.75], [0.88, 0.9], [0.97, 1.25], [1.01, 0.7]] as const;
+
+/** Perfiles (t, medio ancho) de la tibia y el peroné: meseta, caña y maléolo. A ojo sobre la maqueta: adorno. */
+const TIBIA = [[-0.015, 2.3], [0.008, 3.8], [0.05, 3.9], [0.14, 2.8], [0.3, 2.2], [0.7, 1.8], [0.9, 2], [0.965, 2.8], [0.995, 2.7], [1.02, 1.5]] as const;
+const FIBULA = [[-0.02, 0.5], [0.01, 1.3], [0.05, 1.3], [0.12, 0.8], [0.5, 0.7], [0.88, 0.8], [0.95, 1.4], [0.99, 1.4], [1.02, 0.5]] as const;
+
 const BODY_FRAMES: Record<"male" | "female", BodyFrame> = {
   male: {
     head: [74, 30],
@@ -918,30 +926,130 @@ function bonePath(a: Point, b: Point, w: number, head = 2.1): string {
   ].join(" ");
 }
 
+/**
+ * Un hueso con perfil propio: `profile` da el medio ancho en cada tramo (t de 0 a 1), y el contorno pasa suave
+ * por esos puntos. Para la tibia y el peroné, que no son simétricos como un fémur: meseta ancha arriba, caña
+ * fina y maléolo abajo.
+ */
+function taperPath(a: Point, b: Point, profile: readonly (readonly [number, number])[]): string {
+  const p = (q: Point) => `${f1(q[0])} ${f1(q[1])}`;
+  const run = (side: 1 | -1, list: readonly (readonly [number, number])[]) => {
+    const pts = list.map(([t, w]) => along(a, b, t, side * w));
+    let d = "";
+    for (let k = 1; k < pts.length - 1; k += 1) {
+      const mid: Point = [(pts[k]![0] + pts[k + 1]![0]) / 2, (pts[k]![1] + pts[k + 1]![1]) / 2];
+      d += ` Q${p(pts[k]!)} ${p(mid)}`;
+    }
+    return { first: pts[0]!, d, last: pts[pts.length - 1]! };
+  };
+  const left = run(-1, profile);
+  const right = run(1, [...profile].reverse());
+  return `M${p(left.first)}${left.d} L${p(left.last)} L${p(right.first)}${right.d} L${p(right.last)} Z`;
+}
+
 /** Mano o pie: abanico de huesecillos desde un punto en la dirección dada. */
-function Fan({ at, toward, spread, length, rays }: { at: Point; toward: Point; spread: number; length: number; rays: number }) {
+function Fan({ at, toward, spread, length, rays, base = 0, thumb }: { at: Point; toward: Point; spread: number; length: number; rays: number; base?: number; thumb?: 1 | -1 }) {
   const angle = Math.atan2(toward[1] - at[1], toward[0] - at[0]);
   return (
     <g className="grav-smallbones">
       {Array.from({ length: rays }, (_, i) => {
         const a = angle + (i / (rays - 1) - 0.5) * spread;
         // Metacarpo (o metatarso) y tres falanges, cada vez más cortas, con su articulación.
-        const cuts = [0, 0.5, 0.72, 0.88, 1];
-        const at_ = (t: number): Point => [at[0] + Math.cos(a) * length * t, at[1] + Math.sin(a) * length * t];
+        const cuts = [0, 0.44, 0.68, 0.86, 1];
+        // Cada dedo nace de su sitio en el carpo (o el tarso), no todos del mismo punto: si no, parece un rastrillo.
+        const off = (i / (rays - 1) - 0.5) * base;
+        const origin: Point = [at[0] - Math.sin(angle) * off, at[1] + Math.cos(angle) * off];
+        // En la mano (hay pulgar): los dedos no miden lo mismo (índice, corazón, anular, meñique) y se curvan un poco
+        // hacia el pulgar falange a falange, como una mano relajada; rectos e iguales parecían un rastrillo.
+        const order = thumb === undefined ? -1 : thumb < 0 ? i : rays - 1 - i;
+        const reach = length * (order < 0 ? 1 : ([0.93, 1, 0.94, 0.8][order] ?? 0.9));
+        const curl = thumb === undefined ? 0 : thumb * 0.13;
+        const joints: Point[] = [origin];
+        cuts.slice(0, -1).forEach((t, k) => {
+          const from = joints[k]!;
+          const seg = reach * (cuts[k + 1]! - t);
+          const dir = a + curl * k;
+          joints.push([from[0] + Math.cos(dir) * seg, from[1] + Math.sin(dir) * seg]);
+        });
         return (
           <g key={i}>
-            {cuts.slice(0, -1).map((t, k) => {
-              const p0 = at_(t + 0.02);
-              const p1 = at_(cuts[k + 1]! - 0.02);
-              return <line key={k} x1={f1(p0[0])} y1={f1(p0[1])} x2={f1(p1[0])} y2={f1(p1[1])} />;
+            {joints.slice(0, -1).map((p0, k) => {
+              const p1 = joints[k + 1]!;
+              const q0 = along(p0, p1, 0.06);
+              const q1 = along(p0, p1, 0.94);
+              return <line key={k} x1={f1(q0[0])} y1={f1(q0[1])} x2={f1(q1[0])} y2={f1(q1[1])} />;
             })}
-            {cuts.slice(1, -1).map((t) => {
-              const q = at_(t);
-              return <circle key={t} className="grav-knuckle" cx={f1(q[0])} cy={f1(q[1])} r="0.45" />;
-            })}
+            {joints.slice(1, -1).map((q, k) => (
+              <circle key={k} className="grav-knuckle" cx={f1(q[0])} cy={f1(q[1])} r="0.45" />
+            ))}
           </g>
         );
       })}
+      {thumb !== undefined &&
+        (() => {
+          // Pulgar: sale del lado del carpo que mira al cuerpo, más corto y abierto que los dedos (sin él, la mano
+          // era un rastrillo de palos iguales).
+          const a = angle + thumb * 0.2;
+          const off = thumb * base * 0.78;
+          const origin: Point = [at[0] - Math.sin(angle) * off, at[1] + Math.cos(angle) * off + 0.6];
+          const at_ = (t: number): Point => [origin[0] + Math.cos(a) * length * 0.5 * t, origin[1] + Math.sin(a) * length * 0.5 * t];
+          const cuts = [0, 0.46, 0.76, 1];
+          return (
+            <g className="grav-thumb">
+              {cuts.slice(0, -1).map((t, k) => {
+                const p0 = at_(t + 0.03);
+                const p1 = at_(cuts[k + 1]! - 0.03);
+                return <line key={k} x1={f1(p0[0])} y1={f1(p0[1])} x2={f1(p1[0])} y2={f1(p1[1])} />;
+              })}
+            </g>
+          );
+        })()}
+    </g>
+  );
+}
+
+/**
+ * La mano del cuerpo de la maqueta cuelga DE PERFIL (petición del usuario, 2026-11-15: «las manos del cuerpo están de
+ * lado y el hueso no coge esa forma»): de lado, los dedos se tapan unos a otros y se ven como una sola columna que
+ * baja por la mano y se cierra en gancho en la punta, con otro dedo asomando detrás y el pulgar por delante. Cada
+ * lista son los nudos (dx, dy desde la muñeca) de la mano izquierda de la pantalla, sacados del contorno real de la
+ * mano en el lienzo (fila a fila: palma hasta ~y+10, dedos hacia fuera hasta ~y+16 y gancho hacia dentro hasta ~y+27);
+ * la derecha es su espejo. Adorno.
+ */
+interface SideHandShape {
+  fingers: readonly Point[];
+  thumb: readonly Point[];
+}
+
+const SIDE_HANDS: Record<"male" | "female", SideHandShape> = {
+  male: {
+    fingers: [[-0.3, 2.5], [-2.2, 11], [-4.8, 16.5], [-3.8, 21.5], [-1.3, 25.5]],
+    thumb: [[1.6, 3.5], [2.4, 10], [2.3, 16]],
+  },
+  female: {
+    fingers: [[-2, 2.5], [-3.9, 11], [-6.5, 16.5], [-5.5, 21.5], [-3, 25.5]],
+    thumb: [[0, 3.5], [0.6, 10], [0.5, 16]],
+  },
+};
+
+function SideHand({ wrist, mirror, shape }: { wrist: Point; mirror: 1 | -1; shape: SideHandShape }) {
+  const at = (q: Point, dx = 0, dy = 0): Point => [wrist[0] + mirror * (q[0] + dx), wrist[1] + q[1] + dy];
+  const chain = (points: readonly Point[], widths: readonly number[], dx = 0, dy = 0, cut = 1) =>
+    points.slice(0, -1).map((q, k) => {
+      const a = at(q, dx, dy);
+      const b = at(points[k + 1]!, dx, dy);
+      const last = k === points.length - 2;
+      const p0 = along(a, b, 0.07);
+      const p1 = along(a, b, last ? 0.93 * cut : 0.93);
+      return <line key={k} x1={f1(p0[0])} y1={f1(p0[1])} x2={f1(p1[0])} y2={f1(p1[1])} style={{ strokeWidth: widths[k] ?? 1 }} />;
+    });
+  return (
+    <g className="grav-sidehand">
+      {/* El dedo de detrás, asomando hacia el dorso de la mano, algo más corto y tenue. */}
+      <g className="back">{chain(shape.fingers, [1.9, 1.6, 1.3, 1.1], -1.7, -0.3, 0.75)}</g>
+      {/* Metacarpo y tres falanges del dedo que se ve, cada vez más finas. */}
+      <g>{chain(shape.fingers, [2.5, 2, 1.7, 1.4])}</g>
+      <g className="thumb">{chain(shape.thumb, [1.8, 1.4])}</g>
     </g>
   );
 }
@@ -970,24 +1078,25 @@ export function BodyBonesArt({ figure, marks = [] }: { figure: "male" | "female"
   const vertebrae = Array.from({ length: 22 }, (_, i) => {
     const t = i / 21;
     const yy = neckTop + t * (y.pelvis - 6 - neckTop);
-    const size = 2.2 + t * 2.6;
+    const size = 1.7 + t * 2.7;
     return { y: yy, x: cx + Math.sin(t * Math.PI * 2) * 0.8, size };
   });
-  const ribs = Array.from({ length: 12 }, (_, i) => ({ y: y.shoulder + 4 + i * 3.45, i }));
+  const ribs = Array.from({ length: 12 }, (_, i) => ({ y: y.shoulder + 4 + i * 3.7, i }));
   // Diferencias reales del esqueleto femenino (dimorfismo): caja torácica más estrecha, pelvis más ancha y
   // baja, con el arco púbico más abierto. A ojo, sin medida: adorno.
   const female = figure === "female";
   // Más estrecha que los hombros, como en la maqueta (~60 % de su ancho); la femenina, algo más.
-  const halfChest = ((rs - ls) / 2 - 7) * (female ? 0.7 : 0.76);
+  const halfChest = ((rs - ls) / 2 - 7) * (female ? 0.68 : 0.66);
   const pw = female ? 2.5 : 0;
+  // La mano del cuerpo no cuelga igual en los dos: la del varón gira hacia dentro; la de la mujer queda más fuera y recta.
+  const hand = SIDE_HANDS[figure];
   return (
     <svg className="grav-art grav-bones" viewBox="0 0 152 310" aria-hidden="true">
       {/* Cráneo de frente: bóveda redonda, órbitas, abertura nasal en pera, pómulos, maxilar con dientes y mandíbula en U. */}
-      <path className="grav-skull" d={`M${cx} ${hy - 15} C${cx - 9} ${hy - 15} ${cx - 11} ${hy - 7} ${cx - 10.5} ${hy} C${cx - 10.5} ${hy + 3} ${cx - 9.5} ${hy + 5} ${cx - 8.5} ${hy + 6} C${cx - 7} ${hy + 7.5} ${cx - 5.5} ${hy + 8.5} ${cx - 5} ${hy + 9.5} L${cx + 5} ${hy + 9.5} C${cx + 5.5} ${hy + 8.5} ${cx + 7} ${hy + 7.5} ${cx + 8.5} ${hy + 6} C${cx + 9.5} ${hy + 5} ${cx + 10.5} ${hy + 3} ${cx + 10.5} ${hy} C${cx + 11} ${hy - 7} ${cx + 9} ${hy - 15} ${cx} ${hy - 15} Z`} />
-      <path className="grav-jaw" d={`M${cx - 7.5} ${hy + 7} C${cx - 7.5} ${hy + 12} ${cx - 5} ${hy + 16} ${cx} ${hy + 16.5} C${cx + 5} ${hy + 16} ${cx + 7.5} ${hy + 12} ${cx + 7.5} ${hy + 7} L${cx + 5.5} ${hy + 11} C${cx + 3} ${hy + 13} ${cx - 3} ${hy + 13} ${cx - 5.5} ${hy + 11} Z`} />
+      <path className="grav-skull" d={`M${cx} ${hy - 16} C${cx - 8} ${hy - 16} ${cx - 12} ${hy - 10} ${cx - 12} ${hy - 3} C${cx - 12} ${hy + 1} ${cx - 10.5} ${hy + 4} ${cx - 8.5} ${hy + 5.5} C${cx - 7.5} ${hy + 7} ${cx - 6.5} ${hy + 8.5} ${cx - 5.5} ${hy + 9.5} L${cx + 5.5} ${hy + 9.5} C${cx + 6.5} ${hy + 8.5} ${cx + 7.5} ${hy + 7} ${cx + 8.5} ${hy + 5.5} C${cx + 10.5} ${hy + 4} ${cx + 12} ${hy + 1} ${cx + 12} ${hy - 3} C${cx + 12} ${hy - 10} ${cx + 8} ${hy - 16} ${cx} ${hy - 16} Z`} />
+      <path className="grav-jaw" d={`M${cx - 7} ${hy + 7} C${cx - 7} ${hy + 12} ${cx - 4} ${hy + 15.5} ${cx} ${hy + 16} C${cx + 4} ${hy + 15.5} ${cx + 7} ${hy + 12} ${cx + 7} ${hy + 7} L${cx + 5} ${hy + 11} C${cx + 3} ${hy + 12.6} ${cx - 3} ${hy + 12.6} ${cx - 5} ${hy + 11} Z`} />
       <path className="grav-socket" d={`M${cx - 8.2} ${hy - 1.5} C${cx - 8.2} ${hy - 4.5} ${cx - 2.2} ${hy - 4.5} ${cx - 2} ${hy - 1.5} C${cx - 2} ${hy + 1.5} ${cx - 8.2} ${hy + 2} ${cx - 8.2} ${hy - 1.5} Z M${cx + 8.2} ${hy - 1.5} C${cx + 8.2} ${hy - 4.5} ${cx + 2.2} ${hy - 4.5} ${cx + 2} ${hy - 1.5} C${cx + 2} ${hy + 1.5} ${cx + 8.2} ${hy + 2} ${cx + 8.2} ${hy - 1.5} Z`} />
       <path className="grav-socket" d={`M${cx} ${hy + 1.5} C${cx - 1.8} ${hy + 3} ${cx - 2} ${hy + 5.5} ${cx - 0.8} ${hy + 6} L${cx + 0.8} ${hy + 6} C${cx + 2} ${hy + 5.5} ${cx + 1.8} ${hy + 3} ${cx} ${hy + 1.5} Z`} />
-      <path className="grav-cheek" d={`M${cx - 9.5} ${hy + 2.5} Q${cx - 6} ${hy + 4} ${cx - 3.5} ${hy + 3} M${cx + 9.5} ${hy + 2.5} Q${cx + 6} ${hy + 4} ${cx + 3.5} ${hy + 3}`} />
       {Array.from({ length: 8 }, (_, k) => (
         <rect key={k} className="grav-tooth" x={f1(cx - 4.4 + k * 1.1)} y={f1(hy + 8.3)} width="0.9" height="2.2" rx="0.3" />
       ))}
@@ -996,19 +1105,38 @@ export function BodyBonesArt({ figure, marks = [] }: { figure: "male" | "female"
         <rect key={v.y} className="grav-vertebra" x={f1(v.x - v.size)} y={f1(v.y)} width={f1(v.size * 2)} height={f1(v.size * 1.15)} rx="1" />
       ))}
       {/* Clavículas (las escápulas, por detrás, no se ven de frente en la maqueta: quitadas). */}
-      <path className="grav-bone" d={`M${ls + 3} ${y.shoulder - 1} C${cx - 16} ${y.shoulder - 5} ${cx - 8} ${y.shoulder - 2} ${cx - 2} ${sternumTop}`} />
-      <path className="grav-bone" d={`M${rs - 3} ${y.shoulder - 1} C${cx + 16} ${y.shoulder - 5} ${cx + 8} ${y.shoulder - 2} ${cx + 2} ${sternumTop}`} />
+      {([-1, 1] as const).map((sg) => {
+        // Hombro (la escápula, probada otra vez, sigue pareciendo un triángulo gris: fuera): clavícula casi horizontal en S suave desde el esternón hasta
+        // el acromion, que cubre la cabeza del húmero (antes la clavícula era un alambre caído que no tocaba el hombro).
+        const sx = sg < 0 ? ls : rs;
+        const x = (c: number) => f1(sx - sg * c);
+        const sh = y.shoulder;
+        return (
+          <g key={sg}>
+            {/* Sin escápula: probada tres veces (con contorno, sin él, más tenue) y a tamaño real siempre se lee como una
+                cuña rara bajo la clavícula. No volver a intentarlo. */}
+            <path className="grav-bone grav-clavicle" d={`M${x(8.5)} ${sh - 0.8} C${x(15)} ${sh - 2.4} ${f1(cx + sg * 11)} ${sh + 1.9} ${f1(cx + sg * 2.5)} ${sternumTop + 0.4}`} />
+            <ellipse className="grav-joint grav-acromion" cx={x(7.2)} cy={sh - 0.3} rx="3" ry="1.5" />
+          </g>
+        );
+      })}
       {/* Costillas: salen de la columna, bajan por el costado y cierran en el esternón (las de abajo, flotantes). */}
       {ribs.map(({ y: r, i }) => {
         // Caja cónica, como en la maqueta: estrecha bajo el cuello y más ancha en el tercio inferior.
         // Las dos últimas (flotantes) son más cortas; de la 8.ª a la 10.ª cierran cada vez más fuera: el arco costal.
-        const w = halfChest * (0.5 + Math.sin(((i + 1.5) / 13) * Math.PI * 0.8) * 0.55) * (i > 9 ? 0.86 - (i - 10) * 0.12 : 1);
-        const front = i < 7 ? Math.max(sternumTop + 3, Math.min(sternumBottom, r + 12)) : r + 13;
-        const end = i < 7 ? 1.5 : i < 10 ? 3 + (i - 7) * 4.5 : w * 0.82;
+        const w = halfChest * (0.62 + Math.sin(((i + 1.5) / 13) * Math.PI * 0.85) * 0.42) * (i > 9 ? 0.86 - (i - 10) * 0.12 : 1);
+        // Una sola banda por costilla, del centro al costado cayendo hacia fuera, con un pequeño gancho al final:
+        // así se ve en la maqueta (dibujar además la vuelta hasta el esternón las apelmazaba en una mancha).
+        const start = i < 7 ? 1.5 : i < 10 ? 3 + (i - 7) * 4.5 : w * 0.45;
+        const y0 = r - 1.5 + (start > 1.5 ? start * 0.3 : 0);
+        const side = (sg: 1 | -1) => {
+          const x = (c: number) => f1(cx + sg * c);
+          return `M${x(start)} ${f1(y0)} C${x(Math.max(start + 2, w * 0.55))} ${f1(y0 - 1)} ${x(w + 0.3)} ${f1(r + 1)} ${x(w)} ${f1(r + 7)} Q${x(w - 0.6)} ${f1(r + 10)} ${x(w - 3.2)} ${f1(r + 10.6)}`;
+        };
         return (
           <g key={r} className="grav-rib">
-            <path d={`M${cx - 2} ${f1(r - 4)} C${f1(cx - w * 0.6)} ${f1(r - 6)} ${f1(cx - w - 1)} ${f1(r + 1)} ${f1(cx - w - 0.5)} ${f1(r + 9)} C${f1(cx - w)} ${f1(r + 15)} ${f1(cx - w * 0.45)} ${f1(front + 3)} ${f1(cx - end)} ${f1(front + 2)}`} />
-            <path d={`M${cx + 2} ${f1(r - 4)} C${f1(cx + w * 0.6)} ${f1(r - 6)} ${f1(cx + w + 1)} ${f1(r + 1)} ${f1(cx + w + 0.5)} ${f1(r + 9)} C${f1(cx + w)} ${f1(r + 15)} ${f1(cx + w * 0.45)} ${f1(front + 3)} ${f1(cx + end)} ${f1(front + 2)}`} />
+            <path d={side(-1)} />
+            <path d={side(1)} />
           </g>
         );
       })}
@@ -1023,8 +1151,8 @@ export function BodyBonesArt({ figure, marks = [] }: { figure: "male" | "female"
           const q = (x: number, yy: number) => `${f1(half(s, x))} ${f1(yy)}`;
           return [
             // Del sacro sube hacia fuera hasta la cresta (el punto más alto, en el tercio exterior) y baja al acetábulo.
-            `C${q(cx - 7, p - 5)} ${q(lh - 1, p - 16 + pw)} ${q(lh - 7 - pw, p - 13 + pw)}`,
-            `C${q(lh - 12 - pw, p - 11 + pw)} ${q(lh - 10 - pw, p - 1)} ${q(lh - 5 - pw * 0.5, p + 4)}`,
+            `C${q(cx - 7, p - 5)} ${q(lh, p - 16 + pw)} ${q(lh - 5 - pw * 0.6, p - 13 + pw)}`,
+            `C${q(lh - 9.5 - pw * 0.6, p - 11 + pw)} ${q(lh - 8.5 - pw * 0.6, p - 1)} ${q(lh - 5 - pw * 0.5, p + 4)}`,
             `C${q(lh - 4, p + 6)} ${q(lh - 3, p + 7)} ${q(lh - 3, p + 8)}`,
             `C${q(lh - 1, p + 11)} ${q(lh, p + 14)} ${q(lh + 2, p + 17)}`,
             `C${q(lh + 4, p + 21)} ${q(cx - 6, p + 22)} ${q(cx - 3, p + 20)}`,
@@ -1054,24 +1182,33 @@ export function BodyBonesArt({ figure, marks = [] }: { figure: "male" | "female"
         );
       })()}
       {/* Brazos: húmero; radio y cúbito; manos. */}
-      <path className="grav-longbone" d={bonePath([ls + 1, y.shoulder + 1], [le, y.elbow], 2.1, 1.9)} />
-      <path className="grav-longbone" d={bonePath([rs - 1, y.shoulder + 1], [re, y.elbow], 2.1, 1.9)} />
-      <path className="grav-longbone" d={bonePath([le - 1.7, y.elbow + 1], [lw - 1.7, y.wrist], 1, 1.8)} />
-      <path className="grav-longbone" d={bonePath([le + 1.7, y.elbow + 1], [lw + 1.9, y.wrist], 1, 1.8)} />
-      <path className="grav-longbone" d={bonePath([re - 1.7, y.elbow + 1], [rw - 1.9, y.wrist], 1, 1.8)} />
-      <path className="grav-longbone" d={bonePath([re + 1.7, y.elbow + 1], [rw + 1.7, y.wrist], 1, 1.8)} />
-      <Fan at={[lw, y.wrist + 2]} toward={[lw - 1, y.wrist + 20]} spread={0.9} length={16} rays={5} />
-      <Fan at={[rw, y.wrist + 2]} toward={[rw + 1, y.wrist + 20]} spread={0.9} length={16} rays={5} />
+      {([-1, 1] as const).map((sg) => {
+        // Brazo con perfiles propios (antes eran husos puntiagudos): húmero con cabeza y cóndilos, codo, y radio y
+        // cúbito finos y casi paralelos hasta la muñeca, como en la maqueta.
+        const sx = sg < 0 ? ls : rs;
+        const ex = sg < 0 ? le : re;
+        const wx = sg < 0 ? lw : rw;
+        return (
+          <g key={sg}>
+            <path className="grav-longbone" d={taperPath([sx - sg * 6.8, y.shoulder + 3.4], [ex, y.elbow - 0.5], HUMERUS)} />
+            <ellipse className="grav-joint" cx={ex} cy={y.elbow + 0.4} rx="2.7" ry="1.7" />
+            <path className="grav-longbone" d={taperPath([ex - 1.4, y.elbow + 1.6], [wx - 1.6, y.wrist + 0.6], FOREARM)} />
+            <path className="grav-longbone" d={taperPath([ex + 1.4, y.elbow + 1.6], [wx + 1.6, y.wrist + 0.6], FOREARM)} />
+          </g>
+        );
+      })}
+      <SideHand wrist={[lw, y.wrist]} mirror={1} shape={hand} />
+      <SideHand wrist={[rw, y.wrist]} mirror={-1} shape={hand} />
       {/* Piernas: fémur con cuello; rótula; tibia y peroné; pies. */}
-      <path className="grav-longbone" d={bonePath([lh, y.hip], [lk, y.knee], 2.4, 2)} />
-      <path className="grav-longbone" d={bonePath([rh, y.hip], [rk, y.knee], 2.4, 2)} />
-      <path className="grav-longbone" d={bonePath([lk + 0.5, y.knee + 3], [la + 0.5, y.ankle], 1.8, 1.9)} />
-      <path className="grav-longbone" d={bonePath([rk - 0.5, y.knee + 3], [ra - 0.5, y.ankle], 1.8, 1.9)} />
-      <path className="grav-longbone thin" d={bonePath([lk - 4, y.knee + 5], [la - 3.5, y.ankle - 2], 0.6, 1.8)} />
-      <path className="grav-longbone thin" d={bonePath([rk + 4, y.knee + 5], [ra + 3.5, y.ankle - 2], 0.6, 1.8)} />
+      <path className="grav-longbone" d={bonePath([lh - 1.5, y.hip], [lk, y.knee - 1], 2.9, 1.6)} />
+      <path className="grav-longbone" d={bonePath([rh + 1.5, y.hip], [rk, y.knee - 1], 2.9, 1.6)} />
+      <path className="grav-longbone" d={taperPath([lk + 0.5, y.knee + 3.6], [la + 0.5, y.ankle + 1], TIBIA)} />
+      <path className="grav-longbone" d={taperPath([rk - 0.5, y.knee + 3.6], [ra - 0.5, y.ankle + 1], TIBIA)} />
+      <path className="grav-longbone thin" d={taperPath([lk - 4.6, y.knee + 6], [la - 3.6, y.ankle + 1], FIBULA)} />
+      <path className="grav-longbone thin" d={taperPath([rk + 4.6, y.knee + 6], [ra + 3.6, y.ankle + 1], FIBULA)} />
       {/* Carpo y tarso: el bloque de huesecillos de la muñeca y el del tobillo con el talón, de donde salen los dedos. */}
-      <ellipse className="grav-joint" cx={lw} cy={y.wrist + 2} rx="2.6" ry="1.7" />
-      <ellipse className="grav-joint" cx={rw} cy={y.wrist + 2} rx="2.6" ry="1.7" />
+      <ellipse className="grav-joint" cx={lw + hand.fingers[0]![0]} cy={y.wrist + 2} rx="2.6" ry="2" />
+      <ellipse className="grav-joint" cx={rw - hand.fingers[0]![0]} cy={y.wrist + 2} rx="2.6" ry="2" />
       <ellipse className="grav-joint" cx={la} cy={y.ankle + 3} rx="3" ry="2.3" />
       <ellipse className="grav-joint" cx={ra} cy={y.ankle + 3} rx="3" ry="2.3" />
       {/* Articulaciones: cabeza del fémur hacia la pelvis con su trocánter, y cabeza del húmero en el hombro. */}
@@ -1079,12 +1216,14 @@ export function BodyBonesArt({ figure, marks = [] }: { figure: "male" | "female"
       <circle className="grav-joint" cx={rh - 3.5} cy={y.hip - 3} r="3.3" />
       <circle className="grav-joint" cx={lh - 3} cy={y.hip + 2} r="2.3" />
       <circle className="grav-joint" cx={rh + 3} cy={y.hip + 2} r="2.3" />
-      <circle className="grav-joint" cx={ls + 2} cy={y.shoulder + 1.5} r="3.2" />
-      <circle className="grav-joint" cx={rs - 2} cy={y.shoulder + 1.5} r="3.2" />
-      <ellipse className="grav-patella" cx={lk} cy={y.knee - 1} rx="3.2" ry="3.8" />
-      <ellipse className="grav-patella" cx={rk} cy={y.knee - 1} rx="3.2" ry="3.8" />
-      <Fan at={[la, y.ankle + 2]} toward={[la - 4, y.ankle + 18]} spread={0.9} length={16} rays={5} />
-      <Fan at={[ra, y.ankle + 2]} toward={[ra + 4, y.ankle + 18]} spread={0.9} length={16} rays={5} />
+      <circle className="grav-joint" cx={ls + 7.2} cy={y.shoulder + 4.2} r="3.2" />
+      <circle className="grav-joint" cx={rs - 7.2} cy={y.shoulder + 4.2} r="3.2" />
+      {/* Rodilla como en la maqueta: los dos cóndilos del fémur, la interlínea y la rótula pequeña encima. */}
+      {[lk, rk].flatMap((kx) => [-2.4, 2.4].map((o) => <ellipse key={`${kx}${o}`} className="grav-joint" cx={kx + o} cy={y.knee + 0.3} rx="2.7" ry="2.5" />))}
+      <ellipse className="grav-patella" cx={lk} cy={y.knee - 2.2} rx="2.3" ry="2.7" />
+      <ellipse className="grav-patella" cx={rk} cy={y.knee - 2.2} rx="2.3" ry="2.7" />
+      <Fan at={[la, y.ankle + 2]} toward={[la - 4, y.ankle + 18]} spread={0.55} length={11.5} rays={5} base={5} />
+      <Fan at={[ra, y.ankle + 2]} toward={[ra + 4, y.ankle + 18]} spread={0.55} length={11.5} rays={5} base={5} />
       {marks.includes("lumbar") && <circle className="grav-site" cx={cx} cy={y.pelvis - 14} r="6" />}
       {marks.includes("hip") && (
         <>
@@ -1281,11 +1420,17 @@ function vesselTree(points: readonly Point[], twigs: number, reach: number, seed
   const pts = points.map((q, k) => (k === 0 || k === points.length - 1 ? q : ([q[0] + wave(k), q[1]] as Point)));
   // «M » con espacio marca el tronco (las ramitas empiezan por «M» pegado): quien pinta lo distingue así.
   let trunk = `M ${f1(pts[0]![0])} ${f1(pts[0]![1])}`;
-  for (let k = 1; k < pts.length; k += 1) {
-    const a = pts[k - 1]!;
-    const b = pts[k]!;
-    const ctrl = along(a, b, 0.5, wave(k + 3));
-    trunk += ` Q${f1(ctrl[0])} ${f1(ctrl[1])} ${f1(b[0])} ${f1(b[1])}`;
+  // Suave: cada punto intermedio es el control de una curva que pasa por los puntos medios de sus dos tramos
+  // (con el punto como nodo, el vaso hacía un codo en el hombro y en la ingle).
+  for (let k = 1; k < pts.length - 1; k += 1) {
+    const here = pts[k]!;
+    const next = pts[k + 1]!;
+    const mid = k === pts.length - 2 ? next : ([(here[0] + next[0]) / 2, (here[1] + next[1]) / 2] as Point);
+    trunk += ` Q${f1(here[0])} ${f1(here[1])} ${f1(mid[0])} ${f1(mid[1])}`;
+  }
+  if (pts.length === 2) {
+    const ctrl = along(pts[0]!, pts[1]!, 0.5, wave(4));
+    trunk += ` Q${f1(ctrl[0])} ${f1(ctrl[1])} ${f1(pts[1]![0])} ${f1(pts[1]![1])}`;
   }
   const out: string[] = [trunk];
   for (let s = 0; s < points.length - 1; s += 1) {
@@ -1410,9 +1555,16 @@ export function BodyVesselsArt({ figure }: { figure: "male" | "female" }) {
         {[0, 1, 2, 3, 4, 5].flatMap((i) => {
           const yy = y.shoulder + 9 + i * 5.5;
           const reach = 17 + Math.sin(((i + 1) / 7) * Math.PI) * 5;
-          return ([-1, 1] as const).map((side) => (
-            <path key={`${i}${side}`} className="fine" d={`M${cx + side * 2} ${f1(yy)} Q${f1(cx + side * reach * 0.6)} ${f1(yy - 2.5)} ${f1(cx + side * reach)} ${f1(yy + 5)}`} />
-          ));
+          return ([-1, 1] as const).map((side) => {
+            // Dos ramitas por arco, una hacia abajo y otra hacia arriba: la red fina del pecho de la maqueta.
+            const at = (t: number): Point => [
+              (1 - t) ** 2 * (cx + side * 2) + 2 * t * (1 - t) * (cx + side * reach * 0.6) + t ** 2 * (cx + side * reach),
+              (1 - t) ** 2 * yy + 2 * t * (1 - t) * (yy - 2.5) + t ** 2 * (yy + 5),
+            ];
+            const [p, q] = [at(0.42), at(0.72)];
+            const twigs = `M${f1(p[0])} ${f1(p[1])} q${f1(side * 1.5)} 1.5 ${f1(side * 2.2)} 3.6 M${f1(q[0])} ${f1(q[1])} q${f1(side * 1.8)} -0.6 ${f1(side * 3)} -2.6`;
+            return <path key={`${i}${side}`} className="fine" d={`M${cx + side * 2} ${f1(yy)} Q${f1(cx + side * reach * 0.6)} ${f1(yy - 2.5)} ${f1(cx + side * reach)} ${f1(yy + 5)} ${twigs}`} />;
+          });
         })}
       </g>
       <g className="grav-lung grav-deep">
@@ -1420,23 +1572,7 @@ export function BodyVesselsArt({ figure }: { figure: "male" | "female" }) {
           <path key={i} d={d} className={d.startsWith("M ") ? undefined : "fine"} />
         ))}
       </g>
-      <g className="grav-lung">
-        {([-1, 1] as const).flatMap((side) =>
-          vesselTree(
-            [
-              [cx + side * 6, heart[1] - 10],
-              [cx + side * 18, y.shoulder + 12],
-              [cx + side * 22, y.shoulder + 26],
-              [cx + side * 19, y.shoulder + 40],
-            ],
-            4,
-            7,
-            side < 0 ? 15 : 16,
-          ),
-        ).map((d, i) => (
-          <path key={i} d={d} className={d.startsWith("M ") ? undefined : "fine"} />
-        ))}
-      </g>
+      {/* El árbol pulmonar se quitó (bucle 4, vuelta 16): su tronco dibujaba un recuadro anaranjado en el pecho que la maqueta no tiene; quedan los arcos intercostales. */}
       <g className="grav-vein">
         {jugulars.map((d) => (
           <path key={d} d={d} />
@@ -1446,7 +1582,6 @@ export function BodyVesselsArt({ figure }: { figure: "male" | "female" }) {
         {[...head, ...trunk, ...hands, ...digits].map((d) => (
           <path key={d} d={d} className="fine" />
         ))}
-        <path d={`M${heart[0] - 2} ${heart[1] - 6} C${cx - 10} ${heart[1] - 26} ${cx + 8} ${heart[1] - 26} ${cx - 2} ${heart[1] - 10}`} />
         {arteries.map((d, i) => (
           <path key={i} d={d} className={d.startsWith("M ") ? undefined : "fine"} />
         ))}
@@ -1454,15 +1589,24 @@ export function BodyVesselsArt({ figure }: { figure: "male" | "female" }) {
           <path key={`a${i}`} d={d} className={d.startsWith("M ") ? "grav-trunk" : "fine"} />
         ))}
       </g>
-      <g transform={`translate(${heart[0]} ${heart[1]}) scale(1.65) translate(${-heart[0]} ${-heart[1]})`}>
+      <g transform={`translate(${heart[0]} ${heart[1]}) scale(1.35) translate(${-heart[0]} ${-heart[1]})`}>
+      {/* Relleno del corazón: de un foco claro arriba a la derecha a rojo oscuro en el borde, como el volumen lustroso de la maqueta. */}
+      <defs>
+        <radialGradient id={`grav-heart-fill-${figure}`} cx="0.62" cy="0.32" r="0.8">
+          <stop offset="0" className="grav-heart-hi" />
+          <stop offset="0.5" className="grav-heart-mid" />
+          <stop offset="1" className="grav-heart-lo" />
+        </radialGradient>
+      </defs>
       <circle className="grav-heart-glow" cx={heart[0]} cy={heart[1]} r="12" />
       {/* Corazón de frente, inclinado a la izquierda del tripulante: ventrículos con su surco, aurícula
           derecha, cayado de la aorta (rojo) y tronco pulmonar (azul), y las coronarias. Adorno. */}
       <path className="grav-pulmonary" d={`M${heart[0] + 1} ${heart[1] - 5} C${heart[0] + 2} ${heart[1] - 11} ${heart[0] + 6} ${heart[1] - 12} ${heart[0] + 9} ${heart[1] - 10}`} />
-      <path className="grav-aorta" d={`M${heart[0] - 2} ${heart[1] - 5} C${heart[0] - 3} ${heart[1] - 14} ${heart[0] + 5} ${heart[1] - 17} ${heart[0] + 6} ${heart[1] - 12} M${heart[0] - 1} ${heart[1] - 14} l-1 -4 M${heart[0] + 2} ${heart[1] - 15.5} l0 -4 M${heart[0] + 4.5} ${heart[1] - 15} l1 -3.5`} />
+      <path className="grav-aorta" d={`M${heart[0] - 2} ${heart[1] - 5} C${heart[0] - 3} ${heart[1] - 14} ${heart[0] + 5} ${heart[1] - 17} ${heart[0] + 6} ${heart[1] - 12}`} />
       <path className="grav-vena-cava" d={`M${heart[0] - 5} ${heart[1] - 14} L${heart[0] - 5} ${heart[1] - 3}`} />
       <path
         className="grav-heart"
+        style={{ fill: `url(#grav-heart-fill-${figure})` }}
         d={`M${heart[0] - 6} ${heart[1] - 4} C${heart[0] - 8} ${heart[1] - 1} ${heart[0] - 7} ${heart[1] + 5} ${heart[0] - 2} ${heart[1] + 8} C${heart[0] + 1} ${heart[1] + 10} ${heart[0] + 5} ${heart[1] + 11} ${heart[0] + 7} ${heart[1] + 10} C${heart[0] + 9} ${heart[1] + 6} ${heart[0] + 9} ${heart[1]} ${heart[0] + 7} ${heart[1] - 4} C${heart[0] + 5} ${heart[1] - 7} ${heart[0] + 1} ${heart[1] - 7} ${heart[0] - 1} ${heart[1] - 5} C${heart[0] - 3} ${heart[1] - 7} ${heart[0] - 5} ${heart[1] - 6} ${heart[0] - 6} ${heart[1] - 4} Z`}
       />
       {/* Brillo del corazón: en la maqueta es un volumen lustroso, no una forma plana. */}
