@@ -218,29 +218,45 @@ def test_a_file_the_manifest_does_not_name_is_refused(tmp_path: Path) -> None:
     assert not (tmp_path / "EMMA-modelos" / "voice").exists()
 
 
-def test_a_cut_part_resumes_where_it_was(tmp_path: Path, published: Path) -> None:
+def test_a_cut_part_resumes_by_its_blocks(
+    tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Lo bajado de una vez anterior queda anotado por bloques: solo se piden los que faltan."""
+    from app import models_fetch
+
+    monkeypatch.setattr(models_fetch, "BLOCK", 1024)
     index = json.loads((published / "emma-modelos-partes.json").read_text(encoding="utf-8"))
-    first = index["components"]["voice"]["parts"][0]["name"]
+    first = index["components"]["voice"]["parts"][0]
+    data = (published / first["name"]).read_bytes()
     staging = tmp_path / "EMMA-modelos.descarga" / "partes"
     staging.mkdir(parents=True)
-    (staging / (first + ".partial")).write_bytes((published / first).read_bytes()[:1000])
-    asked: list[str | None] = []
+    # Un trozo a medias: el bloque 0 bajado y anotado, el resto en blanco.
+    partial = bytearray(len(data))
+    partial[:1024] = data[:1024]
+    (staging / (first["name"] + ".partial")).write_bytes(bytes(partial))
+    (staging / (first["name"] + ".bloques.json")).write_text(json.dumps(
+        {"size": first["size"], "sha256": first["sha256"], "block": 1024, "done": [0]}
+    ), encoding="utf-8")
+    asked: list[str] = []
     settings = settings_for(tmp_path)
     with respx.mock as router:
         def handler(request: httpx.Request) -> httpx.Response:
             name = request.url.path.rsplit("/", 1)[-1]
-            data = (published / name).read_bytes()
-            if name == first:
-                asked.append(request.headers.get("Range"))
+            body = (published / name).read_bytes()
             header = request.headers.get("Range")
+            if name == first["name"] and header:
+                asked.append(header)
             if header:
-                return httpx.Response(206, content=data[int(header[6:-1]):])
-            return httpx.Response(200, content=data)
+                a, _, b = header.removeprefix("bytes=").partition("-")
+                return httpx.Response(206, content=body[int(a):int(b) + 1 if b else len(body)])
+            return httpx.Response(200, content=body)
 
         router.get(url__startswith=BASE).mock(side_effect=handler)
         job = run(settings, ["voice"])
     assert job["state"] == "done", job
-    assert asked == ["bytes=1000-"]
+    assert "bytes=0-1023" not in asked
+    assert "bytes=1024-2047" in asked
+    assert job["done_bytes"] == job["total_bytes"]
 
 
 def test_not_published_yet_says_so(tmp_path: Path) -> None:
@@ -323,53 +339,61 @@ def test_the_installer_choice_downloads_everything_on_first_start(
     assert models_pack.autostart(settings) is False
 
 
-def test_big_parts_come_in_ranges_at_once_and_resume_each(
+def test_each_part_comes_in_blocks_and_every_block_is_asked_once(
     tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Cada trozo en tramos (`Range`) a la vez: lo que hace la descarga 10 veces más rápida."""
-    from app import models_download
+    """Cada trozo por bloques (`Range`), muchos a la vez: lo que hace la descarga rápida."""
+    from app import models_fetch
 
-    monkeypatch.setattr(models_download, "SEGMENT_MIN", 1)
+    monkeypatch.setattr(models_fetch, "BLOCK", 1024)
     index = json.loads((published / "emma-modelos-partes.json").read_text(encoding="utf-8"))
     first = index["components"]["voice"]["parts"][0]
-    # Un tramo ya empezado de una vez anterior: se sigue por donde iba.
-    staging = tmp_path / "EMMA-modelos.descarga" / "partes"
-    staging.mkdir(parents=True)
-    begun = (published / first["name"]).read_bytes()[:100]
-    (staging / (first["name"] + ".tramo0")).write_bytes(begun)
     asked: list[str] = []
     settings = settings_for(tmp_path)
     with respx.mock as router:
         def handler(request: httpx.Request) -> httpx.Response:
             name = request.url.path.rsplit("/", 1)[-1]
-            data = (published / name).read_bytes()
+            body = (published / name).read_bytes()
             header = request.headers.get("Range")
             if name == first["name"] and header:
                 asked.append(header)
             if header:
                 a, _, b = header.removeprefix("bytes=").partition("-")
-                return httpx.Response(206, content=data[int(a):int(b) + 1 if b else len(data)])
-            return httpx.Response(200, content=data)
+                return httpx.Response(206, content=body[int(a):int(b) + 1 if b else len(body)])
+            return httpx.Response(200, content=body)
 
         router.get(url__startswith=BASE).mock(side_effect=handler)
         job = run(settings, ["voice"])
     assert job["state"] == "done", job
-    step = -(-first["size"] // models_download.SEGMENTS_PER_PART)
+    size = first["size"]
     assert sorted(asked) == sorted(
-        [f"bytes=100-{step - 1}"]
-        + [f"bytes={s}-{min(s + step, first['size']) - 1}"
-           for s in range(step, first["size"], step)]
+        f"bytes={s}-{min(s + 1024, size) - 1}" for s in range(0, size, 1024)
     )
     assert (tmp_path / "EMMA-modelos" / "voice" / "python.exe").read_bytes() == b"py" * 10
     assert job["done_bytes"] == job["total_bytes"]
+    assert job["connections"] >= 1
+
+
+def test_the_controller_opens_while_it_pays_and_stops_when_not() -> None:
+    from app.models_fetch import Controller
+
+    control = Controller(start=8, top=64)
+    assert control.update(10.0, 0) == 12      # sube: más
+    assert control.update(20.0, 4) == 18      # sube: más
+    assert control.update(20.5, 8) == 12      # ya no sube: al que dio lo mejor, y quieto
+    assert control.update(30.0, 20) == 12     # quieto hasta volver a probar
+    assert control.update(30.0, 40) == 15     # a los 30 s, prueba con algo más
+    big = Controller(start=60, top=64)
+    big.update(10.0, 0)
+    assert big.update(50.0, 4) == 64          # nunca pasa del tope
 
 
 def test_a_server_without_ranges_is_not_taken_for_a_whole_part(
     tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from app import models_download
+    from app import models_fetch
 
-    monkeypatch.setattr(models_download, "SEGMENT_MIN", 1)
+    monkeypatch.setattr(models_fetch, "BLOCK", 1024)
     settings = settings_for(tmp_path)
     with respx.mock as router:
         serve(router, published, ranges=False)

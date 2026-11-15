@@ -19,10 +19,10 @@ Lo que no se negocia:
   escribe al final de cada pieza.
 * **Se reanuda**: un trozo cortado se sigue por donde iba (`Range`); los trozos ya usados se
   borran según se sacan, para no ocupar el doble de disco.
-* **Muchas conexiones a la vez**: GitHub limita cada conexión (medido el 2026-11-15: unos
-  3 MB/s con una, 31 MB/s con 16). Se bajan `PARALLEL_PARTS` trozos por delante del que se saca,
-  siempre en orden, y cada trozo en `SEGMENTS_PER_PART` tramos (`Range`) que se reanudan cada uno
-  por su lado. Cuesta, como mucho, ese número de trozos en disco a la espera.
+* **Tan rápido como dé la línea**: GitHub limita cada conexión, así que los trozos se piden por
+  bloques con muchas conexiones a la vez, y cuántas lo decide la medida de la velocidad
+  (`app/models_fetch.py`). Hasta `PARALLEL_PARTS` trozos por delante del que se saca, siempre en
+  orden; cada bloque hecho queda anotado y una descarga cortada sigue por los que faltan.
 
 Lo que se instala se usa la próxima vez que se abre EMMA: la aplicación de escritorio arranca el
 Ollama del paquete y pasa sus rutas al backend al arrancar.
@@ -39,7 +39,6 @@ import shutil
 import tarfile
 import threading
 from collections.abc import Iterator
-from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import IO, Any
@@ -48,6 +47,7 @@ import httpx
 
 from app.core import egress
 from app.core.config import Settings
+from app.models_fetch import BlockFetcher, FetchCancelled, FetchError
 
 PURPOSE = "models-pack"
 INDEX_NAME = "emma-modelos-partes.json"
@@ -58,12 +58,9 @@ INDEX_VERSION = 1
 CHUNK = 1 << 20
 # Margen de disco sobre lo que ocupa la pieza instalada más un trozo en curso.
 DISK_MARGIN = 512 * 1024 * 1024
-# Trozos que se bajan a la vez, y tramos (`Range`) en que se parte cada uno: 4 × 4 = 16
-# conexiones. Medido el 2026-11-15 contra GitHub: 3 MB/s con una conexión, 9 con 4, 24 con 8 y 31
-# con 16 (ya casi la línea entera). Un trozo pequeño (menos de `SEGMENT_MIN`) va en un solo tramo.
+# Trozos que pueden estar bajándose por delante del que se saca (lo que ocupan en disco a la
+# espera). Cuántas conexiones se abren lo decide la medida (`app/models_fetch.py`).
 PARALLEL_PARTS = 4
-SEGMENTS_PER_PART = 4
-SEGMENT_MIN = 64 * 1024 * 1024
 # Timeout de lectura por trozo de red, no de la descarga entera (un trozo son casi 2 GB).
 DOWNLOAD_TIMEOUT = httpx.Timeout(60.0, connect=30.0)
 
@@ -292,42 +289,23 @@ class Downloader:
             shutil.rmtree(target)
         self._set(component=name, phase="download")
 
-        def fetch(part: dict[str, Any]) -> Path:
-            path: Path = parts_dir / part["name"]
-            url, size, sha = f"{base}/{part['name']}", int(part["size"]), str(part["sha256"])
-            if size >= SEGMENT_MIN and SEGMENTS_PER_PART > 1:
-                self._fetch_segmented(client, url, path, size, sha)
-            else:
-                self._fetch_file(client, url, path, size, sha)
-            return path
-
-        pool = ThreadPoolExecutor(max_workers=PARALLEL_PARTS, thread_name_prefix="emma-part")
-
-        def parts() -> Iterator[Path]:
-            # Como mucho PARALLEL_PARTS trozos pedidos por delante del que se está sacando.
-            queue: list[Future[Path]] = []
-            pending = iter(piece["parts"])
-            for part in pending:
-                queue.append(pool.submit(fetch, part))
-                if len(queue) >= PARALLEL_PARTS:
-                    break
-            while queue:
-                path = queue.pop(0).result()
-                following = next(pending, None)
-                if following is not None:
-                    queue.append(pool.submit(fetch, following))
-                yield path
-
+        fetcher = BlockFetcher(
+            client, base, parts_dir, piece["parts"], window=PARALLEL_PARTS,
+            on_bytes=self._add_done, cancelled=self._cancel.is_set,
+            on_connections=lambda n, rate: self._set(connections=n, rate=round(rate)),
+        )
+        parts = fetcher.parts()
         seen: set[str] = set()
         try:
-            self._extract(parts(), target, expected, seen)
-        except BaseException:
-            # Un fallo o una cancelación: los trozos en vuelo se paran (quedan a medias para
-            # reanudar) y no se espera a que acaben.
-            self._cancel.set()
-            raise
+            self._extract(parts, target, expected, seen)
+        except FetchCancelled as exc:
+            raise Cancelled from exc
+        except FetchError as exc:
+            code = "network" if exc.code == "no-range" else exc.code
+            raise PackError(code, exc.detail or exc.code) from exc
         finally:
-            pool.shutdown(wait=True, cancel_futures=True)
+            # Para a los que bajan (lo hecho queda anotado para seguir) y espera a que paren.
+            parts.close()
         missing = set(expected) - seen
         if missing:
             raise PackError("bad-archive", sorted(missing)[0])
@@ -400,85 +378,6 @@ class Downloader:
     def _add_done(self, amount: int) -> None:
         with self._lock:
             self._state["done_bytes"] = int(self._state.get("done_bytes", 0)) + amount
-
-    def _fetch_segmented(self, client: httpx.Client, url: str, path: Path, size: int,
-                         sha: str) -> None:
-        """Un trozo en `SEGMENTS_PER_PART` tramos a la vez; se juntan y se comprueba el trozo."""
-        if path.exists() and path.stat().st_size == size and _sha256(path) == sha:
-            self._add_done(size)
-            return
-        step = -(-size // SEGMENTS_PER_PART)
-        ranges = [(start, min(start + step, size)) for start in range(0, size, step)]
-        pieces = [path.with_name(f"{path.name}.tramo{i}") for i in range(len(ranges))]
-        for attempt in range(2):
-            with ThreadPoolExecutor(max_workers=len(ranges),
-                                    thread_name_prefix="emma-tramo") as pool:
-                futures = [pool.submit(self._fetch_range, client, url, piece, start, end)
-                           for piece, (start, end) in zip(pieces, ranges, strict=True)]
-                errors: list[BaseException | None] = []
-                for future in futures:
-                    error = future.exception()
-                    if error is not None and not self._cancel.is_set():
-                        # Un tramo caído para los demás: no se sigue bajando para nada.
-                        self._cancel.set()
-                    errors.append(error)
-            failed = next((error for error in errors if error is not None), None)
-            if failed is not None:
-                raise failed
-            joined = path.with_name(path.name + ".partial")
-            digest = hashlib.sha256()
-            with joined.open("wb") as out:
-                for piece in pieces:
-                    with piece.open("rb") as handle:
-                        while chunk := handle.read(CHUNK):
-                            digest.update(chunk)
-                            out.write(chunk)
-            for piece in pieces:
-                piece.unlink(missing_ok=True)
-            if joined.stat().st_size == size and digest.hexdigest() == sha:
-                os.replace(joined, path)
-                return
-            # Dañado o de otra versión: fuera, y una vez más desde cero.
-            joined.unlink(missing_ok=True)
-            self._add_done(-size)
-            if attempt == 1:
-                break
-        raise PackError("bad-part", path.name)
-
-    def _fetch_range(self, client: httpx.Client, url: str, piece: Path, start: int,
-                     end: int) -> None:
-        """Los bytes `[start, end)` de `url` en `piece`, siguiendo por lo que ya tenga."""
-        length = end - start
-        have = piece.stat().st_size if piece.exists() else 0
-        if have > length:
-            piece.unlink()
-            have = 0
-        self._add_done(have)
-        if have == length:
-            return
-        try:
-            with client.stream("GET", url, headers={"Range": f"bytes={start + have}-{end - 1}"},
-                               timeout=DOWNLOAD_TIMEOUT) as response:
-                if response.status_code == 404:
-                    raise PackError("not-published", piece.name)
-                if response.status_code != 206:
-                    # Sin `Range` no se puede partir: un tramo no puede recibir el trozo entero.
-                    raise PackError("network", f"HTTP {response.status_code} sin Range")
-                with piece.open("ab") as handle:
-                    for chunk in response.iter_bytes(CHUNK):
-                        self._raise_if_cancelled()
-                        take = chunk[: length - have]
-                        handle.write(take)
-                        have += len(take)
-                        self._add_done(len(take))
-                        if have >= length:
-                            break
-        except egress.EgressBlocked as exc:
-            raise PackError("blocked", exc.reason) from exc
-        except httpx.HTTPError as exc:
-            raise PackError("network", str(exc)) from exc
-        if have != length:
-            raise PackError("network", f"{piece.name}: {have}/{length}")
 
     def _fetch_file(self, client: httpx.Client, url: str, path: Path, size: int, sha: str,
                     *, count: bool = True) -> None:

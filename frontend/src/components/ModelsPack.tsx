@@ -36,6 +36,9 @@ interface Job {
   component_label?: string;
   done_bytes?: number;
   total_bytes?: number;
+  /** Conexiones abiertas ahora y bytes por segundo medidos (`app/models_fetch.py`). */
+  connections?: number;
+  rate?: number;
   message?: string;
 }
 
@@ -179,6 +182,9 @@ export function ModelsPack() {
               {job.component_label ?? ""}{" "}
               <span className="secondary">
                 {gigabytes(job.done_bytes ?? 0)} / {gigabytes(job.total_bytes ?? 0)}
+                {job.rate !== undefined && job.rate > 0 && ` · ${formatNumber(job.rate / 1e6, 1)} MB/s`}
+                {job.connections !== undefined &&
+                  ` · ${formatNumber(job.connections)} ${tr("conexiones", "connections")}`}
               </span>{" "}
               <button type="button" className="command" onClick={() => void run("/cancel", {})}>
                 {tr("Cancelar", "Cancel")}
