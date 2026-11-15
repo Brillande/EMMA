@@ -1,0 +1,26 @@
+{
+  "target": "app/polaris/compat/resource.py",
+  "test": ["tests/test_polaris_windows_reds.py"],
+  "mutations": [
+    {
+      "label": "resource existe también para EMMA y sus bibliotecas",
+      "old": "if not _is_polaris_test(getattr(sys.modules.get(\"__main__\"), \"__file__\", None)):",
+      "new": "if False:"
+    },
+    {
+      "label": "vale cualquier test_*.py, no solo los de la copia de Polaris",
+      "old": "        and os.path.basename(os.path.dirname(folder)) == \"polaris\"",
+      "new": "        and True"
+    },
+    {
+      "label": "vale cualquier fichero de polaris/tests, aunque no sea una prueba",
+      "old": "        os.path.basename(path).startswith(\"test_\")",
+      "new": "        True"
+    },
+    {
+      "label": "se da la memoria de ahora, no el pico",
+      "old": "    return struct_rusage(int(counters.PeakWorkingSetSize))",
+      "new": "    return struct_rusage(int(counters.WorkingSetSize))"
+    }
+  ]
+}

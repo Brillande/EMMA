@@ -1,0 +1,109 @@
+{
+ "target": "app/core/resources.py",
+ "test": [
+  "tests/test_resources.py", "-k",
+  "breaks_its_contract or two_states or latest_signed or undeclared_is_never or says_what_is_missing or only_adds_a_field or gives_only_what or does_not_get_what or carries_no_quantities"
+ ],
+ "mutations": [
+  {
+   "label": "un recurso sin declarar se da por disponible",
+   "old": "    state = held[\"state\"] if held is not None else UNDECLARED\n",
+   "new": "    state = held[\"state\"] if held is not None else AVAILABLE\n"
+  },
+  {
+   "label": "«sin declarar» se puede firmar",
+   "old": "DECLARABLE = (AVAILABLE, UNAVAILABLE)",
+   "new": "DECLARABLE = (AVAILABLE, UNAVAILABLE, UNDECLARED)"
+  },
+  {
+   "label": "se declara un recurso que no esta en el vocabulario",
+   "old": "    if resource not in vocabulary():\n        raise ValueError(",
+   "new": "    if False:\n        raise ValueError("
+  },
+  {
+   "label": "se declara un estado que no existe",
+   "old": "    if state not in DECLARABLE:",
+   "new": "    if False:"
+  },
+  {
+   "label": "vale la primera declaracion firmada, no la ultima",
+   "old": "    return {item[\"resource\"]: item for item in history(declarations)}",
+   "new": "    return {item[\"resource\"]: item for item in history(declarations)[::-1]}"
+  },
+  {
+   "label": "manda el orden en que llegan las declaraciones, no el de la firma",
+   "old": "    for item in sorted(declarations, key=lambda entry: entry[\"ledger_index\"]):",
+   "new": "    for item in declarations:"
+  },
+  {
+   "label": "un recurso declarado no disponible no se dice junto a la contramedida",
+   "old": "    unavailable = [item[\"description\"] for item in items if item[\"state\"] == UNAVAILABLE]",
+   "new": "    unavailable = [item[\"description\"] for item in items if False]"
+  },
+  {
+   "label": "con recursos sin declarar se dice que constan todos disponibles",
+   "old": "    elif undeclared:\n        state = SOME_UNDECLARED",
+   "new": "    elif False:\n        state = SOME_UNDECLARED"
+  },
+  {
+   "label": "la advertencia de que sin declarar no es disponible no viaja con el bloque",
+   "old": "            None if state in (NONE_REQUIRED, ALL_AVAILABLE)",
+   "new": "            None if True"
+  },
+  {
+   "label": "una recomendacion a la que le falta un recurso se retira",
+   "old": "        annotated.append({\n            **item,\n            \"resource_status\"",
+   "new": "        if measure and describe(measure, declarations)[\"unavailable\"]:\n            continue\n        annotated.append({\n            **item,\n            \"resource_status\""
+  },
+  {
+   "label": "una recomendacion a la que le falta un recurso pierde urgencia",
+   "old": "            \"resource_status\": describe(measure, declarations) if measure else None,\n        })",
+   "new": "            \"resource_status\": describe(measure, declarations) if measure else None,\n        })\n        if annotated[-1][\"resource_status\"] and annotated[-1][\"resource_status\"][\"unavailable\"]:\n            annotated[-1][\"urgency\"] = \"routine\""
+  },
+  {
+   "label": "Tierra ve una declaracion que vale desde despues de su corte",
+   "old": "        item for item in declarations if dt.datetime.fromisoformat(item[\"since\"]) <= until",
+   "new": "        item for item in declarations if True"
+  },
+  {
+   "label": "el contexto de mision lista como disponible lo que nadie declaro",
+   "old": "        \"available\": [row[\"key\"] for row in declared if row[\"state\"] == AVAILABLE],",
+   "new": "        \"available\": [key for key in vocabulary() if key not in [row[\"key\"] for row in declared if row[\"state\"] == UNAVAILABLE]],"
+  },
+  {
+   "label": "lo declarado se presenta como un inventario",
+   "old": "DECLARED_LABEL = \"declarado por una persona; EMMA no lleva inventario\"",
+   "new": "DECLARED_LABEL = \"inventario de a bordo\""
+  },
+  {
+   "label": "un vocabulario vacio carga",
+   "old": "    if not isinstance(raw, list) or not raw:",
+   "new": "    if not isinstance(raw, list):"
+  },
+  {
+   "label": "una entrada del vocabulario lleva campos de mas (una cantidad)",
+   "old": "        if not isinstance(item, dict) or set(item) != {\"key\", \"name\"}:",
+   "new": "        if not isinstance(item, dict) or not {\"key\", \"name\"} <= set(item):"
+  },
+  {
+   "label": "una clave que no es una clave carga",
+   "old": "        if not isinstance(key, str) or not _KEY.fullmatch(key):",
+   "new": "        if not isinstance(key, str):"
+  },
+  {
+   "label": "un nombre en blanco carga",
+   "old": "        if not isinstance(name, str) or not name.strip() or name != name.strip():",
+   "new": "        if not isinstance(name, str):"
+  },
+  {
+   "label": "dos recursos con la misma clave",
+   "old": "        if key in found:",
+   "new": "        if False:"
+  },
+  {
+   "label": "dos recursos con el mismo nombre",
+   "old": "        if name.casefold() in names:",
+   "new": "        if False:"
+  }
+ ]
+}

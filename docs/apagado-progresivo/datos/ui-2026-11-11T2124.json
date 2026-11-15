@@ -1,0 +1,116 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T21:24:18.751Z",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "nota": "Portátil de desarrollo. GPU dedicada en W (nvidia-smi); CPU en % de un núcleo; pantalla y GPU integrada sin medir."
+ },
+ "fases": [
+  {
+   "fase": "chrome_en_blanco",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 1.7,
+   "pagina_tareas_pct": 0,
+   "backend_cpu_pct_nucleo": 0.1,
+   "gpu_w_media": 3.5,
+   "gpu_uso_pct": 2,
+   "muestras_gpu": 57,
+   "estado": ""
+  },
+  {
+   "fase": "inicio_quieta",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 0.8,
+   "pagina_tareas_pct": 0.1,
+   "backend_cpu_pct_nucleo": 4.2,
+   "gpu_w_media": 3.2,
+   "gpu_uso_pct": 1,
+   "muestras_gpu": 57,
+   "estado": ""
+  },
+  {
+   "fase": "vosk_primer_arranque",
+   "s_hasta_escuchar": 131.576,
+   "chrome_cpu_s": 15.9
+  },
+  {
+   "fase": "escuchar_emma_encendido",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 10.7,
+   "pagina_tareas_pct": 0.3,
+   "backend_cpu_pct_nucleo": 4.5,
+   "gpu_w_media": 3.4,
+   "gpu_uso_pct": 1,
+   "muestras_gpu": 57,
+   "microfono": "falso de Chrome",
+   "estado": "Di «EMMA» y lo que quieras; «EMMA, deja de escuchar» lo apaga"
+  },
+  {
+   "fase": "seguir_cara_encendido",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 10.8,
+   "pagina_tareas_pct": 3.8,
+   "backend_cpu_pct_nucleo": 4.3,
+   "gpu_w_media": 3.7,
+   "gpu_uso_pct": 4,
+   "muestras_gpu": 57,
+   "camara": "falsa de Chrome, sin cara",
+   "estado": "No se ve ninguna cara: la vista se queda como está"
+  },
+  {
+   "fase": "dolor_cuerpo3d_quieto",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 0.6,
+   "pagina_tareas_pct": 0.1,
+   "backend_cpu_pct_nucleo": 4.3,
+   "gpu_w_media": 3.2,
+   "gpu_uso_pct": 1,
+   "muestras_gpu": 57,
+   "estado": ""
+  },
+  {
+   "fase": "dolor_cuerpo3d_girando",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 9.7,
+   "pagina_tareas_pct": 1.4,
+   "backend_cpu_pct_nucleo": 4.5,
+   "gpu_w_media": 3.4,
+   "gpu_uso_pct": 3,
+   "muestras_gpu": 57,
+   "arrastre": "30 Hz, sintético",
+   "estado": ""
+  },
+  {
+   "fase": "ecografia_quieta",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 0.4,
+   "pagina_tareas_pct": 0.1,
+   "backend_cpu_pct_nucleo": 3.9,
+   "gpu_w_media": 3.1,
+   "gpu_uso_pct": 1,
+   "muestras_gpu": 57,
+   "estado": ""
+  },
+  {
+   "fase": "ecografia_cine_10fps",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 6.4,
+   "pagina_tareas_pct": 2.1,
+   "backend_cpu_pct_nucleo": 4.3,
+   "gpu_w_media": 3.5,
+   "gpu_uso_pct": 5,
+   "muestras_gpu": 57,
+   "estado": ""
+  },
+  {
+   "fase": "inicio_ventana_minimizada",
+   "s": 30,
+   "chrome_cpu_pct_nucleo": 0.5,
+   "pagina_tareas_pct": 0.2,
+   "backend_cpu_pct_nucleo": 4.5,
+   "gpu_w_media": 3.2,
+   "gpu_uso_pct": 1,
+   "muestras_gpu": 56,
+   "estado": ""
+  }
+ ]
+}

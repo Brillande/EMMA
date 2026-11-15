@@ -1,0 +1,9 @@
+{"target": "app/core/storage.py", "test": ["tests/test_observation_provenance.py"],
+ "mutations": [
+  {"label": "el ledger no guarda si el valor es inferido",
+   "old": "        \"observation_type\": observation.observation_type.value,\n",
+   "new": ""},
+  {"label": "un asiento con entorno declarado se relee deducido de la fuente",
+   "old": "            EvidenceContext(payload[\"evidence_context\"])\n            if \"evidence_context\" in payload\n            else None",
+   "new": "None"}
+ ]}

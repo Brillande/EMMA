@@ -1,0 +1,92 @@
+{
+  "target": "app/core/link_sync.py",
+  "test": [
+    "tests/test_link_sync.py"
+  ],
+  "mutations": [
+    {
+      "label": "un restablecimiento que aún viaja ya cuenta como llegado",
+      "target": "app/core/link_sync.py",
+      "old": "        if span[\"start\"] <= light_cut and (span[\"end\"] is None or span[\"end\"] > light_cut):",
+      "new": "        if span[\"start\"] <= light_cut and (span[\"end\"] is None or span[\"end\"] >= light_cut):"
+    },
+    {
+      "label": "el corte de Tierra ignora el enlace caído",
+      "target": "app/core/link_sync.py",
+      "old": "    return start if light_cut is None else min(light_cut, start)",
+      "new": "    return light_cut"
+    },
+    {
+      "label": "sin efemérides, un corte ya cerrado sigue reteniendo",
+      "target": "app/core/link_sync.py",
+      "old": "            if span[\"end\"] is None:\n                return span",
+      "new": "            if True:\n                return span"
+    },
+    {
+      "label": "lo firmado en el instante de la caída cuenta como pendiente",
+      "target": "app/core/link_sync.py",
+      "old": "                and dt.datetime.fromisoformat(item[\"instant\"]) > after",
+      "new": "                and dt.datetime.fromisoformat(item[\"instant\"]) >= after"
+    },
+    {
+      "label": "lo que firma Tierra cuenta como pendiente de bajar",
+      "target": "app/core/link_sync.py",
+      "old": "                if item[\"signer\"] != GROUND_SIGNER",
+      "new": "                if True"
+    },
+    {
+      "label": "la cola se ordena por firma y no por instante",
+      "target": "app/core/link_sync.py",
+      "old": "            key=lambda item: (dt.datetime.fromisoformat(item[\"instant\"]), item[\"index\"]),",
+      "new": "            key=lambda item: item[\"index\"],"
+    },
+    {
+      "label": "se puede repetir el estado vigente",
+      "target": "app/core/link_sync.py",
+      "old": "    if state == current_state(changes):",
+      "new": "    if False:"
+    },
+    {
+      "label": "un cambio puede ir hacia atrás y desordenar los tramos",
+      "target": "app/core/link_sync.py",
+      "old": "    if changes and at < _at(changes[-1]):",
+      "new": "    if False:"
+    },
+    {
+      "label": "cuenta un cambio firmado por otra identidad",
+      "target": "app/core/link_sync.py",
+      "old": "        (item for item in entries if item.get(\"signer\") == CONSOLE_IDENTITY),",
+      "new": "        (item for item in entries),"
+    },
+    {
+      "label": "lo pendiente de enviar se cuenta desde el corte de Tierra",
+      "target": "app/core/link_sync.py",
+      "old": "    to_send = backlog(instants, open_span[\"start\"] if open_span is not None else None)",
+      "new": "    to_send = backlog(instants, cut)"
+    },
+    {
+      "label": "el almacén firma sin mirar las reglas",
+      "target": "app/core/storage.py",
+      "old": "            link_rules.check_change(\n                link_rules.transitions(self.simulated_link_entries()), state, at, declared_by\n            )",
+      "new": "            pass"
+    },
+    {
+      "label": "un cambio mal formado entra en la cuenta",
+      "target": "app/core/storage.py",
+      "old": "            if item[\"state\"] not in link_rules.STATES or moment.tzinfo is None:",
+      "new": "            if False:"
+    },
+    {
+      "label": "una lectura se fecha con su firma y no con su hora",
+      "target": "app/core/storage.py",
+      "old": "            if entry.entry_type in _EFFECTIVE_ENTRY_TYPES and isinstance(payload, dict):",
+      "new": "            if False:"
+    },
+    {
+      "label": "la ruta no aplica el corte por tiempo de luz",
+      "target": "app/api/link_sync.py",
+      "old": "    return _view(store, light_cut)",
+      "new": "    return _view(store, None)"
+    }
+  ]
+}

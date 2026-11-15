@@ -1,0 +1,113 @@
+{
+  "target": "app/countersign_rule.py",
+  "test": [
+    "tests/test_countersign_strict.py"
+  ],
+  "mutations": [
+    {
+      "label": "una contrafirma que no cita nada no es motivo de rechazo",
+      "old": "    if not quote:\n        return f\"{_REFUSED}no cita ninguna fuente. {MUST_CITE}{_NO_ENTRY}\"",
+      "new": "    if not quote:\n        return None"
+    },
+    {
+      "label": "una fuente que no es un informe guardado no es motivo de rechazo",
+      "old": "    if quote.get(\"estado\") == NOT_APPLICABLE:\n        return (",
+      "new": "    if quote.get(\"estado\") == NOT_APPLICABLE:\n        return None\n        return ("
+    },
+    {
+      "label": "el rechazo sin fuente dice que se citó otra cosa",
+      "old": "return f\"{_REFUSED}no cita ninguna fuente. {MUST_CITE}{_NO_ENTRY}\"",
+      "new": "return f\"{_REFUSED}la fuente citada no es un informe guardado. {MUST_CITE}{_NO_ENTRY}\""
+    },
+    {
+      "label": "el rechazo de una fuente que no es un informe no dice qué hace falta",
+      "old": "            f\"{MUST_CITE}{_NO_ENTRY}\"\n        )",
+      "new": "            f\"{_NO_ENTRY}\"\n        )"
+    },
+    {
+      "label": "una cita no localizada no es motivo de rechazo",
+      "old": "    if quote.get(\"estado\") != LOCATED:\n        detail",
+      "new": "    if False:\n        detail"
+    },
+    {
+      "label": "no declarar la frase vista no es motivo de rechazo",
+      "old": "    if seen is None:",
+      "new": "    if False:"
+    },
+    {
+      "label": "la lectura previa dice que se podrá contrafirmar una cita no localizada",
+      "old": "\"allowed\": reason is None,",
+      "new": "\"allowed\": True,"
+    },
+    {
+      "label": "la lectura previa trata una fuente no cotejable como una cita de informe",
+      "old": "    collatable = bool(quote) and dict(quote or {}).get(\"estado\") != NOT_APPLICABLE",
+      "new": "    collatable = bool(quote)"
+    },
+    {
+      "label": "los textos de la regla no dicen que hay que citar un informe",
+      "old": "        \"must_cite\": MUST_CITE,",
+      "new": "        \"must_cite\": \"\","
+    },
+    {
+      "label": "se rotula como de la regla anterior lo que la regla de hoy admite",
+      "old": "    if state == LOCATED and quote.get(\"vista\") is True:\n        return None",
+      "new": "    if False:\n        return None"
+    },
+    {
+      "label": "una contrafirma antigua sin la frase vista no se rotula",
+      "old": "    if state == LOCATED and quote.get(\"vista\") is True:\n        return None",
+      "new": "    if state == LOCATED:\n        return None"
+    },
+    {
+      "label": "una contrafirma antigua sin frase guardada no se rotula",
+      "old": "    if not quote:\n        since = CITE_RULE_DATE",
+      "new": "    if not quote:\n        return None"
+    },
+    {
+      "label": "una contrafirma antigua sin fuente se rotula como una con fuente sin frase guardada",
+      "old": "fuente que cita\" if cited",
+      "new": "fuente que cita\" if True"
+    },
+    {
+      "label": "una contrafirma antigua con una fuente que no es un informe se rotula como no localizada",
+      "old": "    elif state == NOT_APPLICABLE:\n        since",
+      "new": "    elif False:\n        since"
+    },
+    {
+      "label": "una contrafirma antigua sin informe se rotula con la fecha que no le toca",
+      "old": "        since, what = CITE_RULE_DATE, \"citando",
+      "new": "        since, what = RULE_DATE, \"citando"
+    },
+    {
+      "label": "una contrafirma antigua con la cita no localizada no se rotula como tal",
+      "old": "    elif state != LOCATED:\n        since",
+      "new": "    elif False:\n        since"
+    },
+    {
+      "label": "una contrafirma sin la frase declarada vista se dice cotejada",
+      "old": "    if state == LOCATED and quote.get(\"vista\") is True:\n        return {\"collated\": True",
+      "new": "    if state == LOCATED:\n        return {\"collated\": True"
+    },
+    {
+      "label": "toda contrafirma se dice cotejada",
+      "old": "    if state == LOCATED and quote.get(\"vista\") is True:\n        return {\"collated\": True",
+      "new": "    if True:\n        return {\"collated\": True"
+    },
+    {
+      "label": "una fuente no cotejable no dice por qué",
+      "old": "        why = str(quote.get(\"detalle\") or \"\").strip() or NOT_COLLATABLE_DETAIL",
+      "new": "        why = NOT_DECLARED_DETAIL"
+    },
+    {
+      "label": "una contrafirma sin fuente se confunde con una de fuente no guardada",
+      "old": "        why = NO_QUOTE_STORED_DETAIL if source else NO_SOURCE_DETAIL",
+      "new": "        why = NO_QUOTE_STORED_DETAIL"
+    },
+    {
+      "label": "una cita no localizada se dice no declarada",
+      "old": "    elif state != LOCATED:\n        why",
+      "new": "    elif False:\n        why"
+    }
+  ]
+}

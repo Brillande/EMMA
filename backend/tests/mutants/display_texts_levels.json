@@ -1,0 +1,9 @@
+{"target": "app/analysis/risk.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "CONCERN vuelve a llamarse preocupacion",
+   "old": "    RiskLevel.CONCERN: \"precaución\",",
+   "new": "    RiskLevel.CONCERN: \"preocupación\","},
+  {"label": "la insignia pierde la mayuscula inicial",
+   "old": "        return self.display.capitalize()",
+   "new": "        return self.display"}
+ ]}

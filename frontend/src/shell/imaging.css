@@ -1,0 +1,507 @@
+/*
+ * «Imagen e informes» bajo la concha de la maqueta: ecografía (`.studies`, `.study-viewer`, `.frame`),
+ * informes escaneados (`.report`, `.report-page`, `.report-text`) y volúmenes (`.density-notes`). Solo
+ * bajo `.app[data-look="reference"]`.
+ *
+ * Lo que se vio (capturas del 2026-11-07, `crew-08-imaging` con la concha nueva, 1672 × 941; el
+ * escenario compartido no tiene estudios, informes ni volúmenes, así que los estados llenos se
+ * miraron con marcado de muestra inyectado en la página, con las clases de los `.tsx`): los tres
+ * paneles ya eran tarjetas de la maqueta y el mobiliario común (`furniture.css`) ya vestía los
+ * formularios, los mandos, los plegables y la cabecera de cada tabla; pero por dentro seguía la
+ * consola clásica. Los estudios eran una hilera de píldoras de ancho desigual; el estudio elegido
+ * se desplegaba a pelo sobre el panel —la imagen con un filete gris, el cine suelto, «Calidad y
+ * signos» y «Borrador de interpretación» como títulos colgados de una raya, cada anotación y cada
+ * borrador en la caja gris realzada del clásico y la tabla de medidas flotando al final—; un
+ * informe abierto dejaba caer sus páginas, su original y sus cifras debajo de la fila del plegable
+ * sin nada que dijera dónde acaba; en volúmenes, el rechazo de la puerta de datos, la cabecera
+ * limpiada, el control de la cadena vertebral, el visor, la fase de contraste y las densidades
+ * iban uno tras otro sin marco, con las listas con viñeta del navegador; y los mandos «Registrar
+ * informe», «Registrar volumen» y «Declarar fase», hijos directos de una rejilla, se estiraban al
+ * ancho entero del formulario. Aquí cada pieza toma la forma que la maqueta da a la suya: la lista
+ * de estudios, la lista de rutas (`.ref-route-list`: una fila por estudio, alineada a la
+ * izquierda, en baldosas de igual ancho porque el panel es ancho); el estudio elegido, el marco de
+ * «Rutas» (`.ref-frame`) y dentro cada sección su tarjeta (`.ref-card`) con el título sobre su
+ * filete (`.ref-h3`); las anotaciones, los borradores, el texto leído y las tablas sueltas, el
+ * marco de la tira de datos (`.ref-stats`); el informe abierto, una tarjeta cuyo título es la fila
+ * del plegable; y en volúmenes, cada bloque su tarjeta y las listas, filas con filete
+ * (`.ref-next li`).
+ *
+ * Lo que no se toca: la imagen médica y sus medidas. La ecografía va sin filtro ni mezcla, en un
+ * marco cuadrado: el calibre es un SVG que cubre el marco de lado a lado (`inset: 0`) y convierte el
+ * clic con el rectángulo del SVG, así que un relleno movería la medida y un radio con recorte
+ * taparía esquinas de la imagen; por lo mismo, el original escaneado y los lienzos del visor
+ * llevan el filete alrededor y nunca encima, y la página del visor de Polaris (`iframe`) no se
+ * restyla por dentro. Tampoco el color con significado (tabla F.5-1): el amarillo con triángulo del
+ * texto quemado, de la lectura poco fiable, del borrador sin validar y de la calidad no cumplida;
+ * el cian del estudio sin calibrar y de la densidad ausente; el gris de lo no disponible; el
+ * magenta de la instrucción de medida (la propone la automatización) y el verde de las marcas de
+ * calibre (F.5-2). Los marcos van alrededor de la pieza y nunca detrás de una insignia. Ningún
+ * mando ni entrada cambia de alto táctil; el acento de la casilla y del deslizador del cine pasa
+ * del verde del mando clásico al verde azulado de la maqueta, como el filete de los mandos en el
+ * mobiliario: es signo de mando, no color con significado.
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha va en
+ * `:where()`, que no cuenta, y cada regla se acota a su panel (`.panel[data-ui="…"]`) porque
+ * `.studies`, `.quality-table`, `.silence-form` y los plegables aparecen en otras secciones con otra
+ * dueña. Donde la pieza ya tenía borde (`.frame`, `.draft`, `.draft-quote`, `.view-signs`) no se usa
+ * el atajo `border`, solo `border-color`; los marcos nuevos nacen aquí con él y, al final, se
+ * engrosan a 2 px en baja visión y alto contraste, como hace `styles.css` con el panel. Tres
+ * patrones, escritos una vez cada uno con la lista de sus dueños: «tarjeta» (borde `--ref-edge`,
+ * 9 px, degradado y resplandor), «marco» (filete atenuado, 8 px, azul marino) y «filas con filete».
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): la pestaña `crew-imaging` ---- */
+
+/* Lote «muestra» (2026-11-08, Ellande: «está muy lejos todavía de la muestra»; una pantalla por
+   sección). Lo que se vio en la vista de 1672 × 941: la ecografía ocupaba las doce columnas y su
+   formulario de subir, con la nota de la hora, la llenaba; informes y volúmenes empezaban en la
+   mitad de abajo y sus formularios quedaban cortados por el borde. Ahora los formularios de subir
+   de ecografía e informes van tras «Ver detalle» (`BoardDetail`, en sus `.tsx`), y el reparto es
+   ecografía (ocho columnas: su aviso cabe en dos renglones y sus fantomas en una fila) e informes
+   (cuatro: plegados, son tres renglones) lado a lado, y volúmenes debajo a lo ancho, donde su
+   formulario (que no es de esta hoja quitarlo: `volumes/*` no se toca) cabe en una sola fila, con
+   el mando al final de ella.
+   Con un estudio de ecografía abierto, su visor (imagen cuadrada, cine, medidas, calidad y
+   borrador) necesita las doce columnas: la ecografía pasa a todo el ancho y debajo van informes y
+   volúmenes a media anchura. En el cuerpo intermedio (1300 px de ventana), uno bajo otro. */
+:where(.app[data-look="reference"] #crew-panel-imaging) > .slot:has(> .slot-body > [data-ui="ultrasound"]) {
+  --span: 8;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-imaging) > .slot:has(> .slot-body > [data-ui="reports"]) {
+  --span: 4;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-imaging:has([data-ui="ultrasound"] .study-viewer))
+  > .slot:has(> .slot-body > [data-ui="ultrasound"]) {
+  --span: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-imaging:has([data-ui="ultrasound"] .study-viewer))
+  > .slot:has(> .slot-body > :is([data-ui="reports"], [data-ui="volumes"])) {
+  --span: 6;
+  --span-mid: 12;
+}
+
+/* ---- Fantomas, ecografías reales y TAC de ejemplo: fichas con su dibujo grande ---- */
+
+/* En la muestra, lo que se elige es un mosaico de color con el dibujo grande encima de la palabra
+   («Variables RIDGE – Acceso rápido»), no un mando de texto en fila. Aquí, los grupos de ejemplos
+   (`role="group"`, hijos directos del panel: el del lado y el de las medidas del visor van dentro de
+   `.study-viewer` y no cambian): el rótulo del grupo («Fantoma simulado:», «Ecografía real de
+   ejemplo:», «TAC real de ejemplo:») va delante de sus fichas, y cada ficha lleva el pictograma
+   del protocolo a 1,8 rem sobre su nombre, con el velo del acento de la sección (adorno, no estado).
+   Siguen siendo los mismos `button.command`, con su alto táctil y su texto; un mando deshabilitado
+   vuelve al gris del mobiliario (por eso el velo va con `:not(:disabled)`). */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] {
+  display: grid;
+  grid-template-columns: 6.5rem repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+  align-items: stretch;
+  gap: 0 0.45rem;
+  margin: 0.55rem 0;
+}
+
+/* El rótulo del grupo, a la izquierda de sus fichas (en su propia fila costaba un renglón por
+   grupo); lo demás que no es ficha (el motivo de un fallo, `ReasonLine`) va debajo, a lo ancho. El
+   rótulo ocupa su columna en varias filas: si las fichas no caben en una, la segunda no empieza en
+   la columna estrecha del rótulo. Las filas que sobran no miden nada (sin hueco entre filas: el
+   aire entre fichas lo pone su margen). */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > span.secondary:first-child {
+  grid-row: span 4;
+  align-self: center;
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > :not(button, span.secondary:first-child) {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 0;
+  min-height: 4.6rem;
+  margin: 0.22rem 0;
+  padding: 0.45rem 0.5rem;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Mosaicos llenos de color (R4-4, 2026-11-08: «todavía se puede asemejar más»). El velo de antes
+   (30 % que se apagaba al 8 %) dejaba las fichas casi del color del panel; en la muestra el mosaico
+   va lleno. Ahora la receta de `.tile-acc` (`board.css`) con el final más lleno: el acento al 30 %
+   sobre `--ref-navy`, que solo baja al 24 % (`.tile-acc` baja al 14 %), el filete del acento
+   aclarado y su brillo por dentro. Son mandos que cargan un ejemplo, no un nivel ni una marca. El
+   texto, en `--c-text`; el peor punto es el arranque del degradado: 7,3:1 sobre el 30 % del acento
+   de la sección (magenta y cian) con la paleta base. Al pasar el puntero el velo sube al 34 % (6,6:1);
+   antes subía al 42 % sobre `--c-surface`, y ahí el texto quedaba por debajo de 6:1. El acento con
+   respaldo (`--ref-teal`, como `.tile-acc`): sin almacén, `EmptyStore` pinta estos paneles fuera de
+   toda sección, donde `--sec-acc` no existe y la mezcla dejaría el mando sin fondo. Si se cambian
+   los porcentajes, se vuelve a medir. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command:not(:disabled) {
+  --tile-fill: var(--sec-acc, var(--ref-teal));
+  border-color: color-mix(in srgb, var(--tile-fill) 80%, var(--c-text));
+  color: var(--c-text);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tile-fill) 30%, var(--ref-navy)), color-mix(in srgb, var(--tile-fill) 24%, var(--ref-navy)));
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--tile-fill) 30%, transparent),
+    0 0 10px color-mix(in srgb, var(--tile-fill) 30%, transparent);
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command:not(:disabled):hover {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tile-fill) 34%, var(--ref-navy)), color-mix(in srgb, var(--tile-fill) 28%, var(--ref-navy)));
+  box-shadow:
+    inset 0 0 16px color-mix(in srgb, var(--tile-fill) 38%, transparent),
+    0 0 14px color-mix(in srgb, var(--tile-fill) 38%, transparent);
+}
+
+/* Alto contraste: sin velo ni brillo; vuelve el fondo de todo mando (`--c-command`) y queda el filete. */
+.app[data-look="reference"][data-high-contrast="on"] :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command:not(:disabled) {
+  background: var(--c-command);
+  box-shadow: none;
+}
+
+/* El dibujo encima y la palabra debajo: en la ecografía van dentro de la marca (`Mark`); en los TAC,
+   el dibujo es hijo directo del mando (`Command`). */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] > .measure-actions[role="group"] > button.command > .mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command > .pictogram,
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command > .mark > .pictogram {
+  width: 1.8rem;
+  height: 1.8rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command:not(:disabled) > .pictogram,
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) > .measure-actions[role="group"] > button.command:not(:disabled) > .mark > .pictogram {
+  color: color-mix(in srgb, var(--sec-acc) 70%, var(--c-text));
+}
+
+/* Volúmenes a lo ancho: el mando «Registrar volumen» al final de la fila de sus campos, no en un
+   renglón suyo debajo (la regla común de `board.css` lo manda a lo ancho; aquí sobraba ese renglón).
+   El identificador de la sección da el peso para ganarle sin `!important`. */
+#crew-panel-imaging:where(.app[data-look="reference"] *) > .slot .panel[data-ui="volumes"] > .silence-form > button.command {
+  grid-column: auto;
+  align-self: end;
+}
+
+/* Volúmenes a lo ancho: la frase de TAC/RM y la nota de la segmentación no se alargan de lado a lado. */
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] > p {
+  max-width: 62rem;
+}
+
+/* ---- Las piezas del tablero: la cifra y las píldoras de cada panel ---- */
+
+/* La ficha de la cifra y, a su lado, las píldoras del reparto; si no caben, debajo. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"] .ultrasound-board, .panel[data-ui="reports"] .reports-board) {
+  align-items: flex-start;
+  margin: 0.3rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .ultrasound-board > .stat-tile {
+  min-width: 7rem;
+  padding: 0.5rem 0.7rem 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .reports-board > .board-stats {
+  grid-template-columns: repeat(2, minmax(6.5rem, auto));
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .reports-board .stat-tile {
+  padding: 0.5rem 0.7rem 0.6rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"] .ultrasound-board, .panel[data-ui="reports"] .reports-board) > .board-tally {
+  flex: 1 1 14rem;
+  align-self: center;
+  margin: 0;
+}
+
+/* ---- Estudios y volúmenes: la lista de rutas, en baldosas de igual ancho ---- */
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) .studies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: 0.5rem;
+  margin: 0.6rem 0;
+}
+
+/* Cada fila llena su baldosa, también en alto: con un rótulo que pasa a dos líneas al lado de otro
+   de una, la hilera quedaba dentada. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) .studies > li {
+  display: grid;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ultrasound"], .panel[data-ui="volumes"]) .studies > li > button.command {
+  width: 100%;
+  text-align: left;
+}
+
+/* ---- Ecografía: el estudio elegido, en el marco de «Rutas»; dentro, cada sección su tarjeta ---- */
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .study-viewer {
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem 0.8rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* La imagen, cuadrada y sin relleno (ver la cabecera): solo el color del filete y un halo por fuera. */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .frame {
+  border-color: var(--ref-edge);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* El cine (reproducir, fotograma, contador): una barra de mandos con marco; el deslizador conserva
+   su forma del navegador. */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .cine {
+  gap: 0.75rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .cine input[type="range"] {
+  accent-color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .silence-form input[type="checkbox"] {
+  accent-color: var(--ref-teal);
+}
+
+/* «Calidad y signos» y «Borrador de interpretación» (`.draft-panel`): tarjetas con su título sobre
+   un filete, en vez de un título colgado de una raya. El borde nace entero (antes solo había el de
+   arriba). */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .draft-panel {
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .draft-panel > h3 {
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1.05rem;
+}
+
+/* ---- Marco: la tira de datos de la maqueta para lo que iba en la caja gris o suelto ---- */
+
+/* Cada anotación y cada borrador (`.draft`), la lista de signos por vista (`.view-signs`), el texto
+   leído del informe (`.report-text`), y la tabla de medidas que queda directamente en el marco del
+   estudio. `.draft` y `.view-signs` ya tenían borde: aquí solo su color; el texto leído y la tabla lo
+   estrenan. */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] :is(.draft, .view-signs) {
+  border-color: color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .study-viewer > .quality-table,
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .report-text {
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+/* Un poco de aire alrededor de la tabla: el mobiliario redondea las esquinas de su cabecera y,
+   pegada al marco, quedaba una cuña entre las dos curvas. */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .study-viewer > .quality-table {
+  padding: 0.3rem 0.45rem;
+}
+
+/* La frase citada del informe, colgada de un filete del color de la maqueta. */
+:where(.app[data-look="reference"]) .panel[data-ui="ultrasound"] .draft-quote {
+  border-left-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* ---- Informes: el plegable abierto es una tarjeta y su fila, el título ---- */
+
+/* Cerrado, el informe (y la identidad para cotejar) es la fila de acceso del mobiliario; abierto, la
+   fila pasa a ser el título de la tarjeta que guarda sus páginas, el original y las cifras leídas,
+   y la punta de flecha del mobiliario sigue en su sitio para cerrarla. */
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] details.report[open] {
+  margin: 0.4rem 0;
+  padding: 0.3rem 0.75rem 0.75rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] details.report[open] > summary {
+  margin: 0 0 0.6rem;
+  padding-left: 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  border-radius: 0;
+  background: none;
+  color: var(--c-text);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] details.report[open] > summary:hover {
+  background: none;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] details.report[open] > summary::after {
+  right: 0.3rem;
+}
+
+/* El original y su texto, lado a lado como antes, con más aire; el original lleva el filete alrededor
+   (cuadrado: un radio recortaría la página) y el texto, su marco. */
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .report-page {
+  gap: 1rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .report-page img {
+  display: block;
+  border: 1px solid var(--ref-edge);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .report-text {
+  margin: 0.5rem 0 0;
+  padding: 0.6rem 0.8rem;
+}
+
+/* «Cifras leídas»: su propia tarjeta dentro del informe, con el título sobre su filete. */
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .lab-readings {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .lab-readings > h3 {
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1.05rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="reports"] .lab-readings > .quality-table {
+  margin: 0;
+}
+
+/* ---- Volúmenes: cada bloque del estudio elegido, su tarjeta; los avisos, su marco ---- */
+
+/* El visor (el de Polaris, con su página dentro tal cual, o el propio con sus lienzos), la fase de
+   contraste, las densidades y la comparación con el estudio anterior. `.measure-actions` también es
+   `role="group"` (los TAC de ejemplo) y se excluye. */
+:where(.app[data-look="reference"])
+  .panel[data-ui="volumes"]
+  > :is(.polaris-viewer, .volume-viewer, .density-notes, .lesion-comparison, div[role="group"]:not(.measure-actions)) {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* Dentro de una tarjeta el hueco lo pone la rejilla, no los márgenes del clásico. */
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] .polaris-viewer > .polaris-frame {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"])
+  .panel[data-ui="volumes"]
+  > :is(.volume-viewer, .density-notes, .lesion-comparison)
+  > .quality-table {
+  margin: 0;
+}
+
+/* El volumen que la puerta no dejó entrar (`role="alert"`), la cabecera limpiada al entrar
+   (`role="note"`) y el control de la cadena vertebral (`role="status"`): marco neutro alrededor; el
+   color sigue en la marca de cada frase. */
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] > :is([role="alert"], [role="note"], [role="status"]) {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* ---- Filas con filete: las listas de volúmenes, como «Próximas acciones» ---- */
+
+/* Lo que falta en la cadena vertebral (cada fila con la marca y el color de su nivel) y las
+   declaraciones anteriores de la fase de contraste. */
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] > :is([role="status"], div[role="group"]:not(.measure-actions)) > ul {
+  list-style: none;
+  margin: 0.2rem 0;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] > :is([role="status"], div[role="group"]:not(.measure-actions)) > ul > li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="volumes"] > :is([role="status"], div[role="group"]:not(.measure-actions)) > ul > li:last-child {
+  border-bottom: 0;
+}
+
+/* ---- El mando de un formulario mide lo que su palabra ---- */
+
+/* «Registrar informe», «Registrar volumen» y «Declarar fase» son hijos directos de la rejilla del
+   formulario y se estiraban al ancho entero; en la maqueta ningún mando mide un panel. El alto
+   táctil es del mobiliario. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="reports"], .panel[data-ui="volumes"]) .silence-form > button.command {
+  justify-self: start;
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los marcos de esta hoja se engrosan a 2 px como el del panel en `styles.css`, y en baja visión
+   pasan al color del texto secundario. Van al final para ganar por orden con la misma
+   especificidad que las reglas de arriba. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel[data-ui="ultrasound"] :is(.study-viewer, .frame, .cine, .draft-panel, .draft, .view-signs, .study-viewer > .quality-table),
+    .panel[data-ui="reports"] :is(details.report[open], .report-page img, .report-text, .lab-readings),
+    .panel[data-ui="volumes"] > :is(.polaris-viewer, .volume-viewer, .density-notes, .lesion-comparison, div[role="group"]:not(.measure-actions), [role="alert"], [role="note"], [role="status"])
+  ) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel[data-ui="ultrasound"] :is(.study-viewer, .frame, .cine, .draft-panel, .draft, .view-signs, .study-viewer > .quality-table),
+    .panel[data-ui="reports"] :is(details.report[open], .report-page img, .report-text, .lab-readings),
+    .panel[data-ui="volumes"] > :is(.polaris-viewer, .volume-viewer, .density-notes, .lesion-comparison, div[role="group"]:not(.measure-actions), [role="alert"], [role="note"], [role="status"])
+  ) {
+  border-color: var(--c-text-secondary);
+}

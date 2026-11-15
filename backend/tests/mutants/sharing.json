@@ -1,0 +1,68 @@
+{
+  "target": "app/sharing.py",
+  "test": [
+    "tests/test_sharing.py"
+  ],
+  "mutations": [
+    {
+      "label": "la tabla ya no se coteja con la lista blanca de egress",
+      "old": "    if declared != egress.ALLOWLIST:",
+      "new": "    if False:"
+    },
+    {
+      "label": "solo se cotejan los propósitos, no sus hosts",
+      "old": "        declared[row[\"purpose\"]] = frozenset(row[\"hosts\"])",
+      "new": "        declared[row[\"purpose\"]] = egress.ALLOWLIST.get(row[\"purpose\"], frozenset())"
+    },
+    {
+      "label": "lo que impone el código ya no tiene que decir dónde",
+      "old": "    if enforcement == \"code\" and cited == 0:",
+      "new": "    if enforcement == \"code\" and cited < 0:"
+    },
+    {
+      "label": "lo que se impone en parte ya no tiene que decir qué queda fuera",
+      "old": "    if enforcement == \"partial\" and (cited == 0 or limit is None):",
+      "new": "    if enforcement == \"partial\" and cited == 0:"
+    },
+    {
+      "label": "lo que no impone el código puede citar código",
+      "old": "    if enforcement == \"none\" and (cited > 0 or limit is None):",
+      "new": "    if enforcement == \"none\" and limit is None:"
+    },
+    {
+      "label": "lo que no impone el código ya no dice por qué",
+      "old": "    if enforcement == \"none\" and (cited > 0 or limit is None):",
+      "new": "    if enforcement == \"none\" and cited > 0:"
+    },
+    {
+      "label": "un destino desconocido pasa",
+      "old": "    if item[\"destination\"] not in DESTINATIONS:",
+      "new": "    if item[\"destination\"] is None:"
+    },
+    {
+      "label": "dos filas con el mismo id pasan",
+      "old": "    if len(set(ids)) != len(ids):",
+      "new": "    if not ids:"
+    },
+    {
+      "label": "los hosts servidos salen de la tabla y no de la puerta",
+      "old": "                    \"hosts\": sorted(egress.ALLOWLIST[row[\"purpose\"]]),",
+      "new": "                    \"hosts\": sorted(row[\"hosts\"])[:1],"
+    },
+    {
+      "label": "el modo sin red servido es siempre el de con red",
+      "old": "            \"offline\": settings.offline,",
+      "new": "            \"offline\": False,"
+    },
+    {
+      "label": "las filas ya no salen en el orden de los destinos",
+      "old": "    items = sorted(table[\"items\"], key=lambda item: order[item[\"destination\"]])",
+      "new": "    items = sorted(table[\"items\"], key=lambda item: item[\"id\"])"
+    },
+    {
+      "label": "lo que el código impone se sirve sin decir dónde",
+      "old": "                \"enforced_by\": _pointer(item),",
+      "new": "                \"enforced_by\": [],"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "target": "app/volumes/segment.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "el esqueleto se lanza sin la memoria que necesita",
+      "old": "        if free is None or free < needed:",
+      "new": "        if False:"
+    },
+    {
+      "label": "sin dato de memoria se lanza igual",
+      "old": "        if free is None or free < needed:",
+      "new": "        if free is not None and free < needed:"
+    },
+    {
+      "label": "la memoria no crece con el volumen",
+      "old": "    mvoxels = math.prod(e / WORKING_MM for e in extent) / 1e6",
+      "new": "    mvoxels = 12.2"
+    },
+    {
+      "label": "sin margen sobre lo medido",
+      "old": "    return (preset.ram_gb_fixed + preset.ram_gb_per_mvoxel * mvoxels) * RAM_MARGIN",
+      "new": "    return (preset.ram_gb_fixed + preset.ram_gb_per_mvoxel * mvoxels)"
+    },
+    {
+      "label": "sin el consumo fijo: la guarda mata los TAC pequeños (pasó el 2026-10-04)",
+      "old": "    return (preset.ram_gb_fixed + preset.ram_gb_per_mvoxel * mvoxels) * RAM_MARGIN",
+      "new": "    return (preset.ram_gb_per_mvoxel * mvoxels) * RAM_MARGIN"
+    }
+  ]
+}

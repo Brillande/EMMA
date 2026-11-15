@@ -1,0 +1,53 @@
+{
+  "target": "scripts/build_volume_samples.py",
+  "test": [
+    "tests/test_volume_samples_script.py"
+  ],
+  "mutations": [
+    {
+      "label": "un --only con una clave que no sale de los argumentos no aborta",
+      "old": "        if unknown:\n",
+      "new": "        if unknown and False:\n"
+    },
+    {
+      "label": "se conserva una entrada aunque sea de otro sujeto (orden de argumentos equivocado)",
+      "old": "kept.get(key, {}).get(\"sujeto_dataset\") != subject",
+      "new": "kept.get(key) is None"
+    },
+    {
+      "label": "una muestra que no está en el manifiesto se da por conservable",
+      "old": "kept.get(key, {}).get(\"sujeto_dataset\") != subject",
+      "new": "kept.get(key, {\"sujeto_dataset\": subject}).get(\"sujeto_dataset\") != subject"
+    },
+    {
+      "label": "las entradas posteriores a la pedida no se miran antes de rehacerla",
+      "old": "            if key not in only and kept.get",
+      "new": "            if key not in only and keys.index(key) < keys.index(only[0]) and kept.get"
+    },
+    {
+      "label": "--only rehace las demás y conserva la pedida",
+      "old": "        if only and keys[number - 1] not in only:",
+      "new": "        if only and keys[number - 1] in only:"
+    },
+    {
+      "label": "--only rehace todas las muestras",
+      "old": "        if only and keys[number - 1] not in only:",
+      "new": "        if False:"
+    },
+    {
+      "label": "la entrada conservada se reescribe en vez de salir tal cual",
+      "old": "            samples.append(kept[keys[number - 1]])",
+      "new": "            samples.append({**kept[keys[number - 1]], \"dataset\": DATASET})"
+    },
+    {
+      "label": "la huella publicada de visor.zip no es la del fichero escrito",
+      "old": "\"visor.zip\": hashlib.sha256(archive).hexdigest(),",
+      "new": "\"visor.zip\": hashlib.sha256(ct).hexdigest(),"
+    },
+    {
+      "label": "el número del nombre no cuenta las muestras conservadas del mismo preset",
+      "old": "same_preset = sum(item[\"preset\"] == preset.key for item in samples) + 1",
+      "new": "same_preset = 1"
+    }
+  ]
+}

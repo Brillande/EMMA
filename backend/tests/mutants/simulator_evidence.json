@@ -1,0 +1,18 @@
+{
+  "target": "app/ingest/simulator.py",
+  "test": [
+    "tests/test_simulator_evidence.py"
+  ],
+  "mutations": [
+    {
+      "label": "el estado declara el respaldo del simulador aunque los datos no vengan de él",
+      "old": "    if not scenarios:\n        return None\n",
+      "new": "    if False:\n        return None\n"
+    },
+    {
+      "label": "una repetición de datos reales se toma por este modelo",
+      "old": "        & known\n",
+      "new": "\n"
+    }
+  ]
+}

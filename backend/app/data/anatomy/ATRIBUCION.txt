@@ -1,0 +1,17 @@
+esqueleto-anterior.png y esqueleto.json
+
+Generados el 2026-10-01 con polaris/tools/esqueleto_referencia.py (Polaris, AGPL-3.0-or-later,
+copia literal) a partir de BodyParts3D 4.0 (partof_BP3D_4.0_obj_99.zip, descargado de
+https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_BP3D_4.0_obj_99.zip).
+
+"BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0
+International". Licencia verificada en https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+el 2026-10-01: "The license for this database is specified in the Creative Commons Attribution
+4.0 International."
+
+Es una obra derivada (render en vista anterior y centroides por hueso con los nombres de
+TotalSegmentator); se redistribuye bajo CC BY 4.0 con esta atribución.
+
+Nota: en Windows la herramienta original escribe esqueleto.json en la codificación del sistema
+(cp1252; abre el fichero sin `encoding=`). Al copiarlo aquí se ha pasado a UTF-8 sin cambiar
+ningún dato.

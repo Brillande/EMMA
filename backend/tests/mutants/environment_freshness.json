@@ -1,0 +1,16 @@
+{
+  "target": "app/environment/donki.py",
+  "test": ["tests/test_environment.py"],
+  "mutations": [
+    {
+      "label": "con red se llama a DONKI aunque la caché sea reciente",
+      "old": "        if cached is not None and (self.settings.offline or not cached.is_stale(FRESH_FOR)):",
+      "new": "        if cached is not None and self.settings.offline:"
+    },
+    {
+      "label": "una caché caducada no se vuelve a pedir",
+      "old": "        if cached is not None and (self.settings.offline or not cached.is_stale(FRESH_FOR)):",
+      "new": "        if cached is not None:"
+    }
+  ]
+}

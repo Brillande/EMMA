@@ -1,0 +1,64 @@
+{
+ "target": "app/analysis/radiation.py",
+ "test": [
+  "tests/test_radiation_projection.py",
+  "tests/test_context_round2.py"
+ ],
+ "mutations": [
+  {
+   "label": "la proyección se integra con Q = 1",
+   "old": "    value_msv = absorbed_mgy * mean.value\n",
+   "new": "    value_msv = absorbed_mgy\n"
+  },
+  {
+   "label": "la proyección no prolonga la tasa hasta el fin configurado",
+   "old": "    absorbed_mgy = (integral.absorbed_ugy + rate_ugy_h * remaining_h) / 1000\n",
+   "new": "    absorbed_mgy = integral.absorbed_ugy / 1000\n"
+  },
+  {
+   "label": "la horquilla usa el Q medio en vez del de radiación atrapada",
+   "old": "            \"low_msv\": round(absorbed_mgy * trapped.value, 3),\n",
+   "new": "            \"low_msv\": round(absorbed_mgy * mean.value, 3),\n"
+  },
+  {
+   "label": "se proyecta una misión que ya terminó",
+   "old": "    ended = mission_day(integral.last, mission_start) >= mission_days\n",
+   "new": "    ended = False\n"
+  },
+  {
+   "label": "el tramo anterior a la primera lectura se calla",
+   "old": "        if uncovered_days >= 1\n",
+   "new": "        if False\n"
+  },
+  {
+   "label": "la fracción de carrera se da sin límite positivo",
+   "old": "        \"fraction\": round(total / limit_msv, 4) if limit_msv > 0 else None,\n",
+   "new": "        \"fraction\": round(total / max(limit_msv, 1e-9), 4),\n"
+  },
+  {
+   "label": "la horquilla cita otra ficha que la de los Q de dosimetry.py",
+   "old": "    str(MEAN_QUALITY_FACTORS[QualityFactorModel.TRAPPED].ref_id),\n",
+   "new": "    \"nasa-orion-radiation-protection\",\n"
+  },
+  {
+   "label": "sin dosis previa declarada, la carrera proyectada supone cero",
+   "old": "    if prior_career_msv is None:\n        career = {\n            \"value_msv\": None,\n            \"basis\": (\n",
+   "new": "    prior_career_msv = prior_career_msv or 0.0\n    if False:\n        career = {\n            \"value_msv\": None,\n            \"basis\": (\n"
+  },
+  {
+   "label": "los límites del sistema nervioso central pasan a mSv",
+   "old": "ABSORBED = \"mGy\"\n",
+   "new": "ABSORBED = \"mSv\"\n"
+  },
+  {
+   "label": "la proyección se rotula inferida y no predicha",
+   "old": "        \"observation_type\": \"predicted\",\n",
+   "new": "        \"observation_type\": \"inferred\",\n"
+  },
+  {
+   "label": "la proyección alimenta la escala de carrera",
+   "old": "        this_mission = mission[\"value_msv\"] if mission is not None else 0.0\n",
+   "new": "        this_mission = (projection or mission or {}).get(\"value_msv\") or 0.0\n"
+  }
+ ]
+}

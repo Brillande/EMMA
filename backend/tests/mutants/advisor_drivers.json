@@ -1,0 +1,6 @@
+{"target": "app/advisor/recommendations.py", "test": ["tests/test_hydration_nutrition.py"],
+ "mutations": [
+  {"label": "las contramedidas no se ordenan por las variables del hallazgo",
+   "old": "                key=lambda item: not (set(item.followup_checks) & drivers),",
+   "new": "                key=lambda item: False,"}
+ ]}

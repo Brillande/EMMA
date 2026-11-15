@@ -1,0 +1,120 @@
+{
+  "samples": [
+    {
+      "key": "lung-1",
+      "protocol": "lung",
+      "files": [
+        "lung-1.png"
+      ],
+      "original": "dataset/test/healthy/image_13138945535090-10_23_52.png",
+      "dataset_label": "healthy",
+      "dataset": {
+        "name": "A Dataset of Lung Ultrasound Images for Automated AI-based Lung Disease Classification",
+        "citation": "Katumba A. et al. Data in Brief 62:112034 (2025). Datos: Mendeley Data, doi:10.17632/hb3p34ytvx.2",
+        "doi": "10.17632/hb3p34ytvx.2",
+        "license": "CC BY 4.0",
+        "url": "https://data.mendeley.com/datasets/hb3p34ytvx/2"
+      },
+      "burned_in": false,
+      "sha256": {
+        "lung-1.png": "e17f56bc4f942433a64ec61758920ddac5961cec46828c0e1e06a61e1c1e0877"
+      }
+    },
+    {
+      "key": "lung-2",
+      "protocol": "lung",
+      "files": [
+        "lung-2.png"
+      ],
+      "original": "dataset/test/other/LEFT_ANT_LOWER_LONG-13_1_46.jpeg",
+      "dataset_label": "other",
+      "dataset": {
+        "name": "A Dataset of Lung Ultrasound Images for Automated AI-based Lung Disease Classification",
+        "citation": "Katumba A. et al. Data in Brief 62:112034 (2025). Datos: Mendeley Data, doi:10.17632/hb3p34ytvx.2",
+        "doi": "10.17632/hb3p34ytvx.2",
+        "license": "CC BY 4.0",
+        "url": "https://data.mendeley.com/datasets/hb3p34ytvx/2"
+      },
+      "burned_in": true,
+      "sha256": {
+        "lung-2.png": "314de1c9cc3f697914d916258177712aff0dc2dbbc09c3504faf62e3c28acc1b"
+      }
+    },
+    {
+      "key": "liver-1",
+      "protocol": "liver",
+      "files": [
+        "liver-1-00.png",
+        "liver-1-01.png",
+        "liver-1-02.png",
+        "liver-1-03.png",
+        "liver-1-04.png",
+        "liver-1-05.png",
+        "liver-1-06.png",
+        "liver-1-07.png",
+        "liver-1-08.png",
+        "liver-1-09.png"
+      ],
+      "original": "paciente id 1",
+      "dataset_label": "sin esteatosis",
+      "dataset": {
+        "name": "Dataset of B-mode fatty liver ultrasound images",
+        "citation": "Byra M. et al. Int J Comput Assist Radiol Surg (2018), doi:10.1007/s11548-018-1843-2. Datos: Zenodo, doi:10.5281/zenodo.1009146",
+        "doi": "10.5281/zenodo.1009146",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.1009146"
+      },
+      "burned_in": true,
+      "sha256": {
+        "liver-1-00.png": "391ce8d87223ee0804f5055e15900c55e32a4fb061a2e745b66c60260b6c8fb7",
+        "liver-1-01.png": "83a9e5376ee3a8322e2d8afffb35309646d117ab6985c35630b28102b59d65a9",
+        "liver-1-02.png": "c19ea94e575d36cebc744616606878464dd0c475908849b450d41d702b75f8aa",
+        "liver-1-03.png": "1e8ac60fef17a23950f9ae73fe9d52c5c6b8ed74924d4a6636c4ef208a32ff4f",
+        "liver-1-04.png": "26f230ff2f600f71389f3416c6c8b703f32a35a1bdc79f499d4c5cbe800b3fcc",
+        "liver-1-05.png": "4b6fce860f3d545725af2a036a96fc7ba7ac7545e9417f38fa63fcf569631048",
+        "liver-1-06.png": "648d1a978dfedadb393a82957bb141dce11aaab766f0520187b6adeccd4093ba",
+        "liver-1-07.png": "92242a19b7ed7ee8607c130a997598aa45faeb85261e2d02ce7db0af6cf788cc",
+        "liver-1-08.png": "5a6710e9f6f79fa91a14427e59c06033082f13c84a1c924ad4d857882206ff74",
+        "liver-1-09.png": "5498765598413a910a4e69350f3f152e679a53729db93dd2494af7e31946d26e"
+      }
+    },
+    {
+      "key": "liver-2",
+      "protocol": "liver",
+      "files": [
+        "liver-2-00.png",
+        "liver-2-01.png",
+        "liver-2-02.png",
+        "liver-2-03.png",
+        "liver-2-04.png",
+        "liver-2-05.png",
+        "liver-2-06.png",
+        "liver-2-07.png",
+        "liver-2-08.png",
+        "liver-2-09.png"
+      ],
+      "original": "paciente id 18",
+      "dataset_label": "con esteatosis",
+      "dataset": {
+        "name": "Dataset of B-mode fatty liver ultrasound images",
+        "citation": "Byra M. et al. Int J Comput Assist Radiol Surg (2018), doi:10.1007/s11548-018-1843-2. Datos: Zenodo, doi:10.5281/zenodo.1009146",
+        "doi": "10.5281/zenodo.1009146",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.1009146"
+      },
+      "burned_in": true,
+      "sha256": {
+        "liver-2-00.png": "b288f2e6b274c5cf571a3daed63ae6a50bddf145bd8704707a5aa66d2806f9d7",
+        "liver-2-01.png": "46ac87e680fe68cc7f754011627ee2e3d76a33894aa8b1c6ef73407ebdb05c0f",
+        "liver-2-02.png": "56cac767cd983c7f2e7cc48c0a904c0fe90dc733981bf0ccd5486f081296c14d",
+        "liver-2-03.png": "2a4b4c7479d87ce04e064266049f62e99bb73a999c2bc0bfc92f12eadf7ae7cb",
+        "liver-2-04.png": "3ddc3b3357b10c5237041fcd7f8338306722e4b34071e9fe315cdff2e6d2b54e",
+        "liver-2-05.png": "60ddab318c33798aa16f31d08343b4adfd1f5ca8662f335b762121cdbe76a155",
+        "liver-2-06.png": "cd5627ca9271b22e38ad6c6fcd77a4f775224413714b03b7ea4b81e923ebc4f8",
+        "liver-2-07.png": "76bb32861ed9f03c6ae7182d8be33926f7c6e1496b15ffdd26d359382bb6d965",
+        "liver-2-08.png": "1a213e6938209dab3e38400e03a2663d68968d1f6c3dc93da40a52cd42f2b277",
+        "liver-2-09.png": "fec9f7f49ec6a3685c4b89d2432730907e7ccc1381e9697a1c521aba91d46455"
+      }
+    }
+  ]
+}

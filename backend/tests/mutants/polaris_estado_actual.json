@@ -1,0 +1,24 @@
+{
+  "target": "../polaris/tools/estado_actual.py",
+  "test": [
+    "tests/test_packaging.py::test_no_copied_tool_imports_a_polaris_test",
+    "tests/test_packaging.py::test_the_cotejo_date_brought_into_estado_actual_is_still_the_test_s_own"
+  ],
+  "mutations": [
+    {
+      "label": "`cotejado` vuelve a importar la prueba de Polaris, que no viaja con la aplicación",
+      "old": "    fc = fecha_cotejo(open(mem, encoding=\"utf-8\").read())\n",
+      "new": "    from test_perfil_clinico_al_dia import fecha_cotejo  # noqa: E402\n    fc = fecha_cotejo(open(mem, encoding=\"utf-8\").read())\n"
+    },
+    {
+      "label": "`cotejado` vuelve a poner tests/ en sys.path (para importarla por un nombre en cadena)",
+      "old": "    mem = os.path.join(",
+      "new": "    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), \"..\", \"tests\"))\n    mem = os.path.join("
+    },
+    {
+      "label": "la fecha de cotejo traída a la herramienta deja de ser la de la prueba",
+      "old": "[^\\n]*ESTADO-ACTUAL\", texto)",
+      "new": "[^\\n]*ESTADO\", texto)"
+    }
+  ]
+}

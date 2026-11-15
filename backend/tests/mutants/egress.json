@@ -1,0 +1,83 @@
+{
+  "target": "app/core/egress.py",
+  "test": [
+    "tests/test_egress.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin lista blanca",
+      "old": "    if hosts is None or host not in hosts:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el modo sin red ya no corta",
+      "old": "    if settings.offline:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el modo seguro ya no corta",
+      "old": "    if reason is not None:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el freno HALT ya no dice qué es ni qué fichero borrar",
+      "old": "    if border.halted():",
+      "new": "    if False:"
+    },
+    {
+      "label": "el freno HALT puesto no se ve junto al modo seguro",
+      "old": "\"active\": path.exists()",
+      "new": "\"active\": False"
+    },
+    {
+      "label": "el freno HALT puesto no dice desde cuándo",
+      "old": "    if state[\"active\"]:",
+      "new": "    if False:"
+    },
+    {
+      "label": "la fecha del freno es la de creación del fichero, no la de modificación",
+      "old": "path.stat().st_mtime",
+      "new": "path.stat().st_ctime"
+    },
+    {
+      "label": "la fecha del freno sale en hora local y sin zona",
+      "old": "dt.datetime.fromtimestamp(modified, dt.UTC)",
+      "new": "dt.datetime.fromtimestamp(modified)"
+    },
+    {
+      "label": "un freno borrado entre mirar y leer su fecha rompe la respuesta",
+      "old": "        except OSError:\n            # Lo borraron",
+      "new": "        except ZeroDivisionError:\n            # Lo borraron"
+    },
+    {
+      "label": "un freno borrado entre mirar y leer su fecha sigue figurando como puesto",
+      "old": "            state[\"active\"] = False",
+      "new": "            pass"
+    },
+    {
+      "label": "lo que sale ya no pasa por el borde",
+      "old": "    if not verdict.permitido:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el cliente de citas no pasa por la puerta",
+      "old": "        event_hooks={\"request\": [check]},",
+      "new": "        event_hooks={\"request\": []},"
+    },
+    {
+      "label": "varios hilos cargan el borde y siembran el señuelo a la vez",
+      "old": "        with _border_lock:",
+      "new": "        if True:"
+    },
+    {
+      "label": "la puerta se da por lista aunque el señuelo no se sembrara",
+      "old": "                border = polaris.load(\"borde\")\n",
+      "new": "                border = _border_module = polaris.load(\"borde\")\n"
+    },
+    {
+      "label": "sin tope total: un Retry-After largo bloquea la consola",
+      "old": "            deadline=time.monotonic() + RETRY_BUDGET_S,\n",
+      "new": ""
+    }
+  ]
+}

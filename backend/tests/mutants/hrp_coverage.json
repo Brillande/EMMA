@@ -1,0 +1,292 @@
+{
+ "target": "app/evidence/hrp_coverage.py",
+ "test": [
+  "tests/test_hrp_coverage.py"
+ ],
+ "mutations": [
+  {
+   "label": "una fila sin número de página (o con 0, o con un booleano) pasa",
+   "old": "    if not isinstance(hrr_id, int) or isinstance(hrr_id, bool) or hrr_id <= 0:",
+   "new": "    if not isinstance(hrr_id, int):"
+  },
+  {
+   "label": "un título, un elemento o un motivo vacío pasa",
+   "old": "        if not _text(item[name]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un texto que el filtro de lenguaje bloquea se sirve",
+   "old": "        _guarded(f\"{where}/{name}\", item[name])",
+   "new": "        pass"
+  },
+  {
+   "label": "un estado desconocido pasa",
+   "old": "    if not _one_of(item[\"status\"], STATUS):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una fecha de publicación que no es ISO pasa",
+   "old": "    if not _iso_day(item[\"last_published\"]):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un eje RIDGE que no existe pasa",
+   "old": "    if not _one_of(item[\"ridge\"], _RIDGES):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un eje RIDGE sin decir de dónde sale pasa",
+   "old": "    if not _one_of(item[\"ridge_basis\"], RIDGE_BASIS):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una fila apunta a un dominio que EMMA no tiene",
+   "old": "    if not isinstance(domains, list) or not all(_one_of(name, _DOMAINS) for name in domains):",
+   "new": "    if not isinstance(domains, list):"
+  },
+  {
+   "label": "un dominio repetido pasa",
+   "old": "    if len(set(domains)) != len(domains):",
+   "new": "    if False:"
+  },
+  {
+   "label": "las fichas no van en lista",
+   "old": "    if not isinstance(refs, list) or not all(isinstance(ref_id, str) for ref_id in refs):",
+   "new": "    if False:"
+  },
+  {
+   "label": "la ficha de un riesgo es la página de otro",
+   "old": "        if ref.evidence_type == \"hrp_risk\" and ref.url != RISK_PAGE.format(hrr_id):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un riesgo cubierto por dos dominios pasa",
+   "old": "        if len(domains) != 1:",
+   "new": "        if False:"
+  },
+  {
+   "label": "«cubierto» sin ser el riesgo que cita el dominio",
+   "old": "        if cited.get(Domain(domains[0])) not in refs:",
+   "new": "        if False:"
+  },
+  {
+   "label": "«en parte» sin ningún dominio",
+   "old": "        if not domains:",
+   "new": "        if False:"
+  },
+  {
+   "label": "«fuera del alcance» con dominios",
+   "old": "        if domains:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una cobertura desconocida pasa",
+   "old": "        raise CoverageError(f\"{where}: cobertura desconocida {coverage!r}\")",
+   "new": "        pass"
+  },
+  {
+   "label": "un analito pendiente vacío pasa",
+   "old": "    if not isinstance(pending, list) or not all(_text(name) for name in pending):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una lectura sin fecha pasa",
+   "old": "    if not _iso_day(raw[\"read_on\"]):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el listado cita una ficha que no existe",
+   "old": "    _ref(\"listado\", listing[\"ref\"])",
+   "new": "    pass"
+  },
+  {
+   "label": "el eje RIDGE cita una ficha que no existe",
+   "old": "    _ref(\"RIDGE\", raw[\"ridge_source\"])",
+   "new": "    pass"
+  },
+  {
+   "label": "el listado sin el total que declara",
+   "old": "    if found is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo que se dice del listado puede ir vacío",
+   "old": "        if not _text(listing[name]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "faltan riesgos respecto al total del listado",
+   "old": "    if len(risks) != int(found.group(1)):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una página de riesgo repetida pasa",
+   "old": "    if len(set(ids)) != len(ids):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un dominio de EMMA sin ningún riesgo del listado pasa",
+   "old": "    if missing := sorted(_DOMAINS - watched):",
+   "new": "    if missing := []:"
+  },
+  {
+   "label": "el riesgo que cita un dominio se rebaja a «en parte»",
+   "old": "            if item[\"coverage\"] != \"covered\" or item[\"domains\"] != [str(domain)]:",
+   "new": "            if False:"
+  },
+  {
+   "label": "el riesgo que un dominio cita además del suyo no lo nombra en su fila",
+   "old": "            if not rows or any(str(domain) not in item[\"domains\"] for item in rows):",
+   "new": "            if False:"
+  },
+  {
+   "label": "un campo que falta pasa",
+   "old": "    if missing := sorted(expected - item.keys()):",
+   "new": "    if missing := []:"
+  },
+  {
+   "label": "un campo desconocido pasa",
+   "old": "    if extra := sorted(item.keys() - expected):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "el alcance de cada dominio deja de ser la frase del marco de ExMC",
+   "old": "                \"scope\": amcl_alignment(Domain(name)),",
+   "new": "                \"scope\": \"\","
+  },
+  {
+   "label": "la frase de la cobertura pierde los dominios por su nombre",
+   "old": "        domains=_names(names) if names else \"\",",
+   "new": "        domains=\"\","
+  },
+  {
+   "label": "una fecha con forma ISO que no existe pasa",
+   "old": "        dt.date.fromisoformat(value)",
+   "new": "        pass"
+  },
+  {
+   "label": "lo que EMMA dice del listado no pasa el filtro de lenguaje",
+   "old": "    _guarded(\"listado/updates\", listing[\"updates\"])",
+   "new": "    pass"
+  },
+  {
+   "label": "un analito pendiente no pasa el filtro de lenguaje",
+   "old": "        _guarded(f\"{where}/pending\", name)",
+   "new": "        pass"
+  },
+  {
+   "label": "el riesgo que cita un dominio puede faltar del listado",
+   "old": "        if card.evidence_type in ROADMAP_SOURCES and not rows:",
+   "new": "        if False:"
+  },
+  {
+   "label": "el riesgo que cita un dominio es «cubierto» por otro dominio en su fila",
+   "old": "            if item[\"coverage\"] != \"covered\" or item[\"domains\"] != [str(domain)]:",
+   "new": "            if item[\"coverage\"] != \"covered\":"
+  },
+  {
+   "label": "el informe del Roadmap que cita un dominio puede faltar del listado",
+   "old": "ROADMAP_SOURCES = frozenset({\"hrp_risk\", \"evidence_report\"})",
+   "new": "ROADMAP_SOURCES = frozenset({\"hrp_risk\"})"
+  },
+  {
+   "label": "una ficha en dos filas pasa",
+   "old": "            if ref_id in holder and len(REPORT_RISK.get(ref_id, ())) < 2:",
+   "new": "            if False:"
+  },
+  {
+   "label": "una ficha repetida en su fila pasa",
+   "old": "    if len(set(refs)) != len(refs):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un analito pendiente repetido pasa",
+   "old": "    if len(set(pending)) != len(pending):",
+   "new": "    if False:"
+  },
+  {
+   "label": "quitarle la ficha a la fila la libra de ser «cubierto»",
+   "old": "            or (card.evidence_type == \"hrp_risk\" and card.url == RISK_PAGE.format(item[\"hrr_id\"]))",
+   "new": "            or False"
+  },
+  {
+   "label": "quien lee la cobertura puede cambiar lo que se sirve",
+   "old": "    return copy.deepcopy(_loaded())",
+   "new": "    return _loaded()"
+  },
+  {
+   "target": "app/evidence/links.py",
+   "label": "las recomendaciones citan también el riesgo que el dominio cita además",
+   "old": "    return [*_own_risk(domain), *OSDR_BY_DOMAIN.get(domain, ())]",
+   "new": "    return [*_own_risk(domain), *ADDITIONAL_HRP_RISKS.get(domain, ()), *OSDR_BY_DOMAIN.get(domain, ())]"
+  },
+  {
+   "target": "app/evidence/links.py",
+   "label": "el dominio deja de citar el riesgo que cita además del suyo",
+   "old": "    return [*_own_risk(domain), *ADDITIONAL_HRP_RISKS.get(domain, ()),",
+   "new": "    return [*_own_risk(domain),"
+  },
+  {
+   "target": "app/anatomy.py",
+   "label": "la frase de la vejiga pierde su ficha",
+   "old": "        note_refs=(RENAL_STONE_SOURCE,),",
+   "new": "        note_refs=(),"
+  },
+  {
+   "target": "app/anatomy.py",
+   "label": "la región no sirve las fichas de su frase",
+   "old": "            \"note_refs\": [item.to_dict() for item in self.note_refs],",
+   "new": "            \"note_refs\": [],"
+  },
+  {
+   "label": "un informe va en la fila de otro riesgo (y la da por cubierta)",
+   "old": "        if ref.evidence_type == \"evidence_report\" and hrr_id not in REPORT_RISK.get(ref.id, ()):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un valor de enumerado que no es texto revienta con TypeError",
+   "old": "    return isinstance(value, str) and value in allowed",
+   "new": "    return value in allowed"
+  },
+  {
+   "label": "una ficha que no es un identificador revienta con TypeError",
+   "old": "    if not isinstance(refs, list) or not all(isinstance(ref_id, str) for ref_id in refs):",
+   "new": "    if not isinstance(refs, list):"
+  },
+  {
+   "label": "un analito del catálogo repetido en una fila pasa",
+   "old": "    if len(set(keys)) != len(keys):\n        raise CoverageError(f\"{where}: analito del catálogo repetido\")",
+   "new": "    if False:\n        raise CoverageError(f\"{where}: analito del catálogo repetido\")"
+  },
+  {
+   "label": "una clave que no es del catálogo pasa por analito del catálogo",
+   "old": "        if code is None:\n            raise CoverageError(f\"{where}: {key} no es un indicador del catálogo\")",
+   "new": "        if code is None:\n            continue"
+  },
+  {
+   "label": "un analito de un dominio que la fila no nombra pasa",
+   "old": "        if str(code.domain) not in domains:",
+   "new": "        if False:"
+  },
+  {
+   "label": "la fila no valida sus analitos del catálogo",
+   "old": "    _validate_in_catalog(where, item[\"in_catalog\"], domains)",
+   "new": "    pass"
+  },
+  {
+   "label": "un analito del catálogo se sirve sin decir que es descriptivo",
+   "old": "        \"descriptive_only\": descriptive,",
+   "new": "        \"descriptive_only\": False,"
+  },
+  {
+   "label": "un informe que enlazan dos páginas puede ir en una tercera fila",
+   "old": "    \"hrp-dcs-hypoxia-evidence-report\": (168, 173),",
+   "new": "    \"hrp-dcs-hypoxia-evidence-report\": (168, 173, 81),"
+  },
+  {
+   "label": "un informe que enlazan dos páginas puede faltar en una de sus filas",
+   "old": "        if len(pages) > 1 and held and len(held) < len(pages):",
+   "new": "        if False:"
+  }
+ ]
+}

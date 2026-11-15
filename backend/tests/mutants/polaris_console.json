@@ -1,0 +1,28 @@
+{
+  "target": "app/polaris/console.py",
+  "test": [
+    "tests/test_polaris_console.py"
+  ],
+  "mutations": [
+    {
+      "label": "cada captura estrena su propio cerrojo: como los tres cerrojos de antes",
+      "old": "    with _LOCK, contextlib.redirect_stdout(out)",
+      "new": "    with threading.RLock(), contextlib.redirect_stdout(out)"
+    },
+    {
+      "label": "la captura no toma ningún cerrojo",
+      "old": "    with _LOCK, contextlib.redirect_stdout(out)",
+      "new": "    with contextlib.redirect_stdout(out)"
+    },
+    {
+      "label": "el cerrojo deja de ser reentrante: una captura anidada se espera a sí misma",
+      "old": "_LOCK = threading.RLock()",
+      "new": "_LOCK = threading.Lock()"
+    },
+    {
+      "label": "stderr se queda sin capturar: lo que Polaris escribe ahí no llega a quien lo lee",
+      "old": ", contextlib.redirect_stderr(out):",
+      "new": ":"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "target": "app/ingest/names_es.py",
+  "test": ["tests/test_names_es.py"],
+  "mutations": [
+    {
+      "label": "un analito de analítica se nombra con la tabla de EMMA y no con el nombre de Polaris",
+      "old": "        if from_polaris is not None:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el nombre de Polaris se rotula como de EMMA",
+      "old": "            table[key] = SpanishName(from_polaris, NameOrigin.POLARIS)",
+      "new": "            table[key] = SpanishName(from_polaris, NameOrigin.EMMA)"
+    },
+    {
+      "label": "el rótulo de EMMA deja de decir que el nombre no es de LOINC",
+      "old": "    NameOrigin.EMMA: \"nombre de EMMA, no de LOINC\",",
+      "new": "    NameOrigin.EMMA: \"nombre de EMMA\","
+    },
+    {
+      "label": "un nombre de EMMA es el de LOINC sin traducir",
+      "old": "    \"heart-rate\": \"Frecuencia cardiaca\",  # Heart rate",
+      "new": "    \"heart-rate\": \"Heart rate\",  # Heart rate"
+    },
+    {
+      "label": "el ojo izquierdo se nombra igual que el derecho",
+      "old": "    \"onsd-left\": \"Diámetro de la vaina del nervio óptico, ojo izquierdo (ecografía)\",",
+      "new": "    \"onsd-left\": \"Diámetro de la vaina del nervio óptico, ojo derecho (ecografía)\","
+    },
+    {
+      "label": "la API publica un origen que no es el del nombre",
+      "old": "        \"display_es_origin\": str(name.origin),",
+      "new": "        \"display_es_origin\": \"loinc\","
+    }
+  ]
+}

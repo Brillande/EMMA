@@ -1,0 +1,53 @@
+{
+ "target": "app/api/alert_history.py",
+ "test": [
+  "tests/test_alert_history.py::test_a_past_step_is_what_the_engine_says_for_that_window",
+  "tests/test_alert_history.py::test_a_past_step_only_sees_the_deviations_of_its_own_window",
+  "tests/test_alert_history.py::test_todays_solar_event_and_todays_dose_are_not_attributed_to_the_past",
+  "tests/test_alert_history.py::test_which_signatures_count_is_decided_as_in_the_status",
+  "tests/test_status_performance.py::test_the_trends_before_an_instant_see_only_what_came_before_and_each_its_own"
+ ],
+ "mutations": [
+  {
+   "label": "el paso actual se recalcula en vez de ser el del estado",
+   "old": "        if end >= assessed.latest:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un paso pasado se evalua con todas las desviaciones anteriores y no con las de su ventana",
+   "old": "if start <= dev.effective < end],",
+   "new": "if dev.effective < end],"
+  },
+  {
+   "label": "la tendencia de un paso pasado se ajusta con lecturas posteriores a el",
+   "target": "app/api/routes.py",
+   "old": "            before = [obs for obs in self.observations if obs.effective < end]",
+   "new": "            before = list(self.observations)"
+  },
+  {
+   "label": "el evento solar de hoy se atribuye a todos los pasos pasados",
+   "old": "            solar_events=None,",
+   "new": "            solar_events=assessed.solar_events,"
+  },
+  {
+   "label": "la dosis acumulada de hoy se atribuye a todos los pasos pasados",
+   "old": "            cumulative_dose_msv=recorded[-1] if recorded else 0.0,",
+   "new": "            cumulative_dose_msv=assessed.cumulative_dose_msv or 0.0,"
+  },
+  {
+   "label": "un reconocimiento firmado despues del corte de Tierra, o sin la clave de la consola, cuenta",
+   "old": "        if routes._counts(item, until):\n            add(item, \"acknowledgement\"",
+   "new": "        if True:\n            add(item, \"acknowledgement\""
+  },
+  {
+   "label": "un estado declarado despues del corte de Tierra cuenta",
+   "old": "        if routes._counts(item, until):\n            add(item, \"resolution\"",
+   "new": "        if True:\n            add(item, \"resolution\""
+  },
+  {
+   "label": "un silencio fuera de los limites de la API se lista como si valiera",
+   "old": "        if routes._counts(item, until) and routes._within_limits(item):",
+   "new": "        if routes._counts(item, until):"
+  }
+ ]
+}

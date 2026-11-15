@@ -1,0 +1,3 @@
+Cuenta alemana del proveedor: DE89 3704 0044 0532 0130 00
+Segunda tarjeta 5500-0000-0000-0004
+Referencia de lote 1234567890123 (no es un identificador)

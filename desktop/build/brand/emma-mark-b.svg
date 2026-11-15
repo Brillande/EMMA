@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, candidata B «Pulso en órbita»: el latido sale de la Tierra (punto, abajo a la
+       izquierda) y se convierte en el arco largo del retardo de luz hasta la nave (punto, arriba a
+       la derecha). Borrador para el equipo. Colores de palette.ts: bg, line y text. -->
+  <title>EMMA</title>
+  <rect x="0.5" y="0.5" width="23" height="23" rx="5" fill="#0A0D12" stroke="#2A3446"/>
+  <path d="M5 19V15.5L7 11L9 17L10.5 13.5A9 9 0 0 1 18 6" fill="none" stroke="#EEF2F6"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="5" cy="19" r="2.25" fill="#EEF2F6"/>
+  <circle cx="18.5" cy="5.5" r="2.25" fill="#EEF2F6"/>
+</svg>

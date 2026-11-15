@@ -1,0 +1,21 @@
+{"target": "app/validation/mmash.py", "test": ["tests/test_mmash_loaded.py"],
+ "mutations": [
+  {"label": "la tabla deja fuera una lectura que el cargador sí emite",
+   "old": "    BODY_WEIGHT: USER_INFO_SOURCE,",
+   "new": ""},
+  {"label": "el cargador deja de emitir una lectura que la tabla declara",
+   "old": "            for name, value in ((HRV_RMSSD, rmssd(clean)), (HRV_SDNN, sdnn(clean))):",
+   "new": "            for name, value in ((HRV_RMSSD, rmssd(clean)),):"},
+  {"label": "el cargador emite con una fuente que no es la de la tabla",
+   "old": "                subject, LOADED[SLEEP_DURATION],",
+   "new": "                subject, \"mmash:sleep\","},
+  {"label": "una fuente de la tabla se queda sin palabra",
+   "old": "    ACTIGRAPH_SOURCE: \"actígrafo (registros de cama; una lectura por noche)\",",
+   "new": ""},
+  {"label": "una noche sin minutos ponderados divide por cero",
+   "old": "            if covered > 0:",
+   "new": "            if weighted:"},
+  {"label": "las claves publicadas no son las de la tabla",
+   "old": "LOADED_KEYS: tuple[str, ...] = tuple(LOADED)",
+   "new": "LOADED_KEYS: tuple[str, ...] = tuple(LOADED)[:-1]"}
+ ]}

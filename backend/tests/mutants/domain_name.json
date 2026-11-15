@@ -1,0 +1,20 @@
+{
+  "target": "app/ingest/codes.py",
+  "test": [
+    "tests/test_waiting.py::test_the_threads_name_the_domain_in_spanish_not_by_its_api_key",
+    "tests/test_waiting.py::test_a_domain_the_catalogue_does_not_know_keeps_its_key",
+    "tests/test_waiting.py::test_the_domain_has_one_name_where_the_domains_are_named"
+  ],
+  "mutations": [
+    {
+      "label": "los títulos nombran el dominio con su clave inglesa",
+      "old": "        return Domain(key).display",
+      "new": "        return key"
+    },
+    {
+      "label": "un dominio desconocido tumba el recuento",
+      "old": "    except ValueError:\n        return key",
+      "new": "    except KeyError:\n        return key"
+    }
+  ]
+}

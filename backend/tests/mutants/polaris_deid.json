@@ -1,0 +1,13 @@
+{
+  "target": "../polaris/tools/deid.py",
+  "test": [
+    "tests/test_reports.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin revalidación: el texto sale aunque queden restos (deid, en la copia de Polaris)",
+      "old": "    return (deid if ok else None), n, ok, motivo",
+      "new": "    return deid, n, True, motivo"
+    }
+  ]
+}

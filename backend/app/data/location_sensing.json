@@ -1,0 +1,62 @@
+{
+  "_about": "Parámetros de la estimación del módulo por las anclas de módulo (`app/analysis/location.py`). Ninguno tiene respaldo para un módulo metálico en vuelo: se calibran en cada nave.",
+  "window_s": 10,
+  "margin_db": 6,
+  "min_dwell_s": 20,
+  "stale_after_s": 120,
+  "min_rssi_dbm": -95,
+  "evidence": "unsupported",
+  "evidence_note": "Sin respaldo: calibrar en cada nave. La ventana, el margen, la permanencia, la caducidad y el umbral de señal son parámetros de diseño de EMMA. La precisión de zona con BLE medida en Tierra (71-85 %, con los errores en las fronteras entre zonas) no se traslada a un módulo metálico, donde el multitrayecto y el cuerpo de quien lleva el receptor atenúan y reflejan la señal.",
+  "not_coded": "La ubicación es un módulo de la lista declarada (`habitat_modules.json`), no una observación clínica: no lleva código LOINC ni código propio y no entra en el catálogo de indicadores ni en el análisis.",
+  "anchors_are_ship_equipment": "Las anclas son equipo de la nave, certificado y alimentado por ella (el patrón de REALM-1 y de DLR Wireless Compose). EMMA no añade emisores ni pilas: el wearable o la pasarela solo escuchan. Detalle de la viabilidad en `compliance/location-sensing-feasibility.md`.",
+  "basis": [
+    {
+      "id": "nasa-jsc-mscd",
+      "title": "NASA JSC, balizas BLE fijas para situar un iPad a bordo (NTRS 20190001027)",
+      "url": "https://ntrs.nasa.gov/citations/20190001027",
+      "says": "Balizas BLE fijas con pila de cinco años y posición de 50-100 cm, con la motivación de saber la posición en la ISS. Probado solo en Tierra; en NSRL hubo reinicios y un latch-up hacia 7 Gy.",
+      "flown": false,
+      "status": "leído"
+    },
+    {
+      "id": "realm-1",
+      "title": "REALM-1: RFID de carga con lectores fijos en Node 1, Node 2 y el laboratorio de EE. UU.",
+      "url": null,
+      "says": "Localización por anclas fijas de la nave en operación en la ISS. No usa el RSSI, por el multitrayecto.",
+      "flown": true,
+      "status": "leído"
+    },
+    {
+      "id": "dlr-wireless-compose",
+      "title": "DLR Wireless Compose: UWB en Columbus (2018-2019)",
+      "url": null,
+      "says": "Cinco anclas UWB y dos etiquetas en el astronauta. Voló; no publica precisión. Es la alternativa con vuelo documentado.",
+      "flown": true,
+      "status": "leído"
+    },
+    {
+      "id": "ble-zone-accuracy",
+      "title": "Precisión de zona con BLE en interiores (Hadian 2023; Kiarashi 2023)",
+      "url": null,
+      "says": "71-85 % de acierto de zona en Tierra, con los errores en las fronteras.",
+      "flown": false,
+      "status": "leído"
+    },
+    {
+      "id": "ble-zone-accuracy-metal-module",
+      "title": "Precisión de zona con BLE dentro de un módulo metálico",
+      "url": null,
+      "says": "Sin fuente que la mida.",
+      "flown": false,
+      "status": "no verificado"
+    },
+    {
+      "id": "flight-constraints",
+      "title": "Restricciones de vuelo: EMC (SSP 30237, MIL-STD-461) y baterías (JSC 20793)",
+      "url": null,
+      "says": "Todo equipo comercial pasa EMC y toda batería, JSC 20793: por eso las anclas son de la nave y EMMA no añade emisores.",
+      "flown": null,
+      "status": "leído"
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+ "target": "app/evidence/people.py",
+ "test": [
+  "tests/test_people.py"
+ ],
+ "mutations": [
+  {
+   "label": "una ficha con dos organizaciones sale solo con la cadena entera",
+   "old": "    return [part.strip() for part in ref.organization.split(ORG_SEPARATOR) if part.strip()]",
+   "new": "    return [ref.organization]"
+  },
+  {
+   "label": "una ficha sin organización desaparece de la ruta",
+   "old": "        if not orgs:\n            without.append(entry)",
+   "new": "        if False:\n            without.append(entry)"
+  },
+  {
+   "label": "quien la fuente nombra sin firmar no se sirve",
+   "old": "        for person in ref.named_people:\n            by_person",
+   "new": "        for person in ():\n            by_person"
+  },
+  {
+   "label": "una cita abreviada con et al. dice un total que no da",
+   "old": "_ET_AL = re.compile(r\"\\bet al\\b\")",
+   "new": "_ET_AL = re.compile(r\"(?!x)x\")"
+  },
+  {
+   "label": "un et al. de otra obra en la cita abrevia la lista de firmantes",
+   "old": "    return bool(_ET_AL.search(ref.source[start : end + len(_AFTER_LIST)]))",
+   "new": "    return bool(_ET_AL.search(ref.source))"
+  },
+  {
+   "label": "una firma copiada de la nota se da por abreviada si la cita abrevia a otros",
+   "old": "    if not ref.authors or any(name not in ref.source for name in ref.authors):",
+   "new": "    if not ref.authors:"
+  },
+  {
+   "label": "la única firma se cuenta como una de varias",
+   "old": "    if total == 1:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el puesto de cada firmante se cuenta desde cero",
+   "old": "        for position, name in enumerate(ref.authors, start=1):",
+   "new": "        for position, name in enumerate(ref.authors, start=0):"
+  },
+  {
+   "label": "el cargo de quien la fuente nombra pierde el año de la fuente",
+   "old": "        f\"en la fecha de la fuente, {year}\" if year is not None",
+   "new": "        \"en la fecha de la fuente\" if year is not None"
+  },
+  {
+   "label": "una persona que la cita no escribe pasa al registro",
+   "target": "app/evidence/registry.py",
+   "old": "            if not _written(name, source) and not _written(name, notes):",
+   "new": "            if False:"
+  },
+  {
+   "label": "un trozo de otro nombre o de otra palabra cuenta como firmante",
+   "target": "app/evidence/registry.py",
+   "old": "    return re.search(rf\"(?<![^\\W_]){re.escape(name)}(?![^\\W_])\", text) is not None",
+   "new": "    return name in text"
+  },
+  {
+   "label": "un firmante con cifras o arroba pasa al registro",
+   "target": "app/evidence/registry.py",
+   "old": "            if not isinstance(name, str) or not _PERSON_NAME.fullmatch(name):\n                raise fail(f\"`authors`",
+   "new": "            if not isinstance(name, str):\n                raise fail(f\"`authors`"
+  },
+  {
+   "label": "un nombre admite cifras y arrobas",
+   "target": "app/evidence/registry.py",
+   "old": "_NAME_PART = r\"[^\\W\\d_]+(?:[ .'’-]+[^\\W\\d_]+)*\\.?\"",
+   "new": "_NAME_PART = r\"[\\w@.]+(?:[ .'’-]+[\\w@.]+)*\\.?\""
+  },
+  {
+   "label": "dos firmantes caben en una sola entrada",
+   "target": "app/evidence/registry.py",
+   "old": "_PERSON_NAME = re.compile(_NAME_PART)",
+   "new": "_PERSON_NAME = re.compile(rf\"{_NAME_PART}(?:, {_NAME_PART})*\")"
+  },
+  {
+   "label": "un firmante repetido cuenta dos veces",
+   "target": "app/evidence/registry.py",
+   "old": "            if name in authors:",
+   "new": "            if False:"
+  },
+  {
+   "label": "una lista de firmantes vacía pasa",
+   "target": "app/evidence/registry.py",
+   "old": "        if not isinstance(listed, list) or not listed:\n            raise fail(\"`authors`",
+   "new": "        if not isinstance(listed, list):\n            raise fail(\"`authors`"
+  },
+  {
+   "label": "una lista de personas nombradas vacía pasa",
+   "target": "app/evidence/registry.py",
+   "old": "        if not isinstance(listed, list) or not listed:\n            raise fail(\"`named_people`",
+   "new": "        if not isinstance(listed, list):\n            raise fail(\"`named_people`"
+  },
+  {
+   "label": "una persona nombrada lleva campos de más (un correo)",
+   "target": "app/evidence/registry.py",
+   "old": "            if not isinstance(item, dict) or item.keys() != _NAMED_KEYS:",
+   "new": "            if not isinstance(item, dict):"
+  },
+  {
+   "label": "el nombre de una persona nombrada admite cifras y arrobas",
+   "target": "app/evidence/registry.py",
+   "old": "            if not isinstance(name, str) or not _NAMED_NAME.fullmatch(name):",
+   "new": "            if not isinstance(name, str):"
+  },
+  {
+   "label": "un cargo con datos de contacto pasa",
+   "target": "app/evidence/registry.py",
+   "old": "            if not isinstance(role, str) or not role.strip() or _CONTACT.search(role):",
+   "new": "            if not isinstance(role, str) or not role.strip():"
+  },
+  {
+   "label": "un teléfono en un cargo deja de ser contacto",
+   "target": "app/evidence/registry.py",
+   "old": "_CONTACT = re.compile(r\"@|https?:|www\\.|(?:\\d[\\s()+./-]?){9,}\")",
+   "new": "_CONTACT = re.compile(r\"@|https?:|www\\.\")"
+  },
+  {
+   "label": "un intervalo de años en un cargo se toma por un teléfono",
+   "target": "app/evidence/registry.py",
+   "old": "_CONTACT = re.compile(r\"@|https?:|www\\.|(?:\\d[\\s()+./-]?){9,}\")",
+   "new": "_CONTACT = re.compile(r\"@|https?:|www\\.|\\d[\\d ()+./-]{5,}\\d\")"
+  },
+  {
+   "label": "un cargo que la nota da a otra persona pasa",
+   "target": "app/evidence/registry.py",
+   "old": "            if not _named_with_role(name, role, notes):",
+   "new": "            if name not in notes or role not in notes:"
+  },
+  {
+   "label": "el cargo solo puede ir detrás del nombre",
+   "target": "app/evidence/registry.py",
+   "old": "    pair = rf\"(?<![^\\W_])(?:{a}{_NAME_ROLE_GAP}{b}|{b}{_NAME_ROLE_GAP}{a})(?![^\\W_])\"",
+   "new": "    pair = rf\"(?<![^\\W_])(?:{a}{_NAME_ROLE_GAP}{b})(?![^\\W_])\""
+  },
+  {
+   "label": "una persona nombrada que ya firma cuenta dos veces",
+   "target": "app/evidence/registry.py",
+   "old": "            if name in authors or any(person.name == name for person in named):",
+   "new": "            if any(person.name == name for person in named):"
+  },
+  {
+   "label": "una persona nombrada repetida cuenta dos veces",
+   "target": "app/evidence/registry.py",
+   "old": "            if name in authors or any(person.name == name for person in named):",
+   "new": "            if name in authors:"
+  },
+  {
+   "label": "una afiliación de quien la ficha no escribe pasa",
+   "old": "if not isinstance(name, str) or name not in people:",
+   "new": "if not isinstance(name, str):",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una afiliación no escrita junto al nombre pasa",
+   "old": "if not _named_with_role(name, organization, notes):",
+   "new": "if False:",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una afiliación con datos de contacto pasa",
+   "old": "            or _CONTACT.search(organization)\n",
+   "new": "            or False\n",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una persona con dos afiliaciones pasa",
+   "old": "if any(found.name == name for found in out):\n            raise fail(f\"`affiliations`",
+   "new": "if False:\n            raise fail(f\"`affiliations`",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una afiliación con campos de más pasa",
+   "old": "item.keys() != _AFFILIATION_KEYS",
+   "new": "False",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una lista de afiliaciones vacía pasa",
+   "old": "if not isinstance(listed, list) or not listed:\n        raise fail(\"`affiliations`",
+   "new": "if not isinstance(listed, list):\n        raise fail(\"`affiliations`",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una organización nombrada sin su papel escrito junto a ella pasa",
+   "old": "if not _named_with_role(name, role, notes):\n            raise fail(\n                f\"`named_organizations`",
+   "new": "if False:\n            raise fail(\n                f\"`named_organizations`",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una organización nombrada que es la de la ficha pasa",
+   "old": "if name in own or any(found.name == name for found in out):",
+   "new": "if any(found.name == name for found in out):",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una organización nombrada repetida pasa",
+   "old": "if name in own or any(found.name == name for found in out):",
+   "new": "if name in own:",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "un nombre de organización con signos que no son de un nombre pasa",
+   "old": "not isinstance(name, str) or not _ORGANIZATION_NAME.fullmatch(name)\n",
+   "new": "not isinstance(name, str)\n",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una web o un teléfono como nombre de organización pasa",
+   "old": "            or _CONTACT.search(name)\n        ):\n            raise fail(f\"`named_organizations`",
+   "new": "        ):\n            raise fail(f\"`named_organizations`",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una web como papel de una organización pasa",
+   "old": "if not isinstance(role, str) or not role.strip() or _CONTACT.search(role):\n            raise fail(f\"`named_organizations`",
+   "new": "if not isinstance(role, str) or not role.strip():\n            raise fail(f\"`named_organizations`",
+   "target": "app/evidence/registry.py"
+  },
+  {
+   "label": "una afiliación sale para todos los firmantes de la ficha",
+   "old": "(item.organization for item in ref.affiliations if item.name == name)",
+   "new": "(item.organization for item in ref.affiliations)"
+  },
+  {
+   "label": "una organización solo nombrada no se lista",
+   "old": "for name in sorted(by_org.keys() | named_org.keys(), key=_sort_key)",
+   "new": "for name in sorted(by_org.keys(), key=_sort_key)"
+  },
+  {
+   "label": "una organización nombrada pierde el papel que le da la fuente",
+   "old": "_source_of(ref, organization.role, _named_role(ref, organization.role))",
+   "new": "_source_of(ref, organization.role, \"\")"
+  },
+  {
+   "label": "la regla de las organizaciones nombradas no se sirve",
+   "old": "\"named_organization_rule\": i18n.loc(NAMED_ORGANIZATION_RULE),",
+   "new": "\"named_organization_rule\": \"\","
+  }
+ ]
+}

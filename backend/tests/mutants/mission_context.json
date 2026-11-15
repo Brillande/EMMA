@@ -1,0 +1,9 @@
+{"target": "app/analysis/explain.py", "test": ["tests/test_mission_context.py"],
+ "mutations": [
+  {"label": "el inicio de la alerta es la ultima lectura y no la primera",
+   "old": "    onset: dt.datetime | None = concerning[0].effective if concerning else None",
+   "new": "    onset: dt.datetime | None = concerning[-1].effective if concerning else None"},
+  {"label": "lecturas dentro de lo esperado cuentan como cambio",
+   "old": "        (item for item in current if item.is_concerning and get(item.key).domain is domain),",
+   "new": "        (item for item in current if get(item.key).domain is domain),"}
+ ]}

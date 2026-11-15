@@ -1,0 +1,10 @@
+{"target": "app/timeline.py",
+ "test": ["tests/test_countermeasure_decline.py", "-k", "chronicle"],
+ "mutations": [
+  {"label": "la cronica cuenta un no como si fuera un cierre",
+   "old": "        if item[\"action\"] == \"declined\":",
+   "new": "        if False:"},
+  {"label": "la cronica calla el motivo de la decision",
+   "old": "                f\"motivo: {item['reason']}\",\n",
+   "new": "                \"motivo: —\",\n"}
+ ]}

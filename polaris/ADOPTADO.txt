@@ -1,0 +1,388 @@
+# Qué se copia de Polaris a esta carpeta. Lo lee backend/scripts/polaris_sync.py.
+# Regla del proyecto: se copia LITERAL; los cambios se deciden después, aparte (ORIGEN.md).
+#
+#   commit <sha>   commit de Polaris del que se copia
+#   root <módulo>  herramienta pedida; se copian también todos los módulos que importa (cierre)
+#   data <ruta>    fichero o carpeta de tools/ que leen esos módulos (sin node_modules)
+#   extra <ruta>   fichero o carpeta fuera de tools/ (evals/, docs/)
+#   tests auto     las pruebas de Polaris que solo usan lo copiado, con sus ayudantes,
+#                  fixtures y campañas de mutantes (polaris_sync.eligible_tests)
+#   test <fichero> una prueba pedida por su nombre: prueba algo copiado, pero `tests auto` no
+#                  la reconoce porque no nombra una herramienta `x.py` (polaris_sync.named_tests)
+#   fichas auto    la ficha de cada herramienta copiada (tools/fichas/, polaris_sync.cards_for)
+#
+# 2026-10-01: Polaris se republicó sin historia común con 7bf4725 (el commit copiado antes);
+# se pasa a e3b588d. Lo que cambió en lo copiado está en docs/polaris-divergencias.md.
+
+commit 20527939e00b9ebc063a0024210e6f9df663d989
+
+# Visor 3D (ya en uso: visor web del preset hígado)
+root visor3d
+root visor3d_superpone_focos
+data visor3d_web
+data fonts
+data colab
+
+# Decisión, fuentes e identidad
+root decision_alto_riesgo
+root fuente_clinica
+root identidad_paciente
+
+# Dosier de evidencia
+root dosier_invariantes
+root guardian_evals
+root frescura_dosier
+
+# Biblioteca local (RAG)
+root kb
+root kb_embed
+
+# Puerta de salida, señuelos y modo seguro
+root _net
+root canarios
+root borde
+root salida
+root codigo_rojo
+
+# Informes y analítica
+root biomarcadores
+root ocr_informes
+root md_to_pdf_pro
+root deid
+
+# Citas y evidencia
+root soporte_cita
+root verifica_citas
+root tier_evidencia
+root cotejo_invariante
+root honestidad_lint
+
+# Modelo local, calibración y pruebas
+root local
+root score_local
+root evals
+root replay_guard
+root replay_gate
+root mutantes
+
+# Operación
+root estado_rutina
+root guarda_memoria
+root salud
+root seguimiento
+root sintomas
+root transcribe_audios
+
+# 2026-10-04: incongruencias entre fuentes y qué espera por una persona (plan, bloques 3 y 7).
+root incongruencias_caso
+root atascos
+
+# Trazabilidad y línea temporal (especificación §54 y §64). En uso: cronica, cascada_mapa,
+# anticipa y paso_consolidacion (EMMA_USES, backend/app/api/polaris.py). Solo copiadas, sin
+# uso: cascada_clinica y caja
+root cronica
+root cascada_clinica
+root cascada_mapa
+root anticipa
+root paso_consolidacion
+root caja
+
+# Compañeras de seguimiento y cola: validan su estado y lo que un trabajo dejó en disco
+root esquema_estado
+root prueba_entregable
+
+# De-identificación medida y con NER (riesgo H17: informes que viajan a Tierra). deid_ner necesita
+# transformers y el modelo del BSC instalados aparte, como TotalSegmentator
+root deid_ner
+root deid_eval
+
+# Esqueleto de referencia de la cabeza a los pies (BodyParts3D, CC BY 4.0; el zip se baja aparte)
+root esqueleto_referencia
+
+# 2026-10-08 (octava ronda): las herramientas locales que faltaban, copiadas sin uso. Ninguna
+# arrastra por imports un módulo que no estuviera ya copiado (varias sí alcanzan, por los que ya
+# estaban, módulos con red: `salida`, `ia`, `_net`…). Varias llaman al modelo local (`ia.ask`) o
+# lanzan `git` u `ollama` cuando se las llama: no son «deterministas» todas. Quedaron fuera las que
+# abren ellas mismas una URL (`onco`, `audit_herramientas`) y, desde el 2026-10-09, las que abren
+# un puerto, matan procesos o usan el Llavero de macOS (docs/polaris-divergencias.md §18).
+root contexto_caso
+root responder_con_datos
+root estado_actual
+root inventario
+root eval_reescritura
+root bench_determinista
+root rodaje_muro
+root rotar_logs
+root reconciliar_estado
+root dedup_hilos
+root etiquetar_hilos
+root kpi_ned
+root rituales
+root persecucion
+root avisos_flush
+root triage_route
+root triage_route_correo
+root continuity
+root usage_coste
+root audit_agentes
+root audit_comites
+root memoria_radar
+root indice_memoria
+root salud_memoria
+root reglas_repetidas
+root cosecha_checklists
+root cosecha_entregables
+root cosecha_hilos
+root minador_sesiones
+root panel
+root rebuild_agents
+
+# Fichas: para qué sirve cada herramienta, cuándo sí, cuándo no y cuál es su prueba
+root fichas
+fichas auto
+
+# Pruebas, evaluaciones y documentos de Polaris sobre lo copiado
+tests auto
+test test_visor3d_carga.py     # tools/visor3d_web/carga.js, que EMMA sirve
+test test_sys_path_limpio.py   # importar polaris_estado, healthcheck, seguimiento o salida no toca sys.path
+test test_atribucion.py        # ninguna aportación queda sin nombre en lo copiado
+# 2026-10-09: nombran su herramienta sin comillas o con otra de pega, y `tests auto` no las veía
+test test_kpi_ned.py                    # kpi_ned, que no tenía ninguna prueba en la copia
+test test_inventario_uso.py             # inventario
+test test_rodaje_casa_base.py           # rodaje_muro
+test test_healthcheck_state_aislado.py  # healthcheck
+extra evals
+extra docs/lo-que-falta.md
+extra docs/enrutado-modelos.md
+extra docs/agentes.md
+extra docs/concepto-caja.svg
+
+# Avisos legales y cita de Polaris: la AGPL pide que viajen con el código copiado
+extra LICENSE
+extra NOTICE
+extra CITATION.cff
+extra README.md
+extra CHANGELOG.md
+
+# Datos que leen los módulos copiados
+data peripheries.json
+data normas.json
+data polaris_estado.checklist.json
+data orquestadores.json           # lo citan cost_guard y enruta_comite
+
+# NO copiado, por decisión del usuario (docs/polaris-divergencias.md §4, §15 y §18; los módulos
+# que lo leen quedan dormidos). Todo son comentarios: polaris_sync.py no lee nada de aquí abajo.
+#
+# Carpetas y ficheros (los de tools/ que no son un módulo, clasificados por su nombre, sin abrir):
+#   config/ y personas/   perfiles y contactos de personas reales (correo, radar_personas)
+#   launchd/, hooks/ y githooks/
+#                         fontanería de macOS y de git de la máquina de su autora
+#   CLAUDE.md y AGENTS.md instrucciones del asistente de su autora: Claude Code las cargaría al
+#                         trabajar dentro de polaris/ y mezclaría sus reglas con las de EMMA
+#   .claude/              ganchos y skills de su asistente (como CLAUDE.md: rompería el contexto)
+#   CONTRIBUTING, CODE_OF_CONDUCT, ACUERDO-CONTRIBUCION, SECURITY, requirements.txt
+#                         gobierno y dependencias del proyecto Polaris, no de EMMA
+#   pipeline/             neoantígenos (oncología)
+#   tools/visor_video_x/, tools/video_polaris/, tools/interfaces/, tools/pilotos/, tools/templates/
+#                         vídeo para redes, LibreChat en Docker, opencode, plantilla de agentes
+#   laminillas_stack/, laminillas_visor_vendor/, nube_n1_cloudinit/, panel_vision/,
+#   laminillas_geojson_esquema.json
+#                         sus láminas de patología, la GPU en la nube y el panel de visión (§15)
+#   backup.sh, backup-excludes.txt, btp_dispatcher.sh, btp_gateway.sh, btp_run.sh, run_agent.sh,
+#   canario_preflight.sh, codex_review.sh, consola_remota.sh, construir_remoto.sh, deploy_ff.sh,
+#   energia_24_7.sh, ff_al_abrir.sh, sync_al_abrir.sh, git_barrido.sh, hoy_compose.sh,
+#   interfaces.sh, lazo_telegram.sh, mini.sh, opencode_jaula.sh, radar_ned_dia.sh, staging.sh,
+#   aplicar-guardian-agentes.sh, aplicar-guardian-lectura.sh, migrar_a_air.sh,
+#   migrar_secretos_air.sh, setup_keychain.sh, setup_macbook.sh, setup_polaris_air.sh,
+#   polaris-daemons       guiones de shell de sus Mac: arranque, despliegue, copias y migración
+#   _chrome_headless.mjs, captura_visor.mjs
+#                         Chrome sin ventana para capturas de su visor
+#   anatomia_huella.json, juez_rubricas.json, puertos_excepciones.json,
+#   .centinela_secrets.example.json
+#                         datos de herramientas suyas; ningún módulo copiado los nombra
+#   F3-PILOTO-OPENCODE-BORRADOR.md, POLARIS-EN-EL-AIR.md, sync_playbook_FASE2.md
+#                         notas de trabajo de su autora
+#
+# Herramientas NO copiadas, por su nombre. Decisión del usuario (2026-10-08): lo local y
+# determinista se copia, y el resto se declara fuera una a una en vez de con una frase genérica.
+# Una línea por herramienta (`#   nombre   qué es`), cada una una sola vez, agrupadas por motivo.
+# El motivo es LECTURA DE SU DOCSTRING, no una auditoría de su código. Lo cuadran
+# backend/tests/test_polaris_left_out.py (ninguna copiada figura aquí) y, con un clon de Polaris,
+# backend/scripts/polaris_left_out.py (toda herramienta está o copiada o nombrada aquí).
+#
+# [nube] Cerebros y servicios de IA en la nube (§1: fuera para siempre)
+#   chatgpt                     cliente de OpenAI (ChatGPT) por API
+#   gemini                      cliente de Gemini (Google) por API
+#   glm                         cliente de GLM (Z.ai) por API, para diseño web
+#   grok                        Grok (xAI) por API, con búsqueda en vivo de web y de X
+#   openrouter                  pasarela a modelos de muchas casas con una sola clave
+#   perplexity                  Perplexity (Sonar) por API: búsqueda web con citas
+#   consensus_mcp               cliente propio del MCP de Consensus, con su OAuth
+#   scite_mcp                   cliente propio del MCP de scite, con su OAuth
+#   _oauth_refresh              renueva sin persona el token OAuth de esos dos clientes
+#   elicit                      búsqueda de literatura en la API de Elicit
+#   evidencia                   carril de evidencia: Consensus, scite, Elicit y Undermind
+#   radar_literatura            barrido de papers nuevos de su caso vía Perplexity
+#   aeo                         cómo describen a su autora Perplexity, Grok, ChatGPT y Gemini
+#   bench_jev                   mide Jev (TypeSafe AI, por red) contra su triage de tareas
+#   elevenlabs_voz              voz clonada de su autora con ElevenLabs
+#   vision_n1                   manda copias de sus láminas a modelos de visión externos
+#   nube_n1                     GPU alquilada (Scaleway) para procesar sus láminas
+#
+# [red] Registros de ensayos y literatura
+#   actualizar_nct_cache        refresca de ClinicalTrials.gov el estado de sus ensayos
+#   cde_fetch                   consulta el registro chino de ensayos (CDE/NMPA)
+#   cn                          búsqueda libre en el internet chino
+#   cn_fetch                    lee webs chinas geobloqueadas a través de su VPS
+#   radar_cn_vps                barre registros chinos con Chromium desde su VPS de Hong Kong
+#   radar_navegador             registros de ensayos sin API (CTIS…), por navegador
+#   radar_ned_diario            barrido diario, por red, de novedades para su caso
+#
+# [red] Google: Calendar, Drive y YouTube
+#   calendar_sync               lee Google Calendar y lo vuelca en su seguimiento
+#   calendar_write              escribe citas en Google Calendar
+#   drive                       gestor de Google Drive: subir, mover, borrar
+#   subir_historial_drive       sube su historial clínico a su Drive
+#   historial_sync              mantiene al día su historial clínico, también en Drive
+#   youtube                     lee YouTube (Data API): menciones, comentarios y canal
+#   yt_inbox                    buzón de comentarios y menciones de su canal de YouTube
+#
+# [red] X e Instagram
+#   _xurl                       envoltorio de la CLI `xurl` (X API v2), solo lectura
+#   x_centinela                 vigila en X el nombre de su autora y términos protegidos
+#   x_dms                       lee los mensajes directos de X
+#   x_guardados                 cosecha los guardados (bookmarks) de X
+#   x_mcp_puente                envoltorio stdio del MCP de X
+#   x_mentions                  menciones públicas de su autora en X
+#   x_radar                     radar de X hacia su tratamiento
+#   ig_inbox                    lee los mensajes directos de Instagram
+#   instagram_dm                borradores de respuesta a mensajes de Instagram
+#   reel_digest                 transcribe un reel de Instagram o un vídeo de YouTube
+#
+# [red, datos personales] Telegram, WhatsApp y contactos de su autora
+#   bot_telegram                demonio de entrada por Telegram de su lazo 24/7
+#   buzon_ideas                 guarda los enlaces que su autora suelta por Telegram
+#   enviar_hoy                  envía su parte diario a su Telegram
+#   espejo_nudge                aviso semanal por Telegram: refrescar su espejo en Notion
+#   digest                      resumen saneado del proyecto para el bot de un tercero
+#   wa_tracker                  vuelca sus chats desde la base del WhatsApp de escritorio
+#   leer_contacto               lee la conversación de WhatsApp de un contacto
+#   memoria_contactos           ficha de un contacto a partir de sus conversaciones
+#   voz_intima                  recoge sus notas de voz de WhatsApp para su gemelo de voz
+#   presorteo                   ordena su bandeja de WhatsApp con un modelo en Apple MLX
+#
+# [red, datos personales] Correo de su autora (IMAP y SMTP)
+#   correo_outbox               motor de salida: borradores de correo con adjuntos
+#   correo_smtp                 envío real de correo, con sus puertas
+#   correo_responder            borrador de respuesta en la voz de su autora
+#   correo_triage               triage de sus dos cuentas de correo entrante
+#   email_archive               archivo local de todo su correo, por IMAP
+#   adjuntos_clinicos           baja a local los informes médicos de su correo
+#
+# [red] Otros servicios de terceros
+#   postdicom                   sube estudios DICOM a su PostDICOM (DICOMweb)
+#   umami                       métricas de su web en Umami Cloud
+#   ritmo                       pulso de su campaña: tráfico web (umami) y fondos
+#   viajes_precios              precios de vuelos y hoteles vía SerpApi
+#
+# [su asistente y su caso] Vega, sus reservas y su oncología (§15 y desde e3b588d)
+#   vega_gate                   puerta determinista del ciclo de vigilancia de Vega
+#   vega_metrics                observabilidad de Vega
+#   vega_sesion                 una sola memoria para Vega en Telegram
+#   vega_vision                 lo que Vega ve de todo, sin informes crudos ni nombres
+#   perfil_vega                 escribe el perfil de trabajo de su autora para Vega
+#   acciones_datadas            acciones con fecha que Vega propone sin que se las pidan
+#   centinela_ned               avisa al momento, por Telegram, de señales críticas del caso
+#   estado_caso                 estado vivo de su caso: qué llegó, qué se espera, qué tarda
+#   reservas                    «El Conserje»: motor de reservas (viajes, compras, citas)
+#   pipeline_vacuna             tablero de su pipeline de neoantígenos (como pipeline/)
+#
+# [su caso] Láminas de patología y sus copias de revisión «N1» (§15)
+#   laminillas_capas            capas N1 del piloto que revisa el panel de visión
+#   laminillas_color            color de la tanda: desmezcla de tinciones (numpy, scipy)
+#   laminillas_comun            utilidades de los procesadores de láminas
+#   laminillas_congela          pre-congelación y congelación del piloto
+#   laminillas_exporta          `exporta_n1` lanzado por su ventanilla
+#   laminillas_f3               geometría de consenso y puerta de p63
+#   laminillas_geojson          GeoJSON para QuPath de cada lámina
+#   laminillas_he               la H&E del primario y del hueso
+#   laminillas_humo             humo sin datos y criterio de salida
+#   laminillas_ingesta          ingesta, manifiesto e identidad de las láminas
+#   laminillas_lector           lector único de píxeles, sobre OpenSlide
+#   laminillas_metricas         lo que se mide sobre los núcleos detectados
+#   laminillas_pesos            baja de Hugging Face los pesos de los modelos (red)
+#   laminillas_proc             procesadores de láminas con datos
+#   laminillas_registro         registro de los cortes seriados
+#   laminillas_segmenta         segmentación nuclear y reglas de artefacto
+#   laminillas_stack            instala sus venvs dentro de `sandbox-exec` (macOS, red)
+#   exporta_n1                  única boca que escribe las copias N1 de las láminas
+#   puerta_n1                   puerta de lo que entra en N1 o sale a un modelo de visión
+#
+# [su flujo] El juez de sus mensajes salientes; dependen de sus ganchos (desde e3b588d)
+#   juez_normas                 juez de las normas de salida (capa 3)
+#   prefiltro_juez              prefiltro determinista de ese juez
+#   cotejo_frases               ¿dijo su autora la frase que un borrador le atribuye?
+#   nivel_salida                calcula el nivel de cada salida (en sombra)
+#   gate_escalera               escalera del gate de salida: casos y falsos positivos
+#   gate_etiqueta               etiqueta hallazgos del gate de sus ganchos de Claude Code
+#
+# [macOS] launchd, Llavero, Apple MLX, Tailscale y Unix
+#   activar_daemon              única vía para encender un demonio de launchd
+#   vigia                       detecta cuándo su sistema no respondió y lo relanza (launchctl)
+#   backup                      copia cifrada con restic a un USB
+#   migrar_secretos             pasa claves en claro al Llavero de macOS
+#   colgados_stdin              procesos colgados esperando stdin (ps/lsof de Unix)
+#   modelo_mlx                  un modelo local en Apple MLX, con frenos de memoria
+#   bench_modelos               qué modelo local para qué tarea, en Apple MLX
+#   archivar                    clasifica ~/Downloads y ~/Desktop según su taxonomía
+#   preview_remoto              relé TCP por Tailscale para ver un servidor local
+#   staging                     antesala privada por Tailscale antes de producción
+#   sync_playbook               sincroniza su playbook clínico entre sus dos Mac por SSH
+#
+# [git] El repositorio de Polaris, su espejo público y su web
+#   release                     ritual de release: CHANGELOG y etiqueta git sobre master
+#   publicar                    genera el árbol publicable de Polaris
+#   publicar_sync               mantiene al día su repositorio público
+#   espejo_reiniciar_historial  reinicia en un commit el historial del espejo público
+#   pr_portar                   trae un PR del repositorio público a su casa base
+#   ci_barrido                  barre lo que llega por PR a su repositorio público
+#   cerrar_sesion               cierre de sesión: commit, fusión a casa base y poda
+#   dependencias                grafo de quién depende de quién; necesita git y sus rutas
+#   tests_afectados             qué baterías de su `test_all.sh` toca una rama
+#   seguridad_sweep             barrido de seguridad de lo versionado en su constelación
+#   seguridad_sweep_daemon      envoltorio de ese barrido como rutina
+#   web_novedad                 publica sola una novedad en su web
+#   web_revertir                deshace lo que su web publicó sola
+#
+# [su flujo] Su sistema por dentro y sus sesiones de Claude Code
+#   anatomia                    mapa vivo de Polaris: comités, rutinas, qué late
+#   anatomia_mapa               ese mapa dibujado como constelación, exportable a GIF
+#   anatomia_push               sube ese mapa cifrado a un repositorio privado (red)
+#   observatorio                sala de control de Polaris: gasto, rutinas, launchctl
+#   mcp_server                  servidor MCP de Polaris para otro cliente suyo
+#   archivar_nota               archiva un entregable en su fuente de verdad
+#   claude_lazo                 fija la versión de Claude Code que usa su lazo
+#   continuidad_auto            escribe la continuidad al cerrar sesión, con `claude -p`
+#   tiempo_sesiones             en qué se va el tiempo de sus sesiones de Claude Code
+#   memoria_contradicciones     memorias de su asistente que se contradicen
+#   repeticiones_semana         cifra semanal de correcciones repetidas
+#   radar_taller                candidatos de mejora de su sistema para su agente
+#   radar_contacto              atajo antiguo hacia `radar_personas contacto`
+#
+# [local, pero no entraron] Las tres que se miraron para copiar el 2026-10-08, y por qué no
+#   onco                        consulta en local el grafo de oncología OnCo: abre ella misma
+#                               una URL con `urllib` para bajar los datos, que son CC BY-NC 4.0
+#   audit_herramientas          auditoría de uso y salud de sus herramientas: abre ella
+#                               misma una URL con `urllib`
+#   contexto_lazo               contexto que su lazo antepone a cada trabajo: arrastra por
+#                               imports `radar_navegador`, `radar_ned_diario`, `radar_cn_vps`,
+#                               `bench_jev` y `playwright`
+#
+# [copiadas el 2026-10-08 y retiradas el 2026-10-09] Decisión del usuario, al leer su código
+#   borde_gateway               servidor HTTP compatible con OpenAI delante de su borde: abre un
+#                               puerto y llama al modelo (`ia.ask`)
+#   portguard                   arranque limpio de sus servicios locales: abre un socket de
+#                               escucha, lanza `lsof` y `ps` y mata procesos ajenos
+#   permiso_envio               permiso de un envío concreto: lee y escribe el Llavero de macOS
+#                               (`security`)
+#   ok_envio                    da ese permiso desde la consola: importa `permiso_envio`

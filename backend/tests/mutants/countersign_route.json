@@ -1,0 +1,63 @@
+{
+  "target": "app/api/imaging.py",
+  "test": [
+    "tests/test_countersign_strict.py"
+  ],
+  "mutations": [
+    {
+      "label": "el rechazo de la segunda firma sale como un 409 más",
+      "old": "    except countersign_rule.CountersignRefused as exc:",
+      "new": "    except KeyboardInterrupt as exc:"
+    },
+    {
+      "label": "la primera firma saca la frase de la bóveda aunque nadie la pidiera ver",
+      "old": "        if report is None or seen is None:",
+      "new": "        if report is None:"
+    },
+    {
+      "label": "el rechazo de una fuente que no es un informe dice que no cita nada",
+      "old": "            quote = _not_collatable(payload.source)",
+      "new": "            quote = None"
+    },
+    {
+      "label": "para rechazar una fuente que no es un informe se consulta su registro",
+      "old": "            quote = _not_collatable(payload.source)",
+      "new": "            quote = _not_collatable(payload.source)\n            check = _source_check(Settings(offline=False), payload.source)"
+    },
+    {
+      "label": "una contrafirma que no cita nada se rechaza como si citara otra cosa",
+      "old": "    if not source.strip():\n        return None",
+      "new": "    if False:\n        return None"
+    },
+    {
+      "label": "la lectura previa sin fuente dice que se cita algo que no es un informe",
+      "old": "    cited = quote if payload.source.strip() else None",
+      "new": "    cited = quote"
+    },
+    {
+      "label": "la lista de borradores no rotula lo contrafirmado con una regla anterior",
+      "old": "            \"countersign_note\": countersign_rule.prior_rule_note(draft.get(\"countersign\")),",
+      "new": "            \"countersign_note\": None,"
+    },
+    {
+      "label": "la lectura previa no dice si se podrá contrafirmar",
+      "old": "            \"second_signature\": countersign_rule.gate(cited)}",
+      "new": "            \"second_signature\": countersign_rule.gate({\"estado\": \"localizada\"})}"
+    },
+    {
+      "label": "la lista de borradores no lleva los textos de la regla",
+      "old": "            \"second_signature_rule\": countersign_rule.describe(),",
+      "new": "            \"second_signature_rule\": {},"
+    },
+    {
+      "label": "la respuesta de la contrafirma no dice si se cotejó",
+      "old": "            \"collation\": countersign_rule.collation(signed)}",
+      "new": "            \"collation\": None}"
+    },
+    {
+      "label": "la lista de borradores no dice si la contrafirma se cotejó",
+      "old": "            \"countersign_collation\": countersign_rule.collation(draft.get(\"countersign\")),",
+      "new": "            \"countersign_collation\": None,"
+    }
+  ]
+}

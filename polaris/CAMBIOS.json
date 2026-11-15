@@ -1,0 +1,172 @@
+[
+  {
+    "ruta": "tools/visor3d_web/index.html",
+    "fecha": "2026-09-29",
+    "motivo": "Decisión del usuario (docs/polaris-divergencias.md §5): el visor de Polaris es el visor del preset hígado de EMMA y tiene que cumplir sus reglas de interfaz: lesión candidata en amarillo, seleccionada en verde (NASA-STD-3001 Vol 2 F.5-1), y textos de EMMA en vez de los del caso original (TC portal, radiólogo, PET).",
+    "reemplazos": [
+      {
+        "viejo": "<!doctype html>\n",
+        "nuevo": "<!doctype html>\n<!-- Modificado por EMMA el 2026-09-29 (AGPL §5a): colores y textos de EMMA; detalle en polaris/CAMBIOS.json -->\n"
+      },
+      {
+        "viejo": "--coral:#ff6b47;",
+        "nuevo": "--coral:#FFD447;"
+      },
+      {
+        "viejo": "--sel:#ffd666;",
+        "nuevo": "--sel:#6BF09A;"
+      },
+      {
+        "viejo": "  tbody tr:focus-visible { outline:2px solid var(--coral); outline-offset:-2px }\n",
+        "nuevo": "  tbody tr:focus-visible { outline:2px solid var(--coral); outline-offset:-2px }\n  /* EMMA: columnas de radiólogo, procedencia, PET y comparación, que EMMA no tiene */\n  #tabla th:nth-child(2), #tabla td:nth-child(2), #tabla th:nth-child(5), #tabla td:nth-child(5),\n  #tabla th:nth-child(7), #tabla td:nth-child(7), #tabla th:nth-child(8), #tabla td:nth-child(8) { display:none }\n"
+      },
+      {
+        "viejo": "<h1>Mapa hepático · TC portal</h1>",
+        "nuevo": "<h1>Mapa hepático · TC</h1>"
+      },
+      {
+        "viejo": "    <b>Reconstrucción automática sin validación radiológica. No es un informe ni un diagnóstico.</b>\n    Las medidas oficiales son las del informe del radiólogo, que se muestran al lado cuando existen.\n    Las marcas de la revisión informal de un radiólogo (sin informe firmado) se distinguen por su procedencia en cada fila.\n",
+        "nuevo": "    <b>Segmentación automática sin validar: lo que marca el modelo son candidatos a revisar por una persona, no hallazgos.</b>\n    Imagen de referencia previa al vuelo o de Tierra, no un diagnóstico a bordo. Las decisiones son del equipo médico.\n"
+      },
+      {
+        "viejo": "    <div><small>3D · hígado translúcido · <span style=\"color:#ff6b47\">●</span> malla de Polaris · <span style=\"color:#78cdbe\">●</span> marca puntual del radiólogo (esfera de su diámetro, no segmentación) · porta y vasos</small><canvas id=\"gl3\" aria-label=\"Reconstrucción 3D del hígado\"></canvas></div>",
+        "nuevo": "    <div><small>3D · hígado translúcido · <span style=\"color:#FFD447\">●</span> lesión candidata · <span style=\"color:#6BF09A\">●</span> seleccionada · porta y vasos</small><canvas id=\"gl3\" aria-label=\"Reconstrucción 3D del hígado\"></canvas></div>"
+      },
+      {
+        "viejo": "    <caption style=\"text-align:left;color:var(--suave)\">Lesiones de este estudio: L = detección automática de Polaris, M = marca de un radiólogo sin lesión automática debajo. Clic o Enter en una fila lleva el cursor a la lesión en los cortes y en el 3D.</caption>",
+        "nuevo": "    <caption style=\"text-align:left;color:var(--suave)\">Lesiones candidatas de este estudio (L = segmentación automática, sin validar). Clic o Enter en una fila lleva el cursor a la lesión en los cortes y en el 3D.</caption>"
+      },
+      {
+        "viejo": "      <li>La comparación entre fechas solo vale entre la misma fase de contraste (aquí, portal en ambas). El emparejado de lesiones es automático y aproximado; el bueno es el del radiólogo. «Sin pareja automática» NO significa lesión nueva: puede ser una lesión que el modelo no detectó en el otro estudio o un falso positivo.</li>\n",
+        "nuevo": ""
+      },
+      {
+        "viejo": "      <li>Volumen no es función hepática. Cualquier planificación de terapia local la hace el equipo con sus propias herramientas.</li>",
+        "nuevo": "      <li>El volumen no es función hepática. Cualquier decisión la toma el equipo médico.</li>"
+      },
+      {
+        "viejo": "      <li>SUV: PET y TC son estudios distintos (distinta respiración y postura). El SUVmax de cada lesión se mide tras un registro deformable del hígado, con un vóxel de PET (4 mm) de margen; las lesiones pequeñas pierden captación por volumen parcial. El SUV depende de la reconstrucción: aquí, la estándar del centro (LOR-RAMLA con corrección de atenuación). Comparar SUV entre fechas exige tiempos de captación parecidos: el tiempo tras la inyección de cada PET se muestra arriba; si difieren mucho, la comparación es orientativa.</li>\n",
+        "nuevo": ""
+      },
+      {
+        "viejo": "<footer><small>Segmentación: TotalSegmentator (total, liver_segments, liver_lesions, liver_vessels), 100 % local. Visor: NiiVue. Generado por Polaris.</small></footer>",
+        "nuevo": "<footer><small>Segmentación: TotalSegmentator (total, liver_segments, liver_lesions, liver_vessels), 100 % local. Visor: NiiVue. Visor de Polaris (AGPL-3.0), en EMMA.</small></footer>"
+      }
+    ]
+  },
+  {
+    "ruta": "tools/visor3d_web/main.js",
+    "fecha": "2026-09-29",
+    "motivo": "Decisión del usuario (docs/polaris-divergencias.md §5): el visor de Polaris es el visor del preset hígado de EMMA y tiene que cumplir sus reglas de interfaz: lesión candidata en amarillo, seleccionada en verde (NASA-STD-3001 Vol 2 F.5-1), y textos de EMMA en vez de los del caso original (TC portal, radiólogo, PET).",
+    "reemplazos": [
+      {
+        "viejo": "// Visor hepático local (offline) — NiiVue. Lee ./<fecha>/estudio.json + volúmenes y mallas de\n",
+        "nuevo": "// Modificado por EMMA el 2026-09-29 (AGPL §5a): colores y textos de EMMA; detalle en polaris/CAMBIOS.json\n// Visor hepático local (offline) — NiiVue. Lee ./<fecha>/estudio.json + volúmenes y mallas de\n"
+      },
+      {
+        "viejo": "const CORAL = [255, 107, 71]",
+        "nuevo": "const CORAL = [255, 212, 71]      // EMMA: amarillo de precaución (F.5-1)"
+      },
+      {
+        "viejo": "const SELECCION = [255, 214, 102]",
+        "nuevo": "const SELECCION = [107, 240, 154]  // EMMA: verde de selección"
+      },
+      {
+        "viejo": "backColor: BACK, crosshairColor: [1, 0.42, 0.28, 1], crosshairWidth: 1,",
+        "nuevo": "backColor: BACK, crosshairColor: [0.42, 0.94, 0.6, 1], crosshairWidth: 1,"
+      },
+      {
+        "viejo": "  crosshairColor: [1, 0.42, 0.28, 1] })",
+        "nuevo": "  crosshairColor: [0.42, 0.94, 0.6, 1] })"
+      },
+      {
+        "viejo": "<span>volumen tumoral detectado</span>",
+        "nuevo": "<span>volumen de lesiones candidatas</span>"
+      },
+      {
+        "viejo": "<span>del hígado ocupado por lo detectado<br>(exploratorio, no pronóstico)</span>",
+        "nuevo": "<span>del hígado ocupado por lo marcado<br>(exploratorio, no pronóstico)</span>"
+      },
+      {
+        "viejo": "<span>lesiones detectadas<br>",
+        "nuevo": "<span>lesiones candidatas<br>"
+      },
+      {
+        "viejo": "<span>fase portal · ventana W",
+        "nuevo": "<span>ventana W"
+      }
+    ]
+  },
+  {
+    "ruta": "tools/visor3d_web/render.js",
+    "fecha": "2026-09-29",
+    "motivo": "Decisión del usuario (docs/polaris-divergencias.md §5): el visor de Polaris es el visor del preset hígado de EMMA y tiene que cumplir sus reglas de interfaz: lesión candidata en amarillo, seleccionada en verde (NASA-STD-3001 Vol 2 F.5-1), y textos de EMMA en vez de los del caso original (TC portal, radiólogo, PET).",
+    "reemplazos": [
+      {
+        "viejo": "// Render de nivel «ilustración médica» del hígado para vídeo (three.js, la librería del mapa óseo).\n",
+        "nuevo": "// Modificado por EMMA el 2026-09-29 (AGPL §5a): colores y textos de EMMA; detalle en polaris/CAMBIOS.json\n// Render de nivel «ilustración médica» del hígado para vídeo (three.js, la librería del mapa óseo).\n"
+      },
+      {
+        "viejo": "lesion: new THREE.MeshPhysicalMaterial({ color: 0xead3a0,",
+        "nuevo": "lesion: new THREE.MeshPhysicalMaterial({ color: 0xffd447,"
+      },
+      {
+        "viejo": "lesionPequena: new THREE.MeshPhysicalMaterial({ color: 0xb8accb,",
+        "nuevo": "lesionPequena: new THREE.MeshPhysicalMaterial({ color: 0xffd447,"
+      }
+    ]
+  },
+  {
+    "ruta": "tools/deid.py",
+    "fecha": "2026-10-01",
+    "motivo": "Decisión del usuario (2026-10-01): instalar la capa NER de la de-identificación. En Windows un entorno virtual tiene Scripts/python.exe, no bin/python, y `_python_ner()` no lo encontraba: la capa se daría siempre por no disponible. Se prueba también la ruta de Windows; el resto de la función queda igual.",
+    "reemplazos": [
+      {
+        "viejo": "#!/usr/bin/env python3\n\"\"\"tools/deid.py",
+        "nuevo": "#!/usr/bin/env python3\n# Modificado por EMMA el 2026-10-01 (AGPL §5a): _python_ner() busca también Scripts/python.exe (Windows); detalle en polaris/CAMBIOS.json\n\"\"\"tools/deid.py"
+      },
+      {
+        "viejo": "    for c in cand:\n        py = os.path.join(c, \"bin\", \"python\") if c else \"\"\n        if py and os.path.isfile(py):\n            return py\n    return None",
+        "nuevo": "    for c in cand:\n        for py in ((os.path.join(c, \"bin\", \"python\"), os.path.join(c, \"Scripts\", \"python.exe\"))\n                   if c else ()):\n            if os.path.isfile(py):\n                return py\n    return None"
+      }
+    ]
+  },
+  {
+    "ruta": "tools/transcribe_audios.py",
+    "fecha": "2026-10-01",
+    "motivo": "Decisión del usuario (2026-10-01): transcribir audios con Whisper local en EMMA. El script lee de ~/Downloads/.wa_audio y escribe en 00_FUENTE-DE-VERDAD/Audios-Transcritos junto a su propia carpeta, es decir, dentro de polaris/ en EMMA, donde nada de EMMA puede escribir. SRC y OUT se pueden dar por variable de entorno (BTP_AUDIO_SRC, BTP_AUDIO_OUT); sin ellas, los valores de siempre. El resto del script queda igual.",
+    "reemplazos": [
+      {
+        "viejo": "\"\"\"Transcribe notas de voz .opus de WhatsApp",
+        "nuevo": "# Modificado por EMMA el 2026-10-01 (AGPL §5a): SRC y OUT por variable de entorno (BTP_AUDIO_SRC, BTP_AUDIO_OUT); detalle en polaris/CAMBIOS.json\n\"\"\"Transcribe notas de voz .opus de WhatsApp"
+      },
+      {
+        "viejo": "SRC = os.path.expanduser(\"~/Downloads/.wa_audio\")\nOUT = os.path.join(ROOT, \"00_FUENTE-DE-VERDAD\", \"Audios-Transcritos\")",
+        "nuevo": "SRC = os.environ.get(\"BTP_AUDIO_SRC\") or os.path.expanduser(\"~/Downloads/.wa_audio\")\nOUT = os.environ.get(\"BTP_AUDIO_OUT\") or os.path.join(ROOT, \"00_FUENTE-DE-VERDAD\", \"Audios-Transcritos\")"
+      }
+    ]
+  },
+  {
+    "ruta": "tools/estado_actual.py",
+    "fecha": "2026-10-20",
+    "motivo": "Decisión del usuario (2026-10-20): la orden `cotejado` importaba `fecha_cotejo` de la prueba `tests/test_perfil_clinico_al_dia.py`, y las pruebas de Polaris no van en el paquete: en la aplicación instalada esa orden fallaría al importar. La función (tres líneas, la misma expresión regular y el mismo `_fecha`) pasa a la herramienta, y `cotejado` deja de tocar `sys.path` y de importar la prueba; la prueba no se toca y sigue definiendo la suya. EMMA no llama a esta orden. El resto del fichero queda igual.",
+    "reemplazos": [
+      {
+        "viejo": "#!/usr/bin/env python3\n\"\"\"tools/estado_actual.py",
+        "nuevo": "#!/usr/bin/env python3\n# SPDX-License-Identifier: AGPL-3.0-or-later\n# Modificado por EMMA el 2026-10-20 (AGPL §5a), sobre Polaris 20527939e00b9ebc063a0024210e6f9df663d989: `cotejado` usa fecha_cotejo(), traída tal cual de tests/test_perfil_clinico_al_dia.py, en vez de importar esa prueba, que no viaja con la aplicación; detalle en polaris/CAMBIOS.json\n\"\"\"tools/estado_actual.py"
+      },
+      {
+        "viejo": "if __name__ == \"__main__\" and sys.argv[1:2] == [\"huella\"]:\n",
+        "nuevo": "def fecha_cotejo(texto):\n    \"\"\"Fecha de cotejo que declara la memoria: «Cotejo: 13-sep-2026 contra … ESTADO-ACTUAL».\"\"\"\n    # EMMA (AGPL §5a): copiada de tests/test_perfil_clinico_al_dia.py, que la sigue definiendo.\n    m = re.search(r\"Cotejo:?\\**\\s*(\\d{1,2})-([A-Za-zé]{3,})-(\\d{4})[^\\n]*ESTADO-ACTUAL\", texto)\n    return _fecha(*m.groups()) if m else None\n\n\nif __name__ == \"__main__\" and sys.argv[1:2] == [\"huella\"]:\n"
+      },
+      {
+        "viejo": "    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), \"..\", \"tests\"))\n",
+        "nuevo": ""
+      },
+      {
+        "viejo": "    from test_perfil_clinico_al_dia import fecha_cotejo  # noqa: E402\n",
+        "nuevo": ""
+      }
+    ]
+  }
+]

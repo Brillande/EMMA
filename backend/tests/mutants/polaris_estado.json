@@ -1,0 +1,83 @@
+{
+  "target": "app/api/polaris.py",
+  "test": [
+    "tests/test_polaris_bridge.py"
+  ],
+  "mutations": [
+    {
+      "label": "una herramienta que EMMA llama deja de declararse como usada",
+      "old": "    \"visor3d_superpone_focos\",\n",
+      "new": ""
+    },
+    {
+      "label": "se declara como usada una herramienta que EMMA no llama",
+      "old": "    \"_net\",\n",
+      "new": "    \"_net\",\n    \"_casa\",\n"
+    },
+    {
+      "label": "toda herramienta copiada sale como usada por EMMA",
+      "old": "                \"en_uso\": tool.name in EMMA_USES,",
+      "new": "                \"en_uso\": True,"
+    },
+    {
+      "label": "una ficha estropeada tumba la ruta en vez de salir como ausente",
+      "old": "    except (OSError, ValueError):\n        return None\n\n\ndef _adopted_commit",
+      "new": "    except OSError:\n        return None\n\n\ndef _adopted_commit"
+    },
+    {
+      "label": "sin ADOPTADO.txt la ruta responde 500",
+      "old": "        lines = (root / \"ADOPTADO.txt\").read_text(encoding=\"utf-8\").splitlines()\n    except (OSError, ValueError):",
+      "new": "        lines = (root / \"ADOPTADO.txt\").read_text(encoding=\"utf-8\").splitlines()\n    except ZeroDivisionError:"
+    },
+    {
+      "label": "el commit sale de cualquier línea que mencione un commit, no de la que lo fija",
+      "old": "        if len(parts) == 2 and parts[0] == \"commit\":",
+      "new": "        if len(parts) >= 2 and \"commit\" in parts:"
+    },
+    {
+      "label": "una ficha que no es un objeto se enseña como si lo fuera",
+      "old": "    if not isinstance(card, dict):\n        return None",
+      "new": "    if card is None:\n        return None\n    if not isinstance(card, dict):\n        return {}"
+    },
+    {
+      "label": "el motivo de un cambio decidido se pierde por el camino",
+      "old": "                \"motivo\": change.get(\"motivo\"),",
+      "new": "                \"motivo\": None,"
+    },
+    {
+      "label": "un fichero opcional que falta ya no se dice",
+      "old": "        if absent\n",
+      "new": "        if absent and False\n"
+    },
+    {
+      "label": "la tabla calla el motivo de la herramienta que no carga",
+      "old": "                \"motivo\": tool.reason,",
+      "new": "                \"motivo\": None,"
+    },
+    {
+      "label": "lo que el inventario no importa se cuenta entre las que cargan",
+      "old": "        \"cargan\": len(tools) - len(failing) - len(skipped),",
+      "new": "        \"cargan\": len(tools) - len(failing),"
+    },
+    {
+      "label": "lo que el inventario no importa se lista entre las que no cargan",
+      "old": "    failing = [tool for tool in tools if tool.imported and not tool.loads]",
+      "new": "    failing = [tool for tool in tools if not tool.loads]"
+    },
+    {
+      "label": "lo que el inventario no importa se rotula «no carga»",
+      "old": "        return \"no se importa\"\n",
+      "new": "        return \"no carga\"\n"
+    },
+    {
+      "label": "lo que el inventario no importa sale con carga falsa, como un fallo visto",
+      "old": "                \"carga\": tool.loads if tool.imported else None,",
+      "new": "                \"carga\": tool.loads,"
+    },
+    {
+      "label": "la ruta calla qué herramientas no se importan",
+      "old": "        \"no_se_importan\": [{\"herramienta\": t.name, \"motivo\": t.reason} for t in skipped],",
+      "new": "        \"no_se_importan\": [],"
+    }
+  ]
+}

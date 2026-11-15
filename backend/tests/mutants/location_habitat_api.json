@@ -1,0 +1,17 @@
+{"target": "app/api/habitat.py",
+ "test": [
+  "tests/test_habitat.py::test_a_declared_location_is_a_signed_ledger_entry_and_reorders_the_hypothesis",
+  "tests/test_habitat.py::test_an_unknown_module_or_a_module_out_of_place_is_refused"
+ ],
+ "mutations": [
+  {"label": "la ubicacion se ignora: la correlacion no recibe lo declarado",
+   "old": "        CURRENT_WINDOW,\n        stays,\n",
+   "new": "        CURRENT_WINDOW,\n        None,\n"},
+  {"label": "una lectura de cabina entra con un modulo que no esta en la lista",
+   "old": "        if value not in MODULES:\n            raise ValueError(f\"módulo desconocido; uno de {tuple(MODULES)}\")\n        return value",
+   "new": "        return value"},
+  {"target": "app/analysis/location.py",
+   "label": "la ubicacion que se muestra es la primera declarada y no la que la corrige",
+   "old": "    return _location(prevailing(covering))",
+   "new": "    return _location(min(covering, key=lambda item: item.order))"}
+ ]}

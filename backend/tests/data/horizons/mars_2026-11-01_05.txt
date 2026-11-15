@@ -1,0 +1,15 @@
+EMMA, fixture de pruebas (unidad E6, 2026-10-23). Las cifras de las cinco filas (delta, deldot, 1-way_down_LT, S-O-T y /r) y el dia juliano son las de la API de Horizons leida ese dia (cabecera «Ephemeris / API_USER Thu Oct 22 16:39:12 2026 Pasadena, USA», hora de Pasadena; format=text, COMMAND='499', CENTER='500@399', QUANTITIES='20,21,23', 2026-11-01 a 2026-11-05, paso 1d, CSV_FORMAT=YES, CAL_FORMAT=BOTH), copiadas tal cual en el CSV que pide astroquery. Las lineas de cuerpo y centro son las que el analizador de astroquery necesita, no una copia literal de la respuesta.
+*******************************************************************************
+Target body name: Mars (499)                      {source: EMMA fixture}
+Center body name: Earth (399)                     {source: EMMA fixture}
+*******************************************************************************
+ Date__(UT)__HR:MN, Date_________JDUT, , ,            delta,     deldot,  1-way_down_LT,     S-O-T,/r,
+*******************************************************************************
+$$SOE
+ 2026-Nov-01 00:00, 2461345.500000000, , , 1.43251012108556,-14.0484391,    11.91382339,   79.9592,/L,
+ 2026-Nov-02 00:00, 2461346.500000000, , , 1.42437937425787,-14.1089287,    11.84620203,   80.4573,/L,
+ 2026-Nov-03 00:00, 2461347.500000000, , , 1.41621400083797,-14.1683206,    11.77829269,   80.9594,/L,
+ 2026-Nov-04 00:00, 2461348.500000000, , , 1.40801468972147,-14.2264274,    11.71010110,   81.4654,/L,
+ 2026-Nov-05 00:00, 2461349.500000000, , , 1.39978223224787,-14.2830824,    11.64163384,   81.9755,/L,
+$$EOE
+*******************************************************************************

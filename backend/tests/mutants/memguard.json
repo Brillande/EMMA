@@ -1,0 +1,28 @@
+{
+  "target": "app/polaris/compat/memguard.py",
+  "test": [
+    "tests/test_memguard.py"
+  ],
+  "mutations": [
+    {
+      "label": "solo se vigila al hijo directo, no al árbol",
+      "old": "        stack.extend(children.get(pid, []))",
+      "new": "        pass"
+    },
+    {
+      "label": "la huella no cuenta la memoria física del proceso",
+      "old": "    return None if counters is None else counters.WorkingSetSize / _GB",
+      "new": "    return 0.0"
+    },
+    {
+      "label": "el tiempo de CPU no avanza: todo parece colgado",
+      "old": "                out[pid] = ticks / 1e7",
+      "new": "                out[pid] = 0.0"
+    },
+    {
+      "label": "al interrumpir no se mata el árbol (os.killpg no existe en Windows)",
+      "old": "        module.os = _OsWithGroups()",
+      "new": "        pass"
+    }
+  ]
+}

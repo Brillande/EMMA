@@ -1,0 +1,6 @@
+{"target": "app/ingest/cost.py", "test": ["tests/test_hydration_nutrition.py"],
+ "mutations": [
+  {"label": "un tiempo con cifra y 'sin fuente' se acepta",
+   "old": "        if item[\"crew_time_minutes\"] is not None and item[\"crew_time_basis\"] == \"sin fuente\":",
+   "new": "        if False:"}
+ ]}

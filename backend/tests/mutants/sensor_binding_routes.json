@@ -1,0 +1,79 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_sensor_bindings.py::test_only_what_the_console_signed_counts",
+  "tests/test_sensor_bindings.py::test_a_reading_from_a_device_bound_to_someone_else_enters_and_says_so",
+  "tests/test_sensor_bindings.py::test_no_notice_for_the_bound_crew_member_nor_before_the_binding_nor_unbound_devices",
+  "tests/test_sensor_bindings.py::test_an_identifier_that_is_not_one_is_a_422_before_anything_is_recorded",
+  "tests/test_sensor_bindings.py::test_an_import_judges_each_reading_against_the_binding_of_its_instant",
+  "tests/test_sensor_bindings.py::test_the_apple_health_import_carries_the_notice_too",
+  "tests/test_sensor_bindings.py::test_a_broken_binding_record_does_not_turn_an_accepted_reading_into_an_error"
+ ],
+ "mutations": [
+  {
+   "label": "el vinculo BLOQUEA la ingesta de una trama BLE de un dispositivo vinculado a otro",
+   "old": "    entries = _recorded_or_422(\n        lambda: store.record_many(observations, identity_for(\"wearable-ble\"))\n    )",
+   "new": "    if _binding_notice(store, \"wearable-ble\", device, payload.subject, observations):\n        raise HTTPException(status_code=409, detail=\"dispositivo vinculado a otro tripulante\")\n    entries = _recorded_or_422(\n        lambda: store.record_many(observations, identity_for(\"wearable-ble\"))\n    )"
+  },
+  {
+   "label": "el vinculo BLOQUEA una importacion de un dispositivo vinculado a otro",
+   "old": "    entries = _recorded_or_422(lambda: store.record_many(observations, identity_for(source)))",
+   "new": "    if _binding_notice(store, source, device, subject, observations):\n        raise HTTPException(status_code=409, detail=\"dispositivo vinculado a otro tripulante\")\n    entries = _recorded_or_422(lambda: store.record_many(observations, identity_for(source)))"
+  },
+  {
+   "label": "el aviso cuenta un vinculo que no firmo la consola",
+   "old": "        declared = [item for item in store.sensor_bindings() if _counts(item, None)]",
+   "new": "        declared = list(store.sensor_bindings())"
+  },
+  {
+   "label": "el identificador de la ingesta no se normaliza como el de la declaracion",
+   "old": "        return bindings.device_key(device)\n    except ValueError as exc:",
+   "new": "        bindings.device_key(device)\n        return device\n    except ValueError as exc:"
+  },
+  {
+   "label": "una trama BLE con un identificador que no lo es se registra",
+   "old": "    device = _device_or_422(payload.device)\n",
+   "new": "    device = None\n"
+  },
+  {
+   "label": "un export de Apple Health con un identificador que no lo es se registra",
+   "old": "    device = _device_or_422(device)\n    export = await _read_capped(request)\n",
+   "new": "    device = None\n    export = await _read_capped(request)\n"
+  },
+  {
+   "label": "un dataset de Google Fit con un identificador que no lo es se registra",
+   "old": "    device = _device_or_422(device)\n    body = await _read_capped(request)\n",
+   "new": "    device = None\n    body = await _read_capped(request)\n"
+  },
+  {
+   "label": "un registro de vinculos danado convierte en error una lectura ya registrada",
+   "old": "    except TamperedRecordError:\n        return bindings.unavailable(source, device, subject, len(observations))\n",
+   "new": "    except TamperedRecordError:\n        raise\n"
+  },
+  {
+   "label": "la importacion de Apple Health pierde el identificador del dispositivo",
+   "old": "        store, deployed(observations, where), rejected, \"apple-health\", subject, device\n",
+   "new": "        store, deployed(observations, where), rejected, \"apple-health\", subject, None\n"
+  },
+  {
+   "label": "la importacion de Google Fit pierde el identificador del dispositivo",
+   "old": "        store, deployed(observations, where), rejected, \"google-fit\", subject, device\n",
+   "new": "        store, deployed(observations, where), rejected, \"google-fit\", subject, None\n"
+  },
+  {
+   "label": "la trama BLE se juzga sin su identificador",
+   "old": "            store, \"wearable-ble\", device, payload.subject, observations\n",
+   "new": "            store, \"wearable-ble\", None, payload.subject, observations\n"
+  },
+  {
+   "label": "la importacion se juzga contra el vinculo de otra fuente",
+   "old": "        \"binding_notice\": _binding_notice(store, source, device, subject, observations),",
+   "new": "        \"binding_notice\": _binding_notice(store, \"wearable-ble\", device, subject, observations),"
+  },
+  {
+   "label": "todas las lecturas se juzgan en el instante de la primera",
+   "old": "        declared, source, device, subject, [item.effective for item in observations]\n",
+   "new": "        declared, source, device, subject, [observations[0].effective for _ in observations]\n"
+  }
+ ]
+}

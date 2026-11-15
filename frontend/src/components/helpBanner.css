@@ -1,0 +1,114 @@
+/*
+ * La banda de ayuda urgente (`HelpBanner.tsx`, 2026-11-14). Rojo de la paleta, como la tarjeta de
+ * emergencia de «Inicio» y la tabla F.5-1: lo que pide atención inmediata. Pegada arriba mientras se
+ * desplaza la sección, para que no se pierda. El texto va en `--c-text` sobre un fondo apenas teñido,
+ * con el contraste de siempre; la forma (campana) y la palabra («Ayuda urgente») lo dicen también sin
+ * color.
+ */
+.help-banner {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border: 2px solid var(--c-red);
+  border-radius: 9px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c-red) 26%, var(--c-surface)), color-mix(in srgb, var(--c-red) 10%, var(--c-surface)));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c-red) 40%, transparent);
+  color: var(--c-text);
+}
+
+.help-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.3rem 0.8rem;
+  align-items: center;
+}
+
+.help-item + .help-item {
+  padding-top: 0.4rem;
+  border-top: 1px solid color-mix(in srgb, var(--c-red) 50%, transparent);
+}
+
+.help-alarm {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  color: var(--c-red);
+  filter: drop-shadow(0 0 6px var(--c-red));
+}
+
+.help-alarm .pictogram {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.help-body p {
+  margin: 0.1rem 0;
+}
+
+.help-head {
+  font-size: 1.05rem;
+}
+
+.help-reason {
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+.help-label {
+  color: var(--c-text-secondary);
+  margin-right: 0.25rem;
+}
+
+.help-when {
+  font-size: 0.875rem;
+}
+
+.help-close {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.help-close label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+}
+
+.help-close input {
+  width: 10rem;
+}
+
+.help-error {
+  flex-basis: 100%;
+  text-align: right;
+}
+
+.help-basis {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--c-text-secondary);
+}
+
+.help-failure {
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 760px) {
+  .help-item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .help-close {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}

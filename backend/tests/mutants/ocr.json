@@ -1,0 +1,18 @@
+{
+  "target": "app/reports/ocr.py",
+  "test": [
+    "tests/test_reports.py"
+  ],
+  "mutations": [
+    {
+      "label": "una página adivinada no se marca (ocr_informes)",
+      "old": "return self.confidence is not None and self.confidence < MIN_CONFIDENCE",
+      "new": "return False"
+    },
+    {
+      "label": "un PDF con texto se OCR-iza igual",
+      "old": "if layer is not None:",
+      "new": "if False:"
+    }
+  ]
+}

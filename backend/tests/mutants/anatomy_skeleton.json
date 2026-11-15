@@ -1,0 +1,44 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_skeleton_view.py",
+    "tests/test_anatomy_skeleton.py"
+  ],
+  "mutations": [
+    {
+      "label": "el TAC de ejemplo de un dataset se rotula como el cuerpo del tripulante",
+      "old": "        \"label\": i18n.loc(SAMPLE_LABEL if simulated else OWN_LABEL).format(",
+      "new": "        \"label\": i18n.loc(OWN_LABEL).format("
+    },
+    {
+      "label": "la figura del TAC dice ser la de referencia",
+      "old": "        \"source\": OWN_CT,",
+      "new": "        \"source\": REFERENCE,"
+    },
+    {
+      "label": "el hueso cortado por el borde no se marca en la respuesta",
+      "old": "                \"truncated\": name in view.truncated,",
+      "new": "                \"truncated\": False,"
+    },
+    {
+      "label": "la figura derivada de un dataset CC BY pierde su cita",
+      "old": "            if dataset else None",
+      "new": "            if False else None"
+    },
+    {
+      "label": "sin segmentación no se dice por qué se ve el esqueleto de referencia",
+      "old": "            **skeleton(), \"fallback_reason\": i18n.loc(NO_SEGMENTATION), \"fallback_kind\": NO_OWN,",
+      "new": "            **skeleton(),"
+    },
+    {
+      "label": "los huesos sin vóxeles no se listan",
+      "old": "        \"absent_bones\": _named(view.absent),",
+      "new": "        \"absent_bones\": [],"
+    },
+    {
+      "label": "la figura de referencia no dice que lo es",
+      "old": "        \"source\": REFERENCE,\n        \"label\": REFERENCE_LABEL,",
+      "new": "        \"source\": OWN_CT,\n        \"label\": REFERENCE_LABEL,"
+    }
+  ]
+}

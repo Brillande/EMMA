@@ -1,0 +1,38 @@
+{
+  "name": "emma-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-polaris.mjs && tsc --noEmit && vite build && node scripts/third-party.mjs",
+    "build:polaris": "node scripts/build-polaris.mjs",
+    "preview": "vite preview",
+    "preview:back": "node scripts/back-preview.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@mediapipe/tasks-vision": "1.2.2",
+    "@niivue/niivue": "0.69.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "three": "0.186.1",
+    "uplot": "^1.6.32",
+    "vosk-browser": "0.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "0.186.0",
+    "@types/web-bluetooth": "^0.0.22",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  }
+}

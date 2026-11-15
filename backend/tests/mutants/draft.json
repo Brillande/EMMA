@@ -1,0 +1,24 @@
+{
+  "target": "app/interpret/draft.py",
+  "test": [
+    "tests/test_cotejo.py",
+    "tests/test_interpret.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin cotejo de signos en el borrador",
+      "old": "outcome.blocked_reasons.extend(unannotated_claims(text, protocol, annotated))",
+      "new": "pass"
+    },
+    {
+      "label": "el comité se reduce al primer verificador",
+      "old": "for verifier in verifiers or [llm]:",
+      "new": "for verifier in (verifiers or [llm])[:1]:"
+    },
+    {
+      "label": "sin neutralizar los delimitadores (local.py)",
+      "old": "safe = data.replace(\"<<<\", \"< < <\").replace(\">>>\", \"> > >\")",
+      "new": "safe = data"
+    }
+  ]
+}

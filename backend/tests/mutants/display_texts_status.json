@@ -1,0 +1,12 @@
+{"target": "app/api/routes.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "el estado da la trayectoria sin su frase",
+   "old": "        str(domain): with_wording(trajectory.get(str(domain)))",
+   "new": "        str(domain): trajectory.get(str(domain))"},
+  {"label": "las efemerides se juzgan con el plazo de la meteorologia espacial",
+   "old": "                ExternalSource.EPHEMERIS, comms_age[1] if comms_age else None",
+   "new": "                ExternalSource.SPACE_WEATHER, comms_age[1] if comms_age else None"},
+  {"label": "el estado no lleva las palabras de nivel",
+   "old": "        \"level_labels\": level_labels(),",
+   "new": "        \"level_labels\": {},"}
+ ]}

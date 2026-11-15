@@ -1,0 +1,16 @@
+{"target": "app/api/habitat.py",
+ "test": [
+  "tests/test_habitat_crew_cut.py"
+ ],
+ "mutations": [
+  {"label": "la vista de tripulacion de Tierra lee la cabina sin su corte",
+   "old": "    found = excursions(store.habitat_readings(until=until))\n",
+   "new": "    found = excursions(store.habitat_readings())\n"},
+  {"label": "la vista de tripulacion de Tierra lee la cabina desde su corte en vez de hasta el",
+   "old": "    found = excursions(store.habitat_readings(until=until))\n",
+   "new": "    found = excursions(store.habitat_readings(since=until))\n"},
+  {"label": "el almacen no corta las lecturas de cabina en el corte de Tierra",
+   "target": "app/core/storage.py",
+   "old": "            if until is not None and reading.effective > until:\n                continue\n",
+   "new": ""}
+ ]}

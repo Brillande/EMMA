@@ -1,0 +1,49 @@
+{
+ "target": "app/timeline.py",
+ "test": [
+  "tests/test_contrast_phase.py::test_the_chronicle_tells_each_declaration_with_its_label_and_without_the_note",
+  "tests/test_contrast_phase.py::test_the_chronicle_tells_only_what_the_console_would_show"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica no cuenta la fase de contraste declarada",
+   "old": "    for study in store.volume_studies(subject) if declared else []:",
+   "new": "    for study in []:"
+  },
+  {
+   "label": "la cronica cuenta lo que no firmo la consola",
+   "old": "        for item in contrast_phase.history(declared, study, CONSOLE_IDENTITY):",
+   "new": "        for item in contrast_phase.history([{**d, \"signer\": CONSOLE_IDENTITY} for d in declared], study, CONSOLE_IDENTITY):"
+  },
+  {
+   "label": "la declaracion se fecha en la hora de firma y no en el instante que declara",
+   "old": "                mission, until, item, \"at\", \"imagen\", \"contrast-phase-declared\",",
+   "new": "                mission, until, item, None, \"imagen\", \"contrast-phase-declared\","
+  },
+  {
+   "label": "Tierra ve en la cronica una declaracion firmada despues de su corte",
+   "old": "                mission, until, item, \"at\", \"imagen\", \"contrast-phase-declared\",",
+   "new": "                mission, None, item, \"at\", \"imagen\", \"contrast-phase-declared\","
+  },
+  {
+   "label": "la cronica no dice quien declaro",
+   "old": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous),\n                item[\"declared_by\"])",
+   "new": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous),\n                \"\")"
+  },
+  {
+   "label": "la cronica escribe la nota libre sobre el estudio",
+   "old": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous),\n",
+   "new": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous) + str(item[\"note\"]),\n"
+  },
+  {
+   "label": "la cronica cuenta la declaracion sin su rotulo",
+   "old": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous),\n",
+   "new": "                contrast_phase.sentence(item, study[\"ledger_index\"], previous).replace(contrast_phase.DECLARED_LABEL, \"\"),\n"
+  },
+  {
+   "label": "la cronica no dice que constaba antes",
+   "old": "            previous = item\n",
+   "new": ""
+  }
+ ]
+}

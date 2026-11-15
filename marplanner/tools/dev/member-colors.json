@@ -1,0 +1,12 @@
+[
+  { "key": "blue", "name": "blue", "base500": { "l": 0.48, "c": 0.19, "h": 262 } },
+  { "key": "sky", "name": "sky", "base500": { "l": 0.64, "c": 0.13, "h": 232 } },
+  { "key": "teal", "name": "teal", "base500": { "l": 0.6, "c": 0.1, "h": 195 } },
+  { "key": "green", "name": "green", "base500": { "l": 0.5, "c": 0.14, "h": 155 } },
+  { "key": "lime", "name": "lime", "base500": { "l": 0.6, "c": 0.17, "h": 128 } },
+  { "key": "amber", "name": "amber", "base500": { "l": 0.62, "c": 0.13, "h": 85 } },
+  { "key": "orange", "name": "orange", "base500": { "l": 0.65, "c": 0.17, "h": 52 } },
+  { "key": "red", "name": "red", "base500": { "l": 0.56, "c": 0.21, "h": 25 } },
+  { "key": "pink", "name": "pink", "base500": { "l": 0.6, "c": 0.21, "h": 350 } },
+  { "key": "violet", "name": "violet", "base500": { "l": 0.56, "c": 0.21, "h": 298 } }
+]

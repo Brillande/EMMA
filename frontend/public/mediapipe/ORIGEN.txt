@@ -1,0 +1,35 @@
+face_landmarker.task: de dónde sale el modelo de la vista que sigue la cara (demostración)
+==========================================================================================
+
+Qué es: el modelo de MediaPipe Face Landmarker (float16, versión 1), un paquete .task (zip) con
+cuatro modelos: face_detector.tflite (BlazeFace de corto alcance), face_landmarks_detector.tflite
+(Face Mesh V2, 478 puntos), face_blendshapes.tflite y geometry_pipeline_metadata_landmarks.binarypb.
+EMMA solo usa los puntos de los rabillos de los ojos para sacar el giro de la cara sobre la
+pantalla (frontend/src/lib/faceOrientation.ts); los blendshapes y las matrices se piden apagados.
+
+Descargado una vez, en desarrollo, el 2026-11-03, de:
+  https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
+Tamaño: 3 758 596 bytes.
+SHA-256: 64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff
+(lo comprueba frontend/src/lib/faceModel.test.ts)
+
+En ejecución no se descarga nada: el fichero viaja en el paquete (Vite lo copia de public/ a dist/)
+y la aplicación lo carga desde su propio origen.
+
+Licencia: Apache License, Version 2.0. Lo dicen las fichas del modelo de Google, leídas el
+2026-11-03 («LICENSED UNDER Apache License, Version 2.0» en las tres):
+  - Face Mesh V2:
+    https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Face%20Mesh%20V2.pdf
+    (autores Geng Yan e Ivan Grishchenko, Google; fecha del modelo 15 de septiembre de 2022)
+  - Blendshape V2:
+    https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Blendshape%20V2.pdf
+  - BlazeFace (Short Range):
+    https://storage.googleapis.com/mediapipe-assets/MediaPipe%20BlazeFace%20Model%20Card%20(Short%20Range).pdf
+Texto de la licencia: LICENSE-Apache-2.0.txt, aquí al lado, copiado de
+https://www.apache.org/licenses/LICENSE-2.0.txt el 2026-11-03; viaja en el paquete con el modelo y
+con el WebAssembly de @mediapipe/tasks-vision (Apache-2.0 en su package.json, que no trae el texto),
+como pide la §4(a) al redistribuir. Anotado también en NOTICE, en la raíz.
+
+Las fichas dicen para qué se entrenó (puntos de la cara en vídeo de la cámara frontal de un móvil,
+en tiempo real) y sus evaluaciones de equidad; ninguna habla de microgravedad, cascos ni de una
+tableta girada. EMMA no lo ha validado: es una demostración.

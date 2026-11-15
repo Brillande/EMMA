@@ -1,0 +1,900 @@
+/*
+ * «Misión y hábitat» bajo la concha de la maqueta: modo de misión, enlace simulado, cronología
+ * (`.timeline`, `.phases`), hábitat (`[data-ui="habitat"]`, `.grid-2`, `.crew-list`, `.hypotheses`),
+ * preguntas gemelas, dosis y escalas de radiación (`.limits-table`) y recursos. También la pestaña
+ * «Hábitat» de Tierra. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Primera pasada (capturas del 2026-11-07 con la concha nueva, `crew-05-mission` y `ground-04-habitat`,
+ * 1672 × 941): la concha ya ponía a cada panel el marco de la maqueta, pero por dentro seguía la
+ * consola clásica, y lo primero que se veía en las dos consolas ni siquiera era un panel: el nivel de
+ * misión (`.mission-mode`) era un rótulo con su dibujo pegado y dos pliegues, sueltos sobre el fondo
+ * estrellado. Las fases de la misión eran cinco palabras separadas por huecos; las hipótesis del
+ * hábitat, los tripulantes, las cinco preguntas de los gemelos, las etapas de la crónica y las listas
+ * de recursos, texto corrido con viñetas; la atmósfera de cabina y la tripulación, dos columnas sin
+ * nada que las separe. Aquí cada pieza tomó la forma de «Inicio»: la tarjeta de `.ref-card` para el
+ * nivel de misión y para cada hipótesis; el marco interior de los eslabones de «Cuerpo» para las
+ * columnas del hábitat, cada pregunta de los gemelos, cada etapa de la crónica y la tabla de límites;
+ * las fases, como los mandos de ubicación de la maqueta (`.ref-place`); las listas, como las filas de
+ * «Próximas acciones»; y el dibujo que solo nombra, en `--ref-teal`.
+ *
+ * Segunda pasada, el tablero (decisión del usuario, 2026-11-07: cada sección como «Inicio» pero con
+ * sus apartados). Lo que se vio al capturar de nuevo (2026-11-08, mismo tamaño): los ocho paneles
+ * seguían en una sola columna a 1123 px de ancho; el nivel de misión (175 px) y el dosímetro (114 px)
+ * eran dos franjas con casi todo el ancho vacío; el enlace, un formulario de 395 px a lo ancho; las
+ * tres escalas de radiación, una lista de claves a la izquierda y párrafos largos a la derecha; la
+ * cronología decía el día entre comas y las cinco preguntas de los gemelos iban una debajo de otra
+ * (1745 px); el hábitat (6060 px) abría con la hipótesis y no decía en ningún sitio cuántas lecturas
+ * de cabina había ni cuántas se habían salido del límite. Ahora la sección es la rejilla de
+ * `board.css`: arriba el nivel de misión (4 columnas, con el anillo de las medidas que se esperan), el
+ * enlace (8 columnas, dos filas de alto: su formulario mide lo que el nivel y la dosis juntos, y así
+ * ninguno de los dos cortos se estira ni deja hueco) y, bajo el nivel, la dosis (4) con su cifra en
+ * ficha grande; después recursos, radiación, cronología, gemelos y hábitat a todo el ancho, porque son
+ * largos. Se probó la colocación propuesta (dosis 4 · escalas 7 · recursos 5) y se descartó sobre las
+ * medidas de la captura: la dosis (114-200 px) junto al enlace (395-480 px) dejaba 300 px de marco
+ * vacío, y las escalas (852 px) junto a los recursos (266 px) casi 600. En el cuerpo intermedio
+ * (≤ 64 rem) el nivel y el enlace van a mitades, con la dosis bajo el nivel; en el estrecho (≤ 44 rem)
+ * y en baja visión todo va en una columna y el enlace vuelve a una fila. Dentro de los paneles: las
+ * escalas de radiación en dos columnas de celdas (la clave sobre su filete y la cifra grande debajo,
+ * en el mismo `dl.kv`, sin tocar el componente), las cinco preguntas de los gemelos en fila (cinco
+ * columnas en el cuerpo ancho, tres en el intermedio, una en el estrecho) y las lecturas de cabina
+ * como baldosas compactas. En Tierra el nivel de misión no se empareja con el hábitat aunque se
+ * propuso (4 + 8): el hábitat mide casi 6000 px y al lado del nivel (unos 250) quedaban 5700 px de
+ * columna vacía; va a todo el ancho como una tira (el rótulo, el anillo y la píldora en una línea, el
+ * pliegue debajo), y el hábitat y los gemelos debajo.
+ *
+ * Las piezas que cada panel monta en `BoardOnly` (anillo, baldosas, medidores, píldoras) traen sus
+ * datos del propio panel; aquí solo su sitio y su tamaño. Las píldoras toman en su filete el color
+ * REAL de la marca que llevan dentro (`:has(> .c-…)`, un solo mecanismo para toda la sección: el
+ * nivel de misión no puede llevar estilo en línea, lo vigila su prueba), y ninguno nuevo.
+ *
+ * Lo que no se toca: la insignia del nivel de cada tripulante (`.level`) y el color de `LevelPill`,
+ * la marca amarilla del nivel de misión fuera del nominal y la del enlace caído, el magenta de
+ * «Hipótesis del sistema» (lo propone la automatización), el cian del dato ausente («sin dato», «sin
+ * dosis previa», «ubicación sin declarar», lo pendiente que Tierra no tiene, lo sin declarar), el
+ * gris de la casilla sin cifra y de lo declarado no disponible, los colores del medidor (banda y
+ * relleno en texto secundario; fuera de escala, el borde discontinuo de `.meter-oor`: aquí solo
+ * cambian la pista y su borde en escala, con menos especificidad que esa regla), el amarillo y el
+ * azul de una excursión vigente en su baldosa, el filete amarillo del aviso del historial
+ * (`.history-notice`) y el rojo del panel de error. Los mandos, las entradas, los formularios
+ * (`.silence-form`, `.inline-form`), los pliegues, las insignias, `table.ledger`, el `.kv` del
+ * hábitat y los títulos de panel son del mobiliario común (`furniture.css`): aquí solo la caja que
+ * los rodea y el color del dibujo de una clave.
+ *
+ * Especificidad a propósito baja: el prefijo de la concha y el id de la sección van dentro de
+ * `:where()`, que no cuenta, y las reglas ganan a las de `styles.css` solo por cargar después con la
+ * misma especificidad. Donde la pieza ya tenía borde (el medidor, la gráfica de la comparación) no se
+ * usa el atajo `border`: solo `border-color`. Los bordes que nacen aquí (el nivel de misión, las
+ * hipótesis, los marcos interiores, las fases, las celdas de las escalas) no los conocen los modos de
+ * baja visión y alto contraste de `styles.css`, así que el refuerzo a 2 px se repite al final para
+ * ellos, como hace `body.css`.
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): la pestaña `crew-mission` ---- */
+
+/* Tercera pasada, lote «muestra» (2026-11-08, Ellande: «está muy lejos todavía de la muestra»; una
+   pantalla por sección). Lo que se vio a 1672 × 941: la sección medía 7343 px; en la vista solo
+   cabían el nivel, el enlace (dos filas de alto por su formulario) y la dosis, y las fichas de
+   cabina quedaban a seis pantallas. Con el formulario del enlace, el de recursos, las bases de
+   radiación, las tablas del hábitat y la comparación tras «Ver detalle», el enlace ya no mide dos
+   filas: nivel, enlace y dosis van en una fila de tercios (como las tarjetas de arriba de la
+   maqueta); debajo, las escalas de radiación a todo el ancho en cuatro celdas; luego recursos (4) y
+   la línea temporal (8); y los gemelos y el hábitat a todo el ancho. En el cuerpo intermedio: nivel y
+   enlace a mitades, dosis (4) con las escalas (8), recursos (5) con la línea temporal (7). */
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > :is([data-ui="mission-level"], [data-ui="link-sync"], [data-ui="dose"])) {
+  --span: 4;
+  --span-mid: 6;
+}
+
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="dose"]) {
+  --span-mid: 4;
+}
+
+/* Quinta ronda (2026-11-09, Ellande: «se va acercando pero todavía hay margen de mejora»). Lo que
+   se vio a 1672 × 941 tras la cuarta: 2850 px; la radiación a todo el ancho con cuatro celdas de
+   mucho aire, los recursos (4) junto a la línea temporal (8) en una fila propia, y la fase actual
+   fuera de la primera vista. Ahora la radiación (9) comparte fila con los recursos (3), que ya
+   solo llevan sus píldoras, y la línea temporal sube a la columna estrecha junto al hábitat (ver
+   al final). Sin recursos (su lectura falló), la radiación vuelve a todo el ancho. En el cuerpo
+   intermedio, como antes. */
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="radiation-scales"]) {
+  --span: 12;
+  --span-mid: 8;
+}
+
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="radiation-scales"]):has(+ .slot > .slot-body > [data-ui="onboard-resources"]) {
+  --span: 9;
+}
+
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="onboard-resources"]) {
+  --span: 3;
+  --span-mid: 5;
+}
+
+:where(.app[data-look="reference"] #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="mission-timeline"]) {
+  --span: 8;
+  --span-mid: 7;
+}
+
+/* ---- Píldoras: el filete toma el color real de la marca que llevan (ninguno nuevo) ---- */
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-yellow) {
+  --lvl: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-cyan) {
+  --lvl: var(--c-cyan);
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-gray) {
+  --lvl: var(--c-gray);
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-blue) {
+  --lvl: var(--c-blue);
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-magenta) {
+  --lvl: var(--c-magenta);
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill:has(> .c-text) {
+  --lvl: var(--c-text);
+}
+
+/* El rótulo magenta dentro de su píldora, al tamaño de las demás. */
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) .board-pill > .source-tag {
+  font-size: inherit;
+}
+
+/* ---- Nivel de misión: no es un panel y quedaba suelto; aquí es la tarjeta de la maqueta ---- */
+
+:where(.app[data-look="reference"]) .mission-mode {
+  padding: var(--gap);
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+  overflow-wrap: break-word;
+}
+
+/* El mismo relleno que `.panel` en tableta y escritorio (`styles.css`). */
+@media (min-width: 768px) {
+  :where(.app[data-look="reference"]) .mission-mode {
+    padding: var(--space-5);
+  }
+}
+
+/* El rótulo «Nivel de misión» como `.ref-h`: el engranaje en el color de la maqueta y con su hueco
+   (no lo tenía: el dibujo iba pegado a la palabra). */
+:where(.app[data-look="reference"]) .mission-mode .label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"]) .mission-mode .label > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* El anillo de las medidas que se esperan y la píldora del nivel, en una fila bajo el rótulo. */
+:where(.app[data-look="reference"]) .mission-mode > .mission-board {
+  gap: 0.6rem 1.2rem;
+  margin: 0.4rem 0 0.5rem;
+}
+
+:where(.app[data-look="reference"]) .mission-mode .ref-ring-col {
+  flex: none;
+}
+
+/* El catálogo reparte más de cien medidas: tres cifras a 2,2 rem pisaban la pista del anillo (captura
+   del 2026-11-08, «129» sobre el trazo). Aquí la cifra baja hasta caber dentro. */
+:where(.app[data-look="reference"]) .mission-mode .ref-ring-value {
+  font-size: 1.5rem;
+}
+
+/* En Tierra, una tira a todo el ancho (ver la cabecera): el rótulo, el anillo y la píldora en una
+   línea, lo que haya que decir del nivel al lado, y el pliegue debajo en su propia línea. */
+:where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.4rem;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode > p,
+:where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode > .mission-board {
+  margin: 0;
+}
+
+/* Lote «muestra» (2026-11-08): el pliegue, en la misma línea mientras quepa (antes bajaba siempre a
+   la suya y la tira medía 200 px, una quinta parte de la vista, para un nivel y un anillo). */
+:where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode > details {
+  flex: 1 1 18rem;
+}
+
+@media (min-width: 768px) {
+  :where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode {
+    padding: var(--gap) var(--space-5);
+  }
+}
+
+/* ---- Enlace con Tierra: la ficha de lo pendiente y la píldora del estado, sobre la frase ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="link-sync"]) .link-board {
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 0.3rem 0 0.5rem;
+}
+
+/* Una sola ficha: a su ancho de baldosa, no al del panel. */
+:where(.app[data-look="reference"] .panel[data-ui="link-sync"]) .link-board > .board-stats {
+  flex: 0 1 15rem;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+
+/* ---- Dosis de carrera: la cifra en su ficha, con el medidor colgando ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="dose"]) .board-stats {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0.3rem 0 0.4rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="dose"]) .stat-tile > .meter-block {
+  margin-top: 0.3rem;
+}
+
+/* ---- Radiación: las tres (o cuatro) escalas como celdas, la clave sobre su filete y la cifra grande
+   debajo; la tabla de límites en su marco; los medidores sobre la pista de la maqueta ---- */
+
+/* El panel mide su propio ancho: de él depende si las celdas van en dos columnas (abajo). */
+:where(.app[data-look="reference"]) .panel[data-ui="radiation-scales"] {
+  container-type: inline-size;
+}
+
+/* El `dl.kv` del componente, sin tocarlo: en una columna, cada clave encima de su definición. */
+:where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 1.2rem;
+  margin: 0.3rem 0 0.6rem;
+  padding: 0.2rem 0.75rem 0;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* Con sitio, dos columnas de celdas: la rejilla se rellena por columnas con dos filas por pareja
+   (clave, definición), así que «Aguda» y «Esta misión» caen a la izquierda y «Al fin de misión» y
+   «Carrera» a la derecha, las dos largas a la misma altura y las dos cortas también. Con tres
+   escalas la derecha lleva solo «Carrera». */
+@container (min-width: 36rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+  }
+}
+
+/* A todo el ancho (lote «muestra»), las tres o cuatro escalas en una fila de celdas, como las cifras
+   de la maqueta: la rejilla crea una columna por pareja (clave, definición), así que con tres escalas
+   no queda una columna vacía. Quinta ronda: desde 48 rem (antes 60), porque el panel va a 9 de 12
+   columnas (unos 52 rem a 1672 px) y la cifra más ancha con su rótulo, «123,81 mSv ▷ PREDICHO», cabe
+   en una celda de 12 rem; en dos columnas el panel medía el doble de alto. */
+@container (min-width: 48rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv {
+    grid-template-columns: none;
+    grid-template-rows: auto auto;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv > dt {
+  max-width: none;
+  padding: 0.4rem 0 0.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  color: var(--c-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv > dd {
+  padding: 0.35rem 0 0.6rem;
+}
+
+/* La cifra que abre la definición (la dosis de misión, la proyectada, la de carrera), grande como en
+   una ficha; «sin evento», «sin tasa» y «sin dosis previa» no son cifras y se quedan como están. */
+:where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv > dd > .num:first-child {
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="radiation-scales"], [data-ui="habitat"])) .limits-table {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* Misma especificidad que `.meter` y menos que `.meter.meter-oor`: fuera de escala sigue el borde
+   discontinuo en texto secundario, y la banda y el relleno no se nombran. */
+:where(.app[data-look="reference"] .panel:is([data-ui="dose"], [data-ui="radiation-scales"], [data-ui="habitat"], [data-ui="mission-timeline"])) .meter {
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* El dibujo de una clave (el parámetro de cabina, la escala de radiación) solo nombra: va en el color
+   de la maqueta. Una marca con color (`c-*`) es un estado y no se toca. */
+:where(.app[data-look="reference"] .panel:is([data-ui="habitat"], [data-ui="radiation-scales"])) .kv > dt > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* ---- Recursos: las píldoras por estado bajo el resumen; las listas de los pliegues, por filas; el
+   dibujo de la familia del recurso en el color de la maqueta y la marca de su estado como la da el
+   backend ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="onboard-resources"]) > .board-tally {
+  margin: 0.2rem 0 0.55rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="onboard-resources"]) details > ul {
+  list-style: none;
+  margin: 0.3rem 0;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="onboard-resources"]) details > ul > li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="onboard-resources"]) details > ul > li:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="onboard-resources"]) details > ul > li > .mark:first-child:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* ---- Cronología: cada fase en su mando, la actual elegida como en `.ref-place`; debajo, el medidor
+   del día y las píldoras ---- */
+
+:where(.app[data-look="reference"]) .timeline .phases {
+  gap: 0.4rem;
+  margin: 0 0 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .timeline .phases li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* La actual conserva su palabra en negrita y el anillo de «elegido» (`styles.css`); el color de la
+   caja es el de la elección en la maqueta, no un nivel. */
+:where(.app[data-look="reference"]) .timeline .phases li[aria-current="step"] {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, transparent);
+  box-shadow: 0 0 0 1px var(--ref-teal), 0 0 14px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"]) .timeline .phases li .pictogram {
+  color: var(--ref-teal);
+}
+
+/* El medidor del día toma el ancho que las píldoras le dejan; la línea de abajo dice las cifras. */
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) .timeline-board {
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 0 0 0.5rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) .timeline-board > .meter-block {
+  flex: 1 1 8rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) .timeline-board > .board-tally {
+  flex: 0 1 auto;
+  margin: 0;
+}
+
+/* Segunda ronda (2026-11-08): la fila de avisos del perfil, la conjunción y las efemérides
+   (`MissionBoardWarnings`), bajo la línea del día y sobre su «Ver detalle». */
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) > .mission-warnings {
+  margin: 0.3rem 0 0;
+}
+
+/* ---- Listas de la cronología y de los gemelos: filas con raya, el punto en el color de la maqueta ---- */
+
+:where(.app[data-look="reference"] .panel:is([data-ui="mission-timeline"], [data-ui="twin-questions"])) .drivers {
+  margin: 0.35rem 0;
+  padding-left: 1.1rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="mission-timeline"], [data-ui="twin-questions"])) .drivers > li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="mission-timeline"], [data-ui="twin-questions"])) .drivers > li:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="mission-timeline"], [data-ui="twin-questions"])) .drivers li::marker {
+  color: var(--ref-teal);
+}
+
+/* ---- Marcos interiores: las columnas del hábitat, el bloque de sistemas, cada pregunta de los
+   gemelos y cada etapa de la crónica, como los eslabones de la cadena en «Cuerpo» ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .grid-2 > div,
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypotheses[role="group"],
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"]) [data-twin],
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="chronicle-stage"],
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="recomputed-history"] {
+  min-width: 0;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* Los que no están en una rejilla (que ya los separa con su hueco) se separan entre sí. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypotheses[role="group"],
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"]) [data-twin],
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="chronicle-stage"],
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="recomputed-history"] {
+  margin-top: 0.6rem;
+}
+
+/* El título de cada marco sobre su filete, como `.ref-h3`, con el dibujo en el color de la maqueta;
+   el hueco de `.section-gap` sobra dentro de la caja. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .grid-2 > div > h3,
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypotheses[role="group"] > h3,
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"]) [data-twin] > h3,
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="chronicle-stage"] > h3,
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="recomputed-history"] > h3 {
+  margin-top: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .grid-2 > div > h3 > .pictogram,
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypotheses[role="group"] > h3 > .pictogram,
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"]) [data-twin] > h3 > .pictogram,
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="chronicle-stage"] > h3 > .pictogram,
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) [data-ui="recomputed-history"] > h3 > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* ---- Las cinco preguntas de los gemelos, cinco mosaicos en fila. Segunda ronda del lote «muestra»
+   (2026-11-08): con un «Ver detalle» por pregunta, las cinco columnas medían 500 px, y en filas 410.
+   Ahora cada mosaico lleva solo la pregunta, la respuesta si tiene marca y las insignias de nivel, y lo
+   demás de las cinco va en un solo detalle debajo (`TwinQuestions.tsx`). El panel pasa a rejilla y lo
+   que no es una pregunta (el título, lo no disponible, el detalle) cruza todas las columnas: cinco en
+   el cuerpo ancho, tres en el intermedio, una en el estrecho. Solo con respuestas
+   (`data-twin-questions`); mientras carga sigue siendo un panel corriente. ---- */
+
+@container mission-slot (min-width: 36rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="twin-questions"][data-twin-questions] {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="twin-questions"][data-twin-questions] > :not([data-twin]) {
+    grid-column: 1 / -1;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="twin-questions"][data-twin-questions] > :is(h2, p, .board-detail) {
+    margin: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="twin-questions"][data-twin-questions] > [data-twin] {
+    margin-top: 0;
+  }
+}
+
+@container mission-slot (min-width: 60rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="twin-questions"][data-twin-questions] {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"][data-twin-questions]) > [data-twin] {
+  padding: 0.45rem 0.65rem 0.5rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"][data-twin-questions]) > [data-twin] > :is(p, .board-tally) {
+  margin: 0.35rem 0 0;
+}
+
+/* En el detalle común, cada respuesta bajo el nombre de su gemelo, separada de la siguiente. */
+:where(.app[data-look="reference"] .panel[data-ui="twin-questions"]) [data-twin-detail] + [data-twin-detail] {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+/* ---- Hábitat: las píldoras y las baldosas de cabina arriba; cada hipótesis es una tarjeta; su
+   rótulo magenta, intacto, hace de título ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .board-tally {
+  margin: 0 0 0.5rem;
+}
+
+/* Las baldosas, compactas: a once rem caben cinco por fila en el cuerpo ancho y tres en el
+   intermedio; la cifra baja de los 2 rem de una ficha de resumen, que con diez lecturas pesaban más
+   que la hipótesis de debajo. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .board-stats {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  margin: 0 0 0.9rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .board-stats > .stat-tile {
+  padding: 0.45rem 0.65rem 0.5rem;
+}
+
+/* Segunda ronda (2026-11-08, «súbelas si no rompe el formato»): de 0,8 rem al suelo del proyecto,
+   0,875 rem; los rótulos largos («Monóxido de carbono de cabina») ya iban en dos renglones. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .board-stats .stat-label {
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .board-stats .stat-value {
+  font-size: 1.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypotheses {
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypothesis {
+  padding: 0.7rem 0.85rem 0.8rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypothesis > .source-tag {
+  display: block;
+  margin-bottom: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* ---- Tripulación: un tripulante por fila, con la raya; su insignia de nivel sigue siendo la suya ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .crew-list {
+  list-style: none;
+  padding-left: 0;
+  gap: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .crew-list > li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .crew-list > li:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .crew-list > li > .mark:not(.level) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La gráfica de la comparación entre tripulantes ya tenía su filete arriba: solo el color. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .compare-chart {
+  border-top-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* ---- Baja visión y alto contraste (§5.40): los bordes que nacen en esta hoja, a 2 px, como hace
+   `styles.css` con los paneles; en baja visión, además, en texto secundario. La fase actual conserva
+   su borde en `--ref-teal`: solo engorda. ---- */
+
+.app[data-look="reference"][data-low-vision="on"] .mission-mode,
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="habitat"] .hypothesis,
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="habitat"] .grid-2 > div,
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="habitat"] .hypotheses[role="group"],
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="twin-questions"] [data-twin],
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="mission-timeline"] [data-ui="chronicle-stage"],
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="mission-timeline"] [data-ui="recomputed-history"],
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="radiation-scales"] > .kv,
+.app[data-look="reference"][data-low-vision="on"] .panel:is([data-ui="radiation-scales"], [data-ui="habitat"]) .limits-table {
+  border-width: 2px;
+  border-color: var(--c-text-secondary);
+}
+
+.app[data-look="reference"][data-high-contrast="on"] .mission-mode,
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="habitat"] .hypothesis,
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="habitat"] .grid-2 > div,
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="habitat"] .hypotheses[role="group"],
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="twin-questions"] [data-twin],
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="mission-timeline"] [data-ui="chronicle-stage"],
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="mission-timeline"] [data-ui="recomputed-history"],
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="radiation-scales"] > .kv,
+.app[data-look="reference"][data-high-contrast="on"] .panel:is([data-ui="radiation-scales"], [data-ui="habitat"]) .limits-table,
+.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]) .timeline .phases li {
+  border-width: 2px;
+}
+
+/* ---- Comparación entre tripulantes a dos columnas (2026-11-08) ---- */
+
+/* Las series de cada tripulante (y la de cabina) iban una debajo de otra a todo el ancho: cinco
+   gráficas finas de 1000 px y casi 1500 px de alto. Con sitio, en dos columnas, como pequeños
+   múltiplos; uPlot mide su contenedor (`ResizeObserver`) y se ajusta. El tiempo sigue sincronizado
+   entre ellas (`syncKey`) y el orden es el de la lista. Cuarta ronda: la comparación mide su propio
+   ancho (`compare`): junto a los sistemas lleva 8 de las 12 columnas del hábitat. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .compare {
+  container: compare / inline-size;
+}
+
+@container compare (min-width: 56rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="habitat"]) .compare-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1rem;
+  }
+}
+
+/* El dibujo de la ruta al frente de la fila del día de misión (2026-11-08): adorno de «Inicio». Cuarta
+   ronda: el dibujo (12 rem) y el medidor (desde 8 rem) ceden ancho para que las píldoras quepan en su
+   misma fila a 1672 px; antes bajaban a otra y la línea temporal medía una fila más. */
+:where(.app[data-look="reference"] .panel[data-ui="mission-timeline"]) .timeline-board > .ref-route-art {
+  flex: 0 0 12rem;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- Cuarta ronda del lote «muestra» (2026-11-08, Ellande: «todavía se puede asemejar más») ----
+   Lo que se vio a 1672 × 941: «Misión y hábitat» medía 3164 px y el hábitat de Tierra 2494, con el
+   panel del hábitat (unos 1600 px) apilando bloques a todo el ancho y las cinco preguntas de los
+   gemelos en una fila propia de 320 px. Ahora, como la columna lateral de la maqueta («Estado de
+   riesgo», «Próximas acciones»), las preguntas van en una columna estrecha (3 de 12) al lado del
+   hábitat (9), en el orden del DOM de cada consola: a bordo los gemelos van antes (a la izquierda);
+   en Tierra van después y caen bajo el nivel de misión (ver abajo). Solo se emparejan si los dos
+   paneles están y van seguidos; si falta uno, el otro va a todo el ancho. Solo con más de 75 rem de
+   tablero: por debajo (una ventana de 1300 px) el hábitat a 9 columnas no deja sitio a sus fichas, y
+   los dos siguen a todo el ancho. En baja visión, una columna (`board.css`).
+
+   Cada una de las dos ranuras es su propio contenedor (`mission-slot`): las preguntas y el hábitat
+   reparten sus columnas por el ancho que tienen, no por el del tablero (en la columna estrecha, las
+   cinco preguntas van una debajo de otra). */
+:where(.app[data-look="reference"] :is(#crew-panel-mission, #ground-panel-habitat)) > .slot:has(> .slot-body > :is([data-ui="habitat"], [data-ui="twin-questions"])) {
+  container: mission-slot / inline-size;
+}
+
+/* Las parejas, dentro de la consulta (y no deshechas por otra regla debajo de 75 rem: los `:has`
+   pesan más que cualquier regla de vuelta). `75.01rem`: a 75 rem justos no se solapa con nada. */
+@container board (min-width: 75.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) :is(#crew-panel-mission, #ground-panel-habitat)) > .slot:has(> .slot-body > [data-ui="twin-questions"]):has(+ .slot > .slot-body > [data-ui="habitat"]),
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) :is(#crew-panel-mission, #ground-panel-habitat)) > .slot:has(> .slot-body > [data-ui="habitat"]) + .slot:has(> .slot-body > [data-ui="twin-questions"]) {
+    --span: 3;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) :is(#crew-panel-mission, #ground-panel-habitat)) > .slot:has(> .slot-body > [data-ui="twin-questions"]) + .slot:has(> .slot-body > [data-ui="habitat"]),
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) :is(#crew-panel-mission, #ground-panel-habitat)) > .slot:has(> .slot-body > [data-ui="habitat"]):has(+ .slot > .slot-body > [data-ui="twin-questions"]) {
+    --span: 9;
+  }
+
+  /* En Tierra el orden es nivel de misión, hábitat, preguntas. Con la tira del nivel a todo el ancho
+     encima (135 px) y las preguntas al lado del hábitat, bajo ellas quedaban 900 px de columna vacía.
+     Aquí el nivel va arriba de esa columna (3) y el hábitat (9) ocupa dos filas: la del nivel y la de
+     las preguntas, que caen debajo del nivel por la colocación normal de la rejilla (sin `dense` ni
+     `order`: es el siguiente hueco libre). */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-habitat) > .slot:has(> .slot-body > [data-ui="mission-level"]):has(+ .slot > .slot-body > [data-ui="habitat"] ):has(+ .slot + .slot > .slot-body > [data-ui="twin-questions"]) {
+    --span: 3;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-habitat) > .slot:has(> .slot-body > [data-ui="mission-level"]) + .slot:has(> .slot-body > [data-ui="habitat"]):has(+ .slot > .slot-body > [data-ui="twin-questions"]) {
+    grid-row: span 2;
+  }
+}
+
+/* La fila de las preguntas, flexible: el alto que al hábitat le falta sobre el del nivel se lo lleva
+   ella, y no se abre un hueco entre el nivel y las preguntas (con dos filas `auto`, la rejilla lo
+   reparte a medias). La tabla de filas no puede ir en la consulta de arriba (la rejilla es el propio
+   contenedor `board`), así que se pide que estén los tres paneles seguidos; a menos de 75 rem, con
+   todo a todo el ancho, una fila `1fr` en una rejilla sin alto fijo mide lo que su contenido. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-habitat:has(> .slot:has(> .slot-body > [data-ui="mission-level"]) + .slot:has(> .slot-body > [data-ui="habitat"]) + .slot > .slot-body > [data-ui="twin-questions"]) {
+  grid-template-rows: auto auto 1fr;
+}
+
+/* La radiación del hábitat y la tripulación ante un evento solar, en su marco como los demás bloques
+   (antes iban sueltas sobre el panel). */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > :is(.habitat-radiation, .crew-radiation) {
+  min-width: 0;
+  margin-top: 0.6rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > :is(.habitat-radiation, .crew-radiation) > h3 {
+  margin-top: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > :is(.habitat-radiation, .crew-radiation) > h3 > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La columna de claves, más estrecha (8 rem, la clave en dos renglones): a 14 rem («Tasa de dosis
+   absorbida») dejaba a las cuatro fichas 170 px y el rótulo de tipo salía de su marco (captura del
+   2026-11-08); con la clave encima, el bloque crecía 50 px. Especificidad de
+   `.panel[data-ui="habitat"] .kv dt` (`styles.css`) más una: si no, no gana. */
+:where(.app[data-look="reference"]) .panel[data-ui="habitat"] > .habitat-radiation > .kv > dt {
+  max-width: 8rem;
+}
+
+/* Las fichas de la tasa de dosis: cuatro en fila donde quepan, estiradas (`auto-fit`) para que el
+   rótulo de tipo, «● MEDIDO · simulado», lo más ancho (unos 11,5 rem), no salga de su marco. */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .habitat-radiation .board-stats {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  margin: 0.2rem 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) > .habitat-radiation .board-stats .stat-value {
+  font-size: 1.6rem;
+}
+
+/* La revisión de una hipótesis en media columna: el motivo cede ancho para que «Confirmar» y
+   «Descartar» quepan en su línea (antes «Descartar» bajaba sola a otra). */
+:where(.app[data-look="reference"] .panel[data-ui="habitat"]) .hypothesis-review .inline-form input {
+  flex-basis: 10rem;
+}
+
+/* El hábitat por dentro: una rejilla de 12 columnas con las parejas que ya iban seguidas en el DOM
+   (nada de `order`): la hipótesis (6) junto a la atmósfera y la tripulación (6); los sistemas (4)
+   junto a la comparación (8); lo demás (píldoras, fichas, radiación, agua y microbiología) a todo el
+   ancho. Se probó el agua y la microbiología (8) junto a los sistemas (4): sus fichas «sin dato» se
+   partían en dos filas y la pareja medía 350 px. Si un bloque de la pareja falta, el otro va a todo el ancho. En baja
+   visión, una columna, como el resto del tablero (`board.css`): la letra grande no cabe en media
+   columna. */
+@container mission-slot (min-width: 60rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > * {
+    grid-column: 1 / -1;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > .hypotheses:not([role]):has(+ .grid-2) {
+    grid-column: 1 / span 6;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > .hypotheses:not([role]) + .grid-2 {
+    grid-column: 7 / -1;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > .hypotheses[role="group"]:has(+ .compare) {
+    grid-column: 1 / span 4;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > .hypotheses[role="group"] + .compare {
+    grid-column: 5 / -1;
+    margin-top: 0.6rem;
+  }
+
+  /* Las fichas de cabina en seis columnas: con diez lecturas, dos filas, y los rótulos largos en dos
+     renglones (a 8,5 rem iban siete por fila pero con tres renglones y la fila más alta). */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="habitat"] > .board-stats {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+  }
+}
+
+.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="habitat"] > :is(.habitat-radiation, .crew-radiation) {
+  border-width: 2px;
+  border-color: var(--c-text-secondary);
+}
+
+.app[data-look="reference"][data-high-contrast="on"] .panel[data-ui="habitat"] > :is(.habitat-radiation, .crew-radiation) {
+  border-width: 2px;
+}
+
+/* ---- Quinta ronda del lote «muestra» (2026-11-09, Ellande: «se va acercando pero todavía hay margen
+   de mejora») ----
+   Lo que se vio a 1672 × 941 (captura de la cuarta ronda): 2850 px, tres vistas. El nivel de misión
+   era un anillo con dos pliegues debajo y mucho hueco a la derecha; el enlace, un párrafo de tres
+   renglones; la radiación, cuatro columnas de aire a todo el ancho; recursos y línea temporal, una
+   fila propia; la fase actual, a la segunda vista; y bajo las cinco preguntas de los gemelos, la
+   mitad de su columna vacía junto al hábitat. */
+
+/* El nivel de misión, como el «Estado de la misión» de la maqueta: el anillo a la izquierda y, a su
+   derecha, la píldora y los dos pliegues uno encima de otro (antes, debajo del anillo y a todo el
+   ancho: la tarjeta medía 300 px). La fila de la píldora se deshace (`display: contents`) para que
+   el anillo y la píldora sean celdas de la misma rejilla; el rótulo va arriba a todo el ancho y lo
+   demás (aviso, quién lo declaró, pliegues) en la columna de la derecha. Con un pliegue abierto, la tarjeta vuelve a la columna de siempre
+   (su formulario no cabe junto al anillo). Solo a bordo; en Tierra sigue la tira. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.45rem 1rem;
+  align-content: start;
+  align-items: start;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) > * {
+  grid-column: 2;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) > :first-child {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) > .mission-board {
+  display: contents;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) .ref-ring-col {
+  grid-column: 1;
+  grid-row: 2 / span 3;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) .mission-mode:not(:has(> details[open])) > .mission-board > .board-pill {
+  grid-column: 2;
+  justify-self: start;
+}
+
+/* Las escalas de radiación en celdas de 12 rem: la cifra y su rótulo (INFERIDO, PREDICHO) pueden ir
+   en dos renglones, pero el rótulo no se parte. */
+:where(.app[data-look="reference"] .panel[data-ui="radiation-scales"]) > .kv > dd > .obs-type {
+  white-space: nowrap;
+}
+
+/* La línea temporal y las preguntas de los gemelos en la columna estrecha (3 de 12) junto al hábitat
+   (9), que ocupa las dos filas de la derecha. Antes la línea temporal iba en su fila (8) y bajo las
+   preguntas quedaban 700 px de columna vacía junto al hábitat; ahora la fase actual entra en la
+   primera vista y la columna se llena. Sin `order` ni `dense`: el hábitat tiene sitio fijo (fila 4,
+   columnas 4 a 12: la fila 1 es el rótulo de la sección, `.board-frame-h`, y las 2 y 3 son
+   nivel-enlace-dosis y radiación-recursos, y se exige que la
+   radiación y los recursos estén y vayan seguidos) y la
+   línea temporal y las preguntas caen por la colocación normal en los huecos de su izquierda, en su
+   orden del DOM. Solo si los tres paneles van seguidos y con más de 75 rem de tablero; si no, sigue
+   la pareja de arriba (gemelos 3 · hábitat 9) o todo a todo el ancho. En baja visión, una columna. */
+@container board (min-width: 75.01rem) {
+  /* Sin `:has()` anidados (no valen en CSS: una primera versión con la guarda dentro del `:has()`
+     del tablero no casaba nunca): la guarda es la cadena de hermanos radiación + recursos +
+     línea temporal + preguntas + hábitat. */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="radiation-scales"]) + .slot:has(> .slot-body > [data-ui="onboard-resources"]) + .slot:has(> .slot-body > [data-ui="mission-timeline"]):has(+ .slot > .slot-body > [data-ui="twin-questions"]):has(+ .slot + .slot > .slot-body > [data-ui="habitat"]) {
+    --span: 3;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="radiation-scales"]) + .slot:has(> .slot-body > [data-ui="onboard-resources"]) + .slot:has(> .slot-body > [data-ui="mission-timeline"]) + .slot:has(> .slot-body > [data-ui="twin-questions"]) + .slot:has(> .slot-body > [data-ui="habitat"]) {
+    grid-column: 4 / -1;
+    grid-row: 4 / span 2;
+  }
+
+  /* En la columna estrecha la ruta dibujada, el medidor del día y las píldoras van uno debajo de otro. */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-mission) > .slot:has(> .slot-body > [data-ui="radiation-scales"]) + .slot:has(> .slot-body > [data-ui="onboard-resources"]) + .slot:has(> .slot-body > [data-ui="mission-timeline"]):has(+ .slot > .slot-body > [data-ui="twin-questions"]):has(+ .slot + .slot > .slot-body > [data-ui="habitat"]) .timeline-board > * {
+    flex-basis: 100%;
+  }
+}
+
+/* La fila de las preguntas, flexible, como en Tierra: lo que el hábitat mide de más sobre la línea
+   temporal se lo lleva la fila de las preguntas, en vez de repartirse a medias y abrir un hueco bajo
+   la línea temporal. La tabla de filas no puede ir en la consulta (la rejilla es el propio contenedor
+   `board`) ni llevar la guarda entera (sería un `:has()` anidado); con el hábitat presente vale para
+   todos los anchos: en una rejilla sin alto fijo una fila `1fr` mide su contenido. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #crew-panel-mission:has(> .slot > .slot-body > [data-ui="habitat"]) {
+  grid-template-rows: auto auto auto auto 1fr;
+}

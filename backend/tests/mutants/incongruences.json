@@ -1,0 +1,26 @@
+{
+  "target": "app/reports/incongruences.py",
+  "test": ["tests/test_incongruences.py"],
+  "mutations": [
+    {
+      "label": "la muestra no es el día: se comparan fechas distintas",
+      "old": "        samples[name] = f\"sangre {day}\"",
+      "new": "        samples[name] = \"sangre\""
+    },
+    {
+      "label": "sin tolerancia: el redondeo entre laboratorios avisa",
+      "old": "    return scale > 0 and abs(x - y) / scale > RELATIVE_TOLERANCE",
+      "new": "    return x != y"
+    },
+    {
+      "label": "un informe sin fecha se compara",
+      "old": "            continue  # sin fecha no se sabe de qué extracción es: no se compara",
+      "new": "            day = \"?\""
+    },
+    {
+      "label": "la copia queda con las costuras de EMMA",
+      "old": "            tool.muestra_de, tool.extraer, tool._distintos = saved",
+      "new": "            pass"
+    }
+  ]
+}

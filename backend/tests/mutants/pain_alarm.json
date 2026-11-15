@@ -1,0 +1,18 @@
+{
+  "target": "app/pain/alarm.py",
+  "test": [
+    "tests/test_pain_alarm.py"
+  ],
+  "mutations": [
+    {
+      "label": "corte de dolor intenso en 6 y no en 7 (Serlin 1995)",
+      "old": "SEVERE_FROM = 7",
+      "new": "SEVERE_FROM = 6"
+    },
+    {
+      "label": "hormigueo en los dos lados cuenta como de un lado",
+      "old": "if len(tingling_sides) == 1 and",
+      "new": "if len(tingling_sides) >= 1 and"
+    }
+  ]
+}

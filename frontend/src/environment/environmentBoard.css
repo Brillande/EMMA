@@ -1,0 +1,462 @@
+/*
+ * La sección «Entorno» (`EnvironmentBoard.tsx`, maqueta «Panel ambiental EMMA en la ISS» de
+ * 2026-11-15) con el estilo de «Inicio»: el cuerpo lleva `ref-home env-home`, así que hereda la
+ * rejilla de 12 columnas, las variables `--ref-*`/`--acc-*` y las tarjetas de
+ * `referenceDashboard.css`. Aquí solo el reparto y lo propio de sus piezas.
+ *
+ * COLORES DE ADORNO (§2.5 de `compliance/hmi-state-of-the-art.md`): el acento verde del entorno
+ * (`--acc-environment`, el de la letra E de RIDGE en «Inicio»), el acento por serie de la tendencia
+ * y el brillo cian del cuerpo no significan nada. Lo que es dato (las marcas de límite, los niveles
+ * con su palabra) conserva el color de su tabla.
+ */
+
+.env-home { --acc: var(--acc-environment); }
+
+/* Reparto, como la maqueta. */
+
+.env-home .env-header { grid-column: span 12; }
+.env-home .env-global { grid-column: span 3; }
+.env-home .env-index { grid-column: span 3; }
+.env-home .env-station { grid-column: span 1; }
+.env-home .env-trend { grid-column: span 3; }
+.env-home .env-risk { grid-column: span 2; }
+.env-home .env-air { grid-column: span 4; }
+.env-home .env-thermal { grid-column: span 4; }
+.env-home .env-light { grid-column: span 4; }
+.env-home .env-noise { grid-column: span 4; }
+.env-home .env-water { grid-column: span 4; }
+.env-home .env-microbiology { grid-column: span 4; }
+.env-home .env-gravity { grid-column: span 5; }
+.env-home .env-systems { grid-column: span 3; }
+.env-home .env-correlations { grid-column: span 4; }
+
+@media (max-width: 1400px) {
+  .env-home > :not(.ref-places) { grid-column: span 6; grid-row: auto; }
+  .env-home .env-header,
+  .env-home .env-gravity { grid-column: span 12; }
+  .env-home .env-station { display: none; }
+}
+
+@media (max-width: 900px) {
+  .env-home > * { grid-column: span 12 !important; }
+}
+
+.env-home small { font-size: 0.74rem; font-weight: 400; }
+.env-home .ref-card { border-top: 2px solid var(--acc); }
+.env-home section.ref-card { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.env-note { margin: auto 0 0; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.env-h-icon { display: inline-flex; color: var(--acc); margin-right: 0.3rem; }
+.env-h-icon svg { width: 1.15rem; height: 1.15rem; }
+
+/* Cabecera, con los bloques como las pestañas de la maqueta. */
+
+.env-home section.env-header.ref-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.2rem;
+  align-self: start;
+  height: auto;
+}
+
+.env-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.env-title svg { width: 1.4rem; height: 1.4rem; color: var(--acc); }
+
+.env-updated { display: flex; align-items: center; gap: 0.35rem; margin: 0; font-size: 0.875rem; }
+
+.env-chips {
+  list-style: none;
+  margin: 0 0 0 auto;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.env-chips li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent);
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--acc) 10%, transparent);
+  font-size: 0.875rem;
+}
+
+.env-chips svg { width: 1.1rem; height: 1.1rem; color: var(--acc); }
+
+/* Estado global. */
+
+.env-global-box {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--acc) 60%, transparent);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--acc) 12%, transparent);
+}
+
+.env-global-box p { display: grid; gap: 0.2rem; margin: 0; }
+.env-global-box strong { font-size: 1.25rem; }
+.env-global-icon { width: 2.4rem; height: 2.4rem; color: var(--acc); }
+
+/* Parámetros dentro. */
+
+.env-index-body {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.env-index-body .ref-ring strong { font-size: 1.7rem; }
+
+/* Filas: icono, nombre, (barra), cifra. */
+
+.env-list,
+.env-rows,
+.env-risk-list,
+.env-gravity-effects {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.env-list li,
+.env-rows li,
+.env-gravity-effects li {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+}
+
+.env-air .env-rows li { grid-template-columns: 1.1rem minmax(0, 1fr) minmax(3rem, 6rem) auto; }
+.env-air .env-rows li > :nth-child(3):is(.mark, span:not(.env-meter)) { grid-column: span 2; justify-self: end; }
+
+.env-list svg,
+.env-rows svg,
+.env-gravity-effects svg { width: 1.05rem; height: 1.05rem; color: var(--acc); }
+
+.env-value { justify-self: end; white-space: nowrap; font-weight: 600; }
+
+.env-meter {
+  position: relative;
+  height: 0.5rem;
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--c-text) 14%, transparent);
+  overflow: visible;
+}
+
+.env-meter[data-empty] { background: none; }
+
+.env-meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 0.25rem;
+  background: var(--acc);
+}
+
+.env-meter-limit {
+  position: absolute;
+  top: -0.15rem;
+  bottom: -0.15rem;
+  width: 2px;
+  background: var(--c-text);
+}
+
+.env-rows li[data-out] .env-value { text-decoration: underline; }
+
+/* Riesgo. */
+
+.env-risk-list li { display: grid; gap: 0.1rem; font-size: 0.875rem; }
+
+/* Estación (adorno). */
+
+.env-home .env-station.ref-card {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  min-height: 7rem;
+}
+
+.env-station .ref-foot-art { width: 100%; opacity: 0.95; }
+.env-station :is(.ref-play, .ref-play-tri) { display: none; }
+
+/* Tendencia: acento por serie (adorno, como «Aislamiento»). */
+
+.env-home [data-series="cabin-temperature"] { --ser: var(--c-red); }
+.env-home [data-series="cabin-humidity"] { --ser: var(--c-cyan); }
+.env-home [data-series="cabin-ppco2"] { --ser: var(--c-yellow); }
+
+.env-home .ref-multitrend-line[data-series] { stroke: var(--ser); stroke-width: 2; }
+.env-home .ref-multitrend-legend [data-series] line { stroke: var(--ser); stroke-width: 2; }
+
+/* Temperatura. */
+
+.env-thermal-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: stretch;
+}
+
+.env-big { display: grid; gap: 0.15rem; margin: 0; }
+.env-big strong { font-size: 1.9rem; line-height: 1.1; }
+
+.env-range {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--c-text) 25%, transparent);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.env-thermo {
+  display: grid;
+  grid-template-columns: 1.2rem minmax(0, 1fr) 1.2rem;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.env-thermo svg { width: 1.2rem; height: 1.2rem; color: var(--acc); }
+
+.env-thermo-track {
+  position: relative;
+  height: 0.8rem;
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--c-text) 12%, transparent);
+}
+
+.env-thermo-health,
+.env-thermo-comfort {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 0.4rem;
+}
+
+.env-thermo-health { background: color-mix(in srgb, var(--acc) 30%, transparent); }
+.env-thermo-comfort { background: var(--acc); }
+
+.env-thermo-marker {
+  position: absolute;
+  top: -0.25rem;
+  bottom: -0.25rem;
+  width: 0.35rem;
+  margin-left: -0.175rem;
+  border-radius: 0.2rem;
+  background: var(--c-text);
+  box-shadow: 0 0 0 2px var(--ref-card-bg, transparent);
+}
+
+.env-thermo-limits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.env-thermo-limits p {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--c-text) 20%, transparent);
+  border-radius: 0.45rem;
+  font-size: 0.875rem;
+}
+
+.env-thermo-limits svg { width: 1rem; height: 1rem; color: var(--acc); flex: none; }
+
+/* Luz. */
+
+.env-light-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.env-light-curve { margin: 0; display: grid; gap: 0.15rem; }
+.env-light-curve figcaption { font-size: 0.75rem; }
+.env-light-curve .ref-spark { width: 100%; height: 3.2rem; }
+.env-light-curve .ref-spark path { stroke: var(--c-yellow); }
+.env-light-axis { display: flex; justify-content: space-between; font-size: 0.72rem; }
+
+.env-sleep {
+  display: grid;
+  grid-template-columns: 1.3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--acc) 8%, transparent);
+}
+
+.env-sleep svg { width: 1.3rem; height: 1.3rem; color: var(--acc); }
+.env-sleep strong { font-size: 1.1rem; }
+
+.env-noise .ref-spark { width: 100%; height: 2.4rem; }
+
+/* Gravedad: el cuerpo en holograma cian (2026-11-15, «cambiarle estilos al cuerpo»). Adorno. */
+
+.env-gravity-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 8rem;
+  gap: 0.7rem;
+  align-items: stretch;
+}
+
+.env-gravity-now { display: grid; gap: 0.5rem; align-content: center; }
+.env-gravity-now p { display: grid; gap: 0.1rem; margin: 0; }
+.env-gravity-now strong { font-size: 1.35rem; }
+
+.env-gravity-box {
+  display: grid;
+  align-content: center;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--c-text) 18%, transparent);
+  border-radius: 0.5rem;
+}
+
+.env-body {
+  position: relative;
+  min-height: 11rem;
+  border-radius: 0.5rem;
+  background:
+    radial-gradient(ellipse at 50% 55%, color-mix(in srgb, var(--c-cyan) 22%, transparent), transparent 70%);
+  overflow: hidden;
+}
+
+.env-body > :is(.ref-body-canvas, .ref-body-vector) {
+  height: 94%;
+  width: auto;
+  aspect-ratio: 152 / 310;
+  filter:
+    saturate(1.25)
+    hue-rotate(-12deg)
+    brightness(1.15)
+    drop-shadow(0 0 3px color-mix(in srgb, var(--c-cyan) 85%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--c-cyan) 45%, transparent));
+}
+
+/* Correlaciones y sistemas. */
+
+.env-correlation-list svg,
+.env-systems-list svg { color: var(--acc); }
+
+/* ---- Vuelta 2 (2026-11-15): cabe en una pantalla como la maqueta, sin bajar la letra de 0,875 rem. ---- */
+
+.env-home .ref-card { padding-top: 0.45rem; padding-bottom: 0.45rem; }
+.env-home section.ref-card { gap: 0.25rem; }
+.env-home .ref-h { margin-bottom: 0.1rem; }
+.env-home section.env-header.ref-card { flex-wrap: nowrap; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+.env-title { white-space: nowrap; }
+.env-updated { white-space: nowrap; }
+.env-chips { flex-wrap: nowrap; overflow: hidden; }
+.env-chips li { padding: 0.15rem 0.5rem; white-space: nowrap; }
+.env-list, .env-rows, .env-risk-list, .env-gravity-effects { gap: 0.18rem; }
+.env-index-body { grid-template-columns: 5.5rem minmax(0, 1fr); }
+.env-global-box { padding: 0.45rem 0.7rem; }
+.env-big strong { font-size: 1.7rem; }
+.env-body { min-height: 9rem; }
+
+/* El ruido: cifra y lista a la izquierda, su curva a la derecha. */
+.env-home section.env-noise.ref-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 0.8rem; align-content: start; }
+.env-noise > .ref-h { grid-column: 1 / -1; }
+.env-noise > .ref-spark { grid-column: 2; grid-row: 2 / span 2; align-self: center; height: 3.4rem; }
+
+/* La estación (adorno): viga, alas y módulos en los tonos de la paleta. */
+.env-home .env-station.ref-card { display: grid; place-items: center; padding: 0.2rem; background: radial-gradient(ellipse at 50% 60%, color-mix(in srgb, var(--c-blue) 18%, transparent), transparent 70%); }
+.env-iss { width: 100%; height: 100%; max-height: 11rem; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-cyan) 40%, transparent)); }
+.env-iss-truss { fill: color-mix(in srgb, var(--c-text) 70%, transparent); }
+.env-iss-wing { fill: color-mix(in srgb, var(--c-blue) 55%, var(--c-bg, #000)); stroke: color-mix(in srgb, var(--c-cyan) 60%, transparent); stroke-width: 0.8; }
+.env-iss-cell { stroke: color-mix(in srgb, var(--c-cyan) 35%, transparent); stroke-width: 0.5; }
+.env-iss-module { fill: color-mix(in srgb, var(--c-text) 85%, transparent); }
+.env-iss-radiator { fill: color-mix(in srgb, var(--c-text) 45%, transparent); }
+.env-noise > .ref-spark { width: 100%; min-height: 3rem; }
+.env-noise .ref-spark path { stroke: var(--acc); }
+
+/* ---- Vuelta 3 (2026-11-15): más cerca de la foto. ---- */
+
+/* Estado global: el visto grande dentro de un círculo, como la maqueta. */
+.env-global-icon {
+  width: 3rem;
+  height: 3rem;
+  padding: 0.45rem;
+  border: 2px solid var(--acc);
+  border-radius: 50%;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 45%, transparent);
+}
+
+.env-global-box strong { font-size: 1.4rem; }
+
+/* Gravedad: tres cajas como la maqueta (gravedad actual, efectos, cuerpo). */
+.env-gravity-now {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--c-text) 18%, transparent);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.env-gravity-now strong { font-size: 1.5rem; }
+
+.env-gravity-effects li { padding: 0.15rem 0; }
+.env-gravity-effects li > :last-child {
+  justify-self: end;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent);
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--acc) 12%, transparent);
+  white-space: nowrap;
+}
+
+.env-gravity-effects-h { margin: 0 0 0.15rem; font-size: 0.875rem; }
+
+/* Correlaciones: las casillas en verde de acento, las cifras alineadas. */
+.env-correlation-list li { align-items: start; }
+
+/* ---- Vuelta 4: la luz de 24 h como área rellena (adorno: amarillo de la luz, sin nivel). ---- */
+.env-light-curve .ref-area { width: 100%; height: 3.6rem; display: block; }
+.ref-area-fill { fill: color-mix(in srgb, var(--c-yellow) 22%, transparent); }
+.ref-area-line { fill: none; stroke: var(--c-yellow); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.ref-area-peak { fill: var(--c-yellow); }
+.env-light-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+/* ---- Vuelta 5: «Salidas de límite» en cajas como el «Estado de riesgo» de la maqueta. ---- */
+.env-risk-list { gap: 0.35rem; }
+.env-risk-list li {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--c-text) 22%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--c-text) 5%, transparent);
+}
+.env-risk-list li[data-state="ok"] {
+  border-color: color-mix(in srgb, var(--acc) 60%, transparent);
+  background: color-mix(in srgb, var(--acc) 12%, transparent);
+}
+.env-risk-list li[data-state="ok"] strong { font-size: 1.15rem; }
+.env-risk-list .mark svg { width: 1.2rem; height: 1.2rem; }
+.env-risk-list li[data-state="ok"] .secondary { display: block; }

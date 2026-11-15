@@ -1,0 +1,38 @@
+{
+  "target": "app/core/storage.py",
+  "test": [
+    "tests/test_safe_mode.py"
+  ],
+  "mutations": [
+    {
+      "label": "activar sin motivo",
+      "old": "        if active and not any(char.isalnum() for char in reason):",
+      "new": "        if False:"
+    },
+    {
+      "label": "levantarlo sin persona",
+      "old": "        if not any(char.isalpha() for char in declared_by):\n            raise ValueError(\"el modo seguro lo activa o lo levanta una persona con nombre\")",
+      "new": "        pass"
+    },
+    {
+      "label": "la respuesta de un cambio no cuenta su versión",
+      "old": "            version = current[\"version\"] + 1",
+      "new": "            version = 1"
+    },
+    {
+      "label": "la época no crece entre almacenes",
+      "old": "        _last_epoch = max(_last_epoch + 1, time.time_ns() // 1000)",
+      "new": "        _last_epoch = 1"
+    },
+    {
+      "label": "la versión no cuenta los cambios",
+      "old": "            \"version\": len(entries),",
+      "new": "            \"version\": 1,"
+    },
+    {
+      "label": "mirar el estado y firmar sin cerrojo",
+      "old": "        with self._lock:\n            current = self.safe_mode()",
+      "new": "        if True:\n            current = self.safe_mode()"
+    }
+  ]
+}

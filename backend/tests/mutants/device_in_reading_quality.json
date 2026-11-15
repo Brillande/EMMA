@@ -1,0 +1,18 @@
+{
+ "target": "app/analysis/data_quality.py",
+ "test": [
+  "tests/test_device_in_reading.py::test_data_quality_only_gains_the_block_and_only_looks_at_recent_readings"
+ ],
+ "mutations": [
+  {
+   "label": "el aviso mira todas las lecturas, no las de la ventana reciente",
+   "old": "            [obs for obs in observations if obs.effective >= cutoff],\n",
+   "new": "            list(observations),\n"
+  },
+  {
+   "label": "el bloque de calidad no compara con los vinculos declarados",
+   "old": "            sensor_bindings,\n            [obs for obs",
+   "new": "            (),\n            [obs for obs"
+  }
+ ]
+}

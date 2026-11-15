@@ -1,0 +1,53 @@
+{
+ "target": "app/advisor/check_cost.py",
+ "test": [
+  "tests/test_alert_flow.py"
+ ],
+ "mutations": [
+  {
+   "label": "lo sin clasificar del coste se pinta como clasificado",
+   "old": "dimension, spec[\"display\"], held[\"display\"], held[\"value\"] == cost.UNCLASSIFIED",
+   "new": "dimension, spec[\"display\"], held[\"display\"], False"
+  },
+  {
+   "label": "el tiempo de la accion sin cifra no se marca como ausente",
+   "old": "\"crew_time\", ACTION_TIME, _minutes(minutes), minutes is None,",
+   "new": "\"crew_time\", ACTION_TIME, _minutes(minutes), False,"
+  },
+  {
+   "label": "el tiempo de la accion pierde de donde sale",
+   "old": "                _time_basis(measure.crew_time_basis),\n",
+   "new": "                None,\n"
+  },
+  {
+   "label": "el tiempo de medir un indicador pierde de donde sale",
+   "old": "            _time_basis(item[\"crew_time_basis\"]),\n",
+   "new": "            None,\n"
+  },
+  {
+   "label": "«sin fuente» se repite como base junto a «sin cifra con fuente»",
+   "old": "    return None if text is None or text == NO_SOURCE else text",
+   "new": "    return text"
+  },
+  {
+   "label": "una comprobacion que no repite nada calla que no hay coste",
+   "old": "        \"statement\": None if indicators else NO_REPEAT,",
+   "new": "        \"statement\": None,"
+  },
+  {
+   "label": "el coste de un indicador no se lee de ingest/cost.py",
+   "old": "    item = cost.cost(key)\n",
+   "new": "    item = None\n"
+  },
+  {
+   "label": "has_unclassified no ve lo sin clasificar",
+   "old": "        fact[\"missing\"] and fact[\"key\"] in _CLASSES",
+   "new": "        False"
+  },
+  {
+   "label": "la cifra leida de masa, volumen o potencia no viaja con su dato",
+   "old": "                figure=held[\"figure\"],",
+   "new": "                figure=None,"
+  }
+ ]
+}

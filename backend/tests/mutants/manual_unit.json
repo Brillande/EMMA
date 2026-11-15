@@ -1,0 +1,281 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_amendment.py",
+  "tests/test_fhir.py",
+  "tests/test_lab_readings.py",
+  "tests/test_observation_unit.py"
+ ],
+ "mutations": [
+  {
+   "label": "el alta manual no compara la unidad declarada",
+   "old": "            require_catalog_unit(code, unit)\n",
+   "new": "            pass\n"
+  },
+  {
+   "label": "la respuesta dice lo contrario de si la unidad se asumio",
+   "old": "    return {\"unit\": code.unit, \"unit_assumed\": unit is None}\n",
+   "new": "    return {\"unit\": code.unit, \"unit_assumed\": unit is not None}\n"
+  },
+  {
+   "label": "la respuesta del alta calla la unidad",
+   "old": "        \"ledger_index\": entry.index, \"content_hash\": entry.content_hash, **unit,\n        \"food\": recorded.food,\n",
+   "new": "        \"ledger_index\": entry.index, \"content_hash\": entry.content_hash,\n        \"food\": recorded.food,\n"
+  },
+  {
+   "label": "la enmienda no compara la unidad de su correccion",
+   "old": "    unit = _unit_or_422(code, correction.unit)\n",
+   "new": "    unit = _unit_or_422(code, None)\n"
+  },
+  {
+   "label": "la unidad se compara despues de firmar: la lectura queda en el ledger",
+   "old": "    recorded, unit = _observation_or_422(code, payload, settings)\n    entry = _recorded_or_422(lambda: store.record(recorded, identity_for(payload.source)))[0]\n    # El plato tal como quedó firmado (`None` si la lectura no lo lleva): quien envía ve lo que\n",
+   "new": "    recorded, _ = _observation_or_422(code, payload.model_copy(update={\"unit\": None}), settings)\n    entry = _recorded_or_422(lambda: store.record(recorded, identity_for(payload.source)))[0]\n    unit = _unit_or_422(code, payload.unit)\n    # El plato tal como quedó firmado (`None` si la lectura no lo lleva): quien envía ve lo que\n"
+  },
+  {
+   "label": "la enmienda firma como medida una correccion inferida",
+   "old": "            observation_type=correction.observation_type,\n",
+   "new": ""
+  },
+  {
+   "label": "la enmienda pierde el modelo de su correccion",
+   "old": "            model_version=correction.model_version,\n",
+   "new": ""
+  },
+  {
+   "label": "la enmienda pierde el entorno declarado de su correccion",
+   "old": "            evidence_context=correction.evidence_context or settings.deployment_context,\n",
+   "new": ""
+  },
+  {
+   "label": "la enmienda sin entorno lo deduce de la fuente y no del despliegue",
+   "old": "            evidence_context=correction.evidence_context or settings.deployment_context,\n",
+   "new": "            evidence_context=correction.evidence_context,\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "se acepta cualquier unidad escrita",
+   "old": "    if unit == code.unit:\n",
+   "new": "    if unit == code.unit or isinstance(unit, str):\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "la comparacion ignora mayusculas",
+   "old": "    if unit == code.unit:\n",
+   "new": "    if str(unit).lower() == code.unit.lower():\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "la comparacion quita espacios",
+   "old": "    if unit == code.unit:\n",
+   "new": "    if str(unit).strip() == code.unit:\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "el error repite la unidad recibida entera",
+   "old": "        shown = shown[:40] + \"…\"\n",
+   "new": "        shown = shown\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "el corte de la unidad no se marca",
+   "old": "        shown = shown[:40] + \"…\"\n",
+   "new": "        shown = shown[:40]\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "la via FHIR vuelve a su comparacion propia",
+   "old": "        require_catalog_unit(code, quantity.get(\"code\"))\n",
+   "new": "        if quantity.get(\"code\") != code.unit:\n            raise ValueError(f\"unidad incompatible para {code.key}\")\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "el motivo no dice que no se convierte",
+   "old": "EMMA no convierte unidades: una cifra en otra unidad no se registra",
+   "new": "una cifra en otra unidad no se registra"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla pone la fuente en otro elemento FHIR",
+   "old": "| `source` | `device.display` | `source` | `source` |",
+   "new": "| `source` | `device.reference` | `source` | `source` |"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla pierde un campo de §5",
+   "old": "| `model_version` | `extension('https://emma.mission/fhir/model-version').valueString` | `model_version` | `model_version` | `model_version` |\n",
+   "new": ""
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla dice que la unidad se firma",
+   "old": "| `unit` | `valueQuantity.code` | `code.unit` | — |",
+   "new": "| `unit` | `valueQuantity.code` | `code.unit` | `unit` |"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla da a la calidad la extension del contexto",
+   "old": "| `quality` | `extension('https://emma.mission/fhir/confidence').valueDecimal` |",
+   "new": "| `quality` | `extension('https://emma.mission/fhir/context').valueDecimal` |"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla nombra la clave donde FHIR lleva el codigo",
+   "old": "| `variable_id` | `code.coding[0].code` | `code.code` | `key` |",
+   "new": "| `variable_id` | `code.coding[0].code` | `code.key` | `key` |"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "la enmienda acepta una correccion de otro indicador",
+   "old": "                if corrected_key != observation.key:\n",
+   "new": "                if False:\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "la enmienda exige tambien el mismo tripulante y pierde el control de H3",
+   "old": "                if corrected_key != observation.key:\n",
+   "new": "                if corrected_key != observation.key or (\n                    isinstance(reading, dict)\n                    and reading.get(\"subject\") != observation.subject\n                ):\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "un asiento que no es una lectura se enmienda con una",
+   "old": "                if corrected_key is None:\n",
+   "new": "                if False:\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "la enmienda de una enmienda se compara con el asiento y no con su correccion",
+   "old": "                reading = _reading_payload(target)\n",
+   "new": "                reading = target.payload\n"
+  },
+  {
+   "label": "la correccion de otro indicador sale como conflicto (409)",
+   "old": "    except AmendmentMismatch as exc:\n        # Una correccion de otro indicador es un dato malo de quien llama, no un conflicto\n        # de estado: 422, como la unidad equivocada.\n        raise HTTPException(status_code=422, detail=str(exc)) from exc\n",
+   "new": "    except AmendmentMismatch as exc:\n        # Una correccion de otro indicador es un dato malo de quien llama, no un conflicto\n        # de estado: 422, como la unidad equivocada.\n        raise HTTPException(status_code=409, detail=str(exc)) from exc\n"
+  },
+  {
+   "label": "una unidad vacia se compara como cualquier otra, sin su motivo",
+   "old": "    if unit == \"\":\n",
+   "new": "    if False:\n",
+   "target": "app/ingest/fhir.py"
+  },
+  {
+   "label": "una unidad gigante se compara entera, sin su motivo",
+   "old": "    if len(unit) > UNIT_MAX_LENGTH:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "el tope de la unidad se mueve",
+   "old": "UNIT_MAX_LENGTH = 64\n",
+   "new": "UNIT_MAX_LENGTH = 65\n"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "la lectura de cabina no compara la unidad declarada",
+   "old": "    unit = _unit_or_422(declared, payload.unit)\n",
+   "new": "    unit = _unit_or_422(declared, None)\n"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "la respuesta de la lectura de cabina calla la unidad",
+   "old": "    return {\"ledger_index\": entry.index, \"content_hash\": entry.content_hash, **unit}\n",
+   "new": "    return {\"ledger_index\": entry.index, \"content_hash\": entry.content_hash}\n"
+  },
+  {
+   "target": "app/reports/labs.py",
+   "label": "la analitica vuelve a su comparacion propia",
+   "old": "            require_catalog_unit(code, unit)\n",
+   "new": "            if unit != code.unit:\n                raise ValueError(f\"la unidad de '{key}' es {code.unit}\")\n"
+  },
+  {
+   "target": "app/reports/labs.py",
+   "label": "el motivo de la analitica no dice que convierte la persona",
+   "old": "Para confirmarla, convierte el valor leído en el papel y declara ",
+   "new": "Declara "
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "un analito de analitica toma la categoria de su dominio",
+   "old": "    if code.key in LAB_REPORT_ONLY:\n        return ObservationCategory.LABORATORY\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "el NTx vuelve a ser actividad",
+   "old": "    physical_min=0,\n    # Se mide en orina en un laboratorio: no es la «actividad» del dominio óseo.\n    category=ObservationCategory.LABORATORY,\n",
+   "new": "    physical_min=0,\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "una entrada ya enmendada da 422 por el indicador y no 409 por el conflicto",
+   "old": "                and ledger_index not in self.ledger.amendments(chain)\n",
+   "new": ""
+  },
+  {
+   "target": "app/api/reports.py",
+   "label": "la confirmacion de una analitica compara una unidad gigante entera",
+   "old": "        _unit_length_or_422(code, body.unit)\n",
+   "new": "        pass\n"
+  },
+  {
+   "target": "app/api/reports.py",
+   "label": "la confirmacion vuelve a poner el tope en su esquema (lista de Pydantic)",
+   "old": "    unit: str | None = None\n",
+   "new": "    unit: str | None = Field(default=None, max_length=32)\n"
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "el peso vuelve a la «actividad» del dominio oseo",
+   "old": "    category=ObservationCategory.VITAL_SIGNS,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "el volumen de orina de 24 h vuelve a ser imagen",
+   "old": "    # (`data/measurement_cost.json`, «orina-24h-en-tierra»). «laboratory», no «imaging».\n    category=ObservationCategory.LABORATORY,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "la densidad de la orina vuelve a ser imagen",
+   "old": "    # Se mide sobre una muestra de orina (tira o refractómetro): «laboratory», no «imaging».\n    category=ObservationCategory.LABORATORY,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "la carga de sintomas vuelve al laboratorio del dominio inmune",
+   "old": "    # inmune, que es el de los análisis de sangre y saliva.\n    category=ObservationCategory.SURVEY,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "la duracion del sueno vuelve a ser un cuestionario",
+   "old": "    # «sleep data». No es un cuestionario («survey», la del dominio conductual).\n    category=ObservationCategory.ACTIVITY,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/codes.py",
+   "label": "la ingesta de liquidos vuelve a la imagen del dominio",
+   "old": "    # de una muestra, ni un cuestionario. Ninguna de las nueve categorías lo describe.\n    category=NoCategory.NONE_FITS,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "un indicador sin categoria que le corresponda sale con la de su dominio",
+   "old": "    if isinstance(code.category, NoCategory):\n        return None\n",
+   "new": "    if isinstance(code.category, NoCategory):\n        return _CATEGORY_BY_DOMAIN[code.domain]\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "la categoria declarada no manda sobre la del dominio",
+   "old": "    if code.category is not None:\n        return code.category\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "una categoria con el display de otra",
+   "old": "    ObservationCategory.EXAM: \"Exam\",\n",
+   "new": "    ObservationCategory.EXAM: \"Examination\",\n"
+  }
+ ]
+}

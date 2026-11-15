@@ -1,0 +1,25 @@
+{
+  "target": "app/export.py",
+  "test": [
+    "tests/test_knowledge.py::test_the_status_exports_to_pdf_with_emma_title_and_backend_text",
+    "tests/test_knowledge.py::test_dossier_and_chronicle_export_too",
+    "tests/test_knowledge.py::test_the_copy_is_restored_after_exporting"
+  ],
+  "mutations": [
+    {
+      "label": "el PDF sale con el título del caso de la autora de Polaris",
+      "old": "        kwargs[\"title\"] = title",
+      "new": "        pass"
+    },
+    {
+      "label": "la copia queda sustituida tras exportar",
+      "old": "            tool.SimpleDocTemplate = original",
+      "new": "            pass"
+    },
+    {
+      "label": "el PDF del estado no lleva el detalle de las alertas",
+      "old": "        lines += [f\"### {alert.get('domain')} · {alert.get('level')}\", \"\"]",
+      "new": "        lines += [\"\"]"
+    }
+  ]
+}

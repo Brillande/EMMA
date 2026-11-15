@@ -1,0 +1,18 @@
+{
+ "target": "app/analysis/risk.py",
+ "test": [
+  "tests/test_conjunction.py"
+ ],
+ "mutations": [
+  {
+   "label": "el factor de aislamiento sube en conjunción solar",
+   "old": "    progress = min(comms.round_trip_minutes / 40.0, 1.0)",
+   "new": "    progress = 1.0 if (comms.solar_elongation_deg or 99.0) <= 2.0 else min(comms.round_trip_minutes / 40.0, 1.0)"
+  },
+  {
+   "label": "sin elongación se trata como si no hubiera retardo",
+   "old": "    if comms is None or not comms.autonomy_required:",
+   "new": "    if comms is None or not comms.autonomy_required or comms.solar_elongation_deg is None:"
+  }
+ ]
+}

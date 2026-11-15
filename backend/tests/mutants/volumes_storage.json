@@ -1,0 +1,18 @@
+{
+  "target": "app/core/storage.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "una segmentación puede citar otro volumen",
+      "old": "            if payload.get(\"study_sha256\") != study[\"sha256\"]:\n                raise ValueError(\"la segmentación cita otro volumen que el firmado en el estudio\")",
+      "new": "            if False:\n                raise ValueError(\"la segmentación cita otro volumen que el firmado en el estudio\")"
+    },
+    {
+      "label": "los binarios del visor no se cotejan",
+      "old": "BLOB_ENTRY_TYPES = (\n    IMAGING_STUDY_ENTRY_TYPE, SCANNED_REPORT_ENTRY_TYPE, VOLUME_STUDY_ENTRY_TYPE,\n    VOLUME_SEGMENTATION_ENTRY_TYPE,\n)",
+      "new": "BLOB_ENTRY_TYPES = (\n    IMAGING_STUDY_ENTRY_TYPE, SCANNED_REPORT_ENTRY_TYPE, VOLUME_STUDY_ENTRY_TYPE,\n)"
+    }
+  ]
+}

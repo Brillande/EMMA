@@ -1,0 +1,3622 @@
+/*
+ * Estilos de EMMA. Todo color es una variable `--c-*` que genera `lib/palette.ts`:
+ * aqui no se escribe ningun hexadecimal, para que el test de contraste cubra de
+ * verdad lo que se ve (NASA-STD-3001 Vol 2, F.5.10).
+ *
+ * F.5.1: sans serif para lo narrativo, ancho fijo para numeros y tablas.
+ */
+
+:root {
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Base táctil (§5.40.1). Una escala de espacios de 4 en 4 (4, 8, 12, 16, 24 y 32 px) para que
+     todo hueco salga de la misma regla; dos radios, el de la tarjeta y el del mando; y la altura
+     mínima de lo que se pulsa: 44 px con ratón (WCAG 2.5.5), 48 px con el dedo, abajo. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --radius: 10px;
+  --radius-control: 8px;
+  --gap: var(--space-4);
+  --touch: 44px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Sin zoom por doble toque en lo que se pulsa (`manipulation`): el toque responde al momento y el
+   zoom con dos dedos sigue libre, que es el de accesibilidad. El destello del toque del navegador
+   se deja: es la única señal de pulsado de lo que no tiene `:active` propio (F.5.4 c). */
+a,
+button,
+input,
+select,
+textarea,
+summary,
+label,
+[role="tab"],
+[role="button"] {
+  touch-action: manipulation;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+/* Con el dedo (tableta): lo que se pulsa sube a 48 px y la letra del cuerpo a 17 px. Se decide
+   por el puntero y no por el ancho: una tableta apaisada mide lo que una pantalla de escritorio
+   pequeña, y lo que cambia no es el sitio sino la punta con la que se pulsa. */
+@media (pointer: coarse) {
+  :root {
+    --touch: 48px;
+  }
+
+  html,
+  body {
+    font-size: 17px;
+  }
+}
+
+/* La jerarquía va por tamaño y peso, nunca por color: el título de panel (h2, `PanelTitle`) un
+   escalón por encima del cuerpo, el de apartado (h3) en negrita al tamaño del cuerpo. */
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--c-text);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: pre;
+}
+
+/* Una dirección web va en monoespaciada, como las cifras, pero se parte donde haga falta: con
+   `white-space: pre` una URL larga ensanchaba la rejilla entera y la página pasaba de 1400 px a
+   casi 3000 al abrir un plegable (pasada visual del 2026-10-16). */
+.num.url {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Un identificador o una serie larga en monoespaciada que no es una dirección (§5.37.17): la
+   escalera de hitos («L-180 → L-30 → … → R+365», 598 px) o la clave de una referencia salían del
+   panel a 390 px. Conserva sus espacios, como toda cifra, y se parte si no cabe. */
+.num.wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.secondary {
+  color: var(--c-text-secondary);
+}
+
+/* Colores con significado de la tabla F.5-1 y F.5-2. Solo se usan con su sentido. */
+.c-red {
+  color: var(--c-red);
+}
+.c-yellow {
+  color: var(--c-yellow);
+}
+.c-blue {
+  color: var(--c-blue);
+}
+.c-gray {
+  color: var(--c-gray);
+}
+.c-cyan {
+  color: var(--c-cyan);
+}
+.c-magenta {
+  color: var(--c-magenta);
+}
+.c-green {
+  color: var(--c-green);
+}
+.c-text {
+  color: var(--c-text);
+}
+.c-textSecondary {
+  color: var(--c-text-secondary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Pictogramas (icons/): la forma junto a la palabra, F.5.10 e          */
+/* ------------------------------------------------------------------ */
+
+/* Del tamaño de la letra y del color del texto (currentColor): el color sigue siendo el de la
+   clase c-* del elemento que lo contiene. El hueco con la palabra lo pone el CSS, no un espacio
+   en el texto, para que lo que se lee sea la palabra y nada más. */
+.pictogram {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  flex: none;
+}
+
+.mark > .pictogram {
+  margin-right: 0.35em;
+}
+
+/* Selector (components/Chosen.tsx, §5.33.12): la opción sin el anillo de «elegido» reserva su
+   hueco, del mismo ancho que el dibujo y su margen, para que la fila no se mueva al elegir. */
+button[aria-pressed="false"] > .mark:not(:has(> .pictogram))::before {
+  content: "";
+  display: inline-block;
+  width: 1.35em;
+}
+
+h1 > .pictogram,
+h2 > .pictogram,
+h3 > .pictogram,
+h4 > .pictogram,
+summary > .pictogram,
+.strip .cell .label > .pictogram {
+  margin-right: 0.4em;
+}
+
+/* Segunda pasada (§5.33): el signo directo dentro del mando, la cabecera, el rótulo de campo y
+   la ficha (components/Command, Th, FieldLabel, StatTile), con el mismo hueco que en un título. */
+button.command > .pictogram,
+.th-sign > .pictogram,
+label > .pictogram,
+dt > .pictogram,
+legend > .pictogram,
+.stat-label > .pictogram {
+  margin-right: 0.4em;
+}
+
+/* La cabecera de tabla une su dibujo a la primera línea (components/Th.tsx, §5.33.12): en una
+   columna estrecha el texto se parte a la derecha del dibujo y el dibujo no se queda solo encima.
+   En un contenedor flexible `vertical-align` no se aplica: el desplazamiento lo da `top`. */
+.th-sign {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.th-sign > .pictogram {
+  position: relative;
+  top: 0.125em;
+}
+
+/* Escala de tamaños: el texto manda y el dibujo lo sigue en `em`; donde el dibujo es lo que se
+   busca con la vista (la insignia del resumen, el dominio, la pestaña) va un punto más grande. */
+.panel.summary .level,
+.summary > .level {
+  font-size: 1.5rem;
+}
+
+.domain > h3 .pictogram {
+  font-size: 1.5em;
+  vertical-align: middle;
+}
+
+/* Solo las pestañas y el selector de tripulante: el rótulo y los mandos del cambio de escenario,
+   que viven en la misma barra, llevan el dibujo al cuerpo de la letra, como cualquier mando. */
+nav.tabs .console-switch > button[role="tab"] .pictogram,
+.crew-selector > .mark > .pictogram {
+  font-size: 1.25em;
+}
+
+.pictogram-lg {
+  font-size: 1.5em;
+}
+
+.pictogram-xl {
+  font-size: 2em;
+}
+
+/* Dato caducado: la cursiva es la tercera señal, junto al cian y al anillo punteado (Open MCT
+   pinta así el valor viejo; §5.33). La itálica de Plex va empaquetada (main.tsx). */
+.stale {
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------------ */
+/* Estructura                                                           */
+/* ------------------------------------------------------------------ */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* `viewport-fit=cover` (index.html): en una tableta con esquinas redondeadas o barra de inicio,
+     el contenido se aparta de lo que la pantalla no enseña. Sin esos bordes vale 0. */
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* F.4.2: modo simulacion visualmente distinto. Una franja rayada fija que no usa
+   ningun color de la tabla F.5-1: no es una alerta, es un modo. */
+.app[data-mode="simulation"],
+.app[data-mode="mixed"] {
+  border-top: 6px solid transparent;
+  border-image: repeating-linear-gradient(
+      -45deg,
+      var(--c-text-secondary) 0 8px,
+      transparent 8px 16px
+    )
+    6;
+}
+
+main {
+  flex: 1;
+  padding: var(--gap);
+  display: grid;
+  gap: var(--gap);
+  align-content: start;
+  /* Una sola columna que no pasa del ancho de la ventana (§5.37.17). Con la columna implícita
+     (`auto`) la ensanchaba el mínimo de su panel más ancho: la tabla de días de toma de los
+     conjuntos de datos (1384 px) llevaba la consola de Tierra entera a 1434 px en una ventana de
+     1400, y las tablas que ya se desplazan dentro de su caja (`.quality-table`) no podían
+     hacerlo porque su caja crecía con ellas. */
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  /* Una palabra que no cabe en su renglón se parte en vez de salir del panel (§5.37.17): la nota
+     de lectura de los riesgos del HRP cita una dirección en mitad de la frase y a 390 px la
+     consola de Tierra se iba a 391. `break-word` y no `anywhere`: no cambia el ancho mínimo de
+     nada, así que las columnas de una tabla siguen como estaban. */
+  overflow-wrap: break-word;
+}
+
+/* Más aire en la tableta (§5.40.1): a partir de 768 px el panel y el hueco entre paneles pasan a
+   24 px; por debajo se quedan en 16 para no robar ancho a las tablas. */
+@media (min-width: 768px) {
+  main {
+    gap: var(--space-5);
+  }
+
+  .panel {
+    padding: var(--space-5);
+  }
+}
+
+.panel > h2 {
+  margin-bottom: var(--space-4);
+}
+
+/* ------------------------------------------------------------------ */
+/* Franja comun (F.4.2) y navegacion                                     */
+/* ------------------------------------------------------------------ */
+
+/* Franja compacta (§5.40, 2026-11-04): una sola corriente que se parte en filas de alto fijo
+   (44 px, 48 px al tacto): el título, las celdas y, al final, los mandos. Antes cada pieza iba en
+   su renglón y la franja se comía unos 300 px de 900 antes de llegar al contenido. */
+.strip {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  padding: 8px var(--gap);
+  background: var(--c-raised);
+  border-bottom: 1px solid var(--c-line);
+}
+
+/* Es el `h1` de la página (§5.41): el tamaño de siempre, no el de un encabezado del navegador. */
+.strip .title {
+  font-size: inherit;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Solo para el lector de pantalla: las regiones vivas de las alertas (§5.41). En pantalla la
+   alerta ya está en su fila; esto es la misma alerta dicha, no otra señal visual. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* «Saltar al contenido»: fuera de la vista hasta que recibe el foco; entonces, arriba a la
+   izquierda, con el foco verde de siempre (F.5-2) y los colores del texto. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  padding: 8px 12px;
+  background: var(--c-raised);
+  color: var(--c-text);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* El destino del salto recibe el foco por programa: no se le pinta un marco alrededor de todo. */
+main:focus {
+  outline: none;
+}
+
+/* Cada celda, rótulo encima y valor debajo, del alto de una fila: así todas las filas miden lo
+   mismo, con celdas o con mandos. */
+.strip .cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--touch);
+}
+
+/* Los mandos de la franja, juntos al final de la última fila (a la derecha si caben ahí). */
+.strip-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Un plegable de la franja («Atajos», «Modo seguro») se ve y se pulsa como un mando: verde de lo
+   accionable (F.5-2) y abierto con el borde y el peso de lo elegido (F.5.4 c), como el mando del
+   freno. Lo que guarda cuelga encima de la página, justo bajo la franja y pegado a su borde
+   derecho, y la franja no crece. Se ancla a la franja (que es `sticky`, y por eso su bloque
+   contenedor) y no al mando: colgado del mando, con los mandos partidos en filas en una pantalla
+   estrecha, se salía por la izquierda; y su ancho se mide en `%` de la franja y no en `vw`, que
+   con la ampliación de baja visión (`zoom`) daba más que la ventana. */
+.strip details.strip-pop {
+  position: static;
+}
+
+.strip details.strip-pop > summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 12px;
+  color: var(--c-text);
+  background: var(--c-command);
+  border: 1px solid var(--c-green);
+  border-radius: var(--radius-control);
+  list-style: none;
+}
+
+.strip details.strip-pop > summary::-webkit-details-marker {
+  display: none;
+}
+
+.strip details.strip-pop[open] > summary {
+  border-color: var(--c-text);
+  font-weight: 600;
+}
+
+.strip details.strip-pop > :not(summary) {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: var(--gap);
+  z-index: 11;
+  width: max-content;
+  max-width: min(48ch, calc(100% - 2 * var(--gap)));
+  margin: 0;
+  padding: 12px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-text-secondary);
+  border-radius: var(--radius);
+}
+
+/* Un puente invisible hasta el mando: con ratón, al bajar de «Atajos» a su texto el puntero no
+   sale de `:hover` en el hueco y el texto no se apaga a medio camino. */
+.strip details.strip-pop > :not(summary)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 16px;
+}
+
+.strip .silence-form input {
+  min-height: var(--touch);
+}
+
+.strip .cell .label {
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+}
+
+.strip .counts {
+  display: flex;
+  gap: 12px;
+}
+
+/* El enlace con Tierra declarado (§5.34.5), debajo del retardo: acotado en ancho para que parta en
+   renglones dentro de su celda en vez de ensancharla y empujar las demás a otra fila. */
+.strip .link-declared {
+  max-width: 34ch;
+  font-size: 0.875rem;
+}
+
+.mode-tag {
+  padding: 2px 8px;
+  border: 1px dashed var(--c-text-secondary);
+  border-radius: var(--radius);
+}
+
+/* El freno HALT de Polaris en la franja: una linea (triangulo, titulo, fecha y el mando con el
+   rotulo del backend), y nada mas (§5.34.14, §5.35.12). Cerrado o abierto la franja no crece: la
+   explicacion se despliega en la pagina, debajo (`.halt-details`). Sin tope de ancho: la celda
+   puede encogerse (`min-width: 0`) y la fila se parte por sus piezas antes que desbordar, y si no
+   cabe junto a las demas celdas, la franja (con `flex-wrap`) la pasa a su fila. El mando va al
+   cuerpo del rotulo de las celdas, mas bajo que uno de panel, para que la linea no ensanche la
+   franja. */
+.strip .halt-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+}
+
+/* El aviso (la region que se anuncia sola) y su fecha, una pieza de la fila; el mando, al lado. */
+.strip .halt-notice > .halt-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  min-width: 0;
+}
+
+.strip .halt-notice > button.command {
+  min-height: var(--touch);
+  padding: 0 8px;
+  font-size: 0.875rem;
+}
+
+/* F.5.4 c: el mando dice si lo que despliega esta desplegado, como un selector su eleccion. */
+.strip .halt-notice > button.command[aria-expanded="true"] {
+  border-color: var(--c-text);
+  font-weight: 600;
+}
+
+/* La explicacion del freno, en la pagina y no en la franja fija (§5.35.12): con ella abierta en la
+   franja, la franja ocupaba unos 640 de 900 px y tapaba lo que hay que mirar (§5.34.15). Aqui va
+   debajo de la franja, con su ancho de lectura de antes (56ch), y se desplaza con la pagina; el
+   mando que la cierra sigue arriba, a la vista. */
+.halt-details {
+  padding: 8px var(--gap) 12px;
+  background: var(--c-raised);
+  border-bottom: 1px solid var(--c-line);
+  font-size: 0.9rem;
+}
+
+.halt-details > * {
+  max-width: 56ch;
+}
+
+.halt-details p,
+.halt-details ul {
+  margin: 4px 0 0;
+}
+
+.halt-details ul {
+  padding-left: 18px;
+}
+
+/* F.4.2: la barra de navegacion principal, arriba. Tres piezas que se pliegan por filas enteras,
+   nunca a media frase (§5.40.2): el conmutador de consola, el tripulante y el escenario. Todos los
+   mandos de la barra comparten el borde de abajo, así quedan a una misma altura aunque el rótulo
+   de cada campo vaya encima. */
+nav.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 24px;
+  padding: 8px var(--gap);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
+}
+
+/* El conmutador de consola, como control segmentado (`role="tablist"`). La elegida se marca con
+   tres señales además del color (F.5.10 e): barra de abajo, negrita y fondo elevado, como la
+   pestaña abierta del carril. */
+.console-switch {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  padding: 4px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+nav.tabs .console-switch > button[role="tab"] {
+  font: inherit;
+  min-height: 44px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-text-secondary);
+  background: none;
+  border: 1px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: none;
+}
+
+nav.tabs .console-switch > button[role="tab"][aria-selected="true"] {
+  color: var(--c-text);
+  font-weight: 600;
+  background: var(--c-raised);
+  border-color: var(--c-line);
+  border-bottom-color: var(--c-text);
+}
+
+/* Quien se mira: junto a las pestanas, porque gobierna las dos consolas. Rótulo encima y selector
+   debajo, como las celdas de la franja: así el campo ocupa lo que su valor y no lo que su frase. */
+.crew-selector {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.crew-selector > .mark {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* El escenario (§5.33.11, §5.34.14, §5.40.2): «Escenario:» encima de su nombre, y «Cambiar a…» con
+   «Cambiar…» juntos al lado. Si no caben en la fila, los dos mandos bajan juntos a la siguiente;
+   el nombre no se recorta (nombra lo que se está simulando) y, si tuviera que partirse, reparte
+   sus renglones en vez de dejar una palabra sola. */
+.scenario-switcher {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 16px;
+  min-width: 0;
+}
+
+.scenario-current {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.scenario-current > label {
+  font-size: 0.875rem;
+}
+
+.scenario-current > strong {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  text-wrap: balance;
+}
+
+.scenario-actions {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  align-items: center;
+}
+
+.scenario-switcher select {
+  field-sizing: content;
+}
+
+.scenario-switcher select,
+.crew-selector select,
+.scenario-switcher button.command {
+  min-height: 44px;
+}
+
+.scenario-actions > select,
+.scenario-actions > button.command,
+.scenario-confirm > button.command {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* Al confirmar el cambio (§5.34.14): la pregunta y sus dos mandos, juntos y en su fila, debajo del
+   escenario en curso. Si no caben, los mandos bajan juntos bajo la pregunta. */
+.scenario-confirm {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Táctil: todo lo que se pulsa en la barra, a 48 px (§5.40.2). */
+@media (pointer: coarse) {
+  nav.tabs .console-switch > button[role="tab"],
+  .scenario-switcher select,
+  .crew-selector select,
+  .scenario-switcher button.command {
+    min-height: 48px;
+  }
+
+  .scenario-current > strong {
+    min-height: 48px;
+  }
+}
+
+/* Vertical estrecho: el conmutador ocupa su fila entera, con las dos consolas a partes iguales. */
+@media (max-width: 640px) {
+  .console-switch {
+    flex: 1 1 100%;
+  }
+
+  nav.tabs .console-switch > button[role="tab"] {
+    flex: 1 1 0;
+    padding: 8px 12px;
+  }
+}
+
+/* Campos de toda la consola, a la altura de un mando (§5.40.1); también los selectores de la barra
+   (escenario, tripulante) y de la comparación, que antes tenían su copia de esta regla. Con
+   `:where` la regla no pesa nada: el aspecto propio de cada formulario (`.silence-form input`,
+   `.operator input`…) sigue mandando, y lo que aquí se pone es el suelo, la altura y la letra.
+   Las casillas, los botones de opción, los deslizadores y los `input` que son botones no son
+   campos de texto y no crecen así; con el dedo, la casilla se agranda para que se acierte. */
+:where(
+    select,
+    textarea,
+    input:not(
+        [type="checkbox"],
+        [type="radio"],
+        [type="range"],
+        [type="file"],
+        [type="color"],
+        [type="hidden"],
+        [type="button"],
+        [type="submit"],
+        [type="reset"],
+        [type="image"]
+      )
+  ) {
+  font: inherit;
+  min-height: var(--touch);
+  color: var(--c-text);
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+}
+
+@media (pointer: coarse) {
+  :where(input[type="checkbox"], input[type="radio"]) {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  /* Lo que se pulsa y no es un mando de la casa (pestañas de la barra, el asistente, un
+     desplegable): con el dedo, tampoco por debajo de 48 px. Sin peso, como los campos: una regla
+     propia con su altura sigue mandando. También los rótulos del mapa corporal: su sitio sobre
+     el dibujo se calcula con el alto medido de cada uno (`anatomy/siteLayout.ts`). */
+  :where(button, summary, [role="tab"]) {
+    min-height: var(--touch);
+  }
+}
+
+/* F.5-2: verde vivo para el foco y el cursor. */
+:focus-visible {
+  outline: 2px solid var(--c-green);
+  outline-offset: 2px;
+}
+
+/* F.5-2: verde oscuro para el fondo de lo que se puede accionar. F.5.4 c: el
+   boton cambia de aspecto al pulsarlo. La altura es la de `--touch` (44 px con ratón, 48 con el
+   dedo) y el relleno vertical la completa con el renglón centrado, en vez de dejar el texto
+   arriba de una caja más alta: `1lh` es el renglón del propio mando y los 2 px, sus bordes (el
+   relleno fijo de antes es para un navegador sin `lh`). */
+button.command {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-command);
+  border: 1px solid var(--c-green);
+  border-radius: var(--radius-control);
+  min-height: var(--touch);
+  padding: 6px var(--space-4);
+  padding: max(var(--space-1), calc((var(--touch) - 1lh - 2px) / 2)) var(--space-4);
+  cursor: pointer;
+}
+
+button.command:active {
+  transform: translateY(1px);
+  border-color: var(--c-text);
+}
+
+/* F.5.4 c y F.4.3.1 a: el estado actual de un selector se indica. */
+button.command[aria-pressed="true"] {
+  border-color: var(--c-text);
+  font-weight: 600;
+}
+
+button.command:disabled {
+  color: var(--c-gray);
+  background: none;
+  border-color: var(--c-gray);
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------------ */
+/* Niveles                                                              */
+/* ------------------------------------------------------------------ */
+
+.level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+/* El hueco ya lo pone el `gap` de la insignia. */
+.level > .pictogram {
+  margin-right: 0;
+}
+
+/* Desviacion declarada (§2.2 del estado del arte): 2 Hz, 50 % encendido, solo el
+   glifo (F.5.11: el parpadeo rapido es para lo que no es texto). Se detiene al
+   reconocer la alerta. */
+.flash {
+  animation: flash-2hz 0.5s steps(1, end) infinite;
+}
+
+@keyframes flash-2hz {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fichas y medidores (components/StatTile, components/Meter; §5.33)    */
+/* ------------------------------------------------------------------ */
+
+/* Fichas con cifra: el rótulo con su signo arriba, la cifra grande debajo. Sin color propio: el
+   estado, si lo hay, lo pinta su marca.
+   Tableta (§5.40): `auto-fit` con un mínimo que nunca pasa del ancho de la caja (`min(100%, …)`):
+   a 768 px van tres por fila, desde 1024 px las cinco, y ninguna se sale; la cifra, grande para
+   leerla con el brazo extendido. */
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 12px;
+}
+
+.stat-tile {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  min-width: 0;
+  padding: 12px 16px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  overflow-wrap: anywhere;
+  container-type: inline-size;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+/* En una ficha estrecha (tres por fila a 768 px con el dedo) «12 min» a 2rem se salía por 2 px:
+   ahí la cifra baja un punto. */
+@container (max-width: 9rem) {
+  .stat-value {
+    font-size: 1.625rem;
+  }
+}
+
+.stat-value .stat-unit {
+  font-weight: 400;
+}
+
+.stat-unit {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+}
+
+/* Medidor neutro: fondo, banda de referencia y relleno, solo con el fondo realzado, la línea y
+   el texto secundario. El dosímetro usa ya este medidor (§5.33.8), así que `.meter > div` solo
+   alcanza a sus piezas; estas reglas pesan más y las colocan. */
+.meter {
+  position: relative;
+}
+
+/* La banda lleva sus dos bordes en texto secundario: el relleno en `--c-line` sobre
+   `--c-raised` apenas se veía (§5.33.4), y lo que el medidor existe para enseñar son esos dos
+   extremos. Sigue neutra: ningún color con significado. */
+.meter > .meter-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  box-sizing: border-box;
+  background: var(--c-line);
+  border-left: 2px solid var(--c-text-secondary);
+  border-right: 2px solid var(--c-text-secondary);
+}
+
+.meter > .meter-fill {
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  background: var(--c-text-secondary);
+}
+
+/* Fuera de escala (Open MCT): no se dibuja recortado en el extremo; la barra queda vacía con el
+   borde discontinuo y la marca de al lado lo dice. */
+.meter.meter-oor {
+  border-style: dashed;
+  border-color: var(--c-text-secondary);
+}
+
+.meter-block {
+  display: grid;
+  gap: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Consola de tripulacion                                               */
+/* ------------------------------------------------------------------ */
+
+.summary {
+  display: flex;
+  gap: var(--gap);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.summary p {
+  font-size: 1.1rem;
+}
+
+/* El titular de la consola de tripulación («Precaución…», §5.40 tableta): la insignia grande en
+   su renglón y la frase del backend debajo, con el filete del nivel a la izquierda, como las
+   tarjetas de dominio. El color repite lo que ya dicen la forma y la palabra (F.5.10 e); `nominal`
+   no lleva color de alerta. */
+.panel.summary[data-level] {
+  display: grid;
+  gap: 8px;
+  border-left-width: 6px;
+  padding: 16px 24px;
+}
+
+.panel.summary[data-level] .level {
+  font-size: 1.75rem;
+}
+
+.panel.summary[data-level] p {
+  font-size: 1.125rem;
+  line-height: 1.45;
+  max-width: 70ch;
+}
+
+.panel.summary[data-level="watch"] {
+  border-left-color: var(--c-blue);
+}
+.panel.summary[data-level="concern"] {
+  border-left-color: var(--c-yellow);
+}
+.panel.summary[data-level="critical"] {
+  border-left-color: var(--c-red);
+}
+
+/* Rejilla de dominios: `auto-fill` con el mínimo acotado al ancho de la caja (§5.40, tableta). */
+.domains {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: 12px;
+}
+
+/* La silueta pide 26rem a su lado: en un panel de menos de 44rem (1024 × 768 con el carril, y
+   con el dedo la letra a 17 px) a la rejilla le quedaban 72 px por tarjeta y la página se
+   desplazaba en horizontal. Ahí la silueta va encima y la rejilla debajo, a todo el ancho. */
+.panel[data-ui="domains"] {
+  container-type: inline-size;
+}
+
+@container (max-width: 44rem) {
+  .panel[data-ui="domains"] .domains-overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.domain {
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+
+.domain > .level {
+  font-size: 1.25rem;
+}
+
+.domain[data-level="watch"] {
+  border-left-color: var(--c-blue);
+}
+.domain[data-level="concern"] {
+  border-left-color: var(--c-yellow);
+}
+.domain[data-level="critical"] {
+  border-left-color: var(--c-red);
+}
+
+.domain .drivers {
+  font-size: 0.9rem;
+  color: var(--c-text-secondary);
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* Una alerta por tarjeta (§5.40, tableta): el contenido a la izquierda y los mandos a la derecha
+   mientras hay sitio; en pantalla estrecha los mandos bajan debajo, en fila. */
+.alert-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 24px;
+  padding: 16px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+.alert-row + .alert-row {
+  margin-top: 12px;
+}
+
+.alert-row [role="heading"] {
+  font-size: 1.125rem;
+}
+
+.alert-row .drivers {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.earth {
+  font-size: 0.9rem;
+}
+
+/* Las tarjetas de «Qué hacer» en rejilla (§5.40, tableta): una columna en vertical, dos en
+   apaisado ancho. La nota de recursos que la lista pone delante ocupa la fila entera. */
+.recommendations {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 28rem), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.recommendations > :not(.recommendation) {
+  grid-column: 1 / -1;
+}
+
+.recommendation {
+  border-left: 3px solid var(--c-magenta);
+  padding: 4px 0 4px 12px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.recommendations > .recommendation {
+  gap: 8px;
+  padding: 16px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-left: 4px solid var(--c-magenta);
+  border-radius: var(--radius);
+}
+
+/* La de un momento pasado (§5.35.8): el filete sin el magenta de la automatización, en el
+   color de las líneas; lo pasado lleva su forma sin su color. */
+.recommendation.past,
+.recommendations > .recommendation.past {
+  border-left-color: var(--c-line);
+}
+
+.recommendation + .recommendation {
+  margin-top: 14px;
+}
+
+.recommendations > .recommendation + .recommendation {
+  margin-top: 0;
+}
+
+.recommendation .source-tag {
+  font-size: 0.875rem;
+}
+
+details summary {
+  cursor: pointer;
+  color: var(--c-text-secondary);
+}
+
+/* Un resumen que no es un rotulo sino lo que hay que leer (que falta a bordo, que paso la otra
+   vez): texto principal, no secundario. El color de cada estado lo pone su propia marca. */
+details summary.lead {
+  color: var(--c-text);
+}
+
+.evidence {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 0.9rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--gap);
+}
+
+.meter {
+  height: 10px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.meter > div {
+  height: 100%;
+  background: var(--c-text-secondary);
+}
+
+/* F.4.3.2 i: "Commands that are irreversible or hazardous should include a black
+   and yellow diagonally striped border (i.e., hazard tape)". Silenciar una alarma
+   clinica es un mando peligroso. */
+button.command.hazard {
+  border: 3px solid transparent;
+  border-image: repeating-linear-gradient(
+      -45deg,
+      var(--c-yellow) 0 6px,
+      var(--c-bg) 6px 12px
+    )
+    3;
+}
+
+.alert-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  min-width: 11rem;
+}
+
+/* Mandos de la alerta con objetivo táctil (§5.40): 44 px con ratón, 48 px con el dedo, y 8 px
+   entre uno y otro. */
+.alert-row button.command,
+.alert-row .silence-form input,
+.alert-row .silence-form select,
+.recommendations button.command,
+.recommendations .inline-form input {
+  min-height: 44px;
+}
+
+.alert-row button.command {
+  min-width: 44px;
+}
+
+.alert-row .silence-form {
+  background: var(--c-surface);
+}
+
+.alert-row .silence-form .summary {
+  gap: 8px;
+}
+
+.alert-actions .resolution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.alert-actions .resolution input {
+  font: inherit;
+  min-height: 44px;
+  min-width: 0;
+  flex: 1 1 8rem;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+}
+
+@media (pointer: coarse) {
+  .alert-row button.command,
+  .alert-row .silence-form input,
+  .alert-row .silence-form select,
+  .alert-actions .resolution input,
+  .recommendations button.command,
+  .recommendations .inline-form input {
+    min-height: 48px;
+  }
+
+  .alert-row button.command {
+    min-width: 48px;
+  }
+}
+
+/* En un panel estrecho los mandos bajan debajo de la alerta y van en fila, con el ancho de su
+   texto: a 768 px la columna de mandos le quitaba un tercio a los motivos. Por el ancho del panel
+   y no de la ventana: con el carril al lado o con baja visión (`zoom`), la ventana no lo dice. */
+.panel[data-ui="alerts"] {
+  container-type: inline-size;
+}
+
+@container (max-width: 44rem) {
+  .alert-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .alert-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .alert-actions > .secondary,
+  .alert-actions > .resolution {
+    flex-basis: 100%;
+  }
+}
+
+.alert-row.silenced .drivers,
+.alert-row.silenced strong {
+  color: var(--c-text-secondary);
+}
+
+.annunciation {
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+.silence-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-raised);
+}
+
+.silence-form input,
+.silence-form select {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+}
+
+.silence-form input {
+  width: min(100%, 480px);
+}
+
+.operator {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.operator input {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  min-height: 44px;
+}
+
+@media (pointer: coarse) {
+  .operator input {
+    min-height: 48px;
+  }
+}
+
+/* Prueba PVT (pvt/PvtPanel.tsx): en el recuadro de respuesta la forma va grande, encima de la
+   palabra, y cambia con la fase (cuadrado vacío, cuadrado lleno). Sin animación: la marca no es
+   una alarma. */
+.pvt-target {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pvt-target > .pictogram {
+  font-size: 4rem;
+  margin-right: 0;
+}
+
+.capabilities {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.kv dt {
+  color: var(--c-text-secondary);
+}
+
+/* La definición se parte antes que salirse del panel: con el signo delante de cada clave
+   (§5.33.2) la columna de claves crece, y la versión de las reglas, una cadena sin espacios,
+   desbordaba «En qué se apoya» en la rejilla de dos columnas. */
+.kv dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Una cifra o una versión en una definición conserva sus espacios (`.num`), pero puede partirse:
+   la de las reglas es un hash sin espacios que con `white-space: pre` no se partía nunca. */
+.kv dd.num {
+  white-space: pre-wrap;
+}
+
+/* Lo mismo con una cifra o un identificador dentro de la definición (§5.37.17): la versión de un
+   método (`proyeccion-dosis-mision:tasa-media-constante×Q-medio@1`) o un módulo del marco no se
+   partían y salían del panel en pantalla estrecha. */
+.kv dd .num {
+  white-space: pre-wrap;
+}
+
+/* En pantalla estrecha la clave va encima de su definición (§5.37.17): con la columna de claves a
+   su ancho entero («Procedencia de los datos de desarrollo»), a 390 px a la definición le quedaban
+   unos píxeles y su texto salía del panel. En escritorio, igual que antes. */
+@media (max-width: 640px) {
+  .kv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kv dd + dt {
+    margin-top: 6px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Consola de Tierra                                                    */
+/* ------------------------------------------------------------------ */
+
+.delay-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  align-items: center;
+  border-left: 4px solid var(--c-cyan);
+}
+
+/* Las dos fichas del retardo (§5.33.6) y la frase, lado a lado mientras quepan. */
+.delay-banner > .stat-tiles,
+.delay-banner > p {
+  flex: 1 1 320px;
+}
+
+/* Las dos fichas lado a lado mientras quepan, y una debajo de otra cuando no (§5.37.17): con la
+   rejilla de columnas de 150 px, a 390 px cabían dos y la cifra («MET 39/23:00:00», 230 px en
+   monoespaciada grande) salía de su ficha y del panel. Cada ficha guarda el ancho de su cifra
+   (`min-width: auto`, el mínimo de su contenido), y la frase de estado se parte dentro. */
+.delay-banner > .stat-tiles {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.delay-banner > .stat-tiles > .stat-tile {
+  flex: 1 1 15rem;
+  min-width: auto;
+}
+
+/* El enlace declarado, entero, en su fila debajo de las fichas (§5.35.9): como tercera columna
+   estrechaba las fichas y la cifra del corte se salía de la suya. */
+.delay-banner > p.delay-link {
+  flex-basis: 100%;
+}
+
+/* Lo que Tierra tiene va un tiempo de luz por detrás: la cifra sigue en cian, como antes de las
+   fichas, y la ficha va en cursiva (`stale`), la tercera señal de dato caducado. */
+.delay-banner .stat-tile.stale .stat-value {
+  color: var(--c-cyan);
+}
+
+/* El apartado que abre un bloque dentro de un panel de Tierra (marco, riesgos, copia de Polaris):
+   el hueco que antes iba en línea, ahora que el título es `PanelTitle` (§5.33.6). */
+.section-gap {
+  margin-top: 16px;
+}
+
+.charts {
+  display: grid;
+  /* `min(…, 100%)`: en un panel de menos de 420 px la columna no pasa del panel. */
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  gap: var(--gap);
+}
+
+/* Sin `min-width: 0` el ancho que uPlot fija a su lienzo sostenía la columna, y el
+   `ResizeObserver` de `TrendChart` nunca veía encoger el contenedor (§5.39.20). */
+.chart {
+  min-width: 0;
+}
+
+.chart h3 {
+  margin-bottom: 4px;
+}
+
+.chart .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+/* La figura de una serie llena el ancho de su caja y encoge con ella (§5.40, Tierra en tableta):
+   sin márgenes de `<figure>` y con el lienzo de uPlot a su ancho; `TrendChart` lo vuelve a medir
+   con su `ResizeObserver` al girar la tableta o cambiar de pestaña. */
+.series-chart {
+  margin: 0;
+  min-width: 0;
+}
+
+.uplot .u-legend {
+  display: none;
+}
+
+table.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+table.ledger th,
+table.ledger td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+table.ledger th {
+  color: var(--c-text-secondary);
+  font-weight: 400;
+}
+
+/* Calidad del dato: la tabla es ancha y en pantalla estrecha se desplaza, no se corta. */
+.quality-table {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+/* Comida plato a plato (§5.38.2): cada valoración del plato en su línea, de la primera a la
+   última, con la hora y la cifra; la fila se lee desde arriba. */
+.food-series {
+  margin: 0;
+  padding-left: 1.4em;
+}
+
+tr[data-food-dish] th,
+tr[data-food-dish] td {
+  vertical-align: top;
+}
+
+/* Biblioteca de contramedidas (§5.34.1): filas de varias líneas, alineadas arriba. */
+table.library-table th,
+table.library-table td {
+  vertical-align: top;
+}
+
+table.library-table th[scope="row"] {
+  color: var(--c-text);
+}
+
+/* La familia no se parte: en una columna estrecha el dibujo se quedaba solo encima de su palabra. */
+table.library-table td.family {
+  white-space: nowrap;
+}
+
+/* Las columnas de texto largo (contraindicaciones, efectos y la base del tiempo, §5.35.7): el
+   texto se parte dentro de su ancho en vez de ensanchar la columna, que con una base que cita su
+   fuente literal se comía la tabla. El tope va en un bloque dentro de la celda porque una celda
+   de tabla no respeta `max-width`. */
+table.library-table .library-note {
+  max-width: 16em;
+}
+
+/* La cabecera de los efectos no se parte (§5.36.19): casi todas sus celdas dicen «nada escrito», la
+   columna queda estrecha y «Efectos a tener en cuenta» salía en tres líneas, con el dibujo junto a
+   la primera. Entera ocupa el ancho de unas pocas palabras, por debajo del tope de las notas. */
+table.library-table th.library-head-whole {
+  white-space: nowrap;
+}
+
+/* El filtro por familia (§5.35.7): el rótulo a la altura de los mandos y con su hueco tras el
+   dibujo, como un rótulo de campo. */
+.library-filter {
+  align-items: center;
+}
+
+.library-filter > span > .pictogram {
+  margin-right: 0.4em;
+}
+
+/* Las contramedidas en investigación (§5.36.15): cada frase literal de la fuente con su ficha
+   debajo, sin la sangría de un `<blockquote>`, para que la columna no crezca por el margen. */
+.research-quote {
+  margin: 0 0 6px;
+}
+
+.research-quote blockquote {
+  margin: 0;
+}
+
+/* Límites a corto plazo (radiación, §5.34.7): el panel es una columna estrecha y la tabla de
+   cuatro columnas se desplaza dentro de él en vez de cortarse por la derecha. */
+.limits-table {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+/* Matriz banco × peligro RIDGE (bancos de prueba, §5.36.12): seis columnas en un panel de la
+   consola de Tierra; se desplaza dentro de él en vez de cortarse. */
+.ridge-matrix {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+/* Medio relleno lateral: con el de `table.ledger` la última columna quedaba fuera (§5.34.7). */
+.limits-table table.ledger th,
+.limits-table table.ledger td {
+  padding: 4px 4px;
+}
+
+/* Copia de Polaris: un centenar de filas; se desplaza dentro del panel en vez de alargar la consola. */
+.polaris-table {
+  max-height: 28rem;
+  overflow-y: auto;
+}
+
+.polaris-table th[scope="row"] {
+  color: var(--c-text);
+}
+
+/* La fila es el nombre de un módulo (`md_to_pdf_pro`): se escribe tal cual, sin la mayúscula que
+   `.quality-table` pone a las etiquetas del backend. Visto en la pasada visual: salía «Anticipa». */
+.polaris-table th[scope="row"]::first-letter {
+  text-transform: none;
+}
+
+/* El estado «copiada sin uso» en una línea: partido en tres triplicaba el alto de cada fila. */
+.polaris-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+/* La cabecera de la columna es la etiqueta del backend, que viene en minúscula. */
+.quality-table th::first-letter {
+  text-transform: uppercase;
+}
+
+.error {
+  border-left: 4px solid var(--c-red);
+}
+
+@media (max-width: 640px) {
+  .charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* El aviso sobre un historial ya firmado (`overlap`): el filete lo separa de los cotejos. */
+.history-notice {
+  border-left: 4px solid var(--c-yellow);
+  padding-left: 10px;
+}
+
+/* Tierra en tableta (§5.40). Los huecos que los paneles de Tierra llevaban en línea
+   (`style={{ marginTop: … }}`), como clases de la escala de 4 px: 0, 8 y 12. Van después de
+   `.evidence`, `.summary` y `.quality-table`, y les ganan por orden con la misma especificidad. */
+.mt-0 {
+  margin-top: 0;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+
+.mb-3 {
+  margin-bottom: 12px;
+}
+
+/* La fila de una lista de definiciones que agrupa su `dt` y su `dd` sin romper la rejilla. */
+.contents {
+  display: contents;
+}
+
+/* Un título que va en la línea de su plegable (coste de medir). */
+.inline {
+  display: inline;
+}
+
+/* La raíz de Merkle: una cifra de 64 caracteres sin espacios que se parte donde haga falta. */
+.hash-wrap {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Una tabla ancha se desplaza dentro de su panel, no la página: en vertical la columna de
+   contenido mide unos 540 px. La caja se alcanza con el teclado (`tabIndex`, `role="region"` con
+   el nombre de la tabla) y su anillo de foco se ve por dentro del panel. */
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
+
+.table-scroll:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Las exportaciones de Tierra son enlaces con aspecto de mando: el mismo fondo y filete que un
+   `button.command`, a la altura de un objetivo táctil. */
+[data-ui="docs"] a.command {
+  display: inline-flex;
+  align-items: center;
+  color: var(--c-text);
+  text-decoration: none;
+  background: var(--c-command);
+  border: 1px solid var(--c-green);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+[data-ui="docs"] .measure-actions {
+  gap: 8px;
+}
+
+/* Objetivos de la consola de Tierra: 44 px de alto con ratón y 48 px con el dedo
+   (`pointer: coarse`), como las pestañas (WCAG 2.5.5), y 8 px entre uno y otro. */
+[id^="ground-panel-"] :is(button.command, a.command, select, textarea, summary),
+[id^="ground-panel-"] input:not([type="checkbox"], [type="radio"], [type="range"]) {
+  min-height: 44px;
+}
+
+[id^="ground-panel-"] [data-ui="trends"] .summary {
+  gap: 8px;
+}
+
+@media (pointer: coarse) {
+  [id^="ground-panel-"] :is(button.command, a.command, select, textarea, summary),
+  [id^="ground-panel-"] input:not([type="checkbox"], [type="radio"], [type="range"]) {
+    min-height: 48px;
+  }
+}
+
+/* Las secciones de Tierra siguen en una columna a todo el ancho, también en escritorio: sus
+   matrices (conjuntos de datos, bancos × RIDGE, riesgos, perfiles) son anchas, y en dos columnas
+   de 30 rem quedaban siempre a medias dentro de su caja. La rejilla va dentro de cada panel. */
+
+/* Ecografia. Las marcas de calibre van en verde vivo: F.5-2, "Navigation and Cursor
+   Outlines". La imagen no lleva filtros: se mide sobre lo que adquirio el ecografo. */
+.studies {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.study-viewer {
+  display: grid;
+  gap: 10px;
+}
+
+.frame {
+  position: relative;
+  max-width: min(100%, 720px);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.frame svg.calipers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: var(--c-green);
+  fill: none;
+}
+
+.frame svg.calipers.active {
+  cursor: crosshair;
+}
+
+.frame svg.calipers circle {
+  fill: var(--c-green);
+  stroke: none;
+}
+
+.frame svg.calipers polyline {
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.cine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cine input[type="range"] {
+  flex: 1;
+  max-width: 480px;
+  accent-color: var(--c-green);
+}
+
+/* 8 px entre mandos: el hueco mínimo entre objetivos táctiles (§5.40). */
+.measure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Borrador de interpretacion: el texto del modelo se distingue del resto sin color de
+   alerta; lo que pide atencion es el rotulo "sin validar", en amarillo (F.5-1). */
+.draft-panel {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--c-line);
+  padding-top: 10px;
+}
+
+.draft {
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-raised);
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.draft-text {
+  white-space: pre-line;
+}
+
+/* La frase literal del informe citado: se distingue como cita por la sangria y la linea, sin
+   color de alerta; sus saltos de linea son los del informe. */
+.draft-quote {
+  margin: 0;
+  border-left: 2px solid var(--c-line);
+  padding-left: 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.draft-quote blockquote {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.view-signs {
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.view-signs legend {
+  color: var(--c-text-secondary);
+  padding: 0 4px;
+}
+
+/* La regla de ancho de `.silence-form input` es para campos de texto: a una casilla la
+   separaba de su texto. */
+.silence-form input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--c-green);
+}
+
+/* Mapa corporal de dolor. El lienzo toma el fondo de la escena (palette.surface); aqui solo
+   hay tamano y borde. */
+/* En tableta (§5.40) se decide por el ancho del panel, no de la ventana (`@container`, el panel es
+   contenedor en «Paneles de área», más abajo): con el carril al lado, una tableta vertical deja al
+   panel unos 480 px y va en una columna, el mapa a todo el ancho; en horizontal, mapa y formulario
+   lado a lado. La vista girada 90° (`data-rotation`) cae sola en el caso que le toca. */
+.pain-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@container (min-width: 640px) {
+  .pain-layout {
+    grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr);
+  }
+}
+
+.body-map {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* El alto, el que queda de pantalla bajo la franja (`--panel-fit`), entre 360 y 640 px: en
+   horizontal la figura entera cabe sin desplazar; en vertical, a todo el ancho, no pasa de 640. */
+.body-map-canvas {
+  height: clamp(360px, var(--panel-fit, 440px), 640px);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  touch-action: none;
+}
+
+.body-map-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.body-map figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Pie con licencia y fuente (AGPL-3.0 §6/§13). Discreto: no compite con la consola. */
+.about {
+  margin: 24px 16px 16px;
+}
+
+/* Informe escaneado: el original y su texto, lado a lado. */
+.report-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+.report-page img {
+  max-width: 100%;
+}
+.report-text {
+  white-space: pre-wrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875rem;
+}
+/* Uno bajo otro cuando el panel es estrecho (tableta vertical, §5.40), no solo el móvil. */
+@container (max-width: 639px) {
+  .report-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Visor 3D: cortes y superficies lado a lado; uno bajo otro en un panel estrecho. Llena su panel
+   (§5.40): en horizontal, el alto que queda bajo la franja (`--panel-fit`); en vertical, cada
+   lienzo casi cuadrado a todo el ancho. */
+.volume-canvases {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.volume-canvases canvas {
+  width: 100%;
+  height: clamp(320px, 90cqi, 720px);
+  display: block;
+}
+@container (min-width: 640px) {
+  .volume-canvases {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .volume-canvases canvas {
+    height: clamp(320px, var(--panel-fit, 62vh), 900px);
+  }
+}
+/* Paginas de Polaris embebidas tal cual. */
+.polaris-frame {
+  width: 100%;
+  border: 0;
+  display: block;
+  margin-top: 8px;
+}
+.polaris-visor {
+  height: 1600px;
+}
+.polaris-render {
+  height: clamp(360px, var(--panel-fit, 80vh), 900px);
+}
+.volume-viewer tr[aria-selected="true"] th {
+  color: var(--c-green);
+}
+
+/* Medido / inferido / predicho: palabra y glifo, sin color propio (lib/provenance.ts). */
+.obs-type,
+.chain-tag {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--c-line);
+  border-radius: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+.predictions {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.kv.countermeasure {
+  margin: 6px 0;
+  font-size: 0.9rem;
+}
+
+/* Las líneas de los efectos (§5.39.17): bajo la nota de la biblioteca, en la tarjeta y en la
+   tabla, como lista sin viñeta para que cada frase del backend sea una línea. */
+.effects {
+  margin: 4px 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.followups {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.inline-form input {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.hypotheses {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.hypothesis .source-tag {
+  font-size: 0.875rem;
+}
+
+.crew-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+/* Comparacion entre tripulantes: una grafica por persona, apiladas para que el mismo
+   instante caiga en la misma vertical. Sin color por persona: los de la paleta ya
+   significan algo (tabla F.5-1). */
+.compare {
+  display: grid;
+  /* Una columna que no pasa de su panel (§5.37.17): con la implícita (`auto`) la ensanchaba el
+     selector de indicador, que mide lo que su opción más larga (772 px), y a 390 px la consola de
+     Tierra iba a 902 con las gráficas dibujadas a ese ancho. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: var(--gap) 0 0;
+}
+
+.compare-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+
+.compare-controls label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* El selector mide lo que su opción más larga; en pantalla estrecha cede hasta el ancho del panel
+   (§5.37.17) y la opción elegida, corta, se sigue leyendo; las demás, en la lista al abrirlo. */
+.compare-controls select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* El signo del rótulo (§5.33.4) va pegado a su palabra y en su tono, no a medio camino del
+   mando anterior: el hueco de la fila (8px) menos el suyo. */
+.compare-controls label > .pictogram {
+  margin-right: -4px;
+  color: var(--c-text-secondary);
+}
+
+.compare-summary {
+  display: grid;
+  gap: 4px;
+}
+
+.compare-summary .source-tag {
+  font-size: 0.875rem;
+}
+
+.compare-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.compare-chart {
+  border-top: 1px solid var(--c-line);
+  padding-top: 10px;
+}
+
+.compare-chart h3 {
+  font-weight: 400;
+}
+
+.compare-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.875rem;
+}
+
+.timeline .phases {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0 0 6px;
+  padding: 0;
+}
+
+.timeline .phases li {
+  color: var(--c-text-secondary);
+}
+
+.timeline .phases li[aria-current="step"] {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.alert-detail {
+  margin: 6px 0;
+}
+
+.anatomy {
+  display: grid;
+  grid-template-columns: minmax(14rem, 22rem) minmax(0, 1fr);
+  gap: 16px;
+  /* 8 px entre el último mando de los momentos y la primera región (§5.40). */
+  margin-top: 8px;
+}
+
+/* Lista de regiones encima de la cadena cuando el panel es estrecho (tableta vertical, §5.40). */
+@container (max-width: 639px) {
+  .anatomy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.anatomy .regions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  /* Arriba y juntas: sin esto, la rejilla estira las filas hasta el alto de la cadena de al lado
+     y las regiones quedaban repartidas a lo largo de todo el panel. */
+  align-content: start;
+}
+
+/* Cada región, un mando a lo ancho de la lista con el aspecto de los rótulos de la silueta: sin
+   estilo propio salía el botón gris del navegador (gris es «no disponible», F.5-1). */
+.anatomy .region {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.anatomy .region[aria-pressed="true"] {
+  border-color: var(--c-green);
+}
+
+/* Silueta del resumen (anatomy/BodySilhouette.tsx; el dibujo, icons/Silhouette.tsx): acompaña a
+   la rejilla de dominios. La figura va centrada y, a cada lado, el rótulo de cada región a la
+   altura de su zona en el dibujo; las dos regiones sin órgano propio van al pie. */
+.domains-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+/* Figura y rejilla lado a lado cuando el panel da para las dos (§5.40: por el ancho del panel, no
+   de la ventana); si no, la figura a todo el ancho encima de la rejilla. */
+@container (min-width: 820px) {
+  .domains-overview {
+    grid-template-columns: minmax(26rem, 32rem) minmax(0, 1fr);
+  }
+}
+
+.body-silhouette-figure {
+  position: relative;
+  /* El alto de la figura: de él salen su ancho y la posición de cada rótulo (`--reach`). En
+     tableta (§5.40) es el que queda de pantalla bajo la franja (`--panel-fit`), entre 400 y 560 px:
+     en horizontal la figura cabe entera sin desplazar. Los rótulos se recolocan solos con el alto
+     medido (anatomy/siteLayout.ts). */
+  --silhouette-height: clamp(400px, var(--panel-fit, 500px), 560px);
+}
+
+/* El contorno, en el color del texto secundario; cada zona lleva el color de su nivel (clase c-*). */
+.body-silhouette .silhouette {
+  display: block;
+  height: var(--silhouette-height, 500px);
+  width: auto;
+  margin: 0 auto;
+  color: var(--c-text-secondary);
+}
+
+.silhouette .zone {
+  stroke-width: 2.5;
+  fill: currentColor;
+  fill-opacity: 0.18;
+}
+
+.silhouette .zone[data-selected="true"] {
+  stroke-width: 4.5;
+}
+
+/* Los trazos abiertos de un órgano (la cisura, las circunvoluciones, el intestino) son línea, no
+   superficie: sin el relleno tenue de la zona (icons/Silhouette.tsx). */
+.silhouette .zone .trace {
+  fill: none;
+}
+
+/* Los rasgos pequeños (los ojos y su iris, la cisura y las circunvoluciones) con trazo fino: con
+   el de la zona, a 500 px, el ojo era una mancha y el iris no se veía. */
+.silhouette .zone .fine {
+  stroke-width: 1.5;
+}
+
+.silhouette .zone[data-selected="true"] .fine {
+  stroke-width: 2.5;
+}
+
+/* Las vueltas del asa intestinal van a 7 unidades: con el 4,5 de la zona elegida se juntaban. */
+.silhouette .zone[data-selected="true"] .trace:not(.fine) {
+  stroke-width: 3.5;
+}
+
+.body-silhouette .site {
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--c-text);
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  cursor: pointer;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* Dominio arriba, nivel debajo. */
+.body-silhouette .site-state {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+}
+
+/* F.5.4 c y F.4.3.1 a: la región elegida se indica (y lleva además su pictograma). */
+.body-silhouette .site[aria-pressed="true"] {
+  border-color: var(--c-green);
+}
+
+/* Sobre la figura: a la altura de su zona (`top`, del ancla que da icons/Silhouette.tsx) y por el
+   lado que dice el dibujo, justo pasado el contorno a esa altura (`--reach`, en unidades del lienzo
+   de 480 de alto, del mismo ancla). La silueta recalcada de §5.33.3 lleva las manos casi al borde
+   del lienzo: con un desplazamiento único que las salvara, «Musculoesquelético» no cabía.
+   El hueco entre el contorno y el rótulo va en `em` del rótulo (`--site-gap`, §5.34.14): `reach` se
+   mide en la franja de un rótulo de dos líneas a 0,85 rem, y con el texto del navegador agrandado el
+   rótulo crece en alto, abarca más brazo y lo rozaba; el hueco crece con él. A tamaño normal son
+   los 8 px de antes (0,6 × 13,6 px). Desde §5.35.11 la altura (`top`) y el alcance (`--reach`) se
+   calculan con el alto medido del rótulo (anatomy/siteLayout.ts): los que se montarían se
+   apartan, y `reach` se mide en la franja que ocupa de verdad. */
+.body-silhouette-figure .site {
+  --site-gap: 0.6em;
+  position: absolute;
+  transform: translateY(-50%);
+  max-width: calc(50% - var(--reach, 100) * var(--silhouette-height) / 480 - var(--site-gap));
+}
+
+.body-silhouette-figure .site-left {
+  right: calc(50% + var(--reach, 100) * var(--silhouette-height) / 480 + var(--site-gap));
+  text-align: right;
+}
+
+.body-silhouette-figure .site-left .site-state {
+  justify-items: end;
+}
+
+/* Una frase que se parte en dos líneas (la del nivel del hígado, §5.35.11) se alinea dentro de su
+   marca a la izquierda, pegada a su pictograma: alineada a la derecha, el dibujo quedaba suelto en
+   el borde de fuera, lejos de la palabra. La marca entera sigue arrimada a la figura. */
+.body-silhouette-figure .site-left .site-state > .mark {
+  text-align: left;
+}
+
+.body-silhouette-figure .site-right {
+  left: calc(50% + var(--reach, 100) * var(--silhouette-height) / 480 + var(--site-gap));
+}
+
+/* Al pie: las regiones sin órgano propio y, cuando los rótulos no caben junto a sus zonas sin
+   montarse (texto agrandado, anatomy/siteLayout.ts, §5.35.11), la lista de todos ellos
+   (`.body-silhouette-list`), con la misma forma. */
+.body-silhouette-foot {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* En un panel estrecho no hay sitio a los lados: los rótulos pasan debajo de la figura, todos
+   alineados igual. Se decide por el ancho del panel (§5.40): en una tableta vertical el panel tiene
+   unos 450 px de contenido aunque la ventana pase de 720. */
+@container (max-width: 519px) {
+  .body-silhouette-figure {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .body-silhouette-figure .silhouette {
+    flex-basis: 100%;
+  }
+  .body-silhouette-figure .site {
+    position: static;
+    transform: none;
+    max-width: none;
+    text-align: left;
+  }
+  .body-silhouette-figure .site-left .site-state {
+    justify-items: start;
+  }
+}
+
+/* La cadena de una región (anatomy/RegionChain.tsx): un bloque por eslabón de §10. */
+.region-detail {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  min-width: 0;
+}
+
+.region-detail section {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  border-top: 1px solid var(--c-line);
+  padding-top: 8px;
+}
+
+.region-detail h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--c-text-secondary);
+}
+
+.chain-variables,
+.chain-trends {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.chain-variable,
+.chain-trends li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.chain-trends li {
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.recovery {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.recovery th,
+.recovery td {
+  text-align: left;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: top;
+}
+
+.recovery-point {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+/* Perfiles lado a lado (§5.36.7): una columna de frases largas por perfil. Cada casilla guarda un ancho
+   legible y la tabla se desplaza en pantalla estrecha (`quality-table`) en vez de partir cada
+   frase en una palabra por renglón. */
+table.profile-matrix td {
+  min-width: 16em;
+}
+
+.hypothesis-review {
+  margin: 6px 0;
+}
+
+/* Esqueleto de referencia del modo anatómico (anatomy/SkeletonFigure.tsx). */
+.skeleton-figure {
+  margin: 8px 0;
+}
+.skeleton-image {
+  position: relative;
+  height: clamp(360px, var(--panel-fit, 70vh), 720px);
+  max-width: 100%;
+}
+.skeleton-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.skeleton-point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid;
+  transform: translate(-50%, -50%);
+}
+
+/* ------------------------------------------------------------------ */
+/* Paneles de área en tableta (§5.40)                                   */
+/* ------------------------------------------------------------------ */
+
+/* El alto que queda de pantalla bajo la franja fija (`--strip-h`, lo mide `App.tsx`), para que una
+   figura o un visor quepa entero sin desplazar en horizontal. Con la vista girada 90° o 270° el alto
+   de lo que se ve es el ancho de la ventana; con baja visión la ampliación (1,25) se descuenta,
+   como en el carril. */
+.app {
+  --fit-h: 1dvh;
+  --panel-fit: calc(100 * var(--fit-h) - var(--strip-h, 0px) - 48px);
+}
+
+.app[data-rotation="90"],
+.app[data-rotation="270"] {
+  --fit-h: 1dvw;
+}
+
+.app[data-low-vision="on"] {
+  --fit-h: 0.8dvh;
+}
+
+.app[data-low-vision="on"][data-rotation="90"],
+.app[data-low-vision="on"][data-rotation="270"] {
+  --fit-h: 0.8dvw;
+}
+
+/* Cada panel con figura, visor o formulario es contenedor: su disposición sale de su propio ancho
+   (`@container`), no del de la ventana. Con el carril al lado, una tableta vertical deja al panel
+   unos 480 px (una columna) y una horizontal unos 740 (dos); la vista girada cae en su caso sola. */
+.panel:is(
+    [data-ui="domains"],
+    [data-ui="anatomy"],
+    [data-ui="pain"],
+    [data-ui="diary"],
+    [data-ui="cognition"],
+    [data-ui="ultrasound"],
+    [data-ui="reports"],
+    [data-ui="volumes"]
+  ) {
+  container-type: inline-size;
+}
+
+/* Tamaño táctil en los paneles de área: 44 px con ratón (WCAG 2.5.5), 48 px con el dedo. Solo
+   alto y relleno; el aspecto de cada mando es el de siempre. */
+.panel:is(
+    [data-ui="domains"],
+    [data-ui="anatomy"],
+    [data-ui="pain"],
+    [data-ui="pain-history"],
+    [data-ui="diary"],
+    [data-ui="cognition"],
+    [data-ui="pvt"],
+    [data-ui="ultrasound"],
+    [data-ui="ultrasound-received"],
+    [data-ui="reports"],
+    [data-ui="volumes"],
+    [data-ui="habitat"],
+    [data-ui="dose"],
+    [data-ui="radiation-scales"],
+    [data-ui="onboard-resources"],
+    [data-ui="countermeasure-library"],
+    [data-ui="guides"],
+    [data-ui="food-acceptability"],
+    [data-ui="descriptive"],
+    [data-ui="followups"]
+  )
+  :where(
+    button.command,
+    button.site,
+    button.region,
+    select,
+    textarea,
+    input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="file"])
+  ) {
+  min-height: var(--touch-size, 44px);
+}
+
+/* Las tablas de esos mismos paneles, a 0,875rem como mínimo (el resto de `table.ledger` sigue a
+   0,85; no es de esta unidad). */
+.panel:is(
+    [data-ui="anatomy"],
+    [data-ui="pain"],
+    [data-ui="pain-history"],
+    [data-ui="diary"],
+    [data-ui="cognition"],
+    [data-ui="pvt"],
+    [data-ui="ultrasound"],
+    [data-ui="ultrasound-received"],
+    [data-ui="reports"],
+    [data-ui="volumes"],
+    [data-ui="habitat"],
+    [data-ui="dose"],
+    [data-ui="radiation-scales"],
+    [data-ui="onboard-resources"],
+    [data-ui="countermeasure-library"],
+    [data-ui="guides"],
+    [data-ui="food-acceptability"],
+    [data-ui="descriptive"],
+    [data-ui="followups"]
+  )
+  table.ledger {
+  font-size: 0.875rem;
+}
+
+.app {
+  --touch-size: 44px;
+}
+
+@media (pointer: coarse) {
+  .app {
+    --touch-size: 48px;
+  }
+}
+
+.panel
+  :is(.field-block, .pain-layout)
+  :is(select, input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="file"])) {
+  padding: 8px 12px;
+}
+
+/* La casilla del tipo de dolor: la casilla, su forma y su palabra son un solo objetivo táctil. */
+.pain-layout .measure-actions > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch-size, 44px);
+  padding: 0 12px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+/* Las referencias del hábitat (la de microbiología del JSC) se parten antes que salirse del panel. */
+.panel[data-ui="habitat"] li {
+  overflow-wrap: anywhere;
+}
+
+/* En la columna del hábitat (la mitad del panel en tableta horizontal) la clave larga se comía la
+   definición, que quedaba en 26 px con su plegable fuera del panel: la clave no pasa de 14rem. */
+.panel[data-ui="habitat"] .kv {
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+}
+
+.panel[data-ui="habitat"] .kv dt {
+  max-width: 14rem;
+}
+
+/* «Añadir zona desde la lista»: el rótulo encima de su selector, como la nota y quien informa. */
+.pain-layout .silence-form > label {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+}
+
+.pain-layout .silence-form > label > select {
+  width: min(100%, 480px);
+}
+
+/* La nota: el rótulo encima y el campo al ancho de la columna (`cols` solo da el ancho de partida;
+   con él se salía del panel en la columna del formulario). */
+.pain-note {
+  display: grid;
+  gap: 8px;
+}
+
+.pain-note > label {
+  display: grid;
+  gap: 4px;
+}
+
+.pain-note textarea {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.pain-layout .measure-actions > label > input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+/* Diario y batería Cognition: el rótulo encima de su campo, a todo el ancho del bloque; en un
+   panel ancho (tableta horizontal) los campos van en dos columnas y lo demás (notas, quien anota,
+   enviar) ocupa la fila entera. */
+.field-block {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  min-width: 0;
+}
+
+.field-block > label {
+  display: block;
+}
+
+.field-block > input {
+  width: 100%;
+  max-width: 480px;
+}
+
+[data-cognition-test] .field-block > input {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+[data-cognition-test] .field-block + .field-block {
+  margin-top: 12px;
+}
+
+.diary-form {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@container (min-width: 640px) {
+  .diary-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+
+  .diary-form > :not(.field-block) {
+    grid-column: 1 / -1;
+  }
+
+  [data-cognition-test] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    align-items: start;
+  }
+
+  [data-cognition-test] > :not(.field-block) {
+    grid-column: 1 / -1;
+  }
+
+  [data-cognition-test] .field-block + .field-block {
+    margin-top: 0;
+  }
+}
+
+/* Notas de Tierra a bordo (§5.38.1): el formulario de Tierra es el de silenciar con un texto
+   largo, y la lista separa cada nota con la línea de siempre. Sin color: una nota no es una
+   alerta. El texto conserva sus saltos de línea, tal y como se firmó. */
+.ground-note-form textarea {
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  width: min(100%, 640px);
+  display: block;
+}
+
+.ground-notes {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.ground-notes > li {
+  padding: 8px 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.ground-notes > li > p {
+  margin: 2px 0;
+}
+
+.ground-note-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------ */
+/* Carril de pestañas y modos de pantalla (§5.40)                       */
+/* ------------------------------------------------------------------ */
+
+/* La consola tipo tableta: el carril de secciones a la izquierda y su contenido al lado. Con la
+   tableta en vertical o en pantalla estrecha, el carril va arriba (`data-rail="top"`, lo decide
+   `railPlacement` en `displayModes.ts`, que cuenta también el giro de la vista y la baja visión). */
+.console-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+
+.console-panels {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-width: 0;
+}
+
+/* Pegado justo debajo de la franja fija; su alto lo mide `App.tsx` (`--strip-h`). */
+.rail {
+  position: sticky;
+  top: calc(var(--strip-h, 0px) + 8px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  max-height: calc(100dvh - var(--strip-h, 0px) - 16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+.rail-header {
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+/* Los entornos, plegados bajo «Entorno de la misión» (`ConsoleTabs`): el rótulo a tamaño de mando,
+   y abiertos, sus pestañas debajo. Arriba (tableta vertical), abiertos ocupan la fila entera. */
+.rail-header-choices {
+  margin-top: 8px;
+}
+
+.rail-header-choices > summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  cursor: pointer;
+}
+
+.rail-header-choices[open] > summary {
+  margin-bottom: 8px;
+}
+
+.console-layout[data-rail="top"] .rail-header-choices[open] {
+  flex-basis: 100%;
+}
+
+.rail-group-name {
+  margin: 0 8px 4px;
+  font-size: 0.875rem;
+}
+
+.rail-tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+/* Objetivo táctil de 48 px de alto como mínimo (WCAG 2.5.5 pide 44 × 44 px CSS). La abierta, con
+   la barra lateral, la negrita y el fondo elevado: nunca solo el color (F.5.10 e). */
+.rail-tabs > button[role="tab"] {
+  font: inherit;
+  text-align: left;
+  min-height: 48px;
+  min-width: 0;
+  padding: 8px 12px;
+  display: grid;
+  gap: 4px;
+  align-content: center;
+  color: var(--c-text-secondary);
+  background: none;
+  border: 1px solid transparent;
+  border-left: 4px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.rail-tabs > button[role="tab"] > .mark > .pictogram {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.rail-tabs > button[role="tab"][aria-selected="true"] {
+  color: var(--c-text);
+  font-weight: 600;
+  background: var(--c-raised);
+  border-color: var(--c-line);
+  border-left-color: var(--c-text);
+}
+
+.tab-note,
+.tab-alerts {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.tab-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+/* «Pantalla»: el plegable de los mandos de pantalla, al pie del carril. Su rótulo es un objetivo
+   táctil como una pestaña, y plegado dice qué modos están puestos. */
+.display-controls {
+  padding-top: 8px;
+  border-top: 1px solid var(--c-line);
+}
+
+.display-controls > summary.display-toggle {
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.display-controls[open] > summary.display-toggle {
+  background: var(--c-raised);
+  border-color: var(--c-text-secondary);
+}
+
+.display-summary {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+/* Dentro, dos columnas de mandos a todo el ancho de su casilla; lo que lleva estado o explicación
+   debajo (girar, seguir el sensor o la cara, escuchar «EMMA», la iniciativa) ocupa la fila entera.
+   El rótulo largo se parte en líneas: no se corta. */
+.display-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.display-body > .rotation,
+.display-body > .rotation-sensor,
+.display-body > .proactive-controls,
+.display-body > .mark {
+  grid-column: 1 / -1;
+}
+
+.display-controls button.command {
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 12px;
+  text-align: left;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+@media (pointer: coarse) {
+  .display-controls button.command {
+    min-height: 48px;
+  }
+}
+
+/* En el carril al lado cada casilla mide unos 120 px: el dibujo arriba y la palabra debajo, como
+   una tecla, en vez de partir el rótulo detrás del dibujo. El anillo de «elegido», a su izquierda. */
+.console-layout:not([data-rail="top"]) .display-body > button.command > .mark {
+  display: flex;
+  align-items: flex-start;
+}
+
+.console-layout:not([data-rail="top"]) .display-body > button.command > .mark > .mark {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rotation {
+  display: grid;
+  gap: 8px;
+}
+
+/* En el carril, los cuatro giros en dos filas de dos: en una sola no caben sin cortarse. */
+.rotation-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.rotation-options > button.command {
+  padding: 8px 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Seguir el giroscopio: el mando, y debajo cómo va el sensor o «Esto es arriba». La región de
+   estado vacía no se oculta con display: none: el lector de pantalla no anuncia de forma fiable
+   una región que aparece de golpe. */
+.rotation-sensor,
+.proactive-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.mode-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+/* Las cinco tarjetas de los peligros. Tableta (§5.40): `auto-fit` con el mínimo acotado al ancho
+   de la caja, así ninguna tarjeta queda cortada a la derecha (a 1400 px la quinta se salía); a
+   768 px van tres por fila y desde 1366 px las cinco en una (medido con la letra a 17 px). */
+.hazards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: 12px;
+}
+
+/* La tarjeta, no el mando con cinta (`button.command.hazard`): con `.hazard` a secas, «Confirmar
+   cambio» se volvía rejilla y dejaba la marca en un renglón y la palabra en otro (§5.40.1). */
+article.hazard {
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+article.hazard > h3 {
+  font-size: 1.125rem;
+}
+
+article.hazard > h3 .pictogram {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.hazard-domains {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* En una tarjeta estrecha, la insignia debajo del dominio, siempre igual; con sitio (la tarjeta
+   pasa de 16rem), el dominio a la izquierda y la insignia alineada a la derecha. */
+.hazard-domains > li {
+  display: grid;
+  gap: 2px;
+}
+
+@container (min-width: 16rem) {
+  .hazard-domains > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+article.hazard > p {
+  margin: 0;
+}
+
+/* El retardo de ida, la cifra que define la distancia en EMMA: grande, como en las fichas. */
+article.hazard > p .num {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.active-environment {
+  font-size: 0.9rem;
+}
+
+.environment-aspects {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.environment-aspects dt {
+  font-weight: 600;
+}
+
+.environment-aspects dd {
+  margin: 2px 0 0 1.5em;
+}
+
+/* «Leer en voz alta» en la franja (§5.40): los dos mandos y el plegable «Atajos» en fila. */
+.strip .read-aloud {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.strip .read-aloud button.command {
+  min-height: var(--touch);
+}
+
+/* Dentro de «Atajos»: las teclas y el gesto de emergencia, en su ancho de lectura. */
+.strip .read-aloud .shortcut {
+  display: block;
+  font-size: 0.875rem;
+}
+
+/* Cerrado, «Atajos» esconde su texto con `display: none` y no con el ocultado propio del plegable
+   (`content-visibility: hidden`): con este último Chromium deja de leer el texto como descripción
+   del grupo de la voz (`aria-describedby`), y el lector de pantalla perdería el gesto de
+   emergencia. Comprobado en el árbol de accesibilidad de Chromium, cerrado y abierto. */
+.strip details.shortcuts::details-content {
+  content-visibility: visible;
+}
+
+.strip details.shortcuts:not([open]) > .shortcut {
+  display: none;
+}
+
+/* Con ratón o teclado, los atajos se ven también al pasar por encima de «Atajos» o al llegar a él
+   con el tabulador, sin abrirlo; en una pantalla solo táctil, solo al abrirlo (un toque). */
+@media not all and (pointer: coarse) and (hover: none) {
+  .strip details.shortcuts:is(:hover, :has(> summary:focus-visible)) > .shortcut {
+    display: block;
+    /* Por encima del formulario del modo seguro, si está abierto: se cuelgan del mismo sitio. */
+    z-index: 12;
+  }
+}
+
+/* La referencia de «arriba»: una fila propia en el borde de arriba de la franja, con su línea. */
+.strip-edge {
+  flex-basis: 100%;
+  order: -1;
+  display: flex;
+  justify-content: center;
+  margin: -8px calc(-1 * var(--gap)) 0;
+  padding: 2px 0;
+  border-top: 3px solid var(--c-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* «Cámara encendida» va al lado de «Arriba», en la misma fila fija: se ve siempre. */
+.screen-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 16px;
+}
+
+.camera-on {
+  font-weight: 600;
+}
+
+/* «Hay otra persona delante» (`PresenceStrip`, demostración): en la misma fila fija, con sus dos
+   mandos al lado de la pregunta; sin color propio, el texto y los mandos de siempre. */
+.presence-notice {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-weight: 600;
+}
+
+.presence-notice > .secondary {
+  font-weight: 400;
+}
+
+/* La flecha de «arriba» (`ScreenTop`): más grande que la letra, y girada grado a grado hacia el
+   arriba real cuando la cara o el giroscopio lo miden. Sin transición (WCAG 2.3.1). */
+.up-reference {
+  align-items: center;
+}
+
+.up-arrow {
+  display: inline-flex;
+  margin-right: 0.35em;
+  transition: none;
+}
+
+.up-arrow > .pictogram {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Privacidad: lo personal, difuminado, sin foco ni lector de pantalla (`inert`), con su rótulo. */
+/* Cada sección abierta sigue montada; solo se ve la de su pestaña. */
+.section-body {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-width: 0;
+}
+
+.section-body[hidden] {
+  display: none;
+}
+
+/* El sitio de un panel no cuenta para la maqueta mientras no está tapado (`ConsoleTabs.tsx`). */
+.slot:not(.privacy-cover),
+.slot:not(.privacy-cover) > .slot-body {
+  display: contents;
+}
+
+.privacy-cover {
+  position: relative;
+}
+
+.privacy-blur {
+  filter: blur(10px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.privacy-label {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--c-raised);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+/* Y los nombres que viven fuera de las secciones tapadas: el selector de tripulante y quien firma. */
+.app[data-privacy="on"] .crew-selector select,
+.app[data-privacy="on"] .operator input {
+  filter: blur(6px);
+}
+
+/* Y los nombres dentro de las frases que quedan a la vista (`lib/privacyNames.ts`): una barra gris
+   sin letra. Gris es «no disponible» en la tabla F.5-1, y eso es el nombre tapado. */
+::highlight(emma-private-name) {
+  color: transparent;
+  background-color: var(--c-gray);
+}
+
+/* Baja visión: todo más grande, trazos y bordes más gruesos, el texto secundario en el color del
+   texto. Sin colores nuevos: solo tokens de la paleta, y nunca se toca un color con significado
+   (`.c-*`): la regla del texto secundario los deja fuera. */
+.app[data-low-vision="on"] {
+  zoom: 1.25;
+}
+
+.app[data-low-vision="on"] .pictogram {
+  stroke-width: 2.75px;
+}
+
+/* El filete del nivel (el borde izquierdo del titular y de las tarjetas de dominio, con
+   `data-level`) conserva su grosor y su color: es la señal redundante de F.5.10 e, y un
+   `border-width`/`border-color` de una vez la borraba (el titular «Precaución» perdía su amarillo). */
+.app[data-low-vision="on"] .panel,
+.app[data-low-vision="on"] article.hazard,
+.app[data-low-vision="on"] .domain {
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  border-top-color: var(--c-text-secondary);
+  border-right-color: var(--c-text-secondary);
+  border-bottom-color: var(--c-text-secondary);
+}
+
+.app[data-low-vision="on"] .panel:not([data-level]),
+.app[data-low-vision="on"] article.hazard:not([data-level]) {
+  border-left-width: 2px;
+  border-left-color: var(--c-text-secondary);
+}
+
+.app[data-low-vision="on"] .secondary:not([class*="c-"]) {
+  color: var(--c-text);
+}
+
+/* Lo que se mide con la ventana va dentro de lo ampliado: se divide entre la ampliación (1,25). */
+.app[data-low-vision="on"] .rail {
+  max-height: calc(80dvh - var(--strip-h, 0px) - 16px);
+}
+
+.app[data-low-vision="on"][data-rotation="180"] {
+  width: 80vw;
+  height: 80vh;
+}
+
+.app[data-low-vision="on"][data-rotation="90"],
+.app[data-low-vision="on"][data-rotation="270"] {
+  width: 80vh;
+  height: 80vw;
+}
+
+.app[data-low-vision="on"] .rail-tabs > button[role="tab"],
+.app[data-low-vision="on"] .display-controls > summary.display-toggle {
+  min-height: 56px;
+}
+
+.app[data-low-vision="on"] :focus-visible {
+  outline-width: 4px;
+}
+
+/* Alto contraste (deslumbramiento, §5.40): los colores los cambia `applyPalette` con la variante
+   `highContrast` de `lib/palette.ts`, en las mismas variables; aquí no se escribe ninguno. Lo que
+   añade esta hoja es grosor —bordes de 2 px, foco de 4 px, trazos de los pictogramas— y una
+   señal que no es de color: lo no disponible, con el borde discontinuo; los enlaces, subrayados. */
+.app[data-high-contrast="on"] .pictogram {
+  stroke-width: 2.5px;
+}
+
+.app[data-high-contrast="on"][data-low-vision="on"] .pictogram {
+  stroke-width: 3px;
+}
+
+/* Como en baja visión, sin tocar el filete del nivel (`data-level`). */
+.app[data-high-contrast="on"] .panel,
+.app[data-high-contrast="on"] article.hazard,
+.app[data-high-contrast="on"] .domain {
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+}
+
+.app[data-high-contrast="on"] .panel:not([data-level]),
+.app[data-high-contrast="on"] article.hazard:not([data-level]) {
+  border-left-width: 2px;
+}
+
+/* El borde del mando pasa a 2 px y el relleno lo descuenta: el mando sigue midiendo `--touch`. */
+.app[data-high-contrast="on"] button.command {
+  border-width: 2px;
+  padding-block: max(var(--space-1), calc((var(--touch) - 1lh - 4px) / 2));
+}
+
+.app[data-high-contrast="on"] button.command:disabled {
+  border-style: dashed;
+}
+
+.app[data-high-contrast="on"] a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+.app[data-high-contrast="on"] :focus-visible {
+  outline-width: 4px;
+  outline-offset: 3px;
+}
+
+/* Orientación: la vista entera gira dentro de un contenedor fijo del tamaño de la ventana, que es
+   también el que se desplaza (así la franja sigue pegada a su borde de arriba, girado con ella).
+   El giro es de golpe, sin transición: también cuando lo decide el giroscopio (§5.40). */
+.app[data-rotation] {
+  transition: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  min-height: 0;
+}
+
+.app[data-rotation="180"] {
+  width: 100vw;
+  height: 100vh;
+  transform: rotate(180deg);
+}
+
+.app[data-rotation="90"],
+.app[data-rotation="270"] {
+  width: 100vh;
+  height: 100vw;
+  transform-origin: top left;
+}
+
+.app[data-rotation="90"] {
+  transform: rotate(90deg) translateY(-100%);
+}
+
+.app[data-rotation="270"] {
+  transform: rotate(-90deg) translateX(-100%);
+}
+
+/* De lado, la ventana es más baja que ancha para la vista: el carril se desplaza con la página. */
+.app[data-rotation="90"] .rail,
+.app[data-rotation="270"] .rail {
+  position: static;
+  max-height: none;
+}
+
+/* El carril arriba (`data-rail="top"`: tableta en vertical, pantalla estrecha): deja de ser fijo,
+   las pestañas van en filas, todas a la vista y sin desplazar de lado, y «Pantalla» se abre a todo
+   el ancho. La cabecera del entorno, en una fila. */
+.console-layout[data-rail="top"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.console-layout[data-rail="top"] .rail {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.console-layout[data-rail="top"] .rail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+}
+
+.console-layout[data-rail="top"] .rail-tabs {
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+}
+
+.console-layout[data-rail="top"] .rail-header .rail-tabs {
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 12rem));
+}
+
+.console-layout[data-rail="top"] .rotation-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* ------------------------------------------------------------------ */
+/* Asistente «EMMA» (`assistant/`): reserva su sitio, no flota encima.  */
+/* Cerrado, una barra pegada abajo con el título y «Hablar con EMMA».   */
+/* Abierto, una hoja de abajo de alto fijo (vertical) o una columna     */
+/* acoplada a la derecha (horizontal, ≥ 1024 px). Pegada con `sticky`   */
+/* y al final de `.app`: al bajar del todo no tapa nada, y sigue        */
+/* funcionando con la vista girada (el giro hace de `.app` el que se    */
+/* desplaza). Sin colores propios: los de la paleta, por sus variables. */
+/* ------------------------------------------------------------------ */
+
+/* Las medidas del asistente, en un solo sitio. Dentro de lo ampliado (baja visión, ×1,25) lo
+   medido con la ventana se divide entre 1,25, y los px también, para que en pantalla midan lo
+   mismo; de lado, el alto de la vista girada es el ancho de la ventana. `--assistant-bottom` es
+   lo que tapa abajo (la barra o la hoja): el carril fijo lo descuenta de su alto. */
+.app {
+  --assistant-dock-w: 320px;
+  --assistant-sheet-h: 45dvh;
+  --assistant-bar-h: 68px;
+  --assistant-bottom: var(--assistant-bar-h);
+  --assistant-touch: 44px;
+}
+
+.app[data-low-vision="on"] {
+  --assistant-dock-w: 256px;
+  --assistant-sheet-h: 36dvh;
+}
+
+.app[data-rotation="90"],
+.app[data-rotation="270"] {
+  --assistant-sheet-h: 45vw;
+}
+
+.app[data-low-vision="on"][data-rotation="90"],
+.app[data-low-vision="on"][data-rotation="270"] {
+  --assistant-sheet-h: 36vw;
+}
+
+.app:has(> .assistant[data-open="true"]) {
+  --assistant-bottom: var(--assistant-sheet-h);
+}
+
+@media (min-width: 1280px) {
+  .app {
+    --assistant-dock-w: 400px;
+  }
+
+  .app[data-low-vision="on"] {
+    --assistant-dock-w: 320px;
+  }
+}
+
+@media (pointer: coarse) {
+  .app {
+    --assistant-touch: 48px;
+    --assistant-bar-h: 72px;
+  }
+}
+
+/* `flex-shrink: 0`: con la vista girada `.app` tiene alto fijo y, si no, el asistente cedería
+   todo lo que sobra y se quedaría en 0 px. */
+.assistant {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--c-raised);
+  border-top: 1px solid var(--c-line);
+}
+
+/* Hoja de abajo: el 45 % del alto; el resto sigue siendo la consola. */
+.assistant[data-open="true"] {
+  height: var(--assistant-sheet-h);
+}
+
+/* El carril, pegado bajo la franja, no se mete debajo de la barra o la hoja: descuenta su alto.
+   Solo cuando el carril es fijo (más de 760 px y sin la vista de lado). */
+@media (min-width: 761px) {
+  .app:not([data-rotation="90"]):not([data-rotation="270"]):has(> .assistant) .rail {
+    max-height: calc(100dvh - var(--strip-h, 0px) - 16px - var(--assistant-bottom));
+  }
+
+  .app[data-low-vision="on"]:not([data-rotation="90"]):not([data-rotation="270"]):has(> .assistant) .rail {
+    max-height: calc(80dvh - var(--strip-h, 0px) - 16px - var(--assistant-bottom));
+  }
+}
+
+/* En horizontal, abierto, columna acoplada: la consola se estrecha para dejarle su ancho. Con la
+   vista girada no: el giro convierte `.app` en el contenedor y la columna fija se iría con él. */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .app:not([data-rotation]):has(> .assistant[data-open="true"]) {
+    padding-right: var(--assistant-dock-w);
+    --assistant-bottom: 0px;
+  }
+
+  .app:not([data-rotation]) > .assistant[data-open="true"] {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--assistant-dock-w);
+    height: auto;
+    border-top: 0;
+    border-left: 1px solid var(--c-line);
+  }
+}
+
+.assistant-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px var(--gap);
+}
+
+.assistant-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: var(--assistant-touch);
+  margin-right: auto;
+  padding: 4px 12px;
+  background: none;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  color: var(--c-text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.assistant-toggle-state {
+  font-weight: 400;
+}
+
+.assistant-head > button.command {
+  min-height: var(--assistant-touch);
+}
+
+.mic-on {
+  font-weight: 600;
+}
+
+/* Abierto: el hilo se desplaza dentro y el campo de texto queda siempre abajo, a mano. */
+.assistant-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--c-line);
+}
+
+.assistant-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px var(--gap);
+}
+
+.assistant-thread {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-wrap: break-word;
+}
+
+.assistant-who {
+  font-weight: 600;
+}
+
+.assistant-proposal {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+.assistant-proposal dl {
+  margin: 4px 0 8px;
+  display: grid;
+  gap: 4px;
+}
+
+.assistant-proposal dl > div {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.assistant-proposal dt {
+  font-weight: 600;
+}
+
+.assistant-proposal dd {
+  margin: 0;
+}
+
+.assistant-proposal button.command {
+  min-height: var(--assistant-touch);
+  margin: 0 8px 8px 0;
+}
+
+.assistant-scroll > p {
+  margin: 8px 0;
+}
+
+/* El campo a todo el ancho y Enviar a su lado; si no caben, Enviar baja. */
+.assistant-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px var(--gap) 12px;
+  border-top: 1px solid var(--c-line);
+}
+
+.assistant-field {
+  flex: 1 1 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.assistant-input {
+  width: 100%;
+  min-height: var(--assistant-touch);
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--c-text);
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+
+.assistant-form > button.command {
+  min-height: var(--assistant-touch);
+}
+
+.assistant-shortcut {
+  padding: 0 var(--gap) 12px;
+  font-size: 0.875rem;
+}
+
+/* Sin teclado (tableta): el atajo no se enseña; si se conecta uno, sigue funcionando. */
+@media (pointer: coarse) and (hover: none) {
+  .assistant-shortcut {
+    display: none;
+  }
+}
+
+/* Qué se comparte y qué no (`dashboard/SharingPanel.tsx`): un bloque por destino y, dentro, los
+   plegables en rejilla que se reparte sola (una columna en vertical, dos si caben), sin desplazarse
+   de lado. Cada plegable se abre en su celda; las direcciones y los módulos se parten. */
+.sharing-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 8px 16px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.sharing-group > h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.sharing-group > details {
+  min-width: 0;
+}
+
+.sharing-list,
+.sharing-hosts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.sharing-list p {
+  margin: 4px 0;
+}
+
+.sharing-hosts {
+  gap: 2px;
+}

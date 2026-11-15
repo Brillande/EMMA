@@ -1,0 +1,33 @@
+{"target": "app/api/systems.py",
+ "test": [
+  "tests/test_system_status.py::test_a_declaration_is_one_signed_entry_and_the_latest_one_holds",
+  "tests/test_system_status.py::test_outside_the_vocabulary_is_a_422_and_nothing_is_written",
+  "tests/test_system_status.py::test_only_what_the_console_signed_counts",
+  "tests/test_system_status.py::test_ground_only_sees_what_existed_at_its_cut"
+ ],
+ "mutations": [
+  {"label": "una declaracion que no firmo la consola se da por vigente",
+   "old": "        if _counts(item, until)\n        and (until is None",
+   "new": "        if (until is None"},
+  {"label": "Tierra ve una declaracion firmada despues de su corte",
+   "old": "        if _counts(item, until)\n",
+   "new": "        if _counts(item, None)\n"},
+  {"label": "Tierra ve una declaracion que se refiere a un instante posterior a su corte",
+   "old": "        and (until is None or dt.datetime.fromisoformat(item[\"at\"]) <= until)\n",
+   "new": ""},
+  {"label": "la declaracion la firma una identidad que no es la consola",
+   "old": "            identity_for(CONSOLE_IDENTITY), module=payload.module,",
+   "new": "            identity_for(\"otra-fuente\"), module=payload.module,"},
+  {"label": "un corte sin zona horaria no se rechaza",
+   "old": "    if until is not None and until.tzinfo is None:\n        raise HTTPException(status_code=422, detail=\"`until` debe llevar zona horaria\")\n",
+   "new": ""},
+  {"label": "la lectura ignora el corte de Tierra",
+   "old": "    declarations = system_declarations(store, until)",
+   "new": "    declarations = system_declarations(store, None)"},
+  {"label": "la declaracion admite campos que no son suyos",
+   "old": "class SystemStatusIn(BaseModel):\n    model_config = ConfigDict(extra=\"forbid\")",
+   "new": "class SystemStatusIn(BaseModel):\n    model_config = ConfigDict(extra=\"ignore\")"},
+  {"label": "una nota sin tope de longitud",
+   "old": "Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)]",
+   "new": "Note = Annotated[str, StringConstraints(strip_whitespace=True)]"}
+ ]}

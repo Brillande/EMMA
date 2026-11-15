@@ -1,0 +1,68 @@
+{
+ "fuente": "bateria-ui-2026-11-12T0026.csv",
+ "fases": [
+  {
+   "fase": "chrome_en_blanco",
+   "duracion_s": 31.1,
+   "muestras": 30,
+   "equipo_w_media": 46.55,
+   "equipo_julios": 1447.6
+  },
+  {
+   "fase": "inicio_quieta",
+   "duracion_s": 31.12,
+   "muestras": 31,
+   "equipo_w_media": 47.97,
+   "equipo_julios": 1492.5
+  },
+  {
+   "fase": "escuchar_emma_encendido",
+   "duracion_s": 31.29,
+   "muestras": 30,
+   "equipo_w_media": 52.63,
+   "equipo_julios": 1647.0
+  },
+  {
+   "fase": "seguir_cara_encendido",
+   "duracion_s": 30.97,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "dolor_cuerpo3d_quieto",
+   "duracion_s": 30.87,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "dolor_cuerpo3d_girando",
+   "duracion_s": 30.97,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "ecografia_quieta",
+   "duracion_s": 31.01,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "ecografia_cine_10fps",
+   "duracion_s": 30.94,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "inicio_ventana_minimizada",
+   "duracion_s": 30.97,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  }
+ ]
+}

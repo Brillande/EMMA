@@ -1,0 +1,679 @@
+{
+ "varios_con_co2": {
+  "hypotheses": [
+   {
+    "kind": "shared_environment",
+    "label": "correlación, no causa",
+    "title": "Contexto ambiental compartido: CO2 de cabina (presión parcial) fuera de límite",
+    "affected": [
+     "crew-01",
+     "crew-02"
+    ],
+    "excursion": {
+     "module": "m1",
+     "parameter": "cabin-ppco2",
+     "display": "CO2 de cabina (presión parcial)",
+     "unit": "mm[Hg]",
+     "kind": "health",
+     "requirement": "[V2 6004]",
+     "start": "2026-11-30T14:00:00+00:00",
+     "end": "2026-12-01T00:00:00+00:00",
+     "worst": 5.0
+    },
+    "what_is_known": "En la ISS, cada mmHg más de CO2 se asoció con el doble de probabilidad de notificar cefalea (Law et al. 2014). El efecto sobre la cognición es contestado: un estudio controlado no halló relación clara entre concentración y efecto (Scully et al. 2019).",
+    "checks": [
+     "Contrastar la lectura de CO2 con un segundo sensor o una medida portátil.",
+     "Revisar el estado del sistema de eliminación de CO2 y la ventilación del módulo.",
+     "Registrar cefalea, sueño y fatiga de cada tripulante en el diario clínico."
+    ],
+    "countermeasures": "las de la biblioteca para ese parámetro",
+    "evidence": [
+     {
+      "id": "law-2014",
+      "title": "Relationship between carbon dioxide levels and reported headaches on the International Space Station",
+      "source": "Law J. et al., J Occup Environ Med 2014;56(5):477-83 · doi:10.1097/JOM.0000000000000158",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24806559/",
+      "doi": "10.1097/JOM.0000000000000158",
+      "pmid": "24806559",
+      "organization": "NASA Johnson Space Center",
+      "date": "2014-05",
+      "evidence_type": "journal_article",
+      "evidence_type_display": "artículo de revista",
+      "evidence_context": "iss",
+      "population": "human",
+      "population_display": "humano",
+      "notes": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «J Occup Environ Med. 2014 May;56(5):477-83. doi: 10.1097/JOM.0000000000000158»; doi.org resuelve ese DOI a este título en Journal of Occupational & Environmental Medicine. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: «From the NASA Johnson Space Center (Dr Law, Ms Van Baalen, Dr Meyers, and Dr Alexander), Wyle Science, Technology and Engineering (Drs Foy and Wear), and MEI Technologies (Mrs Mason and Ms Mendez), Houston, Tex.». La organización es la afiliación de la primera autora. Releído el 2026-10-26 el resumen (E-utilities de NCBI, efetch en texto) para la deriva del sueño con CO2 del simulador, que decía que Law 2014 describe más problemas de sueño y fatiga con el CO2 alto: el resumen no nombra el sueño ni la fatiga (habla de cefaleas, «For each 1-mm Hg increase in CO(2), the odds of a crew member reporting a headache doubled.»). El texto completo devolvió 403 en journals.lww.com ese día y no se leyó. Buscados ese día en NTRS los resúmenes de la misma línea de trabajo: VanBaalen et al. (NTRS 20140003857) da las cefaleas y los cambios de visión, y Cole et al. (NTRS 20160012725) la congestión; ninguno nombra el sueño. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`, `co2_sleep_efficiency_drop_pct`) para decir que su resumen no habla del sueño. Buscado otra vez el texto completo el 2026-10-31 (decimonovena ronda, U7), sin leerlo: Europe PMC lo registra sin texto completo y fuera de PMC, Unpaywall lo da cerrado y sin copia en ningún repositorio («oa_status»: «closed»), NTRS no tiene nada con su título y la página de la revista, por el DOI, cortó la conexión. Del sueño y la fatiga, la ficha sigue diciendo solo lo que dice el resumen: nada.",
+      "not_applicable": [],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "Law J. et al., J Occup Environ Med 2014;56(5):477-83 · doi:10.1097/JOM.0000000000000158 · PMID 24806559",
+       "pmid": "24806559",
+       "retrieved": "2026-10-31",
+       "basis": "record",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "ninguna señal de diseño resuelta (faltan: guia, metaanalisis, rev_sistematica, rct, ensayo, prospectivo, retrospectivo, serie_casos, caso, animal, in_vitro, rev_narrativa, preprint)",
+       "signals": {
+        "humanos": true
+       },
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": null,
+      "scope_caveat": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «J Occup Environ Med. 2014 May;56(5):477-83. doi: 10.1097/JOM.0000000000000158»; doi.org resuelve ese DOI a este título en Journal of Occupational & Environmental Medicine. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: «From the NASA Johnson Space Center (Dr Law, Ms Van Baalen, Dr Meyers, and Dr Alexander), Wyle Science, Technology and Engineering (Drs Foy and Wear), and MEI Technologies (Mrs Mason and Ms Mendez), Houston, Tex.». La organización es la afiliación de la primera autora. Releído el 2026-10-26 el resumen (E-utilities de NCBI, efetch en texto) para la deriva del sueño con CO2 del simulador, que decía que Law 2014 describe más problemas de sueño y fatiga con el CO2 alto: el resumen no nombra el sueño ni la fatiga (habla de cefaleas, «For each 1-mm Hg increase in CO(2), the odds of a crew member reporting a headache doubled.»). El texto completo devolvió 403 en journals.lww.com ese día y no se leyó. Buscados ese día en NTRS los resúmenes de la misma línea de trabajo: VanBaalen et al. (NTRS 20140003857) da las cefaleas y los cambios de visión, y Cole et al. (NTRS 20160012725) la congestión; ninguno nombra el sueño. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`, `co2_sleep_efficiency_drop_pct`) para decir que su resumen no habla del sueño. Buscado otra vez el texto completo el 2026-10-31 (decimonovena ronda, U7), sin leerlo: Europe PMC lo registra sin texto completo y fuera de PMC, Unpaywall lo da cerrado y sin copia en ningún repositorio («oa_status»: «closed»), NTRS no tiene nada con su título y la página de la revista, por el DOI, cortó la conexión. Del sueño y la fatiga, la ficha sigue diciendo solo lo que dice el resumen: nada.",
+      "scope_in_view": null
+     },
+     {
+      "id": "scully-2019",
+      "title": "Effects of acute exposures to carbon dioxide on decision making and cognition in astronaut-like subjects",
+      "source": "Scully R.R. et al., NPJ Microgravity 2019;5:17 · doi:10.1038/s41526-019-0071-6",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31240239/",
+      "doi": "10.1038/s41526-019-0071-6",
+      "pmid": "31240239",
+      "organization": "KBRwyle / NASA Johnson Space Center",
+      "date": "2019-06-19",
+      "evidence_type": "journal_article",
+      "evidence_type_display": "artículo de revista",
+      "evidence_context": "ground",
+      "population": "human",
+      "population_display": "humano",
+      "notes": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «NPJ Microgravity. 2019 Jun 19;5:17. doi: 10.1038/s41526-019-0071-6»; doi.org resuelve ese DOI a este título en npj Microgravity. El entorno sale del resumen: «The double-blind cross-over study included 22 participants at the Johnson Space Center», en cámara y en Tierra; no es un estudio en vuelo. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: el primer autor firma desde dos sitios, «Biomedical Research and Environmental Sciences, KBRwyle, Houston, TX 77058 USA.» y «Biomedical Research and Environmental Sciences Division, Human Health and Performance Directorate, NASA Lyndon B. Johnson Space Center, Houston, TX 77058 USA.». La organización son las dos, en ese orden: elegir una diría menos de lo que dice el registro. Leído el 2026-10-26 el texto completo en Europe PMC (PMC6584569, XML; licencia CC BY) para la deriva del tiempo de reacción de la PVT con CO2 del simulador. De la PVT: «For the PVT, the probability of achieving an accuracy score of >90% decreased in a dose–response like fashion from 79.5%, 74.7%, 73.4%, to 64.0% for 600, 1200, 2400, and 5000 ppm, respectively» y, a continuación, «However, there was no significant main effect of CO2 condition for the PVT (p = 0.4114).»; en la tabla 2, la velocidad de la PVT tampoco tiene efecto principal del CO2 (p = 0,4313, sin ajustar). De la introducción: «the findings of effects of low concentrations of CO2 upon cognition are controversial and the literature is unsettled», con Satish 2012 (ficha satish-2012-co2-decision-making) entre los estudios que sí ven efecto. El subíndice del CO2 se escribe aquí en línea. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`), en el lado de «sin efecto» de la deriva contestada `co2_pvt_rt_rise_ms`.",
+      "not_applicable": [],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "Scully R.R. et al., NPJ Microgravity 2019;5:17 · doi:10.1038/s41526-019-0071-6 · PMID 31240239",
+       "pmid": "31240239",
+       "retrieved": "2026-10-31",
+       "basis": "record",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "ninguna señal de diseño resuelta (faltan: guia, metaanalisis, rev_sistematica, rct, ensayo, prospectivo, retrospectivo, serie_casos, caso, humanos, animal, in_vitro, rev_narrativa, preprint)",
+       "signals": {},
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "humanos",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": null,
+      "scope_caveat": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «NPJ Microgravity. 2019 Jun 19;5:17. doi: 10.1038/s41526-019-0071-6»; doi.org resuelve ese DOI a este título en npj Microgravity. El entorno sale del resumen: «The double-blind cross-over study included 22 participants at the Johnson Space Center», en cámara y en Tierra; no es un estudio en vuelo. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: el primer autor firma desde dos sitios, «Biomedical Research and Environmental Sciences, KBRwyle, Houston, TX 77058 USA.» y «Biomedical Research and Environmental Sciences Division, Human Health and Performance Directorate, NASA Lyndon B. Johnson Space Center, Houston, TX 77058 USA.». La organización son las dos, en ese orden: elegir una diría menos de lo que dice el registro. Leído el 2026-10-26 el texto completo en Europe PMC (PMC6584569, XML; licencia CC BY) para la deriva del tiempo de reacción de la PVT con CO2 del simulador. De la PVT: «For the PVT, the probability of achieving an accuracy score of >90% decreased in a dose–response like fashion from 79.5%, 74.7%, 73.4%, to 64.0% for 600, 1200, 2400, and 5000 ppm, respectively» y, a continuación, «However, there was no significant main effect of CO2 condition for the PVT (p = 0.4114).»; en la tabla 2, la velocidad de la PVT tampoco tiene efecto principal del CO2 (p = 0,4313, sin ajustar). De la introducción: «the findings of effects of low concentrations of CO2 upon cognition are controversial and the literature is unsettled», con Satish 2012 (ficha satish-2012-co2-decision-making) entre los estudios que sí ven efecto. El subíndice del CO2 se escribe aquí en línea. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`), en el lado de «sin efecto» de la deriva contestada `co2_pvt_rt_rise_ms`.",
+      "scope_in_view": null
+     },
+     {
+      "id": "ochmo-tb-002",
+      "title": "NASA-STD-3001 Technical Brief OCHMO-TB-002 Rev B, Environmental Control and Life Support System",
+      "source": "NASA OCHMO (2023)",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-002-eclss.pdf",
+      "doi": null,
+      "pmid": null,
+      "organization": "NASA OCHMO",
+      "date": "2023-11-14",
+      "evidence_type": "technical_brief",
+      "evidence_type_display": "resumen técnico de norma",
+      "evidence_context": null,
+      "population": null,
+      "population_display": "no aplica",
+      "notes": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "not_applicable": [
+       "doi",
+       "evidence_context",
+       "population"
+      ],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "NASA OCHMO (2023)",
+       "pmid": null,
+       "basis": "none",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "sin PMID: no hay registro que catalogue el diseño, y el texto de la cita no da señales suficientes",
+       "signals": {},
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "humanos",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": "NASA-STD-3001 Vol 2 [V2 6004]",
+      "scope_caveat": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "scope_in_view": null
+     }
+    ],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   }
+  ],
+  "affected": [
+   "crew-01",
+   "crew-02"
+  ],
+  "habitat_excursions": [
+   {
+    "module": "m1",
+    "parameter": "cabin-ppco2",
+    "display": "CO2 de cabina (presión parcial)",
+    "unit": "mm[Hg]",
+    "kind": "health",
+    "requirement": "[V2 6004]",
+    "start": "2026-11-30T14:00:00+00:00",
+    "end": "2026-12-01T00:00:00+00:00",
+    "worst": 5.0
+   }
+  ],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ },
+ "uno_con_co2": {
+  "hypotheses": [
+   {
+    "kind": "individual",
+    "label": "correlación, no causa",
+    "title": "Cambio individual en crew-01",
+    "affected": [
+     "crew-01"
+    ],
+    "excursion": null,
+    "what_is_known": null,
+    "checks": [
+     "Revisar el estado de ese tripulante en su consola."
+    ],
+    "evidence": [],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   }
+  ],
+  "affected": [
+   "crew-01"
+  ],
+  "habitat_excursions": [
+   {
+    "module": "m1",
+    "parameter": "cabin-ppco2",
+    "display": "CO2 de cabina (presión parcial)",
+    "unit": "mm[Hg]",
+    "kind": "health",
+    "requirement": "[V2 6004]",
+    "start": "2026-11-30T14:00:00+00:00",
+    "end": "2026-12-01T00:00:00+00:00",
+    "worst": 5.0
+   }
+  ],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ },
+ "varios_sin_excursion": {
+  "hypotheses": [
+   {
+    "kind": "shared_unknown",
+    "label": "correlación, no causa",
+    "title": "Cambio simultáneo en varios tripulantes sin causa ambiental registrada",
+    "affected": [
+     "crew-01",
+     "crew-02"
+    ],
+    "excursion": null,
+    "what_is_known": null,
+    "checks": [
+     "Revisar los parámetros del hábitat que no se registran en EMMA.",
+     "Revisar si la agenda, la carga de trabajo o un evento común coinciden."
+    ],
+    "evidence": [],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   }
+  ],
+  "affected": [
+   "crew-01",
+   "crew-02"
+  ],
+  "habitat_excursions": [],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ },
+ "excursion_antigua": {
+  "hypotheses": [
+   {
+    "kind": "shared_unknown",
+    "label": "correlación, no causa",
+    "title": "Cambio simultáneo en varios tripulantes sin causa ambiental registrada",
+    "affected": [
+     "crew-01",
+     "crew-02"
+    ],
+    "excursion": null,
+    "what_is_known": null,
+    "checks": [
+     "Revisar los parámetros del hábitat que no se registran en EMMA.",
+     "Revisar si la agenda, la carga de trabajo o un evento común coinciden."
+    ],
+    "evidence": [],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   }
+  ],
+  "affected": [
+   "crew-01",
+   "crew-02"
+  ],
+  "habitat_excursions": [],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ },
+ "dos_modulos": {
+  "hypotheses": [
+   {
+    "kind": "shared_environment",
+    "label": "correlación, no causa",
+    "title": "Contexto ambiental compartido: CO2 de cabina (presión parcial) fuera de límite",
+    "affected": [
+     "crew-01",
+     "crew-02",
+     "crew-03"
+    ],
+    "excursion": {
+     "module": "habitat-principal",
+     "parameter": "cabin-ppco2",
+     "display": "CO2 de cabina (presión parcial)",
+     "unit": "mm[Hg]",
+     "kind": "health",
+     "requirement": "[V2 6004]",
+     "start": "2026-11-30T14:00:00+00:00",
+     "end": "2026-12-01T00:00:00+00:00",
+     "worst": 5.0
+    },
+    "what_is_known": "En la ISS, cada mmHg más de CO2 se asoció con el doble de probabilidad de notificar cefalea (Law et al. 2014). El efecto sobre la cognición es contestado: un estudio controlado no halló relación clara entre concentración y efecto (Scully et al. 2019).",
+    "checks": [
+     "Contrastar la lectura de CO2 con un segundo sensor o una medida portátil.",
+     "Revisar el estado del sistema de eliminación de CO2 y la ventilación del módulo.",
+     "Registrar cefalea, sueño y fatiga de cada tripulante en el diario clínico."
+    ],
+    "countermeasures": "las de la biblioteca para ese parámetro",
+    "evidence": [
+     {
+      "id": "law-2014",
+      "title": "Relationship between carbon dioxide levels and reported headaches on the International Space Station",
+      "source": "Law J. et al., J Occup Environ Med 2014;56(5):477-83 · doi:10.1097/JOM.0000000000000158",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24806559/",
+      "doi": "10.1097/JOM.0000000000000158",
+      "pmid": "24806559",
+      "organization": "NASA Johnson Space Center",
+      "date": "2014-05",
+      "evidence_type": "journal_article",
+      "evidence_type_display": "artículo de revista",
+      "evidence_context": "iss",
+      "population": "human",
+      "population_display": "humano",
+      "notes": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «J Occup Environ Med. 2014 May;56(5):477-83. doi: 10.1097/JOM.0000000000000158»; doi.org resuelve ese DOI a este título en Journal of Occupational & Environmental Medicine. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: «From the NASA Johnson Space Center (Dr Law, Ms Van Baalen, Dr Meyers, and Dr Alexander), Wyle Science, Technology and Engineering (Drs Foy and Wear), and MEI Technologies (Mrs Mason and Ms Mendez), Houston, Tex.». La organización es la afiliación de la primera autora. Releído el 2026-10-26 el resumen (E-utilities de NCBI, efetch en texto) para la deriva del sueño con CO2 del simulador, que decía que Law 2014 describe más problemas de sueño y fatiga con el CO2 alto: el resumen no nombra el sueño ni la fatiga (habla de cefaleas, «For each 1-mm Hg increase in CO(2), the odds of a crew member reporting a headache doubled.»). El texto completo devolvió 403 en journals.lww.com ese día y no se leyó. Buscados ese día en NTRS los resúmenes de la misma línea de trabajo: VanBaalen et al. (NTRS 20140003857) da las cefaleas y los cambios de visión, y Cole et al. (NTRS 20160012725) la congestión; ninguno nombra el sueño. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`, `co2_sleep_efficiency_drop_pct`) para decir que su resumen no habla del sueño. Buscado otra vez el texto completo el 2026-10-31 (decimonovena ronda, U7), sin leerlo: Europe PMC lo registra sin texto completo y fuera de PMC, Unpaywall lo da cerrado y sin copia en ningún repositorio («oa_status»: «closed»), NTRS no tiene nada con su título y la página de la revista, por el DOI, cortó la conexión. Del sueño y la fatiga, la ficha sigue diciendo solo lo que dice el resumen: nada.",
+      "not_applicable": [],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "Law J. et al., J Occup Environ Med 2014;56(5):477-83 · doi:10.1097/JOM.0000000000000158 · PMID 24806559",
+       "pmid": "24806559",
+       "retrieved": "2026-10-31",
+       "basis": "record",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "ninguna señal de diseño resuelta (faltan: guia, metaanalisis, rev_sistematica, rct, ensayo, prospectivo, retrospectivo, serie_casos, caso, animal, in_vitro, rev_narrativa, preprint)",
+       "signals": {
+        "humanos": true
+       },
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": null,
+      "scope_caveat": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «J Occup Environ Med. 2014 May;56(5):477-83. doi: 10.1097/JOM.0000000000000158»; doi.org resuelve ese DOI a este título en Journal of Occupational & Environmental Medicine. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: «From the NASA Johnson Space Center (Dr Law, Ms Van Baalen, Dr Meyers, and Dr Alexander), Wyle Science, Technology and Engineering (Drs Foy and Wear), and MEI Technologies (Mrs Mason and Ms Mendez), Houston, Tex.». La organización es la afiliación de la primera autora. Releído el 2026-10-26 el resumen (E-utilities de NCBI, efetch en texto) para la deriva del sueño con CO2 del simulador, que decía que Law 2014 describe más problemas de sueño y fatiga con el CO2 alto: el resumen no nombra el sueño ni la fatiga (habla de cefaleas, «For each 1-mm Hg increase in CO(2), the odds of a crew member reporting a headache doubled.»). El texto completo devolvió 403 en journals.lww.com ese día y no se leyó. Buscados ese día en NTRS los resúmenes de la misma línea de trabajo: VanBaalen et al. (NTRS 20140003857) da las cefaleas y los cambios de visión, y Cole et al. (NTRS 20160012725) la congestión; ninguno nombra el sueño. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`, `co2_sleep_efficiency_drop_pct`) para decir que su resumen no habla del sueño. Buscado otra vez el texto completo el 2026-10-31 (decimonovena ronda, U7), sin leerlo: Europe PMC lo registra sin texto completo y fuera de PMC, Unpaywall lo da cerrado y sin copia en ningún repositorio («oa_status»: «closed»), NTRS no tiene nada con su título y la página de la revista, por el DOI, cortó la conexión. Del sueño y la fatiga, la ficha sigue diciendo solo lo que dice el resumen: nada.",
+      "scope_in_view": null
+     },
+     {
+      "id": "scully-2019",
+      "title": "Effects of acute exposures to carbon dioxide on decision making and cognition in astronaut-like subjects",
+      "source": "Scully R.R. et al., NPJ Microgravity 2019;5:17 · doi:10.1038/s41526-019-0071-6",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31240239/",
+      "doi": "10.1038/s41526-019-0071-6",
+      "pmid": "31240239",
+      "organization": "KBRwyle / NASA Johnson Space Center",
+      "date": "2019-06-19",
+      "evidence_type": "journal_article",
+      "evidence_type_display": "artículo de revista",
+      "evidence_context": "ground",
+      "population": "human",
+      "population_display": "humano",
+      "notes": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «NPJ Microgravity. 2019 Jun 19;5:17. doi: 10.1038/s41526-019-0071-6»; doi.org resuelve ese DOI a este título en npj Microgravity. El entorno sale del resumen: «The double-blind cross-over study included 22 participants at the Johnson Space Center», en cámara y en Tierra; no es un estudio en vuelo. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: el primer autor firma desde dos sitios, «Biomedical Research and Environmental Sciences, KBRwyle, Houston, TX 77058 USA.» y «Biomedical Research and Environmental Sciences Division, Human Health and Performance Directorate, NASA Lyndon B. Johnson Space Center, Houston, TX 77058 USA.». La organización son las dos, en ese orden: elegir una diría menos de lo que dice el registro. Leído el 2026-10-26 el texto completo en Europe PMC (PMC6584569, XML; licencia CC BY) para la deriva del tiempo de reacción de la PVT con CO2 del simulador. De la PVT: «For the PVT, the probability of achieving an accuracy score of >90% decreased in a dose–response like fashion from 79.5%, 74.7%, 73.4%, to 64.0% for 600, 1200, 2400, and 5000 ppm, respectively» y, a continuación, «However, there was no significant main effect of CO2 condition for the PVT (p = 0.4114).»; en la tabla 2, la velocidad de la PVT tampoco tiene efecto principal del CO2 (p = 0,4313, sin ajustar). De la introducción: «the findings of effects of low concentrations of CO2 upon cognition are controversial and the literature is unsettled», con Satish 2012 (ficha satish-2012-co2-decision-making) entre los estudios que sí ven efecto. El subíndice del CO2 se escribe aquí en línea. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`), en el lado de «sin efecto» de la deriva contestada `co2_pvt_rt_rise_ms`.",
+      "not_applicable": [],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "Scully R.R. et al., NPJ Microgravity 2019;5:17 · doi:10.1038/s41526-019-0071-6 · PMID 31240239",
+       "pmid": "31240239",
+       "retrieved": "2026-10-31",
+       "basis": "record",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "ninguna señal de diseño resuelta (faltan: guia, metaanalisis, rev_sistematica, rct, ensayo, prospectivo, retrospectivo, serie_casos, caso, humanos, animal, in_vitro, rev_narrativa, preprint)",
+       "signals": {},
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "humanos",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": null,
+      "scope_caveat": "Registro de PubMed leído el 2026-10-13 (resumen incluido): «NPJ Microgravity. 2019 Jun 19;5:17. doi: 10.1038/s41526-019-0071-6»; doi.org resuelve ese DOI a este título en npj Microgravity. El entorno sale del resumen: «The double-blind cross-over study included 22 participants at the Johnson Space Center», en cámara y en Tierra; no es un estudio en vuelo. El texto completo no se ha leído. Registro de PubMed releído el 2026-10-14 (E-utilities de NCBI) para la organización: el primer autor firma desde dos sitios, «Biomedical Research and Environmental Sciences, KBRwyle, Houston, TX 77058 USA.» y «Biomedical Research and Environmental Sciences Division, Human Health and Performance Directorate, NASA Lyndon B. Johnson Space Center, Houston, TX 77058 USA.». La organización son las dos, en ese orden: elegir una diría menos de lo que dice el registro. Leído el 2026-10-26 el texto completo en Europe PMC (PMC6584569, XML; licencia CC BY) para la deriva del tiempo de reacción de la PVT con CO2 del simulador. De la PVT: «For the PVT, the probability of achieving an accuracy score of >90% decreased in a dose–response like fashion from 79.5%, 74.7%, 73.4%, to 64.0% for 600, 1200, 2400, and 5000 ppm, respectively» y, a continuación, «However, there was no significant main effect of CO2 condition for the PVT (p = 0.4114).»; en la tabla 2, la velocidad de la PVT tampoco tiene efecto principal del CO2 (p = 0,4313, sin ajustar). De la introducción: «the findings of effects of low concentrations of CO2 upon cognition are controversial and the literature is unsettled», con Satish 2012 (ficha satish-2012-co2-decision-making) entre los estudios que sí ven efecto. El subíndice del CO2 se escribe aquí en línea. Desde el 2026-10-26 lo cita el simulador (ingest/simulator.py, `LITERATURE`), en el lado de «sin efecto» de la deriva contestada `co2_pvt_rt_rise_ms`.",
+      "scope_in_view": null
+     },
+     {
+      "id": "ochmo-tb-002",
+      "title": "NASA-STD-3001 Technical Brief OCHMO-TB-002 Rev B, Environmental Control and Life Support System",
+      "source": "NASA OCHMO (2023)",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-002-eclss.pdf",
+      "doi": null,
+      "pmid": null,
+      "organization": "NASA OCHMO",
+      "date": "2023-11-14",
+      "evidence_type": "technical_brief",
+      "evidence_type_display": "resumen técnico de norma",
+      "evidence_context": null,
+      "population": null,
+      "population_display": "no aplica",
+      "notes": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "not_applicable": [
+       "doi",
+       "evidence_context",
+       "population"
+      ],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "NASA OCHMO (2023)",
+       "pmid": null,
+       "basis": "none",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "sin PMID: no hay registro que catalogue el diseño, y el texto de la cita no da señales suficientes",
+       "signals": {},
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "humanos",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": "NASA-STD-3001 Vol 2 [V2 6004]",
+      "scope_caveat": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "scope_in_view": null
+     }
+    ],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   },
+   {
+    "kind": "shared_environment",
+    "label": "correlación, no causa",
+    "title": "Contexto ambiental compartido: Ruido de cabina (nivel ponderado A) fuera de límite",
+    "affected": [
+     "crew-01",
+     "crew-02",
+     "crew-03"
+    ],
+    "excursion": {
+     "module": "laboratorio",
+     "parameter": "cabin-noise",
+     "display": "Ruido de cabina (nivel ponderado A)",
+     "unit": "dB(A)",
+     "kind": "health",
+     "requirement": "[V2 6077]",
+     "start": "2026-11-30T14:00:00+00:00",
+     "end": "2026-12-01T00:00:00+00:00",
+     "worst": 90.0
+    },
+    "what_is_known": null,
+    "checks": [
+     "Contrastar la lectura con un segundo sensor.",
+     "Revisar el sistema de control ambiental del módulo."
+    ],
+    "countermeasures": "las de la biblioteca para ese parámetro",
+    "evidence": [
+     {
+      "id": "ochmo-tb-002",
+      "title": "NASA-STD-3001 Technical Brief OCHMO-TB-002 Rev B, Environmental Control and Life Support System",
+      "source": "NASA OCHMO (2023)",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-002-eclss.pdf",
+      "doi": null,
+      "pmid": null,
+      "organization": "NASA OCHMO",
+      "date": "2023-11-14",
+      "evidence_type": "technical_brief",
+      "evidence_type_display": "resumen técnico de norma",
+      "evidence_context": null,
+      "population": null,
+      "population_display": "no aplica",
+      "notes": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "not_applicable": [
+       "doi",
+       "evidence_context",
+       "population"
+      ],
+      "outside_enum": [],
+      "outside_enum_display": [],
+      "unverified": [],
+      "unverified_display": [],
+      "grade": {
+       "source": "NASA OCHMO (2023)",
+       "pmid": null,
+       "basis": "none",
+       "tier": "desconocido",
+       "label": "desconocido: no clasificable desde el registro",
+       "preclinical": false,
+       "reason": "sin PMID: no hay registro que catalogue el diseño, y el texto de la cita no da señales suficientes",
+       "signals": {},
+       "missing": [
+        "guia",
+        "metaanalisis",
+        "rev_sistematica",
+        "rct",
+        "ensayo",
+        "prospectivo",
+        "retrospectivo",
+        "serie_casos",
+        "caso",
+        "humanos",
+        "animal",
+        "in_vitro",
+        "rev_narrativa",
+        "preprint"
+       ]
+      },
+      "relevance": "NASA-STD-3001 Vol 2 [V2 6077]",
+      "scope_caveat": "Leído entero el 2026-10-21 (PDF, 23 páginas, en texto; las figuras, solo por sus rótulos). Dice ser solo de referencia: no sustituye a los requisitos de la norma. Reparte las funciones del ECLSS en sistemas (presión, revitalización de aire, agua, detección y extinción de incendios) y su referencia 1 es el resumen del ATCS de Boeing. Releído el 2026-11-01 buscando la comida y el ejercicio: salen como demanda sobre el ECLSS (el recuadro de adaptación del ECLSS con el ejercicio y la nutrición, la estación de ejercicio y la de comer), no entre sus funciones.",
+      "scope_in_view": null
+     }
+    ],
+    "steps": [
+     "Detectar",
+     "Correlacionar con el contexto",
+     "Causas candidatas",
+     "Evidencia",
+     "Comprobaciones",
+     "Confirmación humana",
+     "Seguimiento de la recuperación"
+    ]
+   }
+  ],
+  "affected": [
+   "crew-01",
+   "crew-02",
+   "crew-03"
+  ],
+  "habitat_excursions": [
+   {
+    "module": "habitat-principal",
+    "parameter": "cabin-ppco2",
+    "display": "CO2 de cabina (presión parcial)",
+    "unit": "mm[Hg]",
+    "kind": "health",
+    "requirement": "[V2 6004]",
+    "start": "2026-11-30T14:00:00+00:00",
+    "end": "2026-12-01T00:00:00+00:00",
+    "worst": 5.0
+   },
+   {
+    "module": "laboratorio",
+    "parameter": "cabin-noise",
+    "display": "Ruido de cabina (nivel ponderado A)",
+    "unit": "dB(A)",
+    "kind": "health",
+    "requirement": "[V2 6077]",
+    "start": "2026-11-30T14:00:00+00:00",
+    "end": "2026-12-01T00:00:00+00:00",
+    "worst": 90.0
+   }
+  ],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ },
+ "nadie_afectado": {
+  "hypotheses": [],
+  "affected": [],
+  "habitat_excursions": [
+   {
+    "module": "m1",
+    "parameter": "cabin-ppco2",
+    "display": "CO2 de cabina (presión parcial)",
+    "unit": "mm[Hg]",
+    "kind": "health",
+    "requirement": "[V2 6004]",
+    "start": "2026-11-30T14:00:00+00:00",
+    "end": "2026-12-01T00:00:00+00:00",
+    "worst": 5.0
+   }
+  ],
+  "assumption": "EMMA no registra en qué módulo está cada tripulante: se supone que toda la tripulación comparte el hábitat.",
+  "window_hours": 48.0
+ }
+}

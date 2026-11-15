@@ -1,0 +1,126 @@
+{
+ "target": "app/ingest/category_fit.py",
+ "test": [
+  "tests/test_backend_round19.py",
+  "tests/test_crew_radiation.py::test_on_earth_an_event_after_the_cut_has_no_elapsed_time_and_says_why"
+ ],
+ "mutations": [
+  {
+   "label": "el indicador sin categoría dice el texto None",
+   "old": "        \"category\": None if category is None else category[0],",
+   "new": "        \"category\": str(category and category[0]),"
+  },
+  {
+   "label": "la lista dice la categoría de la dosis y no la que lleva de verdad",
+   "old": "\"category\": fields(CATALOG[key])[\"category\"], \"reason\": reason}",
+   "new": "\"category\": \"exam\", \"reason\": reason}"
+  },
+  {
+   "label": "una de las seis deja de declararse",
+   "old": "    \"circadian-shift\": (\n        \"Sale",
+   "new": "    \"circadian-shift-x\": (\n        \"Sale"
+  },
+  {
+   "label": "el indicador no lleva categoría en la ruta",
+   "target": "app/api/routes.py",
+   "old": "                **category_fit.fields(code),\n",
+   "new": ""
+  },
+  {
+   "label": "la ruta no declara las que no casan",
+   "target": "app/api/routes.py",
+   "old": "        \"category_fit\": category_fit.misfits(),\n",
+   "new": ""
+  },
+  {
+   "label": "el refugio cuenta minutos negativos otra vez",
+   "target": "app/analysis/radiation.py",
+   "old": "    started = now >= event_time\n",
+   "new": "    started = True\n"
+  },
+  {
+   "label": "un refugio aún por empezar sale con 0 y sin frase distinta",
+   "target": "app/analysis/radiation.py",
+   "old": "/ 60) if started else None,",
+   "new": "/ 60) if started else 0,"
+  },
+  {
+   "label": "justo en el instante del evento se trata como aún no empezado",
+   "target": "app/analysis/radiation.py",
+   "old": "    started = now >= event_time\n",
+   "new": "    started = now > event_time\n"
+  },
+  {
+   "label": "sin cifra y sin decir por qué",
+   "target": "app/analysis/radiation.py",
+   "old": "        \"elapsed_note\": None if started else SHELTER_NOT_STARTED,\n",
+   "new": "        \"elapsed_note\": None,\n"
+  },
+  {
+   "label": "la nota sale también con cifra",
+   "target": "app/analysis/radiation.py",
+   "old": "        \"elapsed_note\": None if started else SHELTER_NOT_STARTED,\n",
+   "new": "        \"elapsed_note\": SHELTER_NOT_STARTED,\n"
+  },
+  {
+   "label": "el tripulante deja de ver las notas a toda la tripulación",
+   "target": "app/api/ground_notes.py",
+   "old": "store.ground_notes(subject, CREW_SUBJECT)",
+   "new": "store.ground_notes(subject)"
+  },
+  {
+   "label": "una nota a otro tripulante se cuela",
+   "target": "app/core/storage.py",
+   "old": "            if payload[\"subject\"] not in wanted:\n",
+   "new": "            if False:\n"
+  },
+  {
+   "label": "un destinatario de texto se compara letra a letra",
+   "target": "app/core/storage.py",
+   "old": "        wanted = {subject} if isinstance(subject, str) else subject\n",
+   "new": "        wanted = subject\n"
+  },
+  {
+   "label": "la regla de detección vuelve a leer la tabla privada del motor",
+   "target": "app/risk_entity.py",
+   "old": "        f\"{_plain(rule.min_samples)} lecturas de base o más)\"",
+   "new": "        f\"{_plain(baseline._SAMPLES_FOR_SEVERITY[rule.severity])} lecturas de base o más)\""
+  },
+  {
+   "label": "la frase de detección sale de grave a leve",
+   "target": "app/risk_entity.py",
+   "old": "    graded = sorted(baseline.cut_rules(), key=lambda rule: rule.fraction)  # de leve a grave",
+   "new": "    graded = list(baseline.cut_rules())"
+  },
+  {
+   "label": "un lado de `concerning` desconocido carga",
+   "target": "app/ingest/codes.py",
+   "old": "        if self.concerning not in CONCERNING_SIDES:\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "`both` deja de ser un lado válido",
+   "target": "app/ingest/codes.py",
+   "old": "CONCERNING_SIDES = frozenset({\"high\", \"low\", \"both\"})",
+   "new": "CONCERNING_SIDES = frozenset({\"high\", \"low\"})"
+  },
+  {
+   "label": "cuenta una acción firmada por cualquiera",
+   "target": "app/core/identities.py",
+   "old": "    if action.get(\"signer\") != CONSOLE_IDENTITY:\n        return False\n",
+   "new": ""
+  },
+  {
+   "label": "Tierra cuenta lo firmado después de su corte",
+   "target": "app/core/identities.py",
+   "old": "    return until is None or dt.datetime.fromisoformat(action[\"recorded\"]) <= until\n",
+   "new": "    return True\n"
+  },
+  {
+   "label": "lo firmado justo en el corte ya no cuenta",
+   "target": "app/core/identities.py",
+   "old": "action[\"recorded\"]) <= until\n",
+   "new": "action[\"recorded\"]) < until\n"
+  }
+ ]
+}

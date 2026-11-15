@@ -1,0 +1,18 @@
+{
+  "target": "../polaris/tools/visor3d_web/index.html",
+  "test": [
+    "tests/test_polaris_web_build.py"
+  ],
+  "mutations": [
+    {
+      "label": "la copia cambia un color decidido y el visor servido no se recompila",
+      "old": "--coral:#FFD447;",
+      "new": "--coral:#ff6b47;"
+    },
+    {
+      "label": "la copia cambia un texto y el visor servido no se recompila",
+      "old": "<h1>Mapa hepático · TC</h1>",
+      "new": "<h1>Mapa hepático · TC portal</h1>"
+    }
+  ]
+}

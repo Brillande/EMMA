@@ -1,0 +1,9 @@
+{"target": "app/analysis/recovery_state.py", "test": ["tests/test_context_round3.py"],
+ "mutations": [
+  {"label": "recuperarse y empeorar se confunden",
+   "old": "            \"direction\": \"recovering\" if delta < 0 else \"worsening\",",
+   "new": "            \"direction\": \"recovering\","},
+  {"label": "un dominio estable dice que cambia",
+   "old": "        if delta == 0:\n            found[str(domain)] = None\n            continue",
+   "new": ""}
+ ]}

@@ -1,0 +1,522 @@
+/*
+ * El tablero de cada sección (decisión del usuario, 2026-11-07: «se tiene que parecer más al ejemplo
+ * pero con sus apartados propios»): el cuerpo de una sección deja de ser una columna de paneles largos
+ * y pasa a la rejilla de 12 columnas de «Inicio», con cada panel en su sitio. Solo bajo la concha de la
+ * maqueta; la clásica (`#clasica`) conserva su columna.
+ *
+ * Lo que se vio: `styles.css` monta `.section-body` como rejilla de UNA columna y hace `display:
+ * contents` a `.slot` y `.slot-body` (3099-3115), así que el ítem de la rejilla era el propio panel; pero
+ * tapado por privacidad el `.slot` vuelve a ser caja, y una colocación escrita sobre el panel se rompía
+ * al activarla. Por eso aquí el ítem es siempre `.slot` (rejilla de una celda que estira su panel) y la
+ * colocación se escribe en la hoja de cada sección así:
+ *
+ *   #crew-panel-hazards > .slot:has(> .slot-body > [data-ui="summary"]) { --span: 5; --span-mid: 12; }
+ *
+ * Por defecto todo ocupa las 12 columnas (nada cambia hasta que una sección acorta lo suyo). El ancho
+ * se mide por contenedor y no por ventana: el carril, el panel acoplado del asistente y el `zoom` de
+ * baja visión estrechan el cuerpo. Un panel que devuelve `null` no deja hueco. `.ref-home` («Inicio»)
+ * tiene su propia rejilla en `referenceDashboard.css` y queda fuera.
+ */
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.6rem;
+  container-type: inline-size;
+  container-name: board;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot {
+  display: grid;
+  min-width: 0;
+  grid-column: span var(--span, 12);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot:not(:has(> .slot-body > *)) {
+  display: none;
+}
+
+/* Cuerpo intermedio (≤ 64 rem: una tableta, el asistente acoplado): el segundo reparto de cada hoja.
+   Medido el 2026-11-08: a 1672 px de ventana el cuerpo mide unos 1120 px (70 rem) con el carril al
+   lado, así que el umbral tiene que quedar por debajo para que a ese ancho rija el reparto completo;
+   a 1300 px el cuerpo baja a unos 750 px (47 rem) y rige el intermedio. */
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot {
+    grid-column: span var(--span-mid, 12);
+  }
+}
+
+/* Cuerpo estrecho (≤ 44 rem) y baja visión: una columna, como la clásica. */
+@container board (max-width: 44rem) {
+  :where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot {
+    grid-column: span 12;
+  }
+}
+
+.app[data-low-vision="on"] .section-body:not(.ref-home) > .slot {
+  grid-column: span 12;
+}
+
+/* La tarjeta, con la densidad de «Inicio» (`.ref-card`, `.ref-h`): menos relleno y el título a 1 rem. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel {
+  padding: 0.55rem 0.7rem 0.65rem;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel > h2 {
+  font-size: 1rem;
+  /* Dentro del marco, la cabecera de tarjeta de «Inicio» (`.ref-h`): sin el filete de debajo que
+     `furniture.css` pone a los paneles sueltos; el marco ya separa. */
+  margin-bottom: 0.35rem;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* El tono de un segmento o una barra es el color real del nivel que trae el dato (`levelToken`): en las
+   secciones no se tiñe el nominal de verde (esa desviación es solo de «Inicio»). */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) [data-tone="text"] {
+  background: var(--c-text);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) [data-tone="blue"] {
+  background: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) [data-tone="yellow"] {
+  background: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) [data-tone="red"] {
+  background: var(--c-red);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) [data-tone="gray"] {
+  background: var(--c-gray);
+}
+
+/* Piezas comunes del tablero (`dashboard/HomeCharts.tsx`), sin color con significado propio. */
+
+/* Fila de píldoras: recuentos por nivel o por estado (`LevelPill`, `.ref-pill`). */
+:where(.app[data-look="reference"]) .board-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.25rem 0;
+}
+
+/* Como lista (`ul.board-tally`): sin viñeta ni sangría; la cifra de cada píldora, en negrita. */
+:where(.app[data-look="reference"]) ul.board-tally {
+  list-style: none;
+  padding: 0;
+}
+
+:where(.app[data-look="reference"]) .board-pill {
+  --lvl: var(--ref-teal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.5rem;
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"]) .board-pill > .num {
+  font-weight: 600;
+}
+
+/* Fila de piezas (un anillo y su leyenda, una cifra y su barra). */
+:where(.app[data-look="reference"]) .board-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Fichas de cifra en rejilla: las baldosas de `StatTile` repartidas como las tiras de «Inicio». */
+:where(.app[data-look="reference"]) .board-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
+  gap: 0.4rem;
+  margin: 0.3rem 0;
+}
+
+/* Barra de proporción (`ImpactBar`): la pista neutra y el relleno en el color del texto secundario; el
+   amarillo solo cuando el backend dice `concerning` (mapa `data-tone` de arriba). */
+:where(.app[data-look="reference"]) .board-bar {
+  display: flex;
+  height: 0.5rem;
+  min-width: 3rem;
+  overflow: hidden;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--c-line) 80%, transparent);
+}
+
+:where(.app[data-look="reference"]) .board-bar > span {
+  border-radius: 3px;
+  background: var(--c-text-secondary);
+}
+
+/* Tramo sobre una escala (`RangeBar`): el intervalo `low..high` y, si lo hay, el valor real como marca. */
+:where(.app[data-look="reference"]) .board-range {
+  position: relative;
+  display: block;
+  height: 0.5rem;
+  min-width: 3rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--c-line) 80%, transparent);
+}
+
+:where(.app[data-look="reference"]) .board-range > .board-range-span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--c-text-secondary) 70%, transparent);
+}
+
+:where(.app[data-look="reference"]) .board-range > .board-range-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--c-text);
+}
+
+/* Baja visión y alto contraste: las pistas ganan un filete para no depender del relleno. */
+.app[data-low-vision="on"] .board-bar,
+.app[data-low-vision="on"] .board-range,
+.app[data-high-contrast="on"] .board-bar,
+.app[data-high-contrast="on"] .board-range {
+  box-shadow: inset 0 0 0 1px var(--c-text-secondary);
+}
+
+/* El marco de la sección (2026-11-08, «que se parezca bastante más a la de referencia»): en «Inicio»
+   las tarjetas van dentro de un marco con título («Panel global…», `.ref-frame`); las demás secciones
+   empezaban con paneles sueltos. Ahora el cuerpo es ese marco y su primera fila, el título de la
+   sección con su pictograma (`ConsoleTabs.tsx`, solo bajo la concha). Las tarjetas quedan anidadas. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) {
+  padding: 0.45rem 0.55rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 70%, transparent), color-mix(in srgb, var(--ref-navy) 70%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 10px color-mix(in srgb, var(--c-cyan) 16%, transparent);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .board-frame-h {
+  grid-column: 1 / -1;
+  margin: 0 0 0.1rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .board-frame-h .pictogram {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--ref-teal);
+}
+
+/* Formularios dentro de una tarjeta del tablero (2026-11-08): en la columna clásica cada campo ocupaba
+   su renglón con el rótulo delante, y un formulario de tres campos alargaba la tarjeta más que todo
+   su dato. Como en una tarjeta de la maqueta, el rótulo va encima de su campo y los campos se reparten
+   en fila mientras quepan; el mando, debajo a todo el ancho. Los formularios que ya tienen su propia
+   disposición (dolor, diario, nota de Tierra) se quedan como estaban. Mismo alto táctil. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *):has(> label) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  align-items: end;
+}
+
+/* Caja flexible y no rejilla: un rótulo puede llevar más que su campo (la marca que envuelve el
+   selector de protocolo, la nota «solo si el estudio no la trae…»), y en una rejilla de dos pistas
+   esos hijos de más caían en la columna del texto y lo dejaban a una letra por renglón (se vio en
+   «Imagen e informes»). Aquí el dibujo y la palabra van en la primera línea y todo lo demás, cada
+   cosa en la suya, a lo ancho. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *) > label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.35rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *) > label > :not(.pictogram) {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *) > label > :is(input, select, textarea) {
+  width: 100%;
+}
+
+/* El selector dentro de su marca (el dibujo del protocolo elegido delante): en la misma línea. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *) > label > .mark {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *) > label > .mark > select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) .silence-form:not(.diary-form, .ground-note-form):not(.pain-layout *):has(> label) > :not(label) {
+  grid-column: 1 / -1;
+}
+
+/* La letra de las tarjetas, un punto por debajo de la de la consola clásica (2026-11-08): «Inicio»
+   escribe a 0,84 rem y las secciones a 1 rem, y a su lado parecían otra interfaz. Aquí 0,92 rem, por
+   encima del suelo de 0,875 que fija `styles.css`; los títulos, cifras y mandos llevan su tamaño
+   propio en rem y no cambian. En baja visión no se aplica: manda su `zoom`. */
+.app[data-look="reference"]:not([data-low-vision="on"]) .section-body:not(.ref-home) > .slot .panel {
+  font-size: 0.92rem;
+}
+
+/* ==================================================================================================
+ * Lote «muestra» (2026-11-08, Ellande: «está muy lejos todavía de la muestra de ejemplo»; eligió una
+ * pantalla por sección, más color, cabecera y menú como la muestra, y más dibujos). Aquí lo común.
+ * ================================================================================================== */
+
+/* Los acentos de la maqueta, para toda la concha (antes solo en `.ref-home`): las mismas mezclas. */
+.app[data-look="reference"] {
+  --acc-radiation: color-mix(in srgb, var(--c-magenta) 55%, var(--c-blue));
+  --acc-isolation: var(--c-blue);
+  --acc-distance: color-mix(in srgb, var(--c-cyan) 60%, var(--c-green));
+  --acc-gravity: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red));
+  --acc-environment: var(--c-green);
+}
+
+/* El acento de cada sección (adorno: excepción declarada de F.5-1, `compliance/hmi-state-of-the-art.md`
+   §2.5, ampliada el 2026-11-08 de los peligros RIDGE a las secciones). Como los mosaicos de colores de
+   la muestra: cada sección tiene el suyo. No es un nivel ni un estado: lo que significa algo (`.level`,
+   `[data-level]`, `.c-*`, marcas de dato ausente, caducado o no disponible) conserva su color. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) {
+  --sec-acc: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-hazards, #ground-panel-received) {
+  --sec-acc: var(--acc-radiation);
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-routines, #ground-panel-history) {
+  --sec-acc: var(--acc-distance);
+}
+
+:where(.app[data-look="reference"]) #crew-panel-body {
+  --sec-acc: var(--acc-environment);
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-mission, #ground-panel-habitat) {
+  --sec-acc: var(--acc-isolation);
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-data, #ground-panel-trends) {
+  --sec-acc: color-mix(in srgb, var(--c-cyan) 70%, var(--c-blue));
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-log, #ground-panel-framework) {
+  --sec-acc: var(--acc-gravity);
+}
+
+:where(.app[data-look="reference"]) :is(#crew-panel-imaging, #ground-panel-ledger) {
+  --sec-acc: color-mix(in srgb, var(--c-magenta) 40%, var(--c-cyan));
+}
+
+/* El marco de la sección: filete y velo del acento, y el dibujo del título en su color.
+   Ronda 3 (R3-3, 2026-11-08, «todavía se puede asemejar mucho más»): en la muestra los bloques van
+   llenos de color y aquí casi todo era azul marino con filetes finos. El velo del marco sube del 16 %
+   al 30 % desde arriba a la izquierda, con un segundo velo más tenue por abajo a la derecha, y el
+   filete del 55 % al 75 %. El marco solo lleva texto en su título (color de texto: ≥ 6:1 medido). */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) {
+  border-color: color-mix(in srgb, var(--sec-acc) 75%, var(--ref-edge));
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--sec-acc) 30%, transparent), transparent 45%),
+    linear-gradient(340deg, color-mix(in srgb, var(--sec-acc) 12%, transparent), transparent 35%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 70%, transparent), color-mix(in srgb, var(--ref-navy) 70%, transparent));
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--sec-acc) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--sec-acc) 60%, transparent);
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .board-frame-h .pictogram {
+  color: color-mix(in srgb, var(--sec-acc) 75%, var(--c-text));
+}
+
+/* Cada tarjeta: el filete de arriba y un velo bajo el título en el acento de su sección, como la
+   cabecera de los mosaicos de la muestra. Solo `border-top-color`: el filete izquierdo con significado
+   (`.error`, `.delay-banner`, el nivel del resumen) no se toca.
+   Ronda 3: filete de arriba más grueso y con brillo sin mover nada (una sombra interior de 2 px bajo
+   el borde de 1 px y un halo hacia fuera, en vez de `border-top-width`, que empujaría el contenido y
+   pisaría los 2 px de baja visión); una franja del acento de arriba a la izquierda a transparente
+   (24 % en la esquina, con el velo) en los 0,6 rem de margen sobre el título, donde no hay texto; y
+   bajo el título un velo del 9 % que se apaga a los 2,6 rem. Topes medidos (`getComputedStyle` del
+   texto contra el píxel de fondo dominante de su caja, en las 10 secciones, `scratchpad` de R3-3): el
+   secundario de las unidades del título («(/min)») baja de 6:1 con más del 10 % de velo, y el gris
+   «no disponible» se queda en 6:1 justo sobre la tarjeta sin velo, así que detrás de texto no hay más
+   del 9 % y nada a partir de la primera línea de contenido. Lo vivo va en el borde y la franja. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel {
+  border-top-color: color-mix(in srgb, var(--sec-acc) 90%, var(--c-text));
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--sec-acc) 16%, transparent), transparent 75%) top left / 100% 0.6rem no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--sec-acc) 9%, transparent), color-mix(in srgb, var(--sec-acc) 4%, transparent) 2rem, transparent 2.6rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--sec-acc) 85%, transparent),
+    0 -2px 10px -4px color-mix(in srgb, var(--sec-acc) 70%, transparent),
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* El acento nunca detrás de un nivel (§2.5): una tarjeta que lleva una insignia de nivel, un resumen
+   con `data-level`, una píldora de nivel o una marca azul, amarilla o roja (los colores de «vigilar»,
+   «precaución» y «crítico») se queda sin velo: el ámbar de «Diario y pruebas» o el azul de «Misión y
+   hábitat» no deben leerse como el nivel. El filete, su brillo y la franja de 0,6 rem sobre el título
+   (en el margen, sin nada encima) se quedan. */
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel:has(.level, [data-level], .board-pill, .mark.c-blue, .mark.c-yellow, .mark.c-red),
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel[data-level] {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--sec-acc) 16%, transparent), transparent 75%) top left / 100% 0.6rem no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+}
+
+:where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot .panel > h2 .pictogram {
+  color: color-mix(in srgb, var(--sec-acc) 75%, var(--c-text));
+}
+
+/* Mosaico de categoría lleno de color, como «Variables RIDGE – Acceso rápido» de la muestra (fondo
+   teñido violeta, azul, verde, ámbar y verde, texto claro). Clase común para que las secciones la usen
+   en su TSX: `<div className="tile-acc">` toma el acento de su sección (`--sec-acc`), y una variante
+   lo fija por categoría RIDGE: `tile-acc acc-radiation`, `acc-isolation`, `acc-distance`,
+   `acc-gravity`, `acc-environment` (las mezclas de `--acc-*` de arriba). Adorno (§2.5): no se usa para
+   un nivel ni detrás de uno, y el texto va siempre en `--c-text` (el velo tope, 30 %, deja el texto a
+   6,6:1 con el acento más claro, el verde de entorno; con 34 % bajaba a 5,9; un texto de color con
+   significado no va encima).
+   Con alto contraste se queda el fondo liso y el filete. */
+:where(.app[data-look="reference"]) .tile-acc {
+  --tile-acc: var(--sec-acc, var(--ref-teal));
+  border: 1px solid color-mix(in srgb, var(--tile-acc) 80%, var(--c-text));
+  border-radius: 9px;
+  color: var(--c-text);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--tile-acc) 30%, var(--ref-navy)), color-mix(in srgb, var(--tile-acc) 14%, var(--ref-navy)));
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--tile-acc) 30%, transparent),
+    0 0 10px color-mix(in srgb, var(--tile-acc) 30%, transparent);
+}
+
+:where(.app[data-look="reference"]) .tile-acc .pictogram {
+  color: color-mix(in srgb, var(--tile-acc) 55%, var(--c-text));
+}
+
+:where(.app[data-look="reference"]) .tile-acc.acc-radiation {
+  --tile-acc: var(--acc-radiation);
+}
+
+:where(.app[data-look="reference"]) .tile-acc.acc-isolation {
+  --tile-acc: var(--acc-isolation);
+}
+
+:where(.app[data-look="reference"]) .tile-acc.acc-distance {
+  --tile-acc: var(--acc-distance);
+}
+
+:where(.app[data-look="reference"]) .tile-acc.acc-gravity {
+  --tile-acc: var(--acc-gravity);
+}
+
+:where(.app[data-look="reference"]) .tile-acc.acc-environment {
+  --tile-acc: var(--acc-environment);
+}
+
+/* Con alto contraste, sin velos: el texto sobre el fondo de siempre; el filete del acento se queda
+   (y en las tarjetas, su brillo: va en el borde, no detrás del texto). */
+.app[data-look="reference"][data-high-contrast="on"] .section-body:not(.ref-home),
+.app[data-look="reference"][data-high-contrast="on"] .section-body:not(.ref-home) > .slot .panel,
+.app[data-look="reference"][data-high-contrast="on"] .tile-acc {
+  background: var(--c-surface);
+}
+
+.app[data-look="reference"][data-high-contrast="on"] .tile-acc {
+  box-shadow: none;
+}
+
+/* «Ver detalle» (`components/BoardDetail.tsx`) como enlace (cuarta ronda del lote «muestra»,
+   2026-11-08). Era un mando con filete a todo el ancho, y en «Misión» había cinco o seis: la pantalla
+   parecía un formulario. En la maqueta solo hay enlaces finos con chevrón a la derecha («Ver
+   variables detalladas ›»). Ahora: sin filete ni fondo, el dibujo, la palabra y el chevrón en línea
+   (con un rótulo largo partido en dos renglones el chevrón sigue a la última palabra; en caja
+   flexible se iba al borde y la palabra quedaba en medio). El alto táctil sigue siendo `--touch`
+   (lo pone `button.command`) y el foco, el marco verde de siempre (`:focus-visible`). La palabra va
+   en el color del texto; el acento de la sección solo tiñe el dibujo y el chevrón, adorno.
+   Cerrados, varios seguidos en un panel van en una sola fila de enlaces: cada uno es una caja en
+   línea y se colocan uno tras otro (sin tocar los paneles; en una rejilla o en un flex del panel no
+   cambia nada, cada uno sigue en su celda). Abierto, vuelve a ser un bloque y el texto queda debajo
+   del mando, en el mismo sitio que antes.
+   Los selectores repiten `.app[data-look] main … button.command` para ganar a los del mobiliario
+   (`shell/furniture.css`: filete, fondo teñido y anillo del desplegado), que aquí no van. */
+:where(.app[data-look="reference"]) .board-detail {
+  margin-top: 0.25rem;
+}
+
+:where(.app[data-look="reference"]) .board-detail:has(> .board-detail-body[hidden]) {
+  display: inline-block;
+  max-width: 100%;
+  margin-inline-end: 1.5rem;
+  vertical-align: top;
+}
+
+.app[data-look="reference"] main .board-detail > button.command.board-detail-toggle[aria-expanded] {
+  display: inline-block;
+  max-width: 100%;
+  padding-inline: 0.25rem;
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
+  color: var(--c-text);
+  font-size: 0.9375rem;
+  text-align: start;
+}
+
+.app[data-look="reference"] main .board-detail > button.command.board-detail-toggle[aria-expanded] > .pictogram {
+  margin-inline-end: 0.45rem;
+  color: var(--sec-acc, var(--ref-teal));
+}
+
+/* El chevrón es un carácter y no un dibujo nuevo (los `<svg>` viven en `HomeArt`/`HomeCharts`); el
+   texto alternativo vacío lo deja fuera del lector de pantalla. Cerrado va en línea y sin espacio
+   delante (el hueco es un margen): así no hay corte de línea entre la última palabra y él, y con un
+   rótulo partido en dos renglones no se queda solo en el segundo (pasó con «base de la dosis de
+   misión» cuando era una caja en línea). Abierto, gira y apunta abajo (para girar tiene que ser
+   caja). */
+.app[data-look="reference"] main .board-detail > button.command.board-detail-toggle[aria-expanded]::after {
+  content: "›";
+  content: "›" / "";
+  margin-inline-start: 0.4rem;
+  color: var(--sec-acc, var(--ref-teal));
+  font-size: 1.35em;
+  line-height: 1;
+  vertical-align: -0.06em;
+}
+
+.app[data-look="reference"] main .board-detail > button.command.board-detail-toggle[aria-expanded="true"]::after {
+  display: inline-block;
+  transform: rotate(90deg);
+}
+
+.app[data-look="reference"] main .board-detail > button.command.board-detail-toggle[aria-expanded]:hover {
+  background: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 12%, transparent);
+  text-decoration: underline;
+  text-decoration-color: var(--sec-acc, var(--ref-teal));
+  text-underline-offset: 0.2em;
+}
+
+/* Con alto contraste, subrayado siempre, como los enlaces de esa vista (`styles.css`). */
+.app[data-look="reference"][data-high-contrast="on"] main .board-detail > button.command.board-detail-toggle[aria-expanded] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+:where(.app[data-look="reference"]) .board-detail > .board-detail-body:not([hidden]) {
+  margin-top: 0.25rem;
+}

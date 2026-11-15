@@ -1,0 +1,63 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_contrast_phase.py::test_a_redacted_study_takes_no_more_declarations_and_shows_none",
+  "tests/test_contrast_phase.py::test_redacting_a_study_redacts_who_declared_its_phase_each_with_its_tombstone",
+  "tests/test_contrast_phase.py::test_redacting_a_declaration_alone_leaves_the_study",
+  "tests/test_contrast_phase.py::test_its_phases_and_segmentations_are_carried_along_and_nothing_else",
+  "tests/test_contrast_phase.py::test_a_failed_cascade_writes_nothing",
+  "tests/test_contrast_phase.py::test_a_ledger_signed_before_the_cascade_still_verifies_and_now_redacts_both"
+ ],
+ "mutations": [
+  {
+   "label": "redactar el estudio deja en la cadena el nombre de quien declaro su fase",
+   "old": "            cited = self._carried_with_study(ledger_index)",
+   "new": "            cited = []"
+  },
+  {
+   "label": "redactar el estudio arrastra la segmentacion y deja la fase declarada",
+   "old": "_CARRIED_WITH_STUDY = (VOLUME_PHASE_ENTRY_TYPE, VOLUME_SEGMENTATION_ENTRY_TYPE)",
+   "new": "_CARRIED_WITH_STUDY = (VOLUME_SEGMENTATION_ENTRY_TYPE,)"
+  },
+  {
+   "label": "se arrastran asientos que no son fases de contraste ni segmentaciones",
+   "old": "            if entry.entry_type in _CARRIED_WITH_STUDY\n",
+   "new": "            if entry.entry_type != REDACTION_ENTRY_TYPE\n"
+  },
+  {
+   "label": "se arrastran las fases de otro estudio",
+   "old": "            and entry.payload.get(\"study_index\") == ledger_index\n",
+   "new": ""
+  },
+  {
+   "label": "redactar cualquier asiento arrastra fases, no solo un estudio",
+   "old": "        if not (0 <= ledger_index < len(chain)) or (\n            chain[ledger_index].entry_type != VOLUME_STUDY_ENTRY_TYPE\n        ):",
+   "new": "        if not (0 <= ledger_index < len(chain)):"
+  },
+  {
+   "label": "la fase se redacta en memoria y su fila sigue con el nombre en disco",
+   "old": "        if row is not None:\n            row.payload = None\n            row.redacted = True\n        observation_row",
+   "new": "        if row is not None and redaction.target.entry_type != VOLUME_PHASE_ENTRY_TYPE:\n            row.payload = None\n            row.redacted = True\n        observation_row"
+  },
+  {
+   "label": "la lapida de la fase no se escribe en disco",
+   "old": "        session.add(_ledger_row(redaction.tombstone))",
+   "new": "        if redaction.target.entry_type != VOLUME_PHASE_ENTRY_TYPE:\n            session.add(_ledger_row(redaction.tombstone))"
+  },
+  {
+   "label": "la lapida arrastrada no dice de que estudio viene",
+   "old": "                                f\"redactado con el estudio del asiento {ledger_index}: {reason}\",",
+   "new": "                                reason,"
+  },
+  {
+   "label": "el resultado no dice lo que se redacto con el estudio",
+   "old": "                    redaction = replace(redaction, dependents=dependents)",
+   "new": "                    pass"
+  },
+  {
+   "label": "cada fase se redacta en su propio commit: un fallo a mitad deja el estudio a medias",
+   "old": "                            for index in cited\n                        )\n                        session.commit()",
+   "new": "                            for index in cited\n                            if session.commit() is None\n                        )\n                        session.commit()"
+  }
+ ]
+}

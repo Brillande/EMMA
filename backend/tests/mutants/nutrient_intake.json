@@ -1,0 +1,44 @@
+{
+ "target": "app/ingest/codes.py",
+ "test": [
+  "tests/test_nutrient_intake.py",
+  "tests/test_descriptive_indicators.py"
+ ],
+ "mutations": [
+  {
+   "label": "un nutriente ingerido deja de ser descriptivo sin que nada lo note",
+   "old": "    | frozenset(code.key for code in NUTRIENT_INTAKES)",
+   "new": "    | frozenset(code.key for code in NUTRIENT_INTAKES[1:])"
+  },
+  {
+   "label": "el calcio se registra en moles con un código de masa (invariante 2)",
+   "old": "    NUTRIENT_INTAKE_LOINC[\"calcium-intake-daily\"].example_ucum, CodeSystem.LOINC, 10000,\n",
+   "new": "    \"mmol/(24.h)\", CodeSystem.LOINC, 10000,\n"
+  },
+  {
+   "label": "la proteína toma el código de tasa puntual estimada, no el total de 24 horas",
+   "old": "    \"protein-intake-daily\", \"9085-2\", \"Protein intake 24 hour\",\n",
+   "new": "    \"protein-intake-daily\", \"9079-5\", \"Protein intake Estimated\",\n"
+  },
+  {
+   "label": "el sodio se disfraza de LOINC con un método que lo leído no fija",
+   "old": "    \"sodium-intake-daily\", \"sodium-intake-daily\", \"Sodium intake per day\", \"mg/d\",\n    CodeSystem.EMMA, 20000,\n",
+   "new": "    \"sodium-intake-daily\", \"81011-9\", \"Sodium intake 24 hour Estimated\", \"g/(24.h)\",\n    CodeSystem.LOINC, 20000,\n"
+  },
+  {
+   "label": "la vitamina D ingerida se registra en unidades internacionales",
+   "old": "    \"vitamin-d-intake-daily\", \"vitamin-d-intake-daily\", \"Vitamin D intake per day\", \"ug/d\",\n",
+   "new": "    \"vitamin-d-intake-daily\", \"vitamin-d-intake-daily\", \"Vitamin D intake per day\", \"[IU]/d\",\n"
+  },
+  {
+   "label": "un nutriente gana un rango de referencia que nadie leyó",
+   "old": "        concerning=\"low\", physical_min=0, physical_max=high,\n        # Un registro de lo que se come, como la energía y los líquidos: ninguna de las nueve\n",
+   "new": "        concerning=\"low\", physical_min=0, physical_max=high, reference_low=1,\n        reference_basis=ReferenceBasis.GUIDELINE,\n        # Un registro de lo que se come, como la energía y los líquidos: ninguna de las nueve\n"
+  },
+  {
+   "label": "la fecha de la decisión de los nutrientes se pierde",
+   "old": "    **{code.key: NUTRIENT_INTAKE_DECIDED_ON for code in NUTRIENT_INTAKES},\n",
+   "new": "    **{code.key: DESCRIPTIVE_DECIDED_ON for code in NUTRIENT_INTAKES},\n"
+  }
+ ]
+}

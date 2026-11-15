@@ -1,0 +1,303 @@
+{
+ "target": "app/evidence/flight_direction.py",
+ "test": [
+  "tests/test_flight_direction.py"
+ ],
+ "mutations": [
+  {
+   "label": "un literal que no está en su frase se acepta",
+   "old": "    if literal not in quote:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el literal no tiene que decir su sentido",
+   "old": "    if table[direction].search(literal) is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un literal que dice dos sentidos se acepta",
+   "old": "        if other != direction and words.search(literal):",
+   "new": "        if False:"
+  },
+  {
+   "label": "una frase que no habla del vuelo se acepta",
+   "old": "    if _IN_FLIGHT.search(quote) is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una fuente con animales da un sentido",
+   "old": "    if ref.population != \"human\":",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase de una fuente sin lectura declarada se acepta",
+   "old": "    if item[\"ref\"] not in sources:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase sin comparación se acepta",
+   "old": "    for field in (\"id\", \"ref\", \"where\", \"quote\", \"literal\", \"direction\", \"compared_with\",\n                  \"population\"):",
+   "new": "    for field in (\"id\", \"ref\", \"where\", \"quote\", \"literal\", \"direction\", \"population\"):"
+  },
+  {
+   "label": "«discutido» con frases que coinciden",
+   "old": "        if len(found) < 2:",
+   "new": "        if len(found) < 1:"
+  },
+  {
+   "label": "un sentido que sus frases no dicen se acepta",
+   "old": "    if found != {direction}:",
+   "new": "    if not found:"
+  },
+  {
+   "label": "un sentido sin frase leída se acepta",
+   "old": "    if not cited:\n        raise FlightDirectionError(f\"{key}: un sentido sin frase leída es «sin fuente»\")",
+   "new": "    if False:\n        raise FlightDirectionError(f\"{key}: un sentido sin frase leída es «sin fuente»\")"
+  },
+  {
+   "label": "«sin fuente» declarado sin decir dónde se buscó",
+   "old": "        if not _text(item, \"searched\"):\n            # Uno sin declarar ya es «sin fuente»: si se declara, es que se buscó, y dónde.",
+   "new": "        if False:\n            # Uno sin declarar ya es «sin fuente»: si se declara, es que se buscó, y dónde."
+  },
+  {
+   "label": "un indicador fuera del catálogo se acepta",
+   "old": "    if key not in CATALOG:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase leída que ningún indicador usa se calla",
+   "old": "    if unused := sorted(set(statements) - used):",
+   "new": "    if unused := []:"
+  },
+  {
+   "label": "lo no buscado se dice como buscado",
+   "old": "    elif direction == NO_SOURCE and not searched:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "el marco deja de decir que no es lo esperado en esta persona",
+   "old": "    \"Lo que se observó en otros vuelos, no lo esperado en esta persona. Cada sentido sale de una \"",
+   "new": "    \"Lo que se observó en otros vuelos. Cada sentido sale de una \""
+  },
+  {
+   "label": "el bloque no sigue el orden del perfil",
+   "old": "    rows = [for_indicator(key) for key in keys]",
+   "new": "    rows = [for_indicator(key) for key in sorted(keys)]"
+  },
+  {
+   "label": "un literal que habla de después del vuelo se sirve como del vuelo",
+   "old": "    if _AFTER_FLIGHT.search(literal):",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo buscado y no encontrado sin ficha leída se acepta",
+   "old": "    if not isinstance(searched_refs, list) or not searched_refs:",
+   "new": "    if not isinstance(searched_refs, list):"
+  },
+  {
+   "label": "una ficha de lo buscado sin lectura declarada se acepta",
+   "old": "        if ref not in sources:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una ficha declarada que nada usa cuenta como citada",
+   "old": "    if idle := sorted(set(sources) - read_refs):",
+   "new": "    if idle := []:"
+  },
+  {
+   "label": "«reads_speed» que no es verdadero o falso se acepta",
+   "old": "    if not isinstance(reads_speed, bool):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase de rapidez se lee con las palabras del valor",
+   "old": "    table = _SPEED_WORDS if reads_speed else _DIRECTION_WORDS",
+   "new": "    table = _SPEED_WORDS if reads_speed is None else _DIRECTION_WORDS"
+  },
+  {
+   "label": "una frase de rapidez con palabras del valor se acepta",
+   "old": "    if reads_speed and any(\n        _DIRECTION_WORDS[name].search(literal)",
+   "new": "    if False and any(\n        _DIRECTION_WORDS[name].search(literal)"
+  },
+  {
+   "label": "una frase de rapidez da el sentido de un indicador que no es un tiempo de reacción",
+   "old": "        if statements[ref].get(\"reads_speed\") and key not in REACTION_TIME:",
+   "new": "        if False:"
+  },
+  {
+   "label": "lo leído también, sin decir qué dice",
+   "old": "        if not _text(item, \"searched\"):\n            raise FlightDirectionError(f\"{key}: lo leído también sin decir qué dice\")",
+   "new": "        if False:\n            raise FlightDirectionError(f\"{key}: lo leído también sin decir qué dice\")"
+  },
+  {
+   "label": "lo leído también, sin su ficha",
+   "old": "        also = _validate_searched(key, item, sources, \"lo leído también\")",
+   "new": "        also: list[str] = []"
+  },
+  {
+   "label": "una fecha de fuente que no es fecha se acepta",
+   "old": "    sources = check_sources(raw, FlightDirectionError, EXTENTS, own_read_on=_check_date)",
+   "new": "    sources = check_sources(raw, FlightDirectionError, EXTENTS)"
+  },
+  {
+   "label": "cada frase se sirve con la fecha del fichero y no la suya",
+   "old": "    return str(item.get(\"read_on\") or _source_read_on(item[\"ref\"]))",
+   "new": "    return str(read()[\"read_on\"])"
+  },
+  {
+   "label": "lo leído también se dice como buscado y no encontrado",
+   "old": "    prefix = SEARCHED_PREFIX if direction == NO_SOURCE else ALSO_READ_PREFIX",
+   "new": "    prefix = SEARCHED_PREFIX"
+  },
+  {
+   "label": "«less» deja de decir que baja",
+   "old": "diminished|loss|lower|less)",
+   "new": "diminished|loss|lower)"
+  },
+  {
+   "label": "«microG» deja de nombrar el vuelo",
+   "old": "ISS\\d*|micro-?G)",
+   "new": "ISS\\d*)"
+  },
+  {
+   "label": "la fecha de la frase cede a la de su fuente",
+   "old": "    return str(item.get(\"read_on\") or _source_read_on(item[\"ref\"]))",
+   "new": "    return str(_source_read_on(item[\"ref\"]))"
+  },
+  {
+   "label": "una fecha de frase que no es fecha se acepta",
+   "old": "        _check_date(item[\"read_on\"], key)",
+   "new": "        pass"
+  },
+  {
+   "label": "una frase de rapidez sin declarar se lee con las palabras del valor",
+   "old": "    if not reads_speed and _SPEED_TALK.search(literal):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una palabra de sentido negada se acepta",
+   "old": "    if _negated(literal, direction) or _negated_before(quote, literal):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el día del regreso (R+0) pasa por vuelo",
+   "old": "upon return|recovery|R\\s?\\+\\s?\\d+)",
+   "new": "upon return|recovery)"
+  },
+  {
+   "label": "la fuente que da la frase sale también como leída sin sentido",
+   "old": "        if overlap := sorted(set(also) & {statements[ref][\"ref\"] for ref in cited}):",
+   "new": "        if overlap := []:"
+  },
+  {
+   "label": "el bloque no cuenta la fecha de las frases",
+   "old": "            [row[\"read_on\"] for item in rows for row in item[\"statements\"]]\n            + [day",
+   "new": "            [day"
+  },
+  {
+   "label": "una fecha compacta («20991231») se acepta",
+   "old": "    if not isinstance(value, str) or _DATE.fullmatch(value) is None:",
+   "new": "    if not isinstance(value, str):"
+  },
+  {
+   "label": "un «sin cambio» negado se acepta",
+   "old": "    return _NEGATION.search(literal) is not None",
+   "new": "    return direction != \"unchanged\" and _NEGATION.search(literal) is not None"
+  },
+  {
+   "label": "«speeds» deja de hablar de rapidez",
+   "old": "    r\"speed(?:s|ed|ier)?)\\b\",",
+   "new": "    r\"speed)\\b\","
+  },
+  {
+   "label": "«failed to» deja de negar",
+   "old": "without|cannot|fail(?:ed|s|ing)?\\s+to)",
+   "new": "without|cannot)"
+  },
+  {
+   "label": "una frase de un análogo en tierra pasa por vuelo",
+   "old": "    if _GROUND_ANALOG.search(quote):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el bloque no cuenta la fecha de lo buscado",
+   "old": "            + [day for item in rows for day in item[\"searched_read_on\"]],\n",
+   "new": "            + [],\n"
+  },
+  {
+   "label": "el bloque vuelve a contar la fecha del fichero aunque no se enseñe",
+   "old": "            [row[\"read_on\"] for item in rows for row in item[\"statements\"]]\n",
+   "new": "            [read()[\"read_on\"]]\n            + [row[\"read_on\"] for item in rows for row in item[\"statements\"]]\n"
+  },
+  {
+   "label": "una negación justo antes del literal se acepta",
+   "old": "    if _negated(literal, direction) or _negated_before(quote, literal):",
+   "new": "    if _negated(literal, direction):"
+  },
+  {
+   "label": "un literal que sitúa el cambio antes del vuelo se acepta",
+   "old": "    if _BEFORE_FLIGHT.search(literal):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un tiempo de reacción se lee de una frase que no habla de rapidez ni de tiempo",
+   "old": "                and _TIME_TALK.search(statements[ref][\"literal\"]) is None):",
+   "new": "                and False):"
+  },
+  {
+   "label": "una ficha repetida en lo buscado se acepta",
+   "old": "    if len(set(searched_refs)) != len(searched_refs):",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo buscado no dice cuánto se leyó",
+   "old": "            EXTENTS[read()[\"sources\"][ref][\"extent\"]] for ref in searched_refs\n",
+   "new": "            \"\" for ref in searched_refs\n"
+  },
+  {
+   "label": "una frase entre grupos se lee como sentido en vuelo",
+   "old": "    if _GROUP_COMPARISON.search(_clause(quote, literal)):",
+   "new": "    if False:"
+  },
+  {
+   "label": "«no significant differences» no dice «sin cambio»",
+   "old": "r\"no (?:statistically )?(?:significant )?differences?)\\b\",",
+   "new": "r\"no changes? at all)\\b\","
+  },
+  {
+   "label": "«after space flight» en dos palabras no cuenta como después del vuelo",
+   "old": "r\"after (?:the )?(?:flight|landing|return|space[ -]?flight)|\"",
+   "new": "r\"after (?:the )?(?:flight|landing|return|spaceflight)|\""
+  },
+  {
+   "label": "«post space flight» en dos palabras no cuenta como después del vuelo",
+   "old": "r\"\\b(post[- ]?(?:space[ -]?)?flight|post-?mission|\"",
+   "new": "r\"\\b(post-?flight|post-?mission|\""
+  },
+  {
+   "label": "la comparación entre grupos solo se mira dentro del literal",
+   "old": "    if _GROUP_COMPARISON.search(_clause(quote, literal)):",
+   "new": "    if _GROUP_COMPARISON.search(literal):"
+  },
+  {
+   "label": "la comparación entre grupos solo se mira en un «sin cambio»",
+   "old": "    if _GROUP_COMPARISON.search(_clause(quote, literal)):",
+   "new": "    if direction == \"unchanged\" and _GROUP_COMPARISON.search(_clause(quote, literal)):"
+  },
+  {
+   "label": "«between preflight and inflight» se lee como comparación entre grupos",
+   "old": "r\"\\b(between|among|amongst)\\b(?!\\s+(?:the\\s+)?(?:(?:study|flight|mission)\\s+)?\"",
+   "new": "r\"\\b(between|among|amongst)\\b(?!\\s+(?:the\\s+)?(?:(?:study|flight|mission)\\s+)?ZZZ\""
+  },
+  {
+   "label": "«no statistically significant differences» no dice «sin cambio»",
+   "old": "r\"no (?:statistically )?(?:significant )?differences?)\\b\",",
+   "new": "r\"no (?:significant )?differences?)\\b\","
+  },
+  {
+   "label": "«not significantly altered» no dice «sin cambio»",
+   "old": "r\"not (?:significantly )?(?:different|altered)|\"",
+   "new": "r\"not (?:significantly )?different|\""
+  }
+ ]
+}

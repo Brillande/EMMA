@@ -1,0 +1,196 @@
+/*
+ * La concha de la maqueta (`App` con `look="reference"`; decisión del usuario, 2026-11-07): el fondo,
+ * la franja, el carril y las tarjetas de la maqueta «Panel EMMA: Rutas Espaciales y Salud» sobre el
+ * mismo armazón de la consola (la franja F.4.2, `ConsoleTabs`, los paneles con `data-ui`). Solo se
+ * aplica bajo `.app[data-look="reference"]`: la concha clásica (`#clasica`) no cambia. Degradados,
+ * resplandores y colores de adorno son una desviación consciente de NASA-STD-3001 F.5.10, declarada
+ * en `compliance/hmi-state-of-the-art.md`; los colores salen de mezclas de la paleta. Las variables
+ * `--ref-*` son las de `referenceDashboard.css`, que viste las piezas de «Inicio».
+ */
+
+.app[data-look="reference"] {
+  --ref-navy: color-mix(in srgb, var(--c-blue) 10%, var(--c-bg));
+  --ref-card: color-mix(in srgb, var(--c-blue) 13%, var(--c-surface));
+  --ref-edge: color-mix(in srgb, var(--c-cyan) 45%, color-mix(in srgb, var(--c-blue) 40%, var(--c-line)));
+  --ref-glow: color-mix(in srgb, var(--c-cyan) 22%, transparent);
+  --ref-teal: color-mix(in srgb, var(--c-cyan) 45%, var(--c-blue));
+  position: relative;
+  /* El fondo (estrellas, Tierra) sobresale por los lados y se recorta con `clip`, no con `hidden`:
+     `hidden` convierte `.app` en contenedor de desplazamiento y la franja y el carril, que son `sticky`
+     respecto a la ventana (`styles.css`), se iban con la página al bajar (medido: la franja a -694 px
+     tras 700 px de desplazamiento; hallazgo de la revisión de la unidad 1, 2026-11-07). */
+  overflow-x: clip;
+  color: var(--c-text);
+  background:
+    radial-gradient(ellipse 70% 50% at 75% -10%, color-mix(in srgb, var(--c-blue) 18%, transparent), transparent 70%),
+    var(--ref-navy);
+}
+
+/* El fondo (estrellas, Tierra de noche) detrás; la franja, la barra, la página y el pie «Acerca de»,
+   delante (la Tierra está abajo a la izquierda, justo donde empieza el pie: sin esto lo tapaba;
+   hallazgo de la revisión de la unidad 10). */
+.app[data-look="reference"] > nav.tabs,
+.app[data-look="reference"] > main,
+.app[data-look="reference"] > .about {
+  position: relative;
+  z-index: 1;
+}
+
+/* Franja: el mismo contenido, sobre el fondo de la maqueta, con su logotipo delante de «EMMA». */
+.app[data-look="reference"] .strip {
+  background: color-mix(in srgb, var(--ref-navy) 88%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 50%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.app[data-look="reference"] .strip .title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.35rem;
+  letter-spacing: 0.03em;
+}
+
+.app[data-look="reference"] .strip .ref-logo {
+  flex: none;
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+/* Cada celda de la franja como las fichas de la cabecera de la maqueta (el selector de ubicación, la
+   ficha «C-01»): una caja con el filete y el fondo azul marino de las tarjetas, en vez de texto
+   suelto sobre la barra (2026-11-08, «que se parezca bastante más a la referencia»). Solo la caja:
+   el rótulo, la cifra, su color y su marca no cambian, y el alto sigue siendo el táctil. */
+.app[data-look="reference"] .strip .cell {
+  padding: 0.1rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-card) 55%, transparent);
+  box-shadow: 0 0 8px var(--ref-glow) inset;
+}
+
+.app[data-look="reference"] nav.tabs {
+  background: transparent;
+  border: 0;
+}
+
+/* A todo el ancho, como la muestra: su carril va pegado al borde izquierdo y las tarjetas llegan al
+   derecho. `styles.css` centra `main` con un tope de 1400 px (lo que conviene a la clásica, que es
+   texto corrido): a 1672 px dejaba ~136 px vacíos a cada lado, y a 1920 px, 260 (2026-11-08, lote
+   «muestra», ronda 3). Aquí no hay tope: las rejillas de sección se ensanchan solas porque se miden con
+   consultas de contenedor, y el margen lateral es el de la franja (0,6 rem). */
+.app[data-look="reference"] main {
+  max-width: none;
+  margin: 0;
+  padding: 0.4rem 0.6rem 0.5rem;
+}
+
+/* Carril: la barra lateral de la maqueta, con el conmutador de consola en lo alto (`RailTopContext`). */
+.app[data-look="reference"] .console-layout {
+  grid-template-columns: 15.5rem minmax(0, 1fr);
+  gap: 0.6rem;
+}
+
+.app[data-look="reference"] .rail {
+  padding: 0.3rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+.app[data-look="reference"] .rail-top .console-switch {
+  display: grid;
+  gap: 0;
+  margin-bottom: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+.app[data-look="reference"] .rail-tabs {
+  gap: 0;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"],
+.app[data-look="reference"] .rail-tabs > button[role="tab"] {
+  display: grid;
+  gap: 0.2rem;
+  align-content: center;
+  min-height: var(--touch);
+  padding: 0.48rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--c-text);
+  font: inherit;
+  font-size: 1.05rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] + button[role="tab"],
+.app[data-look="reference"] .rail-tabs > button[role="tab"] + button[role="tab"] {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] > .mark,
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .mark {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] > .mark > .pictogram,
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .mark > .pictogram {
+  flex: none;
+  width: 1.45rem;
+  height: 1.45rem;
+  color: var(--ref-teal);
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"][aria-selected="true"],
+.app[data-look="reference"] .rail-tabs > button[role="tab"][aria-selected="true"] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ref-teal) 45%, var(--c-surface)), color-mix(in srgb, var(--ref-teal) 20%, var(--c-surface)));
+  font-weight: 600;
+  box-shadow: 0 0 14px var(--ref-glow);
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"][aria-selected="true"] > .mark > .pictogram,
+.app[data-look="reference"] .rail-tabs > button[role="tab"][aria-selected="true"] > .mark > .pictogram {
+  color: var(--c-text);
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"]:hover,
+.app[data-look="reference"] .rail-tabs > button[role="tab"]:hover {
+  background: var(--c-raised);
+}
+
+.app[data-look="reference"] .rail-header,
+.app[data-look="reference"] .display-controls {
+  border-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* Paneles de las demás secciones: la tarjeta de la maqueta, con el mismo marco que las de «Inicio».
+   Con `:where()` y solo `border-color`: el prefijo no suma especificidad y el atajo `border` arrastraría
+   el grosor, así que los 2 px de baja visión y alto contraste (`styles.css`) siguen ganando (hallazgo
+   de la revisión de la unidad 2, 2026-11-07). */
+:where(.app[data-look="reference"]) .panel {
+  border-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* Los paneles con un filete izquierdo que significa algo y que `styles.css` pone a la misma
+   especificidad que el marco de arriba (`.error`, rojo; `.delay-banner`, el cian del retardo): el
+   `border-color` del marco, cargado después, se lo tapaba (hallazgo de la revisión de la unidad 11).
+   El filete del nivel (`.summary[data-level]`) no lo necesita: ya gana por especificidad. */
+:where(.app[data-look="reference"]) .panel.error {
+  border-left-color: var(--c-red);
+}
+
+:where(.app[data-look="reference"]) .panel.delay-banner {
+  border-left-color: var(--c-cyan);
+}

@@ -1,0 +1,258 @@
+{
+  "target": "../compliance/software-safety-classification.md",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "una herramienta que EMMA carga se queda sin fila en la ficha",
+      "old": "| `estado_rutina` | `clasificar()`",
+      "new": "| estado_rutina | `clasificar()`"
+    },
+    {
+      "label": "la ficha da fila a una herramienta de la copia que EMMA no carga",
+      "old": "| `sintomas` |",
+      "new": "| `salida` |"
+    },
+    {
+      "label": "la ficha nombra una herramienta que no está en polaris/tools",
+      "old": "| `kb_embed` |",
+      "new": "| `kb_embeds` |"
+    },
+    {
+      "label": "el módulo que la fila cita no llama a la herramienta",
+      "old": "| `app/pain/alarm.py` |",
+      "new": "| `app/pain/catalog.py` |"
+    },
+    {
+      "label": "la fila calla un módulo que sí llama a la herramienta",
+      "old": ", `app/volumes/spine.py` |",
+      "new": " |"
+    },
+    {
+      "label": "la fila cita una prueba de EMMA que no existe",
+      "old": "| `tests/test_routines.py`;",
+      "new": "| `tests/test_routine.py`;"
+    },
+    {
+      "label": "la fila cita una campaña de mutantes que no existe",
+      "old": "mutantes `routines.json` | `test_estado_rutina.py`",
+      "new": "mutantes `routine.json` | `test_estado_rutina.py`"
+    },
+    {
+      "label": "la fila cita una campaña que no corre ninguna prueba de esa fila",
+      "old": "`pain_alarm.json`",
+      "new": "`waiting.json`"
+    },
+    {
+      "label": "una fila se queda sin prueba de EMMA y no lo dice",
+      "old": "| `tests/test_waiting.py`; mutantes `waiting.json` |",
+      "new": "| Las de su panel |"
+    },
+    {
+      "label": "la ficha da por verde una prueba de Polaris que está saltada",
+      "old": "`polaris_halt.json` | `test_borde.py` saltada",
+      "new": "`polaris_halt.json` | `test_borde.py` verde"
+    },
+    {
+      "label": "la ficha cita una prueba de Polaris que no está en la copia",
+      "old": "`test_cronica.py` verde",
+      "new": "`test_cronicas.py` verde"
+    },
+    {
+      "label": "la ficha cita una prueba de Polaris sin decir su resultado",
+      "old": "`decoys.json` | `test_canarios.py` verde",
+      "new": "`decoys.json` | `test_canarios.py`, que corre"
+    },
+    {
+      "label": "la fila enseña la prueba verde y calla la roja que la herramienta declara como suya",
+      "old": "`test_identidad_paciente.py` roja; `test_identidad_tabla.py` verde",
+      "new": "`test_identidad_tabla.py` verde"
+    },
+    {
+      "label": "la fila dice que no hay prueba propia cuando la copia la trae",
+      "old": "| `test_anticipa.py` verde |",
+      "new": "| Ninguna propia en la copia |"
+    },
+    {
+      "label": "la ficha cita un peligro que no está en el expediente de riesgos",
+      "old": "pasa por buena y respalda una contramedida (H20)",
+      "new": "pasa por buena y respalda una contramedida (H99)"
+    },
+    {
+      "label": "el documento fija como vigente un commit que no es el adoptado",
+      "old": "(`polaris/ADOPTADO.txt`), cada fichero se vigila",
+      "new": "(`polaris/ADOPTADO.txt`, hoy `e3b588d`), cada fichero se vigila"
+    },
+    {
+      "label": "el origen del código adaptado pasa a ser un commit que sus cabeceras no citan",
+      "old": "a partir del commit `7bf47257`",
+      "new": "a partir del commit `e3b588d`"
+    },
+    {
+      "label": "el documento vuelve a decir que la copia literal no es SOUP",
+      "old": "**La copia literal (`polaris/`) es SOUP.**",
+      "new": "**La copia literal (`polaris/`) no es SOUP.**"
+    },
+    {
+      "label": "vuelve el titular del apartado anterior, con Polaris fuera de la lista de SOUP",
+      "old": "**Polaris: la copia literal es SOUP; lo adaptado a mano es código de EMMA**",
+      "new": "**Código de terceros incorporado, no SOUP: Polaris**"
+    },
+    {
+      "label": "una fila del borrador de interpretación baja de la Clase C",
+      "old": "| `app/interpret/draft.py` | C |",
+      "new": "| `app/interpret/draft.py` | B |"
+    },
+    {
+      "label": "una fila se queda con la clase sin escribir",
+      "old": "| `app/routines.py` | B |",
+      "new": "| `app/routines.py` | |"
+    },
+    {
+      "label": "una fila pierde la † aunque su módulo sigue sin fila en la tabla de elementos",
+      "old": "| `app/evidence/vault.py` | B† |",
+      "new": "| `app/evidence/vault.py` | B |"
+    },
+    {
+      "label": "una fila lleva † cuando todos sus módulos tienen clase propia",
+      "old": "| `app/reports/ocr.py` | B |",
+      "new": "| `app/reports/ocr.py` | B† |"
+    },
+    {
+      "label": "la nota de la † deja de nombrar un módulo que no tiene fila en la tabla de elementos",
+      "old": "`app/evidence/vault.py` y `app/evidence/source_check.py`",
+      "new": "`app/evidence/vault.py`"
+    },
+    {
+      "label": "una fila deja sin escribir qué pasa si la herramienta falla",
+      "old": "Si ese texto cambiara o quedara vacío, un dato del registro podría dar instrucciones al modelo que redacta (H14)",
+      "new": "Ver arriba"
+    },
+    {
+      "label": "una frase suelta vuelve a afirmar que Polaris no se trata como SOUP",
+      "old": "Las dos mitades obligan a lo mismo en un punto:",
+      "new": "Polaris no se trata como SOUP. Las dos mitades obligan a lo mismo en un punto:"
+    },
+    {
+      "label": "vuelve la frase con que el apartado anterior dejaba a Polaris fuera",
+      "old": "Hasta esa fecha este documento dejaba a Polaris fuera de la lista porque",
+      "new": "No se trata como SOUP porque no se usa tal cual. Hasta esa fecha este documento dejaba a Polaris fuera de la lista porque"
+    },
+    {
+      "label": "una biblioteca que importa una herramienta en uso se queda sin ficha en la lista de SOUP",
+      "old": "| `reportlab` | 5.0.1 |",
+      "new": "| reportlab | 5.0.1 |"
+    },
+    {
+      "label": "el documento da de un entorno aparte una versión que su guion no instala",
+      "old": "`transformers` 5.18.0",
+      "new": "`transformers` 5.17.0"
+    },
+    {
+      "label": "una prueba de Polaris saltada sobre una herramienta en uso se queda sin explicar",
+      "old": "| `guarda_memoria` | `test_guarda_memoria.py` saltada",
+      "new": "| guarda_memoria | `test_guarda_memoria.py` saltada"
+    },
+    {
+      "label": "la tabla de anomalías da de una prueba un resultado que no es el medido",
+      "old": "`test_fuente_clinica.py` roja: crear",
+      "new": "`test_fuente_clinica.py` saltada: crear"
+    },
+    {
+      "label": "la tabla de anomalías calla una de las pruebas rojas de la herramienta",
+      "old": "`test_seguimiento_objetivo_ned.py` roja y `test_seguimiento.py` saltada",
+      "new": "`test_seguimiento.py` saltada"
+    },
+    {
+      "label": "una herramienta sigue entre las anomalías cuando su fila ya no cita ninguna prueba que falle",
+      "old": "`test_cumbre.py` verde; `test_cumbre_integridad.py` saltada",
+      "new": "`test_cumbre.py` verde"
+    },
+    {
+      "label": "desaparece la marca que abre la tabla de anomalías",
+      "old": "<!-- soup-polaris:anomalias -->\n",
+      "new": ""
+    },
+    {
+      "label": "desaparece la marca que separa lo que se carga por su nombre de lo que llega aparte",
+      "old": "<!-- soup-polaris:otro-camino -->\n",
+      "new": ""
+    },
+    {
+      "label": "una fila deja de escribir un nombre privado que EMMA le pide a la herramienta",
+      "old": "`_malla`, `_caja_de`, `_taubin`",
+      "new": "`_malla`, `_taubin`"
+    },
+    {
+      "label": "una fila describe una costura sustituida sin escribir su nombre",
+      "old": "qué es la misma muestra (`muestra_de`)",
+      "new": "qué es la misma muestra"
+    },
+    {
+      "label": "la ficha vuelve a decir que los cerebros de nube no se copian",
+      "old": "**Los cerebros de nube sí están en la copia**: el",
+      "new": "Los cerebros de nube ni se registran ni se copian: el"
+    },
+    {
+      "label": "la ficha da por copiado un módulo de nube que no está en la copia",
+      "old": "(`carril_gratis`, `nvidia`, `fugu`)",
+      "new": "(`carril_gratis`, `nvidia`, `chatgpt`)"
+    },
+    {
+      "label": "vuelve la frase de que lo que publica Polaris está sin revisar",
+      "old": "Hablan de su sistema entero. Aquí van",
+      "new": "Hablan de su sistema entero y no se han revisado una a una contra las filas de arriba. Aquí van"
+    },
+    {
+      "label": "la tabla de lo publicado lista una herramienta sin fila en la ficha",
+      "old": "| `honestidad_lint` | `CHANGELOG.md`",
+      "new": "| `salida` | `CHANGELOG.md`"
+    },
+    {
+      "label": "una evaluación de lo publicado se queda sin decir qué prueba de EMMA lo vigila",
+      "old": "ni el análisis (`tests/test_knowledge.py`) |\n| `local` | `lo-que-falta.md`",
+      "new": "ni el análisis |\n| `local` | `lo-que-falta.md`"
+    },
+    {
+      "label": "una evaluación de lo publicado cita una prueba de EMMA que no existe",
+      "old": "(`tests/test_citations.py`, mutantes `polaris_verifica_citas.json`)",
+      "new": "(`tests/test_citas.py`, mutantes `polaris_verifica_citas.json`)"
+    },
+    {
+      "label": "una evaluación de lo publicado da de una prueba de Polaris un resultado que no es el medido",
+      "old": "tienen prueba (`test_estado_rutina.py` verde)",
+      "new": "tienen prueba (`test_estado_rutina.py` roja)"
+    },
+    {
+      "label": "una evaluación de lo publicado pierde su veredicto",
+      "old": "| **No**: EMMA llama solo a `_limpia_doi()`.",
+      "new": "| EMMA llama solo a `_limpia_doi()`."
+    },
+    {
+      "label": "desaparece la marca que abre la tabla de lo que publica Polaris",
+      "old": "<!-- soup-polaris:publicadas -->\n",
+      "new": ""
+    },
+    {
+      "label": "la ficha calla la herramienta que lanza un proceso al importarse",
+      "old": "| `rodaje_muro` | **Proceso.**",
+      "new": "| rodaje_muro | **Proceso.**"
+    },
+    {
+      "label": "la ficha declara de una herramienta, al importarse, algo que no se mide",
+      "old": "| `rodaje_muro` | **Proceso.** Para",
+      "new": "| `rodaje_muro` | **Proceso.** **Disco.** Para"
+    },
+    {
+      "label": "la ficha atribuye lo que pasa al importar a una herramienta que no lo hace",
+      "old": "| `rodaje_muro` | **Proceso.** Para dar",
+      "new": "| `kpi_ned` | **Proceso.** Para dar"
+    },
+    {
+      "label": "desaparece la marca que abre la tabla de lo que pasa al importar",
+      "old": "<!-- soup-polaris:al-importar -->\n",
+      "new": ""
+    }
+  ]
+}

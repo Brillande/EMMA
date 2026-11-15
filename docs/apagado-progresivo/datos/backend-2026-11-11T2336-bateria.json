@@ -1,0 +1,61 @@
+{
+ "fuente": "bateria-2026-11-11T2331.csv",
+ "fases": [
+  {
+   "fase": "arrancar_backend",
+   "duracion_s": 1.63,
+   "muestras": 2,
+   "equipo_w_media": 55.23,
+   "equipo_julios": 89.8
+  },
+  {
+   "fase": "backend_reposo_sin_datos",
+   "duracion_s": 20.0,
+   "muestras": 19,
+   "equipo_w_media": 54.87,
+   "equipo_julios": 1097.5
+  },
+  {
+   "fase": "simular_mision",
+   "duracion_s": 4.25,
+   "muestras": 4,
+   "equipo_w_media": 65.45,
+   "equipo_julios": 278.0
+  },
+  {
+   "fase": "status_x5",
+   "duracion_s": 7.31,
+   "muestras": 7,
+   "equipo_w_media": 70.96,
+   "equipo_julios": 519.0
+  },
+  {
+   "fase": "backend_reposo_con_datos",
+   "duracion_s": 20.0,
+   "muestras": 19,
+   "equipo_w_media": 51.14,
+   "equipo_julios": 1022.9
+  },
+  {
+   "fase": "busqueda_semantica_1",
+   "duracion_s": 115.91,
+   "muestras": 110,
+   "equipo_w_media": 68.28,
+   "equipo_julios": 7915.2
+  },
+  {
+   "fase": "busqueda_semantica_2",
+   "duracion_s": 0.16,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "backend_reposo_final",
+   "duracion_s": 15.0,
+   "muestras": 15,
+   "equipo_w_media": 46.01,
+   "equipo_julios": 690.2
+  }
+ ]
+}

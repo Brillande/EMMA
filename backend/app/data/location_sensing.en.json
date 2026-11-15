@@ -1,0 +1,22 @@
+{
+  "strings": {
+    "Parámetros de la estimación del módulo por las anclas de módulo (`app/analysis/location.py`). Ninguno tiene respaldo para un módulo metálico en vuelo: se calibran en cada nave.": "Parameters of the module estimate from the module anchors (`app/analysis/location.py`). None is backed for a metal module in flight: they are calibrated on each ship.",
+    "Sin respaldo: calibrar en cada nave. La ventana, el margen, la permanencia, la caducidad y el umbral de señal son parámetros de diseño de EMMA. La precisión de zona con BLE medida en Tierra (71-85 %, con los errores en las fronteras entre zonas) no se traslada a un módulo metálico, donde el multitrayecto y el cuerpo de quien lleva el receptor atenúan y reflejan la señal.": "No backing: calibrate on each ship. The window, the margin, the dwell time, the expiry and the signal threshold are EMMA design parameters. The zone accuracy of BLE measured on Earth (71-85 %, with the errors at the borders between zones) does not carry over to a metal module, where multipath and the body of whoever carries the receiver attenuate and reflect the signal.",
+    "La ubicación es un módulo de la lista declarada (`habitat_modules.json`), no una observación clínica: no lleva código LOINC ni código propio y no entra en el catálogo de indicadores ni en el análisis.": "The location is a module from the declared list (`habitat_modules.json`), not a clinical observation: it carries no LOINC code and no code of its own, and it enters neither the indicator catalogue nor the analysis.",
+    "Las anclas son equipo de la nave, certificado y alimentado por ella (el patrón de REALM-1 y de DLR Wireless Compose). EMMA no añade emisores ni pilas: el wearable o la pasarela solo escuchan. Detalle de la viabilidad en `compliance/location-sensing-feasibility.md`.": "The anchors are ship equipment, certified and powered by the ship (the pattern of REALM-1 and DLR Wireless Compose). EMMA adds no emitters or batteries: the wearable or the gateway only listen. Feasibility detail in `compliance/location-sensing-feasibility.md`.",
+    "NASA JSC, balizas BLE fijas para situar un iPad a bordo (NTRS 20190001027)": "NASA JSC, fixed BLE beacons to locate an iPad on board (NTRS 20190001027)",
+    "Balizas BLE fijas con pila de cinco años y posición de 50-100 cm, con la motivación de saber la posición en la ISS. Probado solo en Tierra; en NSRL hubo reinicios y un latch-up hacia 7 Gy.": "Fixed BLE beacons with a five-year battery and a position of 50-100 cm, motivated by knowing the position on the ISS. Tested on Earth only; at NSRL there were resets and a latch-up at about 7 Gy.",
+    "REALM-1: RFID de carga con lectores fijos en Node 1, Node 2 y el laboratorio de EE. UU.": "REALM-1: cargo RFID with fixed readers in Node 1, Node 2 and the US laboratory",
+    "Localización por anclas fijas de la nave en operación en la ISS. No usa el RSSI, por el multitrayecto.": "Location by fixed ship anchors in operation on the ISS. It does not use RSSI, because of multipath.",
+    "DLR Wireless Compose: UWB en Columbus (2018-2019)": "DLR Wireless Compose: UWB in Columbus (2018-2019)",
+    "Cinco anclas UWB y dos etiquetas en el astronauta. Voló; no publica precisión. Es la alternativa con vuelo documentado.": "Five UWB anchors and two tags on the astronaut. It flew; it does not publish accuracy. It is the alternative with documented flight.",
+    "Precisión de zona con BLE en interiores (Hadian 2023; Kiarashi 2023)": "Zone accuracy with BLE indoors (Hadian 2023; Kiarashi 2023)",
+    "71-85 % de acierto de zona en Tierra, con los errores en las fronteras.": "71-85 % zone hit rate on Earth, with the errors at the borders.",
+    "Precisión de zona con BLE dentro de un módulo metálico": "Zone accuracy with BLE inside a metal module",
+    "Sin fuente que la mida.": "No source that measures it.",
+    "Restricciones de vuelo: EMC (SSP 30237, MIL-STD-461) y baterías (JSC 20793)": "Flight constraints: EMC (SSP 30237, MIL-STD-461) and batteries (JSC 20793)",
+    "Todo equipo comercial pasa EMC y toda batería, JSC 20793: por eso las anclas son de la nave y EMMA no añade emisores.": "All commercial equipment goes through EMC and every battery through JSC 20793: that is why the anchors belong to the ship and EMMA adds no emitters.",
+    "leído": "read",
+    "no verificado": "not verified"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "target": "scripts/polaris_left_out.py",
+  "test": ["tests/test_polaris_left_out.py"],
+  "mutations": [
+    {
+      "label": "una herramienta copiada puede figurar también como no copiada",
+      "old": "        both=sorted(copied_tools & declared),",
+      "new": "        both=[],"
+    },
+    {
+      "label": "una herramienta de Polaris puede quedar sin copiar y sin nombrar",
+      "old": "        undeclared=sorted(tools - copied_tools - declared),",
+      "new": "        undeclared=[],"
+    },
+    {
+      "label": "un nombre que Polaris ya no tiene se queda en la lista",
+      "old": "        stale=sorted(declared - tools),",
+      "new": "        stale=[],"
+    },
+    {
+      "label": "una herramienta nombrada dos veces pasa por una",
+      "old": "        repeated=sorted(name for name, times in Counter(names).items() if times > 1),",
+      "new": "        repeated=[],"
+    },
+    {
+      "label": "una carpeta vale por otra que la contiene en su nombre",
+      "old": "    whole = rf\"(?<![\\w.-]){re.escape(entry)}(?![\\w-]|\\.\\w)\"",
+      "new": "    whole = re.escape(entry)"
+    },
+    {
+      "label": "una línea de continuación cuenta como herramienta",
+      "old": "TOOL_LINE = re.compile(r\"^#   ([A-Za-z_][A-Za-z0-9_]*) {2,}\\S\")",
+      "new": "TOOL_LINE = re.compile(r\"^# +([A-Za-z_][A-Za-z0-9_]*) +\\S\")"
+    },
+    {
+      "label": "las herramientas se leen de todo el bloque, también de la parte de carpetas",
+      "old": "    found = (TOOL_LINE.match(line) for line in lines[starts[0] + 1 :])",
+      "new": "    found = (TOOL_LINE.match(line) for line in lines)"
+    }
+  ]
+}

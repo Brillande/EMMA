@@ -1,0 +1,13 @@
+{"target": "app/core/storage.py",
+ "test": ["tests/test_countermeasure_decline.py", "-k", "store_refuses or same_entry_type"],
+ "mutations": [
+  {"label": "se firma un no sin motivo",
+   "old": "            if not reason.strip():\n                raise ValueError(\"decidir no adoptar una contramedida exige su motivo\")",
+   "new": "            if False:\n                raise ValueError(\"decidir no adoptar una contramedida exige su motivo\")"},
+  {"label": "un no apunta a una adopcion como si fuera un cierre",
+   "old": "            if adoption_index is not None:\n                raise ValueError(\"decidir no adoptar no apunta a ninguna adopción\")",
+   "new": "            if False:\n                raise ValueError(\"decidir no adoptar no apunta a ninguna adopción\")"},
+  {"label": "cualquier accion inventada se firma",
+   "old": "        if action not in (\"adopted\", \"closed\", \"declined\"):",
+   "new": "        if False:"}
+ ]}

@@ -1,0 +1,48 @@
+{
+ "target": "app/environment/ephemeris.py",
+ "test": [
+  "tests/test_conjunction.py"
+ ],
+ "mutations": [
+  {
+   "label": "la caché de antes de la elongación deja de cargar",
+   "old": "            raw.get(\"solar_elongation_deg\"), raw.get(\"solar_elongation_flag\")",
+   "new": "            raw[\"solar_elongation_deg\"], raw[\"solar_elongation_flag\"]"
+  },
+  {
+   "label": "la caché se carga sin pasar el filtro",
+   "old": "            solar_elongation_deg=checked_deg,",
+   "new": "            solar_elongation_deg=raw.get(\"solar_elongation_deg\"),"
+  },
+  {
+   "label": "la elongación no se guarda en la caché",
+   "old": "            \"solar_elongation_deg\": self.solar_elongation_deg,",
+   "new": "            \"solar_elongation_deg\": None,"
+  },
+  {
+   "label": "la consulta lee la elongación y la tira",
+   "old": "        solar_elongation_deg=elongation,",
+   "new": "        solar_elongation_deg=None,"
+  },
+  {
+   "label": "se lee otra columna que la de astroquery",
+   "old": "SOLAR_ELONGATION_COLUMN = \"elong\"",
+   "new": "SOLAR_ELONGATION_COLUMN = \"S-O-T\""
+  },
+  {
+   "label": "un texto o un booleano se aceptan como ángulo",
+   "old": "    if isinstance(degrees, bool) or not isinstance(degrees, numbers.Real):",
+   "new": "    if degrees is None:"
+  },
+  {
+   "label": "un ángulo imposible se guarda como dato",
+   "old": "    if not math.isfinite(value) or not low <= value <= high:",
+   "new": "    if not math.isfinite(value):"
+  },
+  {
+   "label": "una marca desconocida se guarda tal cual",
+   "old": "    return value, flag_text if flag_text in _ELONGATION_FLAGS else None",
+   "new": "    return value, flag_text"
+  }
+ ]
+}

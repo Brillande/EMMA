@@ -1,0 +1,23 @@
+{
+  "target": "app/evidence/dossier.py",
+  "test": [
+    "tests/test_evidence_dossier.py"
+  ],
+  "mutations": [
+    {
+      "label": "la frescura ya no bloquea",
+      "old": "    blocked = [*schema, *crossed, *stale]",
+      "new": "    blocked = [*schema, *crossed]"
+    },
+    {
+      "label": "las contradicciones ya no bloquean",
+      "old": "    crossed = list(rules._invariantes(items, invariantes_dominio=[]))",
+      "new": "    crossed = []"
+    },
+    {
+      "label": "el esquema cerrado ya no bloquea",
+      "old": "        for item in items for problem in rules._schema_pieza(item)",
+      "new": "        for item in items for problem in []"
+    }
+  ]
+}

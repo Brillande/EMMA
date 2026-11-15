@@ -1,0 +1,73 @@
+{
+  "target": "app/api/volumes.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "la subida no mira la cabecera: se guarda aunque haya datos personales",
+      "old": "    cleaned = _refuse_personal_data(store, raw, subject, clean)",
+      "new": "    cleaned = None"
+    },
+    {
+      "label": "si la comprobación no puede ejecutarse, se guarda igual",
+      "old": "    except privacy.CheckUnavailable as failed:\n        raise HTTPException(",
+      "new": "    except privacy.CheckUnavailable as failed:\n        return None\n        raise HTTPException("
+    },
+    {
+      "label": "con datos personales se avisa pero se guarda",
+      "old": "            raise _Refused(\n                f\"El volumen puede llevar datos personales",
+      "new": "            return None\n            raise _Refused(\n                f\"El volumen puede llevar datos personales"
+    },
+    {
+      "label": "se comprueba contra la identidad de nadie",
+      "old": "    declared = latest_identity(store, subject)",
+      "new": "    declared = None"
+    },
+    {
+      "label": "se limpia sin que el operador lo pida",
+      "old": "            if clean:",
+      "new": "            if True:"
+    },
+    {
+      "label": "se pide limpiar y se guarda el fichero recibido, sin limpiar",
+      "old": "    kept = cleaned.data",
+      "new": "    kept = raw"
+    },
+    {
+      "label": "el asiento firmado no declara que el volumen se limpió",
+      "old": "    entry = store.record_volume_study(payload, kept, identity_for(CONSOLE_IDENTITY))",
+      "new": "    said = payload.pop(\"cleaned\")\n    entry = store.record_volume_study(payload, kept, identity_for(CONSOLE_IDENTITY))\n    payload[\"cleaned\"] = said"
+    },
+    {
+      "label": "el asiento da por huella del recibido la del guardado",
+      "old": "        \"received_sha256\": sha256_hex(raw),",
+      "new": "        \"received_sha256\": sha256_hex(kept),"
+    },
+    {
+      "label": "el asiento no dice qué campos se vaciaron",
+      "old": "        \"fields\": list(cleaned.fields),",
+      "new": "        \"fields\": [],"
+    },
+    {
+      "label": "lo limpio que no pasa la puerta se guarda igual",
+      "old": "    except privacy.PersonalDataFound as still:\n        raise _Refused(",
+      "new": "    except privacy.PersonalDataFound as still:\n        return privacy._rebuilt(raw)\n        raise _Refused("
+    },
+    {
+      "label": "se ofrece limpiar sin probar si limpiar serviría",
+      "old": "                cleanable=_would_enter_clean(raw, declared),",
+      "new": "                cleanable=True,"
+    },
+    {
+      "label": "una limpieza que no se pudo hacer se ofrece como posible",
+      "old": "    except (privacy.PersonalDataFound, privacy.CheckUnavailable):\n        return False",
+      "new": "    except (privacy.PersonalDataFound, privacy.CheckUnavailable):\n        return True"
+    },
+    {
+      "label": "el rechazo no lleva el texto de la oferta que enseña la interfaz",
+      "old": "            \"clean_offer\": privacy.CLEAN_OFFER if cleanable else None,",
+      "new": "            \"clean_offer\": None,"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "target": "app/core/storage.py",
+  "test": ["tests/test_lab_readings.py"],
+  "mutations": [
+    {
+      "label": "una lectura se confirma dos veces",
+      "old": "                raise LabReadingConflict(\"esa lectura ya está confirmada\")",
+      "new": "                pass"
+    },
+    {
+      "label": "la confirmación no exige persona con nombre",
+      "old": "        if not any(char.isalpha() for char in str(confirmation.get(\"confirmed_by\", \"\"))):",
+      "new": "        if False:"
+    },
+    {
+      "label": "un analito de analítica entra sin su informe",
+      "old": "            if observation.key in LAB_REPORT_ONLY:\n",
+      "new": "            if False:\n"
+    },
+    {
+      "label": "el almacén devuelve el asiento firmado y no una copia",
+      "old": "                    **copy.deepcopy({k: v for k, v in entry.payload.items() if k != SALT_FIELD}),",
+      "new": "                    **{k: v for k, v in entry.payload.items() if k != SALT_FIELD},"
+    }
+  ]
+}

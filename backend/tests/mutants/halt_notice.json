@@ -1,0 +1,58 @@
+{
+  "target": "app/api/safe_mode.py",
+  "test": [
+    "tests/test_halt_notice.py"
+  ],
+  "mutations": [
+    {
+      "label": "hay aviso de freno aunque el fichero no exista",
+      "old": "    if not halt[\"active\"]:\n        return None",
+      "new": "    if False:\n        return None"
+    },
+    {
+      "label": "el aviso no llega a la respuesta: la consola nunca lo pinta",
+      "old": "    halt[\"notice\"] = halt_notice(halt, settings.offline)",
+      "new": "    halt[\"notice\"] = None"
+    },
+    {
+      "label": "el aviso da por hecho el modo sin red aunque haya red",
+      "old": "halt_notice(halt, settings.offline)",
+      "new": "halt_notice(halt, True)"
+    },
+    {
+      "label": "el aviso no dice desde cuándo está puesto el freno",
+      "old": "        \"since\": halt[\"since\"],",
+      "new": "        \"since\": None,"
+    },
+    {
+      "label": "en modo sin red el aviso se presenta como la causa del corte",
+      "old": "    if offline:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el aviso no dice qué fichero hay que borrar para quitarlo",
+      "old": "        f\"Se quita borrando el fichero {halt['file']}; la consola no tiene un mando para ello.\",",
+      "new": "        \"Se quita borrando el fichero; la consola no tiene un mando para ello.\","
+    },
+    {
+      "label": "el aviso no dice qué sigue funcionando con el freno puesto",
+      "old": "        \"summary\": \"Siguen las constantes, el análisis, las alertas y el modelo local.\",",
+      "new": "        \"summary\": \"\","
+    },
+    {
+      "label": "el aviso no nombra qué salidas a internet corta",
+      "old": "        f\"{_exits()}. Lo que viene",
+      "new": "        \"Lo que viene"
+    },
+    {
+      "label": "el aviso nombra la tabla de nombres y no lo que de verdad sale (ALLOWLIST)",
+      "old": "    names = [EXIT_NAMES.get(purpose, purpose) for purpose in egress.ALLOWLIST]",
+      "new": "    names = list(EXIT_NAMES.values())"
+    },
+    {
+      "label": "el aviso no distingue el freno del modo seguro",
+      "old": "\"Es el freno por fichero de Polaris, no el modo seguro: no se firma ni deja asiento en \"",
+      "new": "\"Es el freno por fichero de Polaris: no se firma ni deja asiento en \""
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{"target": "app/environment/systems.py",
+ "test": [
+  "tests/test_system_status.py::test_a_vocabulary_that_cannot_be_honest_is_not_loaded",
+  "tests/test_system_status.py::test_the_basis_says_what_the_eclss_brief_and_the_atcs_back_with_their_cards"],
+ "mutations": [
+  {"label": "la base del vocabulario puede citar una ficha que no esta en el registro",
+   "old": "        registry.get(ref_id)  # una ficha que no está en el registro falla aquí",
+   "new": "        pass"},
+  {"label": "la base del vocabulario puede citar dos veces la misma ficha",
+   "old": "    if len(set(basis_refs)) != len(basis_refs):",
+   "new": "    if False:"},
+  {"label": "la base del vocabulario pierde sus fichas al cargar",
+   "old": "    basis_refs = tuple(refs)",
+   "new": "    basis_refs: tuple[str, ...] = ()"},
+  {"label": "una base con fichas que no son una lista de identificadores se carga",
+   "old": "    if not isinstance(refs, list) or not all(isinstance(ref, str) for ref in refs):",
+   "new": "    if False:"},
+  {"label": "la ruta deja de servir las fichas en que se apoya la base",
+   "old": "            for ref in (registry.get(ref_id) for ref_id in VOCABULARY.basis_refs)",
+   "new": "            for ref in (registry.get(ref_id) for ref_id in ())"}
+ ]}

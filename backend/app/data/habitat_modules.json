@@ -1,0 +1,27 @@
+{
+  "basis": "Parámetro de diseño de EMMA, sin respaldo bibliográfico: EMMA no modela una nave concreta. La lista es una partición funcional mínima de un hábitat de larga duración y se sustituye por la del vehículo real al desplegar.",
+  "not_coded": "Un módulo es un identificador de esta lista, no una observación clínica: no lleva código LOINC ni entra en el catálogo de indicadores.",
+  "default": "habitat-principal",
+  "modules": [
+    {
+      "key": "habitat-principal",
+      "display": "Hábitat principal",
+      "description": "Volumen común. Es el módulo de una lectura que no declara otro."
+    },
+    {
+      "key": "laboratorio",
+      "display": "Laboratorio",
+      "description": "Zona de trabajo y experimentos."
+    },
+    {
+      "key": "camarotes",
+      "display": "Camarotes",
+      "description": "Zona de descanso de la tripulación."
+    },
+    {
+      "key": "esclusa",
+      "display": "Esclusa",
+      "description": "Acceso al exterior y preparación de EVA."
+    }
+  ]
+}

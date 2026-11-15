@@ -1,0 +1,19 @@
+{"target": "app/api/habitat.py",
+ "test": [
+  "tests/test_habitat_solar_cause.py::test_the_crew_view_reads_the_dosimetry_moves_no_level_and_ground_only_what_it_can_know",
+  "tests/test_habitat_solar_cause.py::test_the_crew_view_reads_donki_with_what_its_data_covers"
+ ],
+ "mutations": [
+  {"label": "la vista de tripulacion no pasa la radiacion a la correlacion",
+   "old": "        _radiation(doses, solar),\n",
+   "new": "        None,\n"},
+  {"label": "la vista de tripulacion no lee la dosimetria",
+   "old": "        doses[subject] = [obs for obs in assessed.observations if obs.key == DOSE_KEY]\n",
+   "new": "        doses[subject] = []\n"},
+  {"label": "la vista de tripulacion no lee lo que el estado tiene de DONKI",
+   "old": "    if age_seconds is None:\n",
+   "new": "    if True:\n"},
+  {"label": "los datos de DONKI se dan por actuales aunque sean viejos",
+   "old": "            now - dt.timedelta(seconds=age_seconds) + FRESH_FOR,\n",
+   "new": "            now + FRESH_FOR,\n"}
+ ]}

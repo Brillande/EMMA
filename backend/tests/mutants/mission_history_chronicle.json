@@ -1,0 +1,89 @@
+{
+ "target": "app/timeline.py",
+ "test": [
+  "tests/test_mission_history.py::test_each_prior_mission_is_a_fact_of_the_career_stage",
+  "tests/test_mission_history.py::test_a_mission_without_dose_is_told_as_not_declared_not_zero",
+  "tests/test_mission_history.py::test_the_career_comes_first_and_the_mission_keeps_its_stages",
+  "tests/test_mission_history.py::test_only_the_history_in_force_enters_the_chronicle",
+  "tests/test_mission_history.py::test_the_chronicle_counts_only_what_the_console_signed",
+  "tests/test_mission_history.py::test_ground_only_sees_the_career_signed_before_its_cut",
+  "tests/test_mission_history.py::test_the_chronicle_reads_the_history_once_and_writes_nothing"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica no cuenta las misiones previas",
+   "old": "        *_career_events(career, mission),\n",
+   "new": ""
+  },
+  {
+   "label": "Tierra ve en la cronica un historial firmado despues de su corte",
+   "target": "app/api/timeline.py",
+   "old": "        latest_mission_history(store, subject, until),",
+   "new": "        latest_mission_history(store, subject, None),"
+  },
+  {
+   "label": "la cronica cuenta cualquier historial, no solo el de la consola",
+   "target": "app/api/timeline.py",
+   "old": "        latest_mission_history(store, subject, until),",
+   "new": "        (lambda h: None if not h else {**max(h, key=lambda i: i['ledger_index']), 'missions': __import__('app.core.mission_history', fromlist=['x']).decode(max(h, key=lambda i: i['ledger_index'])['missions'])})([i for i in store.mission_histories(subject) if until is None or i['recorded'] <= until.isoformat()]),"
+  },
+  {
+   "label": "una mision previa se situa con el calendario de esta mision",
+   "old": "        if basis == \"declared\":\n            return in_flight\n",
+   "new": ""
+  },
+  {
+   "label": "una mision previa lleva dia de mision",
+   "old": "if basis == \"data\" else None,",
+   "new": "if basis != \"recorded\" else None,"
+  },
+  {
+   "label": "la carrera no va primero",
+   "old": "_CLOCK_ORDER = {\"declared\": 0, \"data\": 1, \"recorded\": 2}",
+   "new": "_CLOCK_ORDER = {\"declared\": 3, \"data\": 1, \"recorded\": 2}"
+  },
+  {
+   "label": "la fuente no dice de que asiento sale ni que no se comprueba",
+   "old": "    source = f\"asiento {index}: {mission_history.CHRONICLE_SOURCE}\"",
+   "new": "    source = f\"asiento {index}\""
+  },
+  {
+   "label": "todas las misiones previas con la misma clave",
+   "old": "            key=f\"ledger:{index}:mission:{number}\",",
+   "new": "            key=f\"ledger:{index}\","
+  },
+  {
+   "label": "la cronica no dice quien declaro el historial",
+   "old": "            mission_history.chronicle_sentence(item), career[\"declared_by\"], source,",
+   "new": "            mission_history.chronicle_sentence(item), _SYSTEM, source,"
+  },
+  {
+   "label": "la mision previa se fecha en su fin y no en su inicio",
+   "old": "        start = dt.datetime.combine(item.start, dt.time(), dt.UTC)",
+   "new": "        start = dt.datetime.combine(item.end, dt.time(), dt.UTC)"
+  },
+  {
+   "label": "una mision previa sin dosis se cuenta como cero",
+   "target": "app/core/mission_history.py",
+   "old": "        else \"sin exposición a radiación declarada (no es cero)\"",
+   "new": "        else \"exposición a radiación declarada 0,00 mSv\""
+  },
+  {
+   "label": "el documento exportado da a una mision previa una hora que nadie declaro",
+   "target": "app/export.py",
+   "old": "            at = item[\"fecha\"] if item.get(\"time_basis\") == \"declared\" else _utc(item[\"at\"])",
+   "new": "            at = _utc(item[\"at\"])"
+  },
+  {
+   "label": "el documento exportado rotula la carrera como instante en UTC",
+   "target": "app/export.py",
+   "old": "        clock = \"Día declarado\" if stage[\"key\"] == \"career\" else \"Instante (UTC)\"",
+   "new": "        clock = \"Instante (UTC)\""
+  },
+  {
+   "label": "la cronica lee el perfil para contar la carrera",
+   "old": "    index = career[\"ledger_index\"]\n",
+   "new": "    index = career[\"ledger_index\"]\n    __import__('app.api.routes', fromlist=['x']).get_store().profiles('crew-01')\n"
+  }
+ ]
+}

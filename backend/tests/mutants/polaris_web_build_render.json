@@ -1,0 +1,18 @@
+{
+  "target": "../polaris/tools/visor3d_web/render.html",
+  "test": [
+    "tests/test_polaris_web_build.py"
+  ],
+  "mutations": [
+    {
+      "label": "la copia cambia la página de render y lo servido no se recompila",
+      "old": "<title>Hígado 3D · render</title>",
+      "new": "<title>Hígado 3D</title>"
+    },
+    {
+      "label": "la copia cambia la política de contenido de la página de render y lo servido sigue igual",
+      "old": "worker-src 'self' blob:; ",
+      "new": ""
+    }
+  ]
+}

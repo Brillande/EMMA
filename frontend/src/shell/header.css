@@ -1,0 +1,505 @@
+/*
+ * Lote «muestra» (2026-11-08): la cabecera como la de la muestra (`components/StatusStrip.tsx`).
+ * Hoja con dueño propio (unidad «Cabecera»).
+ *
+ * Qué se vio: la franja de la concha nueva medía unos 240 px a 1672 de ancho y era una sola corriente
+ * de fichas (título, celdas, mandos) partida donde caía; la muestra tiene arriba una fila con el
+ * logotipo grande, «EMMA» y su nombre largo, una barra y el lema, y a la derecha iconos grandes con
+ * su palabra (red, campana, ayuda, ficha del tripulante). Solo la caja y el sitio: rótulos, cifras,
+ * marcas y colores con significado son los de siempre. Solo con la cabecera de la muestra
+ * (`.strip-masthead`, que la franja pone cuando lleva el logotipo, es decir, en la concha nueva).
+ *
+ * Tercera ronda (R3-2): de 193 px a 90, en dos filas de alto táctil.
+ *
+ * Cuarta ronda (R4-1, la unidad «cabecera en una fila»): 90 px eran aún el doble que la muestra. Ahora la
+ * cabecera son dos franjas sin hueco entre ellas: arriba, una línea de lectura apretada
+ * (`.masthead-status`: «Arriba» y las celdas de F.4.2 con su dibujo, un rótulo corto y su valor en la
+ * misma línea; no son mandos y no llevan alto táctil); debajo, la fila de la muestra
+ * (`.masthead-bar`), del alto táctil, con la marca, el título y los mandos e iconos. Medido
+ * (2026-11-08, Chromium, 1672×941): ver el informe de R4-1. Si algo no cabe, cada franja se parte en
+ * renglones; nada se recorta ni se tapa.
+ *
+ * Quinta ronda (R5-1, «cabecera en una franja»): medida con todo cargado y los textos reales, esas
+ * dos franjas eran 126 px a 1672 (la línea de lectura en dos renglones y los mandos en dos filas:
+ * «Leer en voz alta», «Modo seguro» y «Red abierta» además partidos en dos renglones cada uno). La
+ * muestra es una sola franja de ~60 px. Ahora la cabecera es una fila: a la izquierda, a todo el
+ * alto, la marca; a la derecha (`.masthead-main`) dos pisos, arriba la línea de lectura (un renglón
+ * de letra) y debajo el título, los mandos y los iconos (el alto táctil). Cada mando en un renglón.
+ * Medido (2026-11-09, Chromium, 1672×941): ver el informe de R5-1. A 1300 px los mandos bajan de
+ * fila dentro de su piso; nada se recorta ni se tapa.
+ */
+
+.app[data-look="reference"] .strip.strip-masthead {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0 14px;
+  padding: 1px var(--gap) 2px;
+  border-top: 2px solid var(--c-text-secondary);
+}
+
+/* Los dos pisos de la derecha: se llevan todo el ancho que deja la marca. */
+.app[data-look="reference"] .masthead-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+/* La línea de lectura: «Arriba» y las celdas, a la letra del suelo del proyecto, en un renglón. */
+.app[data-look="reference"] .masthead-status {
+  display: flex;
+  flex-wrap: wrap;
+  /* Pegada a la derecha, encima de los mandos y los iconos, como el lema de la muestra va encima
+     de su fila; si no cabe en un renglón, baja de celda en celda. */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0 6px;
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1.1;
+}
+
+/* La referencia de «arriba» (`ScreenTop`): la primera de la línea; su raya es el borde de arriba de
+   la cabecera, sin el margen negativo ni la fila entera de la franja clásica. */
+.app[data-look="reference"] .strip-masthead .strip-edge {
+  /* Puede encogerse: con «Cámara encendida» y el aviso de presencia, en pantalla estrecha o con baja
+     visión, sus piezas se parten en renglones (`.screen-top` lleva `flex-wrap`) y no se salen. */
+  flex: 0 1 auto;
+  min-width: 0;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+  line-height: inherit;
+}
+
+.app[data-look="reference"] .strip-masthead .strip-edge .up-arrow > .pictogram {
+  /* Al alto de la letra: a 1,1 em «Arriba» medía 18 px y las celdas 17. */
+  width: 1em;
+  height: 1em;
+}
+
+/* Su caja se disuelve: cada celda es una pieza de la línea, junto a «Arriba». Si no caben todas en un
+   renglón, bajan de una en una, y «Arriba» no se queda solo en el suyo (pasaba a 1300 px). */
+.app[data-look="reference"] .masthead-cells {
+  display: contents;
+}
+
+/* Cada celda en una línea: dibujo y rótulo corto, y el valor detrás. Sin la caja de ficha de
+   `consoleShell.css` (su filete y su relleno hacían la línea 6 px más alta): la separa de la de al
+   lado un filete fino, adorno de la paleta de la concha. */
+.app[data-look="reference"] .masthead-cells > .cell {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 5px;
+  min-height: 0;
+  padding: 1px 0 1px 7px;
+  border: 0;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  line-height: inherit;
+}
+
+/* Sin «Arriba» delante, la primera celda abre la línea y no lleva filete. */
+.app[data-look="reference"] .masthead-status > .masthead-cells:first-child > .cell:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.app[data-look="reference"] .masthead-cells .label {
+  white-space: nowrap;
+}
+
+/* La vigilancia, como las demás celdas de la línea (R5-1): a la vista solo su dibujo, delante de
+   «Completa» o «Reducida · …». La palabra «Vigilancia» se escribe tal cual en la celda (lo exige
+   `lib/wording.test.ts`) y aquí se recorta al ancho del dibujo: sigue en el texto para el lector de
+   pantalla (sin `title`: la palabra solo se escribe una vez en la fuente). */
+.app[data-look="reference"] .masthead-cells > .cell-monitoring > .label {
+  flex: none;
+  width: 1.15em;
+  overflow: hidden;
+}
+
+/* El enlace con Tierra declarado o simulado caído sigue debajo del retardo, en su renglón: la línea
+   de lectura crece solo mientras hay algo que decir de él (y entonces se ve, que es lo que importa). */
+.app[data-look="reference"] .masthead-cells .link-declared {
+  flex-basis: 100%;
+  max-width: none;
+}
+
+.app[data-look="reference"] .masthead-cells .counts {
+  gap: 6px;
+}
+
+/* Las cifras de la línea en la letra del texto, como la muestra, y no en la monoespaciada: con
+   ella la línea no cabía en 1672 px (el retardo y las alertas medían 130 px más). Siguen con las
+   cifras de ancho fijo (`tabular-nums`, de `.num`): el reloj no baila al cambiar. */
+.app[data-look="reference"] .masthead-cells .num {
+  font-family: var(--font-sans);
+}
+
+/* La etiqueta del modo simulado conserva su recuadro discontinuo (F.4.2), sin el relleno de arriba y
+   abajo que hacía la línea más alta, y al alto de la letra: con su filete, del alto de la línea. */
+.app[data-look="reference"] .masthead-cells .mode-tag {
+  padding: 0 6px;
+  margin-block: -1px;
+  line-height: 1;
+}
+
+/* La marca, a todo el alto de la franja: el logotipo más grande, como en la muestra. */
+/* El piso de abajo: título, lema, mandos e iconos, del alto táctil. */
+.app[data-look="reference"] .masthead-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0 10px;
+  min-width: 0;
+  font-size: 0.875rem;
+}
+
+.app[data-look="reference"] .masthead-brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.app[data-look="reference"] .strip-masthead .masthead-brand > .ref-logo {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.app[data-look="reference"] .masthead-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.05;
+}
+
+.app[data-look="reference"] .masthead-emma {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* En tres renglones cortos (R5-1): la marca deja más ancho a la línea de lectura. */
+.app[data-look="reference"] .masthead-long {
+  max-width: 7rem;
+  line-height: 1.1;
+  font-size: 0.875rem;
+}
+
+/* El título de la consola, junto a la marca y tras una barra, como el lema de la muestra: en dos
+   renglones si hace falta (cabe en el alto de la fila), sin caja de ficha. */
+.app[data-look="reference"] .strip-masthead .title {
+  flex: 0 1 auto;
+  max-width: 10rem;
+  margin: 0;
+  padding-left: 9px;
+  border-left: 2px solid var(--ref-teal);
+  font-size: 0.875rem;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* El lema es adorno: solo si sobra ancho para él en la fila. */
+.app[data-look="reference"] .masthead-motto {
+  display: none;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+@media (min-width: 2600px) {
+  .app[data-look="reference"] .masthead-motto {
+    display: block;
+    flex: 0 1 auto;
+  }
+}
+
+/* Los mandos y los iconos, pegados a la derecha de la fila. */
+.app[data-look="reference"] .masthead-tools {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0 6px;
+  min-width: 0;
+}
+
+.app[data-look="reference"] .masthead-tools > .strip-controls {
+  gap: 5px;
+  margin-left: 0;
+}
+
+/* Los mandos, más justos de relleno: el alto táctil no cambia. */
+.app[data-look="reference"] .masthead-tools .read-aloud {
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.app[data-look="reference"] .masthead-tools .read-aloud button.command,
+.app[data-look="reference"] .masthead-tools details.strip-pop > summary,
+.app[data-look="reference"] .masthead-tools .scenario-switcher button.command,
+.app[data-look="reference"] .masthead-tools .scenario-switcher select {
+  padding: 0 7px;
+  font-size: 0.875rem;
+}
+
+/* Cada mando en un renglón (R5-1): «Leer en voz alta» y «Modo seguro» iban partidos en dos. */
+.app[data-look="reference"] .masthead-tools :is(button.command, details.strip-pop > summary) {
+  white-space: nowrap;
+}
+
+/* «Atajos» abre lo mismo que «Ayuda», el signo de la muestra, que va con los iconos: con «Ayuda» a
+   la vista, su rótulo sale de la fila (el plegable sigue en su sitio, con su texto en el árbol de
+   accesibilidad para la descripción del grupo de la voz, y «Ayuda» lo abre y lo cierra). Sin
+   «Ayuda» (la voz no disponible) tampoco hay «Atajos». */
+.app[data-look="reference"] .strip-masthead:has(.masthead-help) details.shortcuts > summary {
+  display: none;
+}
+
+/* El escenario: «Escenario:» y su nombre en un párrafo de dos renglones, al alto de un mando, en vez
+   de rótulo encima y nombre debajo, que lo hacían el doble de ancho. */
+.app[data-look="reference"] .masthead-tools .scenario-switcher {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.app[data-look="reference"] .masthead-tools .scenario-current {
+  display: block;
+  max-width: 12rem;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.app[data-look="reference"] .masthead-tools .scenario-current > label,
+.app[data-look="reference"] .masthead-tools .scenario-current > strong {
+  display: inline;
+  min-height: 0;
+}
+
+/* Los iconos de la muestra, al final de la fila. */
+.app[data-look="reference"] .masthead-icons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+  gap: 5px;
+}
+
+.app[data-look="reference"] .masthead-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.25rem;
+  min-height: var(--touch);
+  font-size: 0.875rem;
+}
+
+.app[data-look="reference"] .masthead-icon > .mark:first-child {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  line-height: 1.1;
+}
+
+.app[data-look="reference"] .masthead-icon > .mark:first-child > .pictogram {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+}
+
+/* El globo de la campana: la cifra con la forma y el color de la clase más grave activa (la clase
+   `c-*` de su marca) sobre el fondo de la paleta, el mismo par que la tabla ya mide. Va sobre el
+   hombro derecho de la campana, como en la muestra; la campana deja a su derecha el sitio que el
+   globo sobresale, para que no pise «Ayuda» (lo pisaba 6 px con la campana a 3,6 rem). */
+.app[data-look="reference"] .masthead-bell {
+  margin-right: 0.5rem;
+}
+
+.app[data-look="reference"] .masthead-bell > .bell-badge {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 0.1rem);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 4px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  background: var(--c-bg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.app[data-look="reference"] .masthead-bell > .bell-badge > .pictogram {
+  margin-right: 0.2em;
+}
+
+/* La campana como mando (2026-11-09: «la campana no enseña las alertas»): lleva a la lista de
+   alertas de la consola. Se ve igual que la marca que era (sin caja, sin relleno, el globo en su
+   sitio) para que la cabecera no crezca; al pasar el ratón, el velo verde azulado de los mandos de
+   la concha, y el foco, el marco verde de siempre (`:focus-visible`, F.5-2). */
+.app[data-look="reference"] button.masthead-bell {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.app[data-look="reference"] button.masthead-bell:hover {
+  background: color-mix(in srgb, var(--ref-teal) 12%, transparent);
+}
+
+/* Lo que la campana (o el asistente, `reveal`) pone a la vista queda debajo de la franja fija y no
+   tapado por ella: con `block: "start"` el panel subía hasta y = 0 y su título quedaba bajo los 67 px
+   de la cabecera (medido 2026-11-09, 1672×941). El alto de la franja lo mide `App.tsx` (`--strip-h`). */
+.app[data-look="reference"] [data-ui] {
+  scroll-margin-top: calc(var(--strip-h, 0px) + 8px);
+}
+
+/* «Ayuda» es un mando: verde de lo accionable (F.5-2) y, abierta, con el borde y el peso de lo
+   elegido (F.5.4 c), como «Atajos», que es lo que abre. */
+.app[data-look="reference"] .masthead-help {
+  padding: 1px 8px;
+  color: var(--c-text);
+  background: var(--c-command);
+  border: 1px solid var(--c-green);
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.app[data-look="reference"] .masthead-help[aria-expanded="true"] {
+  border-color: var(--c-text);
+  font-weight: 600;
+}
+
+/* La celda de la red, entre los iconos: sin la caja de ficha, como los demás iconos, con su antena
+   algo mayor; «Red» y su estado, uno encima del otro como el dibujo y la palabra de «Alertas» y
+   «Ayuda», en el alto táctil (no es un mando: el del freno, si lo hay, va en su línea). */
+.app[data-look="reference"] .masthead-icons > .cell {
+  padding: 0 0.4rem;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.app[data-look="reference"] .masthead-icons > .cell .label > .pictogram {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* La ficha del tripulante («C-01» en la muestra): el rótulo y el selector en una fila, en su caja. */
+.app[data-look="reference"] .masthead-crew > .crew-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ref-card) 70%, transparent);
+  /* El filete, como sombra y no como borde: con borde la ficha medía 46 px (el selector, táctil, 44
+     y dos de filete) y estiraba la fila de los mandos. */
+  box-shadow:
+    0 0 0 1px var(--ref-edge),
+    0 0 8px var(--ref-glow) inset;
+}
+
+.app[data-look="reference"] .masthead-crew > .crew-selector > .mark > .pictogram {
+  font-size: 1.3em;
+}
+
+/* «Tripulante» a la vista solo con su dibujo, como la ficha «C-01» de la muestra: la marca se recorta
+   al ancho del dibujo y la palabra queda fuera de la vista pero en el texto del rótulo, así que el
+   selector se sigue llamando «Tripulante» para el lector de pantalla. */
+.app[data-look="reference"] .masthead-crew > .crew-selector > .mark {
+  flex: none;
+  width: 1.4em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.app[data-look="reference"] .masthead-crew > .crew-selector select {
+  padding-inline: 8px 4px;
+  font-size: 0.875rem;
+}
+
+/* ---- El aviso de retardo de Tierra en una banda (R5-1) ---- */
+
+/* Qué se vio: encima del carril y de la sección de Tierra, el aviso («Tierra tiene datos hasta…»,
+   «A bordo ya van por…», el retardo de ida y la frase del enlace) medía ~150 px a todo el ancho:
+   dos fichas altas en una fila, la frase del retardo al lado y la del enlace en su fila debajo.
+   Ahora es una banda: a la izquierda las dos fichas, una encima de otra, con rótulo y cifra en un
+   renglón; a la derecha, las frases, cada una en su párrafo, a la letra del suelo del proyecto. Todo
+   el texto sigue a la vista, nada se recorta ni se pliega (es el aviso de retardo: dato). La cifra de
+   lo que Tierra tiene sigue en cian y cursiva (dato caducado), la de a bordo como siempre. Solo con
+   la concha nueva y fuera de baja visión, como la regla de `ground-received.css` a la que sustituye
+   (mismo selector, y esta hoja carga después). */
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 1rem;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-size: 0.875rem;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner > .stat-tiles {
+  display: grid;
+  grid-template-columns: max-content;
+  grid-row: 1 / span 3;
+  grid-column: 1;
+  gap: 2px;
+}
+
+/* Rótulo y cifra en un renglón. Sin la contención de ancho de la ficha (`styles.css`): con ella la
+   columna `auto` no sabría cuánto mide la cifra y la ficha quedaría a cero. */
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner .stat-tile {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 0 0.6rem;
+  padding: 1px 0.6rem;
+  container-type: normal;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner .stat-value {
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+/* Las frases, a la derecha de las fichas, una debajo de otra y sin el filete que las separaba de
+   las fichas de encima (ya no tienen nada encima). */
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner > p {
+  grid-column: 2;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner > p.delay-link {
+  padding-top: 0;
+  border-top: 0;
+}

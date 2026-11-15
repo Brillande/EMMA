@@ -1,0 +1,9 @@
+{"target": "app/analysis/forecast_check.py", "test": ["tests/test_context_round3.py"],
+ "mutations": [
+  {"label": "una proyeccion se da por acertada sin mirar el margen",
+   "old": "            predicted[\"projected_change_low\"] <= change <= predicted[\"projected_change_high\"]",
+   "new": "            True"},
+  {"label": "se comprueba una instantanea antes de su horizonte",
+   "old": "        if horizon_at > reference:\n            continue",
+   "new": "        if False:\n            continue"}
+ ]}

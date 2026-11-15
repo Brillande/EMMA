@@ -1,0 +1,84 @@
+{
+  "samples": [
+    {
+      "key": "higado-1",
+      "nombre": "Abdomen: hígado 1",
+      "preset": "higado",
+      "modalidad": "CT",
+      "sujeto_dataset": "s0816",
+      "estudio_dataset": "ct thorax-abdomen-pelvis",
+      "dataset": {
+        "name": "TotalSegmentator dataset v2.0.1 (1228 TAC con 117 estructuras segmentadas)",
+        "citation": "Wasserthal J. et al. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiol Artif Intell 2023;5(5):e230024. Datos: Zenodo, doi:10.5281/zenodo.10047292",
+        "doi": "10.5281/zenodo.10047292",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.10047292"
+      },
+      "sha256": {
+        "ct.nii.gz": "e1f9531a95b1fbd2cc5095e952de86657b8fb9099380c35e64559c0afdb4adeb",
+        "visor.zip": "82d8e94c766be86620c1193a59570427c9c3e5ab2e172bfa0f9e66f37ce7740c"
+      },
+      "lesiones": 4
+    },
+    {
+      "key": "higado-2",
+      "nombre": "Abdomen: hígado 2",
+      "preset": "higado",
+      "modalidad": "CT",
+      "sujeto_dataset": "s0048",
+      "estudio_dataset": "ct abdomen-pelvis",
+      "dataset": {
+        "name": "TotalSegmentator dataset v2.0.1 (1228 TAC con 117 estructuras segmentadas)",
+        "citation": "Wasserthal J. et al. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiol Artif Intell 2023;5(5):e230024. Datos: Zenodo, doi:10.5281/zenodo.10047292",
+        "doi": "10.5281/zenodo.10047292",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.10047292"
+      },
+      "sha256": {
+        "ct.nii.gz": "7270e80af64c0fbe65528fbc7da1d6029abebee035364428c7e1529a35567485",
+        "visor.zip": "c5fefc6e641fcb910ba2d9c802c45268a95be43ace32682e9a5030d71d0283ca"
+      },
+      "lesiones": 4
+    },
+    {
+      "key": "ojos-3",
+      "nombre": "Cabeza: órbitas 1",
+      "preset": "ojos",
+      "modalidad": "CT",
+      "sujeto_dataset": "s0289",
+      "estudio_dataset": "ct angiography head",
+      "dataset": {
+        "name": "TotalSegmentator dataset v2.0.1 (1228 TAC con 117 estructuras segmentadas)",
+        "citation": "Wasserthal J. et al. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiol Artif Intell 2023;5(5):e230024. Datos: Zenodo, doi:10.5281/zenodo.10047292",
+        "doi": "10.5281/zenodo.10047292",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.10047292"
+      },
+      "sha256": {
+        "ct.nii.gz": "b4913adab5f94be030cc6ecec2d5654ae8cea23fc8547b7cbd475598cb9c1052",
+        "visor.zip": "0d210a2d3567b02ae581324456ec1ad2089e78d5618a71f3af80f0e618f3fea1"
+      },
+      "lesiones": 0
+    },
+    {
+      "key": "esqueleto-4",
+      "nombre": "Cuerpo entero: esqueleto 1",
+      "preset": "esqueleto",
+      "modalidad": "CT",
+      "sujeto_dataset": "s1152",
+      "estudio_dataset": "ct polytrauma",
+      "dataset": {
+        "name": "TotalSegmentator dataset v2.0.1 (1228 TAC con 117 estructuras segmentadas)",
+        "citation": "Wasserthal J. et al. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiol Artif Intell 2023;5(5):e230024. Datos: Zenodo, doi:10.5281/zenodo.10047292",
+        "doi": "10.5281/zenodo.10047292",
+        "license": "CC BY 4.0",
+        "url": "https://doi.org/10.5281/zenodo.10047292"
+      },
+      "sha256": {
+        "ct.nii.gz": "beaacb36c0bfb1de99c68448ef0e3c324144ff8c62ab87b2fdcc7fa14bec850f",
+        "visor.zip": "f6983be6839281081e009aabde8017ee8094d8ddff1853a572588e9fb54a080f"
+      },
+      "lesiones": 0
+    }
+  ]
+}

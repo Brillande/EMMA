@@ -1,0 +1,18 @@
+{
+  "target": "app/reports/identity.py",
+  "test": [
+    "tests/test_report_identity.py"
+  ],
+  "mutations": [
+    {
+      "label": "un informe de otra persona se usa igual",
+      "old": "        \"usable\": bool(original.SIRVE.get(verdict, False)),",
+      "new": "        \"usable\": True,"
+    },
+    {
+      "label": "se coteja contra nadie",
+      "old": "        original.titular = lambda: _holder(declared)",
+      "new": "        pass"
+    }
+  ]
+}

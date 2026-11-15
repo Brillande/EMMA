@@ -1,0 +1,15 @@
+{"target": "app/timeline.py",
+ "test": [
+  "tests/test_system_status.py::test_a_declaration_moves_no_level_alert_or_excursion_and_shows_in_the_context"
+ ],
+ "mutations": [
+  {"label": "la cronica fecha la declaracion con su hora de firma y no con el instante al que se refiere",
+   "old": "            mission, until, item, \"at\", \"habitat\", \"system-status-declared\",",
+   "new": "            mission, until, item, None, \"habitat\", \"system-status-declared\","},
+  {"label": "la cronica no cuenta lo declarado de los sistemas",
+   "old": "    for item in habitat_systems.history(counted(store.system_statuses())):",
+   "new": "    for item in habitat_systems.history([]):"},
+  {"label": "la frase de la cronica no lleva el rotulo ni la nota de quien declara",
+   "old": "            habitat_systems.sentence(item), item[\"declared_by\"])",
+   "new": "            f\"sistema {item['system_display']}: {item['state_display']}\", item[\"declared_by\"])"}
+ ]}

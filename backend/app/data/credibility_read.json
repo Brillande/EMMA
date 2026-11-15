@@ -1,0 +1,418 @@
+{
+  "_nota": "Credibilidad de cada capa de EMMA que predice o infiere, con los factores de NASA-STD-7009B leídos con su frase. `statements` son frases literales de la norma, copiadas con el PDF delante el día `read_on`; `factors` son los once factores que nombran [M&S 48] y [M&S 31], cada uno con la pregunta literal de las tablas 5 y 12. `layers` es una ficha por capa: cada factor con lo que HAY para esa capa, dicho en palabras, SIN nivel ni puntuación (la norma puntúa con tablas de nivel que EMMA no ha aplicado). `sites` dice qué función del código rotula la cifra INFERIDA o PREDICHA (`ruta/modulo.py:funcion`): la prueba exige que toda función que rotula tenga ficha y que toda ficha nombre funciones que rotulan. `served_in` dice dónde se sirve; `tests`, las pruebas de la suite por defecto que la verifican (una marcada `live` o `external` no corre en ella: se cuenta en el texto del factor, no aquí). `model_version`, el de la cifra cuando lo lleva; si no, `model_note` dice por qué. El bloque `criticality` es lo leído del Apéndice D (criticidad del uso), con su propio `read_on`, y cada ficha lleva en su `criticality` lo que hay en los dos ejes de la matriz, en palabras: la matriz no se aplica, porque determinar la criticidad corresponde a quien tiene autoridad para ello (§4.1). Nada de esto entra en el análisis (invariante 5) y citar la norma no es aplicarla (invariante 6). El cargador es app/evidence/credibility.py.",
+  "read_on": "2026-10-23",
+  "sources": {
+    "nasa-std-7009b": {"extent": "partial", "read_on": "2026-10-26", "what": "PDF de standards.nasa.gov (88 páginas) en texto: portada y registro de cambios, prólogo, los requisitos de registro de §4.2.1 y §4.3.6 y el Apéndice E hasta la presentación de los factores de resultados (E.1 a E.3.4 y E.4.1, tablas 5, 6 y 12); de las tablas de nivel, la 7 y el arranque de la 8. El 2026-10-26, la introducción de §4.1 y §4.1.1 (página 20) y el Apéndice D entero (páginas 56 a 61: D.1 a D.3 con las tablas 3 y 4; la figura 1, solo por los rótulos que salen al pasarla a texto)."},
+    "nasa-hdbk-7009a": {"extent": "partial", "what": "Portada, registro de cambios y prólogo (páginas 1 a 3 de 157): es la guía de la revisión A."}
+  },
+  "title": "Credibilidad de cada capa que predice o infiere",
+  "about": "NASA-STD-7009B, la norma de modelos y simulaciones de NASA, pide registrar la credibilidad de un modelo por factores y comunicarla a quien decide. La base de conocimiento del equipo (§2.3) pide que toda capa predictiva nueva explicite credibilidad e incertidumbre. Aquí va, para cada cifra que EMMA rotula INFERIDA o PREDICHA, lo que hay en cada factor de la norma, dicho tal cual.",
+  "statements": [
+    {
+      "id": "purpose",
+      "label": "Para qué es la norma",
+      "quote": "ensuring the credibility of the results from M&S is assessed and clearly conveyed, especially for critical decisions.",
+      "ref": "nasa-std-7009b",
+      "where": "Foreword"
+    },
+    {
+      "id": "revision-split",
+      "label": "Lo que cambia la revisión B",
+      "quote": "splitting the M&S Results Credibility Assessment into M&S Capability and M&S Results Assessments.",
+      "ref": "nasa-std-7009b",
+      "where": "Document History Log, Revision B"
+    },
+    {
+      "id": "not-direct",
+      "label": "La credibilidad no se mide directamente",
+      "quote": "Neither the M&S capability nor the M&S results credibility can be assessed directly.",
+      "ref": "nasa-std-7009b",
+      "where": "Apéndice E, §E.2"
+    },
+    {
+      "id": "levels-reported",
+      "label": "Los niveles se determinan y se informan",
+      "quote": "This Standard levies no requirements with respect to what levels to achieve (the sufficiency threshold levels), merely that the levels be determined and reported.",
+      "ref": "nasa-std-7009b",
+      "where": "§4.3.6"
+    },
+    {
+      "id": "levels-labels",
+      "label": "Cinco rótulos de nivel",
+      "quote": "Reporting factor level assessment is recommended using a 5-tier labeling system representing levels ranging from \"no supporting information\" to \"gold-standard\" evidence and rigor.",
+      "ref": "nasa-std-7009b",
+      "where": "Apéndice E, §E.2"
+    },
+    {
+      "id": "no-combining",
+      "label": "Los factores no se combinan",
+      "quote": "Given that the factors are largely independent, comparison between or combining of factor assessments and thresholds is not intended and should be avoided in all labeling approaches.",
+      "ref": "nasa-std-7009b",
+      "where": "Apéndice E, §E.2"
+    }
+  ],
+  "groups": [
+    {
+      "id": "capability",
+      "name": "M&S Capability",
+      "name_es": "Capacidad del modelo (lo que sale del desarrollo)",
+      "requirement": "[M&S 48]",
+      "quote": "A record of the assessed M&S capability shall be maintained according to each of the following factors:",
+      "where": "§4.2.1.8"
+    },
+    {
+      "id": "results",
+      "name": "M&S Results",
+      "name_es": "Resultados del modelo (lo que sale del uso)",
+      "requirement": "[M&S 31]",
+      "quote": "A record of the assessed M&S results shall be maintained according to each of the following factors:",
+      "where": "§4.3.6.1"
+    }
+  ],
+  "factors": [
+    {"id": "data-pedigree", "group": "capability", "name": "M&S Data Pedigree", "name_es": "Procedencia de los datos de desarrollo", "question": "M&S Data Pedigree: Is the pedigree (and quality) of the data used to develop the M&S adequate or acceptable?", "where": "§E.3.1, Tabla 5"},
+    {"id": "verification", "group": "capability", "name": "M&S Verification", "name_es": "Verificación", "question": "M&S Verification: Were the M&S implemented correctly, per their requirements/specifications?", "where": "§E.3.1, Tabla 5"},
+    {"id": "validation", "group": "capability", "name": "M&S Validation", "name_es": "Validación", "question": "M&S Validation: Did the M&S results compare favorably to the referent data, and how close is the referent to the RWS?", "where": "§E.3.1, Tabla 5"},
+    {"id": "development-review", "group": "capability", "name": "M&S Development Technical Review", "name_es": "Revisión técnica del desarrollo", "question": "M&S Development Technical Review: Were any technical reviews of the M&S or M&S development accomplished? What were the scopes of the reviews? How formal were the reviews? How recently did the reviews occur, relative to the development activities? Who conducted the reviews, and how independent were the reviewers from the M&S program/project?", "where": "§E.3.1, Tabla 5"},
+    {"id": "development-management", "group": "capability", "name": "M&S Development Process/Product Management", "name_es": "Gestión del proceso y del producto de desarrollo", "question": "M&S Development Process/Product Management: How well managed were the M&S development processes and products?", "where": "§E.3.1, Tabla 5"},
+    {"id": "use-assessment", "group": "results", "name": "M&S Use Assessment", "name_es": "Adecuación del uso", "question": "M&S Use Assessment: How well does the proposed M&S use match the permissible use(s) of the M&S? How similar is the proposed use of the M&S to previous successful uses?", "where": "§E.4.1, Tabla 12"},
+    {"id": "input-pedigree", "group": "results", "name": "M&S Input Pedigree", "name_es": "Procedencia de las entradas", "question": "M&S Input Pedigree: Is the pedigree (and quality) of the data used to setup and run the model adequate or acceptable?", "where": "§E.4.1, Tabla 12"},
+    {"id": "uncertainty", "group": "results", "name": "M&S Uncertainty Characterization", "name_es": "Caracterización de la incertidumbre", "question": "M&S Uncertainty Characterization: Is the uncertainty in the current M&S results appropriately characterized? What are the sources of uncertainty in the results and how are they propagated through to the results of the analysis?", "where": "§E.4.1, Tabla 12"},
+    {"id": "robustness", "group": "results", "name": "M&S Results Robustness", "name_es": "Robustez de los resultados", "question": "M&S Results Robustness: How thoroughly are the sensitivities of the current M&S results known?", "where": "§E.4.1, Tabla 12"},
+    {"id": "use-review", "group": "results", "name": "M&S Use/Analysis Technical Review", "name_es": "Revisión técnica del uso", "question": "M&S Use/Analysis Results Technical Review: Were any technical reviews of the M&S use or M&S results accomplished? What were the scopes of the reviews? How formal were the reviews? How recently did the reviews occur relative to the use and analysis activities? Who conducted the reviews, and how independent were the reviewers from the M&S program/project?", "where": "§E.4.1, Tabla 12"},
+    {"id": "use-management", "group": "results", "name": "M&S Use Process/Product Management", "name_es": "Gestión del proceso y del producto de uso", "question": "M&S Use Process/Product Management: How well managed were the M&S Use processes and products?", "where": "§E.4.1, Tabla 12"}
+  ],
+  "not_assessed": "EMMA no ha evaluado ninguna capa con las tablas de nivel de la norma (7 a 11 y 15 a 20): ninguna casilla lleva nivel ni puntuación, y lo que dice cada una es lo que hay, no cuánto vale. Tampoco se suman ni se comparan factores: la norma pide no combinarlos.",
+  "emma": "Cada cifra INFERIDA o PREDICHA tiene aquí su ficha, con los once factores y lo que hay en los dos ejes de criticidad del Apéndice D. La prueba exige que toda función que rotula una cifra así tenga ficha, y que toda ficha nombre una función que rotula. Ninguna capa tiene validación frente a un referente.",
+  "out_of_scope": [
+    "Observaciones que llegan ya rotuladas INFERIDAS o PREDICHAS por la ingesta (POST /api/observations con su `model_version`): el modelo es de quien la envía, y EMMA solo exige que lo nombre.",
+    "El simulador: sus series se rotulan por entorno («simulado»), no como INFERIDAS ni PREDICHAS; el respaldo de cada deriva va en /api/status, `simulation.evidence`.",
+    "El borrador de interpretación (`app/interpret/`, Clase C): no es una cifra ni entra en el análisis."
+  ],
+  "not_read": [
+    "Una guía NASA-HDBK-7009 para la revisión B: buscada en standards.nasa.gov el 2026-10-23 y no encontrada; la publicada allí, NASA-HDBK-7009A (2019), es la de la revisión A, que evaluaba capacidad y resultados juntos.",
+    "Las tablas de nivel de cada factor, salvo la 7 y el arranque de la 8: no se han aplicado a ninguna capa.",
+    "Las fuentes de las que el Apéndice D toma sus categorías de consecuencia: se buscaron esas categorías el 2026-10-31 en el NASA Systems Engineering Handbook (NASA/SP-2016-6105 Rev 2) y en el NASA Risk Management Handbook, que es el mismo NASA/SP-2011-3422 y no un documento aparte. Ninguno trae la escala de la Tabla 3: en el primero no aparecen los rótulos de los extremos de la escala, y en el segundo el del extremo superior sale una sola vez y no como nivel. Se recorrieron por palabras, no se leyeron enteros. El procedimiento NESC-PR-006 no se encontró: NTRS no da resultados, y no es público en lo buscado. De dónde sale cada casilla de la Tabla 3 sigue sin saberse."
+  ],
+  "criticality": {
+    "read_on": "2026-10-26",
+    "title": "Criticidad del uso (Apéndice D)",
+    "about": "NASA-STD-7009B pide registrar la criticidad de cada uso de un modelo ([M&S 6]), y su Apéndice D propone una matriz que cruza dos ejes: la consecuencia de la decisión y la influencia que tienen en ella los resultados del modelo. Aquí va, para cada capa, lo que hay en cada eje, dicho en palabras.",
+    "not_applied": "EMMA no ha aplicado la matriz del Apéndice D a ninguna capa ni ha registrado la criticidad de ninguna ([M&S 6]): la norma pone esa determinación en manos de la dirección del programa o del proyecto con la autoridad técnica delegada de NASA, y nadie con esa autoridad la ha hecho. Cada ficha dice qué decisión informa la cifra y qué otra información hay al tomarla, no en qué casilla de la matriz cae.",
+    "statements": [
+      {
+        "id": "criticality-considers",
+        "label": "Qué considera la criticidad",
+        "quote": "An M&S criticality assessment considers: (1) the consequences to human safety or mission success criteria, and (2) the degree to which M&S results influence a decision.",
+        "ref": "nasa-std-7009b",
+        "where": "Apéndice D, §D.1, p. 56"
+      },
+      {
+        "id": "criticality-record",
+        "label": "Se registra",
+        "quote": "A record of the assessed criticality associated with M&S use shall be maintained.",
+        "ref": "nasa-std-7009b",
+        "where": "§4.1.1.2 [M&S 6], p. 20"
+      },
+      {
+        "id": "criticality-method",
+        "label": "Y el método con que se evaluó",
+        "quote": "The method used, either Appendix D as is or modified, or another method, is to be recorded.",
+        "ref": "nasa-std-7009b",
+        "where": "§4.1.1.2, p. 20"
+      },
+      {
+        "id": "criticality-who",
+        "label": "Quién la determina",
+        "quote": "Program and project management, in collaboration with the delegated NASA Technical Authority, has the responsibility to identify and record the critical decisions to be addressed with M&S and to determine which M&S are in scope, based upon the criticality of the situation addressed by the proposed use of the M&S.",
+        "ref": "nasa-std-7009b",
+        "where": "§4.1, p. 20"
+      },
+      {
+        "id": "criticality-breakpoints",
+        "label": "Los cortes de cada fila se fijan con esa autoridad",
+        "quote": "For each row, quantitative breakpoints should be established between levels 1-5 in coordination with Program/Project Management and delegated NASA Technical Authority.",
+        "ref": "nasa-std-7009b",
+        "where": "Apéndice D, §D.2, p. 57"
+      },
+      {
+        "id": "criticality-adjust",
+        "label": "La matriz se puede ajustar",
+        "quote": "Programs, projects, stakeholders, or customers of M&S may find the need to adjust this matrix.",
+        "ref": "nasa-std-7009b",
+        "where": "Apéndice D, §D.1, p. 56"
+      },
+      {
+        "id": "criticality-other-information",
+        "label": "La influencia depende de la otra información",
+        "quote": "This is predicated on the amount of other information available when making the impending decision.",
+        "ref": "nasa-std-7009b",
+        "where": "Apéndice D, §D.3, p. 59"
+      },
+      {
+        "id": "criticality-as-a-guide",
+        "label": "Como guía de buenas prácticas, para cualquier modelo",
+        "quote": "Any M&S effort within or outside the auspices of a program or project, even without a defined critical use, may choose to use this Standard as a guide for best practices in M&S development, use, and reporting.",
+        "ref": "nasa-std-7009b",
+        "where": "Apéndice D, §D.1, p. 57"
+      }
+    ],
+    "axes": [
+      {"id": "decision", "name": "Decision Consequence", "name_es": "Decisión que informa (eje de la consecuencia)", "quote": "Consequence classifications assess the impact of an M&S-influenced decision that may prove detrimental to the RWS.", "where": "Apéndice D, §D.2, p. 57"},
+      {"id": "influence", "name": "M&S Influence", "name_es": "Otra información al decidir (eje de la influencia)", "quote": "M&S Influence estimates the degree to which M&S results impact the (program/project) decision under consideration (see Table 4, M&S Influence).", "where": "Apéndice D, §D.3, p. 59"}
+    ]
+  },
+  "layers": [
+    {
+      "id": "trend-projection",
+      "display": "Proyección de las derivas al horizonte de relevancia",
+      "observation_type": "predicted",
+      "model_version": "trend:ols-contexto@1",
+      "model_note": null,
+      "sites": ["analysis/trend.py:projection"],
+      "served_in": ["/api/status → predictions[]"],
+      "tests": [
+        "tests/test_observation_provenance.py::test_a_projection_is_labelled_predicted_with_its_model_and_margin",
+        "tests/test_observation_provenance.py::test_noise_is_never_projected",
+        "tests/test_context_round3.py::test_a_steady_drift_is_projected_within_its_margin",
+        "tests/test_context_round3.py::test_a_drift_that_stops_is_caught_as_a_miss"
+      ],
+      "factors": {
+        "data-pedigree": "No hay datos de desarrollo: el modelo es una recta de mínimos cuadrados sobre las lecturas de cada tripulante en la ventana de tendencia, sin parámetros ajustados con otro conjunto.",
+        "verification": "Pruebas unitarias sobre series construidas: una deriva real se proyecta con su modelo y su margen, el ruido no se proyecta, una deriva constante cae dentro de su margen y una que se detiene se marca como fallo (lista de pruebas en la ficha). No hay estimación del error numérico ni verificación de extremo a extremo contra requisitos de error.",
+        "validation": "Ninguna frente a un referente. «¿Acertaron las proyecciones?» compara cada proyección con lo medido al llegar su horizonte, en retrospectiva y con instantáneas firmadas: es una calibración del propio modelo sobre los datos de cada tripulante, en la demostración simulados. MMASH, 24 horas en Tierra, no cubre un horizonte de semanas.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: mostrar a dónde llegaría una deriva real si siguiera igual, rotulada PREDICHA y con la base «no es un pronóstico clínico». La cifra y su margen solo se muestran; el motor decide si una deriva preocupa con la misma pendiente y el mismo horizonte, frente al umbral de relevancia y con su error típico. Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "Las lecturas del registro firmado del tripulante en la ventana de tendencia, cada una con su tipo y su entorno declarados; en la demostración, las del simulador determinista.",
+        "uncertainty": "Margen de la pendiente: su error típico por el umbral t de significación, llevado al horizonte. No incluye la incertidumbre del supuesto lineal ni la de cada lectura.",
+        "robustness": "Sin análisis de sensibilidad a la ventana, al horizonte ni al umbral de significación. Solo se proyecta una deriva que se distingue del ruido.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; cada cifra se muestra con su base y su modelo.",
+        "use-management": "Se recalcula en cada consulta. Una vez al día la proyección se firma en el registro como instantánea y se contrasta al llegar su horizonte."
+      },
+      "criticality": {
+        "decision": "La cifra proyectada solo se muestra, rotulada PREDICHA. La misma pendiente, contrastada con el umbral de relevancia al mismo horizonte, suma al estado del dominio y puede acabar en una alerta, que leen la tripulación y Tierra; decide una persona. La decisión que informa es sobre la salud de un tripulante; qué consecuencia tendría equivocarse no se ha clasificado.",
+        "influence": "Junto a la proyección están las lecturas medidas de las que sale, con su serie, su línea base personal y la desviación de cada una frente a ella. No hay otro modelo ni datos de vuelo de esa persona con que contrastarla de antemano: «¿Acertaron las proyecciones?» la compara después con lo medido."
+      }
+    },
+    {
+      "id": "mission-dose",
+      "display": "Dosis equivalente de esta misión",
+      "observation_type": "inferred",
+      "model_version": "dosis-mision:trapecio-uGy/h×Q-medio@1",
+      "model_note": null,
+      "sites": ["analysis/radiation.py:mission_dose"],
+      "served_in": ["/api/status → radiation.mission", "/api/crew/radiation → crew[].mission"],
+      "tests": [
+        "tests/test_context_round2.py::test_mission_dose_integrates_the_rate_with_the_flight_quality_factor",
+        "tests/test_context_round2.py::test_one_reading_is_not_a_mission_dose"
+      ],
+      "factors": {
+        "data-pedigree": "El único dato de desarrollo es el factor de calidad medio del vuelo, medido con TEPC en el Spacelab SLS-1 (1991, órbita baja; ficha `badhwar-1992-sls1-tepc`, leída en su resumen de PubMed). Se aplica fuera del entorno en que se midió.",
+        "verification": "Pruebas unitarias de la integral por trapecio con el factor aplicado y de que una sola lectura no da dosis (lista de pruebas en la ficha).",
+        "validation": "Ninguna de esta integral frente a un dosímetro de referencia. Lo más cercano es una prueba marcada `live`, fuera de la suite por defecto, que integra un día real de DosTel con el mismo factor en `environment/dosimetry.py` y comprueba que cae en el rango documentado de la ISS: un contraste de orden de magnitud, de otro módulo.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: mostrar la dosis equivalente de esta misión, rotulada INFERIDA, y sumarla a la dosis previa declarada en la escala de carrera. No entra en la dosis acumulada del riesgo ni en ningún nivel. Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "La tasa de dosis absorbida registrada en el registro firmado desde el inicio de la misión; en la demostración, la del simulador.",
+        "uncertainty": "No se propaga ninguna: la cifra sale sin intervalo. El factor medio no trae incertidumbre en su ficha y la mezcla de tipos de radiación de la misión es desconocida.",
+        "robustness": "Sin análisis de sensibilidad. La horquilla por tipo de radiación, otra capa, enseña cuánto varía la dosis proyectada según el factor de calidad.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; la cifra se muestra con su base y su modelo.",
+        "use-management": "Se recalcula en cada consulta y no se guarda; lleva su `model_version`."
+      },
+      "criticality": {
+        "decision": "Se muestra, rotulada INFERIDA, y se suma a la dosis previa declarada en la escala de carrera; no entra en la dosis acumulada del riesgo ni en ningún nivel ni alerta. Lo que informe lo decide quien la lee, sobre la exposición de un tripulante.",
+        "influence": "Junto a ella están la tasa de dosis registrada de la que sale y los eventos solares que recibe EMMA. A bordo de Orion el aviso ante un evento de radiación lo da HERA, que EMMA no lee. EMMA no tiene otro modelo de la dosis de la misión con que contrastarla."
+      }
+    },
+    {
+      "id": "career-dose",
+      "display": "Dosis de carrera con la de esta misión",
+      "observation_type": "inferred",
+      "model_version": null,
+      "model_note": "Sin `model_version` propio: suma la dosis previa declarada en el perfil y la dosis de misión inferida (ficha `mission-dose`).",
+      "sites": ["analysis/radiation.py:scales"],
+      "served_in": ["/api/status → radiation.career", "/api/crew/radiation → crew[].career"],
+      "tests": [
+        "tests/test_context_round2.py::test_career_needs_a_declared_prior_dose_and_never_assumes_zero",
+        "tests/test_context_round2.py::test_the_profile_feeds_the_career_scale",
+        "tests/test_radiation_projection.py::test_without_a_positive_limit_there_is_no_career_fraction"
+      ],
+      "factors": {
+        "data-pedigree": "Ningún dato de desarrollo propio. El límite de carrera es el de NASA-STD-3001 [V1 4030], leído.",
+        "verification": "Pruebas unitarias: sin dosis previa declarada no se supone cero, el perfil llega a la escala y sin límite positivo no hay fracción (lista de pruebas en la ficha).",
+        "validation": "Ninguna.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: mostrar la fracción del límite de carrera que llevaría el tripulante con esta misión. No alimenta el nivel de radiación, que lee la dosis acumulada facilitada (ficha `supplied-cumulative-dose`). Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "La dosis previa la declara el perfil firmado del tripulante; EMMA no la contrasta con un registro dosimétrico. La de misión es la de la ficha `mission-dose`.",
+        "uncertainty": "Ninguna propagada; la dosis de misión que suma tampoco la lleva.",
+        "robustness": "Sin análisis de sensibilidad.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; la cifra se muestra con su base.",
+        "use-management": "Se recalcula en cada consulta y no se guarda."
+      },
+      "criticality": {
+        "decision": "Se muestra como fracción del límite de carrera de NASA-STD-3001 [V1 4030]; no alimenta el nivel de radiación, que lee la dosis acumulada facilitada. Lo que informe lo decide quien la lee.",
+        "influence": "Junto a ella están la dosis previa declarada en el perfil firmado del tripulante y la dosis de misión que suma. EMMA no tiene el registro dosimétrico de carrera con que contrastar la dosis previa."
+      }
+    },
+    {
+      "id": "mission-dose-projection",
+      "display": "Dosis de misión y de carrera proyectadas al fin de misión",
+      "observation_type": "predicted",
+      "model_version": "proyeccion-dosis-mision:tasa-media-constante×Q-medio@1",
+      "model_note": null,
+      "sites": ["analysis/radiation.py:mission_projection"],
+      "served_in": ["/api/status → radiation.projection", "/api/status → radiation.projection.career"],
+      "tests": [
+        "tests/test_radiation_projection.py::test_the_projection_extends_the_mean_rate_to_the_configured_end",
+        "tests/test_radiation_projection.py::test_after_the_configured_end_there_is_nothing_to_project",
+        "tests/test_radiation_projection.py::test_the_projected_career_needs_a_declared_prior_dose_and_never_assumes_zero",
+        "tests/test_radiation_projection.py::test_the_days_before_the_first_rate_reading_are_said_not_extrapolated",
+        "tests/test_radiation_projection.py::test_the_projection_never_feeds_the_cumulative_dose_or_any_level"
+      ],
+      "factors": {
+        "data-pedigree": "El factor de calidad medio del vuelo, medido con TEPC en el Spacelab SLS-1 (1991, órbita baja; ficha `badhwar-1992-sls1-tepc`). Se aplica fuera del entorno en que se midió.",
+        "verification": "Pruebas unitarias: la tasa media se prolonga hasta el fin configurado, tras el fin no hay nada que proyectar, la carrera exige dosis previa declarada, los días anteriores a la primera lectura se dicen y no se extrapolan, y la proyección no alimenta la dosis acumulada ni ningún nivel (lista de pruebas en la ficha).",
+        "validation": "Ninguna: ninguna proyección se ha contrastado con la dosis registrada al acabar una misión.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: mostrar la dosis de esta misión y la de carrera al fin de misión configurado, porque la justificación de [V1 4030] cuenta en la carrera la exposición proyectada de la misión. Se muestra y no alimenta la dosis acumulada del riesgo ni ningún nivel (hay prueba). Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "La tasa media registrada desde la primera lectura y la duración de misión configurada; los días anteriores a la primera lectura no se extrapolan, y la base dice cuántos son.",
+        "uncertainty": "Ninguna propagada. Supone tasa constante: no prevé eventos solares, y la media incluye un evento pasado si lo hubo; lo dice su base.",
+        "robustness": "Sin análisis de sensibilidad a la tasa ni a la duración.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; la cifra se muestra con su base y su modelo.",
+        "use-management": "Se recalcula en cada consulta y no se guarda. A diferencia de la proyección de derivas, no se firma una instantánea ni se contrasta al acabar la misión."
+      },
+      "criticality": {
+        "decision": "Se muestran la dosis de esta misión y la de carrera al fin de misión configurado; no alimentan la dosis acumulada del riesgo ni ningún nivel (hay prueba). Lo que informen lo decide quien las lee.",
+        "influence": "Junto a ella están la dosis de misión ya acumulada y la tasa registrada de la que sale. Supone tasa constante y no prevé eventos solares; EMMA no tiene otro modelo de la dosis de la misión con que contrastarla."
+      }
+    },
+    {
+      "id": "dose-by-radiation-type",
+      "display": "Horquilla de la dosis proyectada por tipo de radiación",
+      "observation_type": "inferred",
+      "model_version": null,
+      "model_note": "Sin `model_version` propio: es la dosis absorbida de la proyección (ficha `mission-dose-projection`) por los dos factores de calidad por tipo.",
+      "sites": ["analysis/radiation.py:mission_projection"],
+      "served_in": ["/api/status → radiation.projection.by_type"],
+      "tests": [
+        "tests/test_radiation_projection.py::test_the_range_by_radiation_type_uses_the_sls1_quality_factors_and_is_inferred",
+        "tests/test_radiation_projection.py::test_every_flight_quality_factor_names_the_card_the_range_cites"
+      ],
+      "factors": {
+        "data-pedigree": "Los factores de calidad de la radiación atrapada y de los rayos cósmicos galácticos, medidos con TEPC en el Spacelab SLS-1 (1991, órbita baja; ficha `badhwar-1992-sls1-tepc`), con su incertidumbre en la ficha.",
+        "verification": "Pruebas unitarias: la horquilla usa los dos factores del SLS-1, se rotula INFERIDA y cada factor nombra la ficha que cita (lista de pruebas en la ficha).",
+        "validation": "Ninguna.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: enseñar cuánto sería la dosis proyectada si toda fuera de un tipo o toda del otro. No es un intervalo de confianza, y lo dice. No entra en ningún nivel. Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "La dosis absorbida proyectada (ficha `mission-dose-projection`). EMMA no sabe la mezcla de tipos de la misión: OSDR RadLab no da espectro.",
+        "uncertainty": "La incertidumbre de cada factor está en su ficha y no se propaga a la horquilla.",
+        "robustness": "La horquilla es en sí una variación de una entrada, el factor de calidad, entre dos valores medidos; no hay otro análisis de sensibilidad.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; la cifra se muestra con su base y su fuente.",
+        "use-management": "Se recalcula con la proyección en cada consulta y no se guarda."
+      },
+      "criticality": {
+        "decision": "Se muestra como horquilla de la dosis proyectada; no es un intervalo de confianza y no entra en ningún nivel.",
+        "influence": "Junto a ella están la dosis proyectada que reparte y los dos factores de calidad, cada uno con su ficha. EMMA no conoce la mezcla de tipos de radiación de la misión."
+      }
+    },
+    {
+      "id": "bone-density-band",
+      "display": "Banda de pérdida de densidad mineral ósea",
+      "observation_type": "inferred",
+      "model_version": "bmd-banda-nasa-1-1,5pct-mes@1",
+      "model_note": null,
+      "sites": ["analysis/inferred.py:bone_density_band"],
+      "served_in": ["/api/status → inferred[]", "/api/risks (estado inferido del dominio óseo)"],
+      "tests": [
+        "tests/test_mission_context.py::test_bone_loss_is_an_inferred_band_that_grows_with_the_mission",
+        "tests/test_inferred_return.py::test_outside_postflight_the_band_is_the_same_as_before",
+        "tests/test_inferred_return.py::test_in_postflight_the_band_stops_at_the_return_day",
+        "tests/test_exercise_context.py::test_the_band_is_the_same_with_and_without_the_measured_exercise"
+      ],
+      "factors": {
+        "data-pedigree": "La tasa de pérdida de población sin contramedidas que publica NASA («The Human Body in Space», ficha `nasa-human-body-in-space`), clasificada como magnitud documentada. No es un modelo de esta persona.",
+        "verification": "Pruebas unitarias: la banda crece con el día de misión, en posvuelo se detiene en el día de regreso y no cambia con el ejercicio medido (lista de pruebas en la ficha).",
+        "validation": "Ninguna: la densidad ósea no se mide a bordo, y la banda no se ha contrastado con densitometría antes y después de ningún vuelo.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: mostrar la trayectoria inferida, no medida, que pide la especificación (§9). No puntúa ni alerta (hay prueba). Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "Solo el día de misión y la fase, del calendario configurado. El ejercicio registrado va al lado y no la ajusta.",
+        "uncertainty": "La banda, de la tasa baja a la alta, es la dispersión que da la fuente. No incluye la variación entre personas ni el efecto del ejercicio, cuya magnitud no es citable.",
+        "robustness": "Sin análisis de sensibilidad.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso; la banda se muestra con su base y su fuente.",
+        "use-management": "Se recalcula en cada consulta y no se escribe en el registro como medida."
+      },
+      "criticality": {
+        "decision": "Se muestra como trayectoria inferida del dominio óseo; no puntúa ni alerta (hay prueba). Lo que informe lo decide quien la lee.",
+        "influence": "La densidad ósea no se mide a bordo: junto a la banda solo están el día de misión y el ejercicio registrado, que va al lado y no la ajusta. La banda no se ha contrastado con densitometría."
+      }
+    },
+    {
+      "id": "supplied-cumulative-dose",
+      "display": "Dosis acumulada facilitada (la que lee el riesgo)",
+      "observation_type": "inferred",
+      "model_version": null,
+      "model_note": "EMMA no la calcula: la da un parámetro de la consulta o la última observación de dosis acumulada del registro. Se rotula INFERIDA porque la dosis efectiva es una magnitud calculada, no la lectura directa de un sensor.",
+      "sites": ["api/routes.py:crew_status"],
+      "served_in": ["/api/status → dose"],
+      "tests": [
+        "tests/test_observation_provenance.py::test_the_status_labels_dose_projections_and_provenance",
+        "tests/test_api.py::test_dose_at_limit_is_critical",
+        "tests/test_api.py::test_a_recorded_career_dose_triggers_the_limit"
+      ],
+      "factors": {
+        "data-pedigree": "No hay modelo de EMMA ni datos de desarrollo.",
+        "verification": "Pruebas de la ruta: la cifra se rotula INFERIDA, en el límite el dominio llega al nivel más alto de EMMA y una dosis registrada en el registro llega al límite (lista de pruebas en la ficha).",
+        "validation": "No hay modelo de EMMA que validar: la cifra la calcula quien la registra, y EMMA no tiene ese modelo ni lo ha contrastado.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas.",
+        "use-assessment": "Es la única de estas cifras que entra en el riesgo: el nivel de radiación la compara con el límite de carrera. Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "El parámetro de la consulta o la última observación de dosis acumulada firmada en el registro; la respuesta dice cuál de los dos. Dónde se calcula la dosis registrada no tiene fuente (coste de medir, pendiente).",
+        "uncertainty": "Ninguna: la observación no trae intervalo.",
+        "robustness": "Sin análisis de sensibilidad del nivel a esta cifra.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso.",
+        "use-management": "Cada observación entra por el registro firmado; el parámetro de la consulta no se guarda."
+      },
+      "criticality": {
+        "decision": "Es la única de estas cifras que entra en el riesgo: el nivel de radiación la compara con el límite de carrera, y al alcanzarlo el dominio de radiación pasa por sí solo al nivel de alerta más alto de EMMA. La decisión que informa es sobre la exposición de un tripulante, y la toma una persona.",
+        "influence": "EMMA no tiene el modelo de esta cifra: la da un parámetro de la consulta o la última observación de dosis acumulada del registro. Junto a ella están la tasa de dosis registrada y los eventos solares que recibe EMMA; el aviso de HERA, a bordo de Orion, EMMA no lo lee."
+      }
+    },
+    {
+      "id": "radlab-dose-estimate",
+      "display": "Dosis equivalente estimada de la dosimetría de la ISS",
+      "observation_type": "inferred",
+      "model_version": null,
+      "model_note": "Sin `model_version`: la respuesta nombra el factor de calidad aplicado (`model`) y su fuente, y declara si la dosis equivalente es medida o estimada.",
+      "sites": ["environment/dosimetry.py:DoseEstimate.to_dict"],
+      "served_in": ["/api/radiation/dose → dose"],
+      "tests": [
+        "tests/test_dosimetry.py::test_measured_dose_equivalent_is_preferred_over_estimation",
+        "tests/test_dosimetry.py::test_falls_back_to_quality_factor_when_no_measurement",
+        "tests/test_dosimetry.py::test_integration_is_trapezoidal_over_real_gaps",
+        "tests/test_dosimetry.py::test_estimate_always_declares_its_provenance"
+      ],
+      "factors": {
+        "data-pedigree": "Los factores de calidad medios medidos con TEPC en el Spacelab SLS-1 (ficha `badhwar-1992-sls1-tepc`). La función Q(L) de ICRP 60 está escrita, pero OSDR RadLab no publica el espectro que necesita.",
+        "verification": "Pruebas unitarias: la dosis equivalente medida se prefiere a la estimada, sin ella se aplica el factor, la integral recorre los huecos reales y la cifra declara su procedencia (lista de pruebas en la ficha).",
+        "validation": "Un contraste de orden de magnitud, no una validación: una prueba marcada `live`, fuera de la suite por defecto, integra la serie real de DosTel del 2022-04-01 y comprueba que con el factor medio cae en el rango documentado de la ISS y con Q = 1 por debajo. No se ha comparado con un dosímetro de dosis equivalente.",
+        "development-review": "Ninguna revisión técnica formal ni independiente. Los cambios pasan la revisión de código del propio desarrollo, que no es la revisión entre pares de la norma.",
+        "development-management": "Control de versiones local con un cambio por commit, ruff y mypy --strict en verde y campañas de mutantes sobre las defensas. No hay plan de ciclo de vida del modelo ([M&S 41]) ni registro de usos permitidos ([M&S 14]) aparte de esta ficha.",
+        "use-assessment": "Uso: estimar la dosis equivalente de una ventana de dosimetría real de la ISS. La respuesta avisa de que no es un resultado dosimétrico de grado operacional, y la cifra no entra en el estado de ningún tripulante. Esa adecuación no se ha evaluado con la tabla de la norma.",
+        "input-pedigree": "Series de tasa de dosis absorbida de OSDR RadLab, por su cliente con caché, con la edad del dato y su caducidad; el campo de dosis equivalente existe en el esquema y no está poblado.",
+        "uncertainty": "No se propaga; el factor elegido viaja con la cifra.",
+        "robustness": "Se puede pedir con otro factor de calidad, y una prueba fija que Q = 1 subestima la dosis por el factor medio; no hay otro análisis.",
+        "use-review": "Ninguna revisión técnica de los resultados en uso.",
+        "use-management": "Se calcula en cada consulta desde la caché de RadLab y no se guarda."
+      },
+      "criticality": {
+        "decision": "Estima la dosis equivalente de una ventana de dosimetría real de la ISS; no entra en el estado de ningún tripulante ni en ningún nivel, y la respuesta avisa de que no es un resultado dosimétrico de grado operacional.",
+        "influence": "Junto a ella está la serie de tasa de dosis absorbida de OSDR RadLab de la que sale; la dosis equivalente medida se prefiere cuando la serie la trae, y hoy ese campo no está poblado."
+      }
+    }
+  ]
+}

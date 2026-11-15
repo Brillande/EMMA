@@ -1,0 +1,209 @@
+{
+  "target": "app/timeline.py",
+  "test": [
+    "tests/test_timeline.py"
+  ],
+  "mutations": [
+    {
+      "label": "la crónica usa una clave que no es el asiento y se repite",
+      "old": "        key=f\"ledger:{index}\",",
+      "new": "        key=\"ledger:0\","
+    },
+    {
+      "label": "un seguimiento cerrado cuenta como pendiente",
+      "old": "        if item.get(\"state\") in (\"closed\", \"cerrado\"):\n            continue",
+      "new": "        if False:\n            continue"
+    },
+    {
+      "label": "esta semana no filtra por la ventana",
+      "old": "today <= date <= end",
+      "new": "today <= date"
+    },
+    {
+      "label": "esta semana deja la copia sustituida",
+      "old": "            follow.recopilar, summit.foco = saved",
+      "new": "            pass"
+    },
+    {
+      "label": "qué depende de este dato olvida la región anatómica",
+      "old": "                deps.append(f\"region:{region.key}\")",
+      "new": "                pass"
+    },
+    {
+      "label": "qué depende de este dato deja el mapa de EMMA en la copia",
+      "old": "            cascade.MAPA, cascade.DEPENDIENTES = saved",
+      "new": "            pass"
+    },
+    {
+      "label": "vuelve a usar el reloj real: el ahora ignora las lecturas",
+      "old": "    if reference:\n        return AsOf(_instant(reference), \"data\")",
+      "new": "    if False:\n        return AsOf(_instant(reference), \"data\")"
+    },
+    {
+      "label": "vuelve a usar el reloj real: esta semana cuenta desde hoy",
+      "old": "    today = now.moment.date()",
+      "new": "    today = dt.date.today()"
+    },
+    {
+      "label": "vuelve a usar el reloj real: el bloque de Polaris cuenta desde su hoy",
+      "old": "        anticipa.date = _date_at(today)",
+      "new": "        pass"
+    },
+    {
+      "label": "esta semana deja el reloj de los datos en la copia",
+      "old": "            anticipa.date = saved_date",
+      "new": "            pass"
+    },
+    {
+      "label": "la crónica olvida el inicio de las alertas",
+      "old": "        *_analysis_events(status, mission),",
+      "new": ""
+    },
+    {
+      "label": "la crónica olvida las excursiones de cabina",
+      "old": "        *_habitat_events(store, mission),",
+      "new": ""
+    },
+    {
+      "label": "la crónica cuenta lecturas de cabina posteriores a su ahora",
+      "old": "store.habitat_readings(until=mission.now.moment)",
+      "new": "store.habitat_readings()"
+    },
+    {
+      "label": "la crónica cuenta un cambio de fase que aún no ha llegado",
+      "old": "        if moment > mission.now.moment:\n            return",
+      "new": "        if False:\n            return"
+    },
+    {
+      "label": "la crónica ordena por la clave y no por el instante",
+      "old": "(_CLOCK_ORDER[event[\"time_basis\"]], _instant(event[\"at\"]))",
+      "new": "(_CLOCK_ORDER[event[\"time_basis\"]], event[\"clave\"])"
+    },
+    {
+      "label": "un asiento con solo hora de firma se sitúa en la misión",
+      "old": "        if basis != \"data\":\n            return \"unplaced\"",
+      "new": "        if False:\n            return \"unplaced\""
+    },
+    {
+      "label": "Tierra recibe en la crónica lo firmado después de su corte",
+      "target": "app/core/identities.py",
+      "old": "    return until is None or dt.datetime.fromisoformat(action[\"recorded\"]) <= until\n",
+      "new": "    return True\n"
+    },
+    {
+      "label": "Tierra recibe lo decidido sobre un estado posterior a su corte",
+      "old": "    if until is not None and at > until:",
+      "new": "    if False:"
+    },
+    {
+      "label": "una ubicación declarada sale en la crónica con la clave interna de su tipo",
+      "old": "        located = item[\"kind\"] == _LOCATION_KIND",
+      "new": "        located = False"
+    },
+    {
+      "label": "una ubicación declarada se cuenta como un evento del plan que empieza y termina",
+      "old": "        if item[\"kind\"] == _LOCATION_KIND:",
+      "new": "        if False:"
+    },
+    {
+      "label": "una ubicación declarada sale como asunto de los próximos días",
+      "old": "        if item.get(\"kind\") == _LOCATION_KIND:",
+      "new": "        if False:"
+    },
+    {
+      "label": "una toma posvuelo de Inspiration4 se sitúa con el calendario configurado, no con su regreso",
+      "old": "            event[\"stage\"] = \"postflight\"",
+      "new": "            pass"
+    },
+    {
+      "label": "la crónica cuenta tomas posvuelo posteriores al ahora",
+      "old": "            if _instant(sample[\"at\"]) > mission.now.moment:\n                continue",
+      "new": "            if False:\n                continue"
+    },
+    {
+      "label": "la crónica cuenta cada toma posvuelo como un evento aunque sean del mismo día",
+      "old": "            days.setdefault(sample[\"days_after_landing\"], []).append(sample)",
+      "new": "            days.setdefault(sample[\"at\"], []).append(sample)"
+    },
+    {
+      "label": "el evento de un día posvuelo va en su primera toma y cuenta lo que vino después",
+      "old": "                mission, _instant(samples[-1][\"at\"]), \"posvuelo\",",
+      "new": "                mission, _instant(samples[0][\"at\"]), \"posvuelo\","
+    },
+    {
+      "label": "un día posvuelo da por dentro del rango prevuelo todas sus tomas",
+      "old": "    within = sum(1 for sample in samples if sample[\"within_preflight_range\"])",
+      "new": "    within = len(samples)"
+    },
+    {
+      "label": "la crónica posvuelo nombra el indicador en inglés aunque EMMA lo enseñe en español",
+      "old": "    name = item[\"display_es\"]",
+      "new": "    name = item[\"display\"]"
+    },
+    {
+      "label": "las cifras posvuelo salen con cuatro decimales y no con los de su indicador",
+      "old": "    digits = display.decimals_for(key)",
+      "new": "    digits = 4"
+    },
+    {
+      "label": "la crónica posvuelo deja la unidad UCUM en crudo",
+      "old": "    return f\"{figures} {display.unit(ucum)}\".rstrip()",
+      "new": "    return f\"{figures} {ucum}\".rstrip()"
+    },
+    {
+      "label": "la crónica no cuenta la recuperación posvuelo",
+      "old": "        *_recovery_events(observations, mission),",
+      "new": ""
+    },
+    {
+      "label": "la crónica cuenta lo firmado por cualquier identidad, no solo por la consola",
+      "old": "        return [item for item in items if action_counts(item, until)]",
+      "new": "        return list(items)"
+    },
+    {
+      "label": "la crónica cuenta un «en arreglo» firmado por otra identidad",
+      "old": "    for item in signed.resolutions:",
+      "new": "    for item in store.alert_resolutions(subject):"
+    },
+    {
+      "label": "la crónica cuenta un descarte firmado por otra identidad o que la API no habría aceptado",
+      "old": "    for item in signed.dismissals:",
+      "new": "    for item in store.alert_dismissals(subject):"
+    },
+    {
+      "label": "la crónica cuenta un reconocimiento firmado por otra identidad",
+      "old": "    for item in signed.acknowledgements:",
+      "new": "    for item in store.acknowledgements(subject):"
+    },
+    {
+      "label": "la crónica cuenta un silencio firmado por otra identidad o que la API no habría aceptado",
+      "old": "    for item in signed.changes:",
+      "new": "    for item in store.annunciation_changes(subject):"
+    },
+    {
+      "label": "la crónica cuenta una contramedida firmada por otra identidad",
+      "old": "    for item in signed.decisions:",
+      "new": "    for item in store.followup_decisions(subject):"
+    },
+    {
+      "label": "la crónica cuenta un evento de misión firmado por otra identidad",
+      "old": "    for item in counted(store.mission_events(subject)):",
+      "new": "    for item in store.mission_events(subject):"
+    },
+    {
+      "label": "la crónica cuenta el estado de un sistema firmado por otra identidad",
+      "old": "habitat_systems.history(counted(store.system_statuses()))",
+      "new": "habitat_systems.history(store.system_statuses())"
+    },
+    {
+      "label": "la crónica cuenta un vínculo de sensor firmado por otra identidad",
+      "old": "sensor_bindings.history(counted(store.sensor_bindings()))",
+      "new": "sensor_bindings.history(store.sensor_bindings())"
+    },
+    {
+      "label": "la crónica cuenta un recurso declarado por otra identidad",
+      "old": "declared_resources.history(counted(store.resource_declarations()))",
+      "new": "declared_resources.history(store.resource_declarations())"
+    }
+  ]
+}

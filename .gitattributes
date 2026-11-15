@@ -1,0 +1,5 @@
+# Sin conversión de saltos de línea, en ningún fichero. La copia de Polaris (`polaris/`) es byte a
+# byte y la vigila `backend/tests/test_polaris_copy.py`: con autocrlf, una copia de trabajo en
+# Windows saldría en CRLF y la prueba fallaría (por eso `polaris_sync.py` lee de los objetos de git).
+* -text
+backend/app/data/kb-model/*.onnx filter=lfs diff=lfs merge=lfs -text

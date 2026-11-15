@@ -1,0 +1,18 @@
+{
+ "strings": {
+  "síndrome agudo de radiación": "acute radiation syndrome",
+  "probabilidad de al menos un síndrome agudo de radiación en la misión, para un tripulante": "probability of at least one acute radiation syndrome during the mission, for one crew member",
+  "Los datos del IMM están referidos al entorno de la ISS; en misiones de exploración eso puede cambiar la incidencia del síndrome agudo de radiación, y el informe lo dice.": "The IMM data are baselined to the ISS environment; in exploration missions that may change the incidence of acute radiation syndrome, and the report says so.",
+  "órbita baja, seis meses": "low Earth orbit, six months",
+  "órbita baja, doce meses": "low Earth orbit, twelve months",
+  "salida al espacio profundo, un mes": "deep space sortie, one month",
+  "visita y hábitat lunar, doce meses": "lunar visit and habitation, twelve months",
+  "viaje y hábitat en espacio profundo, doce meses": "deep space journey and habitation, twelve months",
+  "misión planetaria, treinta y seis meses": "planetary mission, thirty-six months",
+  "la misión de referencia del IMM en órbita baja de seis meses, la duración de una expedición de la estación": "the IMM reference mission in low Earth orbit of six months, the length of a station expedition",
+  "el IMM no tiene una misión cislunar; la salida corta al espacio profundo es la más parecida a un vuelo de Orion alrededor de la Luna": "the IMM has no cislunar mission; the short deep space sortie is the closest to an Orion flight around the Moon",
+  "la misión de referencia del IMM de visita y hábitat lunar": "the IMM reference mission of lunar visit and habitation",
+  "el IMM no tiene un tránsito a Marte; el viaje y hábitat en espacio profundo es el tramo fuera de la magnetosfera más parecido": "the IMM has no Mars transit; the deep space journey and habitation is the closest stretch outside the magnetosphere",
+  "la misión planetaria del IMM, la única con estancia en otro planeta": "the IMM planetary mission, the only one with a stay on another planet"
+ }
+}

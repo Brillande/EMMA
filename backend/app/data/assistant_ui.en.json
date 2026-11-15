@@ -1,0 +1,1858 @@
+{
+  "_nota": "Contraparte en inglés de assistant_ui.json (2026-11-15): el rótulo, los alias y el `about` de cada consola, pestaña, modo y panel que no está apartado en esta versión, emparejados por id con el inventario en castellano, que sigue siendo la fuente de la estructura (`kind`, `places`, `intent`). Los alias van como los deja `catalog.plain()`: minúsculas ASCII sin puntuación, el primero el rótulo, y ninguno repetido entre paneles. Traducción automática, sin revisar por una persona; lo vigila tests/test_assistant_ui_en.py.",
+  "consoles": {
+    "crew": {
+      "label": "Crew console",
+      "aliases": [
+        "crew console",
+        "crew",
+        "on board console",
+        "on board"
+      ],
+      "about": "The on-board console: the status of whoever uses it, their alerts, their log and their tests."
+    },
+    "ground": {
+      "label": "Ground console",
+      "aliases": [
+        "ground console",
+        "ground",
+        "mission control",
+        "houston"
+      ],
+      "about": "The Ground console: what has arrived from on board with the light delay, the history and the trends."
+    }
+  },
+  "sections": {
+    "crew": {
+      "home": {
+        "label": "Home",
+        "aliases": [
+          "home",
+          "dashboard",
+          "main screen",
+          "home screen"
+        ],
+        "about": "The main screen: mission and crew status, the four vital signs with their 24 h curve, the RIDGE hazards, the next actions and the routes, as in the mockup."
+      },
+      "radiation": {
+        "label": "Radiation",
+        "aliases": [
+          "radiation",
+          "radiation and health",
+          "radiation section",
+          "spectrum"
+        ],
+        "about": "Flight radiation: sources, domain level, particles of the last 24 h, dosimetry, NASA-STD-3001 limits, effects, countermeasures, route with the projected dose and shelter."
+      },
+      "isolation": {
+        "label": "Isolation",
+        "aliases": [
+          "isolation",
+          "isolation and psychosocial health",
+          "psychosocial health",
+          "isolation section"
+        ],
+        "about": "Isolation and psychosocial health: behavioral indicators, 14-day trend, sleep, mood, Cognition battery, nutrition, correlations, risk, recommendations and alerts."
+      },
+      "gravity": {
+        "label": "Gravity",
+        "aliases": [
+          "gravity",
+          "gravitational health",
+          "gravity section"
+        ],
+        "about": "Gravitational health: exposure and phase, musculoskeletal, cardiovascular and fluids, tests, exercise consistency, fields, prediction and countermeasures."
+      },
+      "environment": {
+        "label": "Environment",
+        "aliases": [
+          "environment",
+          "spacecraft environment",
+          "environmental panel",
+          "environment section"
+        ],
+        "about": "Spacecraft environment: environmental status, limits, 72 h trend, atmosphere, temperature, light and sleep, noise, water, microbiology, gravity, systems and correlations."
+      },
+      "nodes": {
+        "label": "Distance and nodes",
+        "aliases": [
+          "distance and nodes",
+          "nodes tab",
+          "on board reserves"
+        ],
+        "about": "The ISS mockup by location: distance and communications, the integrated tests panel with the Polaris viewer, and the reserves of medications, food and equipment."
+      },
+      "hazards": {
+        "label": "Hazards and alerts",
+        "aliases": [
+          "hazards and alerts",
+          "hazards",
+          "alerts"
+        ],
+        "about": "The status summary, the active alerts with their detail and what to do, and the five hazards of flight. Alerts are acknowledged here."
+      }
+    },
+    "ground": {
+      "received": {
+        "label": "Received status",
+        "aliases": [
+          "received status",
+          "received",
+          "alerts"
+        ],
+        "about": "The latest that has arrived from on board, with the light delay: the status, the five hazards, the projections and their check, and the notes for the crew."
+      },
+      "history": {
+        "label": "History",
+        "aliases": [
+          "history",
+          "crew history",
+          "record history"
+        ],
+        "about": "The crew member's history: baseline, mission by mission, reported pain, received ultrasounds and post-flight recovery."
+      },
+      "trends": {
+        "label": "Trends",
+        "aliases": [
+          "trends",
+          "series",
+          "charts"
+        ],
+        "about": "The trend charts of each indicator throughout the mission: how the vital signs evolve."
+      },
+      "habitat": {
+        "label": "Habitat",
+        "aliases": [
+          "habitat",
+          "radiation",
+          "mission"
+        ],
+        "about": "The crew against the shared habitat, the cabin air, radiation, the mission level and the twins' questions."
+      },
+      "framework": {
+        "label": "Framework and sources",
+        "aliases": [
+          "framework and sources",
+          "framework",
+          "sources"
+        ],
+        "about": "The NASA framework and the sources: HRP risks, datasets, facilities, cost of measuring, people and testbeds."
+      },
+      "ledger": {
+        "label": "Ledger and documents",
+        "aliases": [
+          "ledger and documents",
+          "ledger",
+          "documents"
+        ],
+        "about": "The signed ledger (audit), the documentation to export and the Polaris copy."
+      },
+      "library": {
+        "label": "Library",
+        "aliases": [
+          "library",
+          "guides",
+          "glossary"
+        ],
+        "about": "The countermeasure library, the guides on how to measure each thing and the glossary of terms."
+      }
+    },
+    "environments": {
+      "aliases": [
+        "mission environment",
+        "mission profile",
+        "profile"
+      ],
+      "about": "One tab per mission environment (low Earth orbit, cislunar, Moon, transit and Mars surface) with what its source says; the environment can be declared from there."
+    }
+  },
+  "modes": {
+    "lowVision": {
+      "label": "Low vision",
+      "aliases": [
+        "low vision",
+        "larger text",
+        "bigger text",
+        "large text",
+        "i cannot see well",
+        "normal text"
+      ],
+      "about": "Larger text, controls and strokes, to see the screen better."
+    },
+    "essential": {
+      "label": "Essential mode",
+      "aliases": [
+        "essential mode",
+        "essential"
+      ],
+      "about": "Leaves only the sections that are indispensable for acting."
+    },
+    "privacy": {
+      "label": "Privacy",
+      "aliases": [
+        "privacy",
+        "privacy mode"
+      ],
+      "about": "Hides names, personal figures and notes when someone else is present; alerts and general status stay visible."
+    },
+    "voice": {
+      "label": "Voice: read each new alert",
+      "aliases": [
+        "voice read each new alert",
+        "voice mode",
+        "alert voice",
+        "read each alert",
+        "read new alerts"
+      ],
+      "about": "With voice on, each new alert is read aloud once."
+    },
+    "proactive": {
+      "label": "EMMA takes the initiative",
+      "aliases": [
+        "emma takes the initiative",
+        "initiative",
+        "proactive mode",
+        "warn me on your own"
+      ],
+      "about": "EMMA greets, reads the status and warns on its own about new alerts, overdue measurements, mission level and solar event."
+    },
+    "followSensor": {
+      "label": "Follow the sensor",
+      "aliases": [
+        "follow the sensor",
+        "gyroscope",
+        "rotation sensor"
+      ],
+      "about": "The view rotates by itself with the device's gyroscope."
+    },
+    "followFace": {
+      "label": "Follow the face (demo)",
+      "aliases": [
+        "follow the face demo",
+        "follow the face",
+        "follow my face",
+        "face tracking"
+      ],
+      "about": "The view rotates by itself following the face of whoever is looking, using the camera (demonstration)."
+    },
+    "wakeWord": {
+      "label": "Listen for «EMMA»",
+      "aliases": [
+        "listen for emma",
+        "hands free",
+        "wake word",
+        "when i say your name",
+        "listen for your name"
+      ],
+      "about": "Hands-free: the console hears the word «EMMA» and records the sentence that follows."
+    },
+    "rotation": {
+      "label": "Rotate",
+      "aliases": [
+        "rotate",
+        "turn the screen",
+        "screen upright",
+        "normal view",
+        "sideways",
+        "upside down"
+      ],
+      "about": "Rotates the whole screen view: upright, sideways or upside down."
+    },
+    "highContrast": {
+      "label": "High contrast",
+      "aliases": [
+        "high contrast",
+        "more contrast",
+        "glare",
+        "the screen dazzles me",
+        "too much light"
+      ],
+      "about": "Raises the contrast of the whole console for strong light or reflections, with the same color meanings; it combines with low vision."
+    },
+    "autoPrivacy": {
+      "label": "Automatic privacy with another face",
+      "aliases": [
+        "automatic privacy with another face",
+        "automatic privacy",
+        "auto privacy",
+        "privacy when someone is there"
+      ],
+      "about": "With «Follow the face (demo)» on, if the camera sees another face, EMMA turns privacy on by itself and says so; otherwise it only suggests it (demo, without validation; only counts faces)."
+    }
+  },
+  "panels": {
+    "home-location": {
+      "label": "Crew location",
+      "aliases": [
+        "crew location",
+        "location",
+        "where the crew is"
+      ],
+      "about": "The backend's mission profiles with their thumbnail; the declared one is marked. Choosing one changes the route the dashboard shows."
+    },
+    "home-module": {
+      "label": "Sublocation",
+      "aliases": [
+        "sublocation",
+        "dashboard module",
+        "crew module"
+      ],
+      "about": "The crew member's module and since when: the one the console declared or the one estimated by the spacecraft's module anchors, marked as estimated."
+    },
+    "home-global": {
+      "label": "Overall crew status",
+      "aliases": [
+        "overall crew status",
+        "overall status",
+        "mission status and vital signs"
+      ],
+      "about": "Mission status with its level, domains by RIDGE hazard, the four vital signs with their curve, the 24 h trend and the body with the organs on alert."
+    },
+    "home-crew": {
+      "label": "Crew member card",
+      "aliases": [
+        "crew member card",
+        "dashboard crew member"
+      ],
+      "about": "The crew member: their level, the mission phase and the mission time."
+    },
+    "home-ridge-individual": {
+      "label": "Crew member RIDGE hazards",
+      "aliases": [
+        "crew member ridge hazards",
+        "individual ridge"
+      ],
+      "about": "The five RIDGE hazards by letter, with the level of each of the crew member's domains."
+    },
+    "home-logbook": {
+      "label": "Notes and logbook",
+      "aliases": [
+        "notes and logbook",
+        "logbook",
+        "dashboard notes"
+      ],
+      "about": "The crew member's latest log entries; from here «Log and tests» opens for writing."
+    },
+    "home-risk": {
+      "label": "Risk status",
+      "aliases": [
+        "risk status",
+        "overall level"
+      ],
+      "about": "The current overall level, large, and the other levels of the scale below it."
+    },
+    "home-next-actions": {
+      "label": "Next actions",
+      "aliases": [
+        "next actions",
+        "dashboard actions",
+        "upcoming actions"
+      ],
+      "about": "The open follow-ups and the first recommendations, three in total."
+    },
+    "home-ridge-quick": {
+      "label": "RIDGE hazards: quick access",
+      "aliases": [
+        "ridge hazards quick access",
+        "quick access"
+      ],
+      "about": "Each RIDGE hazard with the level of its domains, not aggregated, and for distance the light time; shortcuts to «Body» and «Quality and sensors»."
+    },
+    "home-routes": {
+      "label": "Space routes",
+      "aliases": [
+        "space routes",
+        "routes",
+        "route"
+      ],
+      "about": "The mission profile on display: day, distance and delay from the ephemerides, dose, gravity, predicted projections of the status and aspects of the profile."
+    },
+    "rad-nav": {
+      "label": "Radiation subsections",
+      "aliases": [
+        "radiation subsections",
+        "radiation index"
+      ],
+      "about": "The section strip: it leads to radiation, exposure, effects, prevention, prediction and history, and gives the current mission, its day and its phase."
+    },
+    "rad-spectrum": {
+      "label": "Electromagnetic spectrum",
+      "aliases": [
+        "electromagnetic spectrum",
+        "types of radiation"
+      ],
+      "about": "The order of the spectrum bands, from most to least energy, and where ionizing radiation begins; no figures. Dose in space comes from particles, which are not in it."
+    },
+    "rad-sources": {
+      "label": "Other relevant sources",
+      "aliases": [
+        "other relevant sources",
+        "other sources",
+        "radiation sources"
+      ],
+      "about": "The current solar particle event according to DONKI, the dated solar cycle note and what is known about Orion's on-board warning, in the backend's own sentences."
+    },
+    "rad-now": {
+      "label": "Radiation status (current)",
+      "aliases": [
+        "radiation status current",
+        "radiation status",
+        "radiation level"
+      ],
+      "about": "The level of the radiation domain now, with its word and its shape, and where it is heading if it changed."
+    },
+    "rad-levels": {
+      "label": "Radiation alerts and levels",
+      "aliases": [
+        "radiation alerts and levels",
+        "alerts and levels",
+        "radiation levels"
+      ],
+      "about": "The engine's scale of levels with the radiation domain's level marked, and how many radiation alerts are active."
+    },
+    "rad-weather-now": {
+      "label": "Particle environment (now)",
+      "aliases": [
+        "particle environment now",
+        "particle environment",
+        "protons now"
+      ],
+      "about": "The latest sample of proton flux at 10 MeV or above and of the solar wind, with NOAA's S1 reference alongside, not evaluated. It is the environment at GOES and L1, not at the spacecraft."
+    },
+    "rad-exposure": {
+      "label": "Exposure by location",
+      "aliases": [
+        "exposure by location",
+        "radiation by location"
+      ],
+      "about": "What each mission profile's source says about its radiation environment, with its planet; the declared profile is marked."
+    },
+    "rad-dosimetry": {
+      "label": "Dosimetry and monitoring",
+      "aliases": [
+        "dosimetry and monitoring",
+        "dosimetry",
+        "accumulated dose"
+      ],
+      "about": "The absorbed dose rate on board with its curve, this mission's dose inferred with its quality factor, and the ring against the career limit."
+    },
+    "rad-limits": {
+      "label": "Dose limits",
+      "aliases": [
+        "dose limits",
+        "radiation limits"
+      ],
+      "about": "The NASA-STD-3001 career limit with its source and the short-term limits per organ from Table 4.8-1, in their unit."
+    },
+    "rad-effects": {
+      "label": "Health effects",
+      "aliases": [
+        "health effects",
+        "effects of radiation",
+        "radiation effects"
+      ],
+      "about": "The effect sentence of the Radiation risk entity with its HRP record, and the body regions with the level of their domain."
+    },
+    "rad-crew": {
+      "label": "Crew member: RIDGE",
+      "aliases": [
+        "crew member ridge",
+        "ridge impact"
+      ],
+      "about": "The crew member's five RIDGE letters with the level of their domains, the radiation one highlighted, and their location if recorded."
+    },
+    "rad-tests": {
+      "label": "Tests and monitoring",
+      "aliases": [
+        "tests and monitoring",
+        "radiation tests"
+      ],
+      "about": "What measures the radiation risk and with what equipment: dosimeter, calculation on the dosimetry and blood analysis."
+    },
+    "rad-route": {
+      "label": "Space route and estimated exposure",
+      "aliases": [
+        "space route and estimated exposure",
+        "estimated exposure",
+        "route and exposure"
+      ],
+      "about": "The profile's route and the dose: what is integrated to date, inferred, and the projection to end of mission, predicted."
+    },
+    "rad-history": {
+      "label": "Exposure history",
+      "aliases": [
+        "exposure history",
+        "previous exposure"
+      ],
+      "about": "The crew member's declared previous missions with their days and their dose if known."
+    },
+    "rad-management": {
+      "label": "Recovery and risk management",
+      "aliases": [
+        "recovery and risk management",
+        "radiation risk management"
+      ],
+      "about": "The library's countermeasures for the radiation risk, as in its matrix row."
+    },
+    "rad-space-weather": {
+      "label": "Space weather",
+      "aliases": [
+        "space weather",
+        "solar weather"
+      ],
+      "about": "The curves of the last 24 h of proton flux and solar wind, observed: EMMA does not forecast."
+    },
+    "rad-shielding": {
+      "label": "Shielding and protection zones",
+      "aliases": [
+        "shielding and protection zones",
+        "shielding",
+        "shielding zones",
+        "shelter"
+      ],
+      "about": "What is known about shielding and shelter: the procedure if an event is in effect and what the source says about the end of sheltering."
+    },
+    "rad-recommendations": {
+      "label": "Radiation recommendations",
+      "aliases": [
+        "radiation recommendations",
+        "recommendations for radiation"
+      ],
+      "about": "The status recommendations for the radiation domain, as given."
+    },
+    "grav-exposure": {
+      "label": "Gravity exposure summary",
+      "aliases": [
+        "gravity exposure summary",
+        "gravitational exposure",
+        "exposure summary"
+      ],
+      "about": "The currently declared gravity, the surface gravity of Earth, Moon and Mars, and the mission day."
+    },
+    "grav-transition": {
+      "label": "Phase and transition",
+      "aliases": [
+        "phase and transition",
+        "gravity mission phase"
+      ],
+      "about": "The mission phases with the current one marked and the days remaining, with the backend's basis for the phases."
+    },
+    "grav-risk": {
+      "label": "Risk status (gravity)",
+      "aliases": [
+        "risk status gravity",
+        "gravitational risk",
+        "gravity risk"
+      ],
+      "about": "The worst level among the musculoskeletal, bone and cardiovascular domains, each with its own, and the active alerts."
+    },
+    "grav-musculo": {
+      "label": "Musculoskeletal system",
+      "aliases": [
+        "musculoskeletal system",
+        "muscle and skeleton",
+        "muscle and bone"
+      ],
+      "about": "Lean mass, bone density, strength, grip and resorption with their change over the mission; the body in muscle and in bone."
+    },
+    "grav-cardio": {
+      "label": "Cardiovascular system and fluids",
+      "aliases": [
+        "cardiovascular system and fluids",
+        "fluids",
+        "cardiovascular"
+      ],
+      "about": "Heart rate, pressure, orthostatic drop, jugular by ultrasound, hematocrit and peak VO2; the body with its vessels."
+    },
+    "grav-tests": {
+      "label": "Tests and assessments",
+      "aliases": [
+        "tests and assessments",
+        "gravity assessments",
+        "gravity tests"
+      ],
+      "about": "The catalog tests (IMTP, grip, DXA, tandem walk, sit-to-stand, orthostatic, jugular, VO2) and when the last one was."
+    },
+    "grav-training": {
+      "label": "Training: consistency",
+      "aliases": [
+        "training consistency",
+        "exercise consistency",
+        "gamification"
+      ],
+      "about": "Days with exercise in 7 days, streak, and averages of exercise and impacts. No points or challenges."
+    },
+    "grav-fields": {
+      "label": "Gravity field comparison",
+      "aliases": [
+        "gravity field comparison",
+        "gravity fields",
+        "compare gravity fields"
+      ],
+      "about": "Surface gravity of Earth, orbit, Moon and Mars, and this mission's exposure in the current environment."
+    },
+    "grav-transition-risks": {
+      "label": "Transition risks",
+      "aliases": [
+        "transition risks",
+        "risks in the transition",
+        "balance hand eye motion sickness"
+      ],
+      "about": "Loss of balance (tandem walk), hand-eye coordination (motor praxis, MPT) and space motion sickness (no indicator): mission readings, change from the first and 30-day curve."
+    },
+    "grav-prediction": {
+      "label": "Simulation / prediction",
+      "aliases": [
+        "simulation prediction",
+        "gravity prediction",
+        "gravity simulation"
+      ],
+      "about": "The backend's trend extrapolation for these indicators, with its sentence: it is not a clinical forecast."
+    },
+    "grav-exercises": {
+      "label": "Exercises and countermeasures",
+      "aliases": [
+        "exercises and countermeasures",
+        "recommended exercises",
+        "gravity countermeasures"
+      ],
+      "about": "The backend's recommendations for these domains or, when there are none, the bone and musculoskeletal countermeasures."
+    },
+    "iso-header": {
+      "label": "Isolation and psychosocial health",
+      "aliases": [
+        "isolation and psychosocial health",
+        "isolation header"
+      ],
+      "about": "The section title with the mission profile, the time of the data and the crew member."
+    },
+    "iso-indicators": {
+      "label": "Behavioral indicators",
+      "aliases": [
+        "behavioral indicators",
+        "psychosocial index"
+      ],
+      "about": "How many behavioral indicators of the catalog have a reading in the last 24 h, and the latest mood, sleep, circadian misalignment and PVT. There is no composite index."
+    },
+    "iso-trend": {
+      "label": "14-day trend",
+      "aliases": [
+        "14 day trend",
+        "fourteen day trend",
+        "isolation trend"
+      ],
+      "about": "The 14-day curves of self-reported mood, sleep and PVT, each on its own range and told apart by stroke."
+    },
+    "iso-factors": {
+      "label": "Factors (weekly change)",
+      "aliases": [
+        "factors weekly change",
+        "isolation factors",
+        "weekly change"
+      ],
+      "about": "The change in the mean of the last 7 days against the previous 7 for each behavioral indicator. Descriptive: it does not evaluate."
+    },
+    "iso-global": {
+      "label": "Overall isolation status",
+      "aliases": [
+        "overall isolation status",
+        "behavioral level"
+      ],
+      "about": "The engine's level for the behavioral domain, its trajectory and its reasons, in the backend's sentences."
+    },
+    "iso-mood": {
+      "label": "Mood",
+      "aliases": [
+        "mood",
+        "isolation mood",
+        "self reported mood"
+      ],
+      "about": "Radar of the six behavioral indicators: where each one's latest reading falls within its own 14-day range."
+    },
+    "iso-sleep": {
+      "label": "Sleep and circadian rhythm",
+      "aliases": [
+        "sleep and circadian rhythm",
+        "circadian rhythm",
+        "isolation sleep"
+      ],
+      "about": "Sleep duration and efficiency and circadian misalignment, 7-day means with their change, and the hours of sleep over 14 days as bars."
+    },
+    "iso-interactions": {
+      "label": "Crew interactions",
+      "aliases": [
+        "crew interactions",
+        "cohesion",
+        "team cohesion"
+      ],
+      "about": "Messages, events and leisure hours, and reminders, over 7 days from the planner; team cohesion is not measured."
+    },
+    "iso-light": {
+      "label": "Light exposure",
+      "aliases": [
+        "light exposure",
+        "light at the eye"
+      ],
+      "about": "The habitat's cabin illuminance: latest, mean and maximum over 24 h with its curve. It is not the light at the eye and it is not evaluated."
+    },
+    "iso-nutrition": {
+      "label": "Nutrition and menu",
+      "aliases": [
+        "nutrition and menu",
+        "isolation nutrition",
+        "behavioral nutrition"
+      ],
+      "about": "The mean energy intake over 7 days and food acceptability, with the backend's sentence."
+    },
+    "iso-tests": {
+      "label": "Cognitive tests",
+      "aliases": [
+        "cognitive tests",
+        "isolation tests",
+        "cognition tests"
+      ],
+      "about": "The tests of the Cognition battery in their order, with their accuracy in the last session or marked as not recorded."
+    },
+    "iso-progress": {
+      "label": "Logging consistency",
+      "aliases": [
+        "logging consistency",
+        "record consistency",
+        "isolation consistency"
+      ],
+      "about": "Days with PVT, streak of consecutive days, days with a mood self-report and Cognition sessions; no points or levels."
+    },
+    "iso-correlations": {
+      "label": "Behavioral correlations",
+      "aliases": [
+        "behavioral correlations",
+        "isolation correlations"
+      ],
+      "about": "Key correlations: the highest-r pairs the backend finds among the behavioral indicators, and a reading by the local model, marked as AI draft."
+    },
+    "iso-risk": {
+      "label": "Behavioral domain risk",
+      "aliases": [
+        "behavioral domain risk",
+        "behavioral risk",
+        "risk of decline"
+      ],
+      "about": "The risk engine's level and score for the behavioral domain; it is not a probability."
+    },
+    "iso-recommendations": {
+      "label": "Behavioral recommendations",
+      "aliases": [
+        "behavioral recommendations",
+        "isolation recommendations"
+      ],
+      "about": "The backend's behavioral recommendations; with none active, the library's countermeasures for the behavioral risk."
+    },
+    "iso-alerts": {
+      "label": "Behavioral alerts",
+      "aliases": [
+        "behavioral alerts",
+        "isolation alerts"
+      ],
+      "about": "The active alerts of the behavioral domain with their level and what changed, and the shortcut to Hazards and alerts."
+    },
+    "env-header": {
+      "label": "Spacecraft environment",
+      "aliases": [
+        "spacecraft environment",
+        "environment header",
+        "environment blocks"
+      ],
+      "about": "The title with the mission profile, the time of the data and each environment block with its status: no reading, or how many out of limit."
+    },
+    "env-global": {
+      "label": "Overall environmental status",
+      "aliases": [
+        "overall environmental status",
+        "environment status"
+      ],
+      "about": "Whether any cabin reading is outside its standard limit or its comfort zone right now, with the limit the backend cites."
+    },
+    "env-index": {
+      "label": "Parameters within limits",
+      "aliases": [
+        "parameters within limits",
+        "environmental index"
+      ],
+      "about": "How many evaluated habitat parameters are within their limits. There is no composite environmental index."
+    },
+    "env-trend": {
+      "label": "72 h environmental trend",
+      "aliases": [
+        "72 h environmental trend",
+        "environmental trend",
+        "72 hour trend"
+      ],
+      "about": "Cabin temperature, humidity and CO2 over the last 72 h, each curve on its own range."
+    },
+    "env-risk": {
+      "label": "Limit excursions in 72 h",
+      "aliases": [
+        "limit excursions in 72 h",
+        "limit excursions",
+        "environmental risk"
+      ],
+      "about": "The limit excursions of the last 72 h, split into comfort or target and standard limit."
+    },
+    "env-air": {
+      "label": "Atmosphere and air quality",
+      "aliases": [
+        "atmosphere and air quality",
+        "air quality",
+        "cabin atmosphere"
+      ],
+      "about": "Oxygen, CO2, pressure, humidity, carbon monoxide, ammonia and formaldehyde with their latest reading and, where a single limit applies, a bar against it."
+    },
+    "env-thermal": {
+      "label": "Temperature and thermal comfort",
+      "aliases": [
+        "temperature and thermal comfort",
+        "thermal comfort",
+        "cabin temperature"
+      ],
+      "about": "Cabin temperature over its standard range with the backend's comfort zone."
+    },
+    "env-light": {
+      "label": "Light and circadian cycle",
+      "aliases": [
+        "light and circadian cycle",
+        "cabin light"
+      ],
+      "about": "Cabin illuminance, latest, mean and maximum over 24 h with its curve, and the duration of the last sleep. Light is not evaluated."
+    },
+    "env-noise": {
+      "label": "Cabin noise",
+      "aliases": [
+        "cabin noise",
+        "environment noise",
+        "noise"
+      ],
+      "about": "Cabin noise, its 24 h maximum and its standard limit."
+    },
+    "env-water": {
+      "label": "Drinking water",
+      "aliases": [
+        "drinking water",
+        "water quality",
+        "potable water"
+      ],
+      "about": "Bacteria, total organic carbon and silver in the drinking water: shown and not evaluated."
+    },
+    "env-microbiology": {
+      "label": "Environmental microbiology",
+      "aliases": [
+        "environmental microbiology",
+        "surface microbiology"
+      ],
+      "about": "Culturable bacteria from the air and the surfaces: shown and not evaluated."
+    },
+    "env-gravity": {
+      "label": "Gravity exposure",
+      "aliases": [
+        "gravity exposure",
+        "time in microgravity"
+      ],
+      "about": "The backend's gravity regime, the mission time and the level of muscle, bone and neuro-ocular, with the body as a decorative hologram."
+    },
+    "env-systems": {
+      "label": "Habitat systems",
+      "aliases": [
+        "habitat systems",
+        "environmental control",
+        "environment systems"
+      ],
+      "about": "The declared status of the habitat systems; with no declaration, undeclared."
+    },
+    "env-correlations": {
+      "label": "Environment correlations",
+      "aliases": [
+        "environment correlations",
+        "analysis and correlations"
+      ],
+      "about": "The highest-r pairs the backend finds among the measured indicators. Correlation, not cause."
+    },
+    "home-social": {
+      "label": "Social connection and outreach",
+      "aliases": [
+        "social connection and outreach",
+        "social connection",
+        "outreach"
+      ],
+      "about": "Mockup card about activities and outreach with the community; no data behind it."
+    },
+    "home-outreach": {
+      "label": "Extension: Earth and communities",
+      "aliases": [
+        "extension earth and communities",
+        "earth extension",
+        "earth and communities"
+      ],
+      "about": "Mockup card about use in isolated populations and emergencies; no data behind it."
+    },
+    "home-essential": {
+      "label": "Urgent help",
+      "aliases": [
+        "urgent help",
+        "emergency card",
+        "ask for help",
+        "emergency button"
+      ],
+      "about": "The red card to ask for urgent help: the crew sees it at once, whoever is closest first, and Ground one light time later."
+    },
+    "home-diagnostics": {
+      "label": "Integrated diagnostics",
+      "aliases": [
+        "integrated diagnostics",
+        "tests and visualization"
+      ],
+      "about": "Available tests with their count, the latest segmented volume (Polaris) as a pre-flight reference, the analysis of the status and the 30-day laboratory trends."
+    },
+    "home-distance": {
+      "label": "Distance and communications",
+      "aliases": [
+        "distance and communications",
+        "communication delay"
+      ],
+      "about": "Distance to Earth, the Moon and Mars and their light time for the chosen profile, computed locally with SPICE, and the nodes that really exist."
+    },
+    "home-sync": {
+      "label": "Synchronization and data",
+      "aliases": [
+        "synchronization and data",
+        "link status",
+        "sync and data"
+      ],
+      "about": "The real status of the link with Ground and of offline mode, which is the nominal one, and what the backend says about local storage."
+    },
+    "nodes-distance-risks": {
+      "label": "Risks and challenges of distance",
+      "aliases": [
+        "risks and challenges of distance",
+        "challenges of distance",
+        "distance risks"
+      ],
+      "about": "Each challenge of distance for the chosen profile: career dose against the limit, gravity, latency and declared resources, with the level of their RIDGE domains."
+    },
+    "nodes-correlations": {
+      "label": "Variable correlation",
+      "aliases": [
+        "variable correlation",
+        "correlations",
+        "correlation of variables"
+      ],
+      "about": "Pairs of the crew member's series over 30 days with their Pearson r, n and 95 % interval, and the scatter of the chosen pair. Correlation, not cause."
+    },
+    "nodes-scenarios": {
+      "label": "Scenarios and prediction",
+      "aliases": [
+        "scenarios and prediction",
+        "scenarios"
+      ],
+      "about": "The status projections, the projected dose at end of mission, how many past projections were right and the backend's first recommendation."
+    },
+    "home-reserves-status": {
+      "label": "Resources and inventory",
+      "aliases": [
+        "resources and inventory",
+        "on board stock",
+        "inventory"
+      ],
+      "about": "Medications, food and medical equipment according to the signed counts: items in stock, below minimum and minimum autonomy. Stock can be declared here."
+    },
+    "home-reserves-medications": {
+      "label": "Medications: management",
+      "aliases": [
+        "medications management",
+        "medication management",
+        "on board medical kit"
+      ],
+      "about": "Each counted medication with its stock, its autonomy and the alternatives of the same family; those below their minimum come first."
+    },
+    "home-reserves-nutrition": {
+      "label": "Food and nutrition",
+      "aliases": [
+        "food and nutrition",
+        "reserves nutrition"
+      ],
+      "about": "The latest signed energy intake and appetite, and the food acceptability computed by the backend."
+    },
+    "home-reserves-resupply": {
+      "label": "Resupply",
+      "aliases": [
+        "resupply",
+        "next resupply"
+      ],
+      "about": "The next declared resupply and each category's coverage and margin until it arrives."
+    },
+    "countermeasure-library": {
+      "label": "Countermeasure library",
+      "aliases": [
+        "countermeasure library",
+        "countermeasures"
+      ],
+      "about": "The whole countermeasure library, grouped by RIDGE hazard: action, support, contraindications, effects, crew time, follow-up and resources. It can be filtered by family."
+    },
+    "library-research": {
+      "label": "Under research: not offered",
+      "aliases": [
+        "under research not offered",
+        "under research"
+      ],
+      "about": "Shows the countermeasures still under research that are not offered on board, such as negative pressure or artificial gravity, with their RIDGE hazard, status and the source's sentence."
+    },
+    "library-searched-not-found": {
+      "label": "Searched and not found (library)",
+      "aliases": [
+        "searched and not found library",
+        "searched and not found in the library"
+      ],
+      "about": "Lists what was searched for about countermeasures under research and was not found in the sources."
+    },
+    "library-read-not-included": {
+      "label": "Read and not included",
+      "aliases": [
+        "read and not included",
+        "read but left out"
+      ],
+      "about": "Lists what was read about countermeasures under research and left out, with the reason."
+    },
+    "library-what-was-read": {
+      "label": "What was read (library)",
+      "aliases": [
+        "what was read library",
+        "what was read"
+      ],
+      "about": "Lists the sources read about countermeasures under research: what was read from each, when, and its address."
+    },
+    "library-how-to-read": {
+      "label": "How to read it (library)",
+      "aliases": [
+        "how to read it library",
+        "how to read the library"
+      ],
+      "about": "Explains how to read the countermeasure library: the criterion of each family and how each countermeasure is assigned to its RIDGE hazard."
+    },
+    "library-ridge-group": {
+      "label": "Library RIDGE group",
+      "aliases": [
+        "library ridge group",
+        "ridge group"
+      ],
+      "about": "The countermeasures of one RIDGE hazard (radiation, isolation, distance, gravity or hostile environment), in a table with their support, cost and follow-up."
+    },
+    "library-no-ridge": {
+      "label": "No RIDGE hazard",
+      "aliases": [
+        "no ridge hazard",
+        "without ridge hazard"
+      ],
+      "about": "Lists the library countermeasures with no RIDGE hazard assigned, in the same table as the rest."
+    },
+    "library-no-figure": {
+      "label": "No figure (library)",
+      "aliases": [
+        "no figure library",
+        "no figure"
+      ],
+      "about": "For a countermeasure with no crew time figure, shows the basis that explains it, with its literal source."
+    },
+    "library-source": {
+      "label": "Source (library)",
+      "aliases": [
+        "source library",
+        "source"
+      ],
+      "about": "Shows where a library countermeasure's crew time figure comes from."
+    },
+    "recommendation-evidence": {
+      "label": "Evidence for a recommendation",
+      "aliases": [
+        "evidence for a recommendation",
+        "recommendation evidence"
+      ],
+      "about": "Lists the evidence a recommendation rests on: the records and studies cited."
+    },
+    "recommendation-prior-response": {
+      "label": "Prior response",
+      "aliases": [
+        "prior response",
+        "previous response"
+      ],
+      "about": "Summarizes what happened the previous times this countermeasure was adopted, with the caveat that what happened afterwards does not prove it was because of it."
+    },
+    "recommendation-prior-response-detail": {
+      "label": "Prior response detail",
+      "aliases": [
+        "prior response detail",
+        "detail of the prior response"
+      ],
+      "about": "Unfolds the detail of the prior response: the lines of the last adoption, the earlier ones and what the assessment compares against."
+    },
+    "recommendation-earlier-adoptions": {
+      "label": "Earlier adoptions",
+      "aliases": [
+        "earlier adoptions",
+        "previous adoptions"
+      ],
+      "about": "Shows what happened each of the previous times this countermeasure was adopted, adoption by adoption."
+    },
+    "recommendation-resources": {
+      "label": "On-board resources for a recommendation",
+      "aliases": [
+        "on board resources for a recommendation",
+        "recommendation resources"
+      ],
+      "about": "Shows what is on record on board for the resources a recommendation asks for: available, unavailable or undeclared. It is a notice; it does not prevent adopting it."
+    },
+    "recommendation-resources-detail": {
+      "label": "Recommendation resources detail",
+      "aliases": [
+        "recommendation resources detail",
+        "detail of the recommendation resources"
+      ],
+      "about": "Unfolds the list of resources a recommendation asks for, each with its declared status and its note."
+    },
+    "countermeasure-cost": {
+      "label": "Cost and follow-up",
+      "aliases": [
+        "cost and follow up",
+        "countermeasure cost"
+      ],
+      "about": "Shows what a countermeasure costs: the resources it asks for, the crew time with its basis, and when and how it will be known whether it helped."
+    },
+    "mission-level": {
+      "label": "Mission level",
+      "aliases": [
+        "mission level",
+        "progressive disconnection",
+        "graceful degradation"
+      ],
+      "about": "Shows the mission level in effect, which says which measurements are still expected when power or crew time is scarce, and who declared it and why."
+    },
+    "mission-level-how-to-read": {
+      "label": "How to read the mission level",
+      "aliases": [
+        "how to read the mission level",
+        "explain the mission level"
+      ],
+      "about": "Explains the mission level in effect: which measurements are expected and which are not at this level, and where the criterion comes from."
+    },
+    "mission-level-change": {
+      "label": "Change the level",
+      "aliases": [
+        "change the level",
+        "change the mission level"
+      ],
+      "about": "Lets you change the mission level: choose the level, write who and the reason, cite a system and sign it."
+    },
+    "alert-check-cost": {
+      "label": "What it costs to check",
+      "aliases": [
+        "what it costs to check",
+        "cost of checking"
+      ],
+      "about": "Shows what it costs to check an alert: time, where it is processed, when the result arrives, consumables, power and training needed."
+    },
+    "alert-detail": {
+      "label": "Detail: what changed, since when and why",
+      "aliases": [
+        "detail what changed since when and why",
+        "alert detail",
+        "detail of the alert"
+      ],
+      "about": "Detail of an alert: what changed, since when, against which baseline, what other signals accompany it, how long it persists and what was happening around it."
+    },
+    "baseline-profile": {
+      "label": "Personal baseline",
+      "aliases": [
+        "personal baseline",
+        "baseline"
+      ],
+      "about": "Shows what each indicator is compared against: the crew member's own normal or, while it is learning, only a danger limit, and how it is computed."
+    },
+    "baseline-by-indicator": {
+      "label": "By indicator and state (baseline)",
+      "aliases": [
+        "by indicator and state baseline",
+        "by indicator and state"
+      ],
+      "about": "Table of the baseline by indicator and state (rest, sleep, activity): median, spread, readings and their provenance."
+    },
+    "baseline-catalog-range": {
+      "label": "Catalog range, by indicator",
+      "aliases": [
+        "catalog range by indicator",
+        "catalog range"
+      ],
+      "about": "Shows the catalog's reference range for each indicator."
+    },
+    "baseline-personal-data": {
+      "label": "Sex and age",
+      "aliases": [
+        "sex and age",
+        "age and sex"
+      ],
+      "about": "Explains how declared sex and age are handled: who declares it, that sex only decides whether cycle tracking is offered, the radiation dose and its privacy."
+    },
+    "crew-sex": {
+      "label": "Declared sex",
+      "aliases": [
+        "declared sex",
+        "declare sex"
+      ],
+      "about": "Shows the declared sex, who declared it and when. On board it can be declared and is signed; on Ground it is read-only, with the delay."
+    },
+    "crew-sex-privacy": {
+      "label": "What is stored and how it is deleted",
+      "aliases": [
+        "what is stored and how it is deleted",
+        "how to delete declared sex"
+      ],
+      "about": "Explains what is stored about the declared sex, what it is used for and how that entry is deleted separately."
+    },
+    "cycle": {
+      "label": "Menstrual cycle",
+      "aliases": [
+        "menstrual cycle",
+        "cycle",
+        "period"
+      ],
+      "about": "Shows the latest cycle and contraception record, and whether the baseline is adjusted by phase. With sex undeclared or male, it says it does not apply."
+    },
+    "baseline-other-flights": {
+      "label": "In other flights, by indicator",
+      "aliases": [
+        "in other flights by indicator",
+        "other flights"
+      ],
+      "about": "Shows what was observed in other flights for each indicator (up, down, no change or disputed), with the sentence read and its source. It is context, not what to expect in this person."
+    },
+    "baseline-statements": {
+      "label": "Sentences read (baseline)",
+      "aliases": [
+        "sentences read baseline",
+        "baseline sentences"
+      ],
+      "about": "Lists the sentences read in the sources about how an indicator changes in other flights, with their citation."
+    },
+    "summary": {
+      "label": "Summary",
+      "aliases": [
+        "summary",
+        "status summary"
+      ],
+      "about": "Shows the summary of the crew member's general status with its level."
+    },
+    "alerts": {
+      "label": "Active alerts",
+      "aliases": [
+        "active alerts",
+        "alerts"
+      ],
+      "about": "Shows the active alerts. Lets you write who is at the console and acknowledge, suppress or inhibit an alert, and it is signed."
+    },
+    "recommendations": {
+      "label": "What to do",
+      "aliases": [
+        "what to do",
+        "recommendations"
+      ],
+      "about": "Shows what to do: the countermeasure recommendations with their reason and evidence. Lets you adopt one or decline it with a reason, and it is signed."
+    },
+    "environments": {
+      "label": "Mission environments",
+      "aliases": [
+        "mission environments",
+        "environments"
+      ],
+      "about": "Mission environments: profiles such as low Earth orbit, Moon or Mars, each with its particularities."
+    },
+    "environment-profile": {
+      "label": "Environment profile",
+      "aliases": [
+        "environment profile",
+        "profile of the environment"
+      ],
+      "about": "Shows what is known about a mission environment, such as low Earth orbit, Moon or Mars, aspect by aspect with its sources, and whether it is the declared one."
+    },
+    "environment-declare": {
+      "label": "Declare as the mission environment",
+      "aliases": [
+        "declare as the mission environment",
+        "declare the environment"
+      ],
+      "about": "Lets you declare the environment being viewed as the mission environment, with who and a reason, and it is signed."
+    },
+    "hazards": {
+      "label": "The five hazards",
+      "aliases": [
+        "the five hazards",
+        "five hazards",
+        "hazards"
+      ],
+      "about": "Shows the five hazards: radiation, isolation, distance from Earth with its delay, gravity and hostile environment, each with its domains and level."
+    },
+    "predictions": {
+      "label": "Projections",
+      "aliases": [
+        "projections",
+        "predictions",
+        "forecasts"
+      ],
+      "about": "Shows the projections: where the indicators are drifting over the coming weeks, with their margin. They are predicted data, not measured. Read-only."
+    },
+    "twin-questions": {
+      "label": "The twins' five questions",
+      "aliases": [
+        "the twins five questions",
+        "twins",
+        "five questions",
+        "the five questions of the twins"
+      ],
+      "about": "The twins' five questions answered for a crew member: body, habitat, mission day, countermeasures and what awaits a person's decision."
+    },
+    "twin-questions-source": {
+      "label": "Where the questions come from",
+      "aliases": [
+        "where the questions come from",
+        "source of the questions"
+      ],
+      "about": "Shows which document the twins' five questions come from. Read-only."
+    },
+    "twin-answer-provenance": {
+      "label": "Where it comes from (a twins answer)",
+      "aliases": [
+        "where it comes from a twins answer",
+        "where it comes from"
+      ],
+      "about": "Shows where an answer to the twins' questions comes from: which panels and status data support it. Read-only."
+    },
+    "evidence-entry": {
+      "label": "Scope and reading of an evidence item",
+      "aliases": [
+        "scope and reading of an evidence item",
+        "scope of an evidence item"
+      ],
+      "about": "Folded note of a cited source: its scope, for example whether it was measured in animals and not in people, and what was read from it and when. Read-only."
+    },
+    "audit": {
+      "label": "Signed ledger",
+      "aliases": [
+        "signed ledger",
+        "audit",
+        "ledger"
+      ],
+      "about": "Shows the signed on-board ledger: whether the chain of entries verifies, how many there are, its Merkle root and the list of entries with type, signer and time."
+    },
+    "context-sources": {
+      "label": "Context sources",
+      "aliases": [
+        "context sources",
+        "sources of the context"
+      ],
+      "about": "Shows which sources of the team's context were read and which were not, with the reason for the unread ones and what EMMA uses them for. It is inventory; it does not touch crew status."
+    },
+    "context-source": {
+      "label": "A context source",
+      "aliases": [
+        "a context source",
+        "one context source"
+      ],
+      "about": "A context source, folded: its title and whether it was read; when opened, where it comes from and what was read from it."
+    },
+    "credibility-factors": {
+      "label": "The eleven factors of the standard",
+      "aliases": [
+        "the eleven factors of the standard",
+        "eleven factors",
+        "credibility"
+      ],
+      "about": "Shows the credibility factors of NASA's standard for models, grouped, with each one's question and what there is for the inferred or predicted figures."
+    },
+    "criticality-axes": {
+      "label": "The two axes of the matrix",
+      "aliases": [
+        "the two axes of the matrix",
+        "criticality axes"
+      ],
+      "about": "Shows the axes of the use criticality matrix in NASA's standard, read from its appendix. The matrix has not been applied: each axis is only explained here."
+    },
+    "credibility-layer": {
+      "label": "A credibility layer",
+      "aliases": [
+        "a credibility layer",
+        "one credibility layer"
+      ],
+      "about": "A layer of inferred or predicted figures, folded: its model, where it is labeled and served, what tests it and each credibility factor explained in words."
+    },
+    "datasets": {
+      "label": "Human datasets",
+      "aliases": [
+        "human datasets",
+        "datasets",
+        "reference datasets"
+      ],
+      "about": "Shows the reference human datasets and CIPHER: who they measure, which variables, their collections before, during and after flight, their access and what EMMA uses them for."
+    },
+    "dataset": {
+      "label": "A dataset",
+      "aliases": [
+        "a dataset",
+        "one dataset"
+      ],
+      "about": "A dataset, folded: who it measures, its variables, collection schedule, controls, access and its role for EMMA, each with the source's sentence."
+    },
+    "dataset-catalog": {
+      "label": "A dataset catalog",
+      "aliases": [
+        "a dataset catalog",
+        "one dataset catalog"
+      ],
+      "about": "A data catalog, folded: what it is, how it is accessed, what EMMA uses it for and what it is not. Catalogs do not measure anyone."
+    },
+    "docs": {
+      "label": "Documentation and export",
+      "aliases": [
+        "documentation and export",
+        "documentation",
+        "export"
+      ],
+      "about": "Lets you download as PDF the received status, the chronicle, the received pain and the evidence dossier, and search EMMA's documentation by typing a question."
+    },
+    "facilities": {
+      "label": "Columbus facilities: EPM and Biolab",
+      "aliases": [
+        "columbus facilities epm and biolab",
+        "facilities",
+        "columbus",
+        "biolab"
+      ],
+      "about": "Shows Columbus's EPM and Biolab facilities traced from the facility to the experiment, equipment, data and publication, with what was found and what is missing."
+    },
+    "facility": {
+      "label": "A facility",
+      "aliases": [
+        "a facility",
+        "one facility"
+      ],
+      "about": "A laboratory facility, folded: its experiment and each link of the chain with its status and the source's sentences, or what is missing and where it was searched."
+    },
+    "forecast-check": {
+      "label": "Projection check",
+      "aliases": [
+        "projection check",
+        "check of the projections"
+      ],
+      "about": "Shows whether the projections were right: each row compares the projected change and its margin with what was measured later. It is model calibration, not a finding about anyone."
+    },
+    "framework": {
+      "label": "NASA framework and design hypotheses",
+      "aliases": [
+        "nasa framework and design hypotheses",
+        "nasa framework",
+        "design hypotheses"
+      ],
+      "about": "Shows the NASA framework EMMA starts from and its design hypotheses: the starting gaps, the relation to the IMM, each domain's RIDGE hazard and what was read."
+    },
+    "framework-coverage": {
+      "label": "What EMMA does with what it asks (framework)",
+      "aliases": [
+        "what emma does with what it asks framework",
+        "what emma does with what it asks"
+      ],
+      "about": "Fold with what each sentence of a NASA source asks for and what EMMA does with it: whether it covers it, partly or not, with the reason and the files."
+    },
+    "received-state": {
+      "label": "Latest received status",
+      "aliases": [
+        "latest received status",
+        "last received status",
+        "received status"
+      ],
+      "about": "Shows the latest crew status that has reached Ground with the delay: the general level, the summary and each domain with its level and reasons."
+    },
+    "trends": {
+      "label": "Trends",
+      "aliases": [
+        "trends",
+        "charts",
+        "series"
+      ],
+      "about": "Shows the charts of each indicator over time. You can choose the time window, drag to zoom and double-click to go back."
+    },
+    "delay": {
+      "label": "Applied delay",
+      "aliases": [
+        "applied delay",
+        "delay",
+        "signal delay"
+      ],
+      "about": "Shows the signal delay between the spacecraft and Ground: up to when Ground has data, where on board already is and the link status."
+    },
+    "environment-choices": {
+      "label": "View or choose another environment",
+      "aliases": [
+        "view or choose another environment",
+        "choose environment",
+        "other environments",
+        "change environment",
+        "list of environments"
+      ],
+      "about": "Unfolds the list of mission environments, such as low Earth orbit, Moon or Mars, to view or choose another."
+    },
+    "display-controls": {
+      "label": "Display (mode controls)",
+      "aliases": [
+        "display mode controls",
+        "display controls",
+        "display modes",
+        "display settings"
+      ],
+      "about": "Display controls: low vision, essential mode, rotate the view, privacy and voice. Lets you turn each mode on or off."
+    },
+    "ground-notes-composer": {
+      "label": "Notes from Ground to the crew",
+      "aliases": [
+        "notes from ground to the crew",
+        "write a note",
+        "note for the crew"
+      ],
+      "about": "Lets you write and sign a note from Ground for one crew member or the whole crew, as information or a question, and see when each note arrives on board."
+    },
+    "hrp-risks": {
+      "label": "HRP risks",
+      "aliases": [
+        "hrp risks",
+        "hrp"
+      ],
+      "about": "Fold with all the risks of NASA's Human Research Program and what EMMA does with each: whether it monitors it, partly, or it is out of its scope."
+    },
+    "hrp-domain-scope": {
+      "label": "Scope of each domain",
+      "aliases": [
+        "scope of each domain",
+        "domain scope"
+      ],
+      "about": "Fold with the scope of each EMMA domain against a Human Research Program risk: which part of that risk each domain monitors."
+    },
+    "measurement-cost": {
+      "label": "Cost of measuring",
+      "aliases": [
+        "cost of measuring",
+        "measurement cost"
+      ],
+      "about": "Shows the cost of measuring each indicator: what equipment is needed, how much crew time it takes, where it is processed, when the result arrives and whether it uses consumables."
+    },
+    "measurement-cost-searched": {
+      "label": "What was searched (cost of measuring)",
+      "aliases": [
+        "what was searched cost of measuring",
+        "what was searched"
+      ],
+      "about": "Shows what was searched for about the cost of measuring and not found in any source; it is stated, not filled in."
+    },
+    "kb-coverage": {
+      "label": "Knowledge base coverage",
+      "aliases": [
+        "knowledge base coverage",
+        "coverage of the knowledge base"
+      ],
+      "about": "Shows the list from the team's knowledge base on the cost of measuring and, alongside, where EMMA has it or why it is not included."
+    },
+    "ground-dependence": {
+      "label": "Dependence on Ground",
+      "aliases": [
+        "dependence on ground",
+        "ground dependence"
+      ],
+      "about": "Shows what today depends on Ground for measuring and, alongside, what each mission profile says about resupply and return."
+    },
+    "ground-mission-history": {
+      "label": "Mission-by-mission history",
+      "aliases": [
+        "mission by mission history",
+        "previous career"
+      ],
+      "about": "Shows, read-only, the crew member's previous missions declared on board that have already reached Ground, with their cross-check against the profile."
+    },
+    "mission-profiles": {
+      "label": "Mission profiles side by side",
+      "aliases": [
+        "mission profiles side by side",
+        "mission profiles"
+      ],
+      "about": "Shows the mission profiles side by side, such as space station, Moon or Mars, with one row per aspect such as delay, duration or autonomy, and marks the chosen one."
+    },
+    "profile-matrix-statements": {
+      "label": "Sentences read (mission profiles)",
+      "aliases": [
+        "sentences read mission profiles",
+        "profile sentences"
+      ],
+      "about": "Fold with the sentences read from a mission profile's source, as written, with their page, section and the day they were read."
+    },
+    "people": {
+      "label": "People and organizations",
+      "aliases": [
+        "people and organizations",
+        "people",
+        "organizations"
+      ],
+      "about": "Shows the people and organizations that appear in the sources, with the records they provide or that name them. Only what the records state, no contact details."
+    },
+    "organization": {
+      "label": "An organization",
+      "aliases": [
+        "an organization",
+        "one organization"
+      ],
+      "about": "An organization, folded: the records it provides or that name it, with their title, year, document type and who signs them."
+    },
+    "people-no-organization": {
+      "label": "No organization",
+      "aliases": [
+        "no organization",
+        "without organization"
+      ],
+      "about": "Fold with the source records that give no organization, with their title, year and who signs them."
+    },
+    "people-of-records": {
+      "label": "People in the records",
+      "aliases": [
+        "people in the records",
+        "people of the records"
+      ],
+      "about": "Fold with the people cited in the records: each with the records that cite them, their role in them, the year and the record's organization."
+    },
+    "polaris": {
+      "label": "Polaris copy",
+      "aliases": [
+        "polaris copy",
+        "polaris",
+        "copy of polaris"
+      ],
+      "about": "Shows the copy of Polaris code that EMMA carries: which version it is, which tools load, which ones EMMA uses and what was changed. It can be filtered and searched by name."
+    },
+    "recovery": {
+      "label": "Post-flight recovery",
+      "aliases": [
+        "post flight recovery",
+        "recovery",
+        "postflight"
+      ],
+      "about": "Shows recovery after flight: each collection against the crew member's own pre-flight range, whether it is inside or outside and when it returns to range."
+    },
+    "detection-rule": {
+      "label": "A detection rule",
+      "aliases": [
+        "a detection rule",
+        "one detection rule",
+        "detection rule"
+      ],
+      "about": "Fold with the common risk detection rule, step by step, as the engine applies it."
+    },
+    "hrp-risk": {
+      "label": "An HRP risk",
+      "aliases": [
+        "an hrp risk",
+        "one hrp risk"
+      ],
+      "about": "An EMMA risk, folded: its RIDGE hazard, the body part, its indicators, the evidence it cites, its levels, countermeasures and its uncertainty."
+    },
+    "testbeds": {
+      "label": "Testbeds and validation",
+      "aliases": [
+        "testbeds and validation",
+        "testbeds",
+        "validation",
+        "analogs"
+      ],
+      "about": "Shows the testbeds on Earth and the validation each would allow: which mission conditions they reproduce and which they leave out, against each RIDGE hazard."
+    },
+    "testbed": {
+      "label": "A testbed",
+      "aliases": [
+        "a testbed",
+        "one testbed"
+      ],
+      "about": "A testbed, folded: what it reproduces and what it leaves out, duration, participants, data, providers and what validation it would allow EMMA."
+    },
+    "guides": {
+      "label": "How to measure and glossary",
+      "aliases": [
+        "how to measure and glossary",
+        "measurement guides",
+        "how to measure"
+      ],
+      "about": "Explains step by step how to take each measurement, such as blood pressure or temperature, with the source of each step, and a glossary of the console's terms. Read-only."
+    },
+    "guide": {
+      "label": "The guide for a measurement",
+      "aliases": [
+        "the guide for a measurement",
+        "a measurement guide"
+      ],
+      "about": "The guide for a measurement: which indicators it covers, its steps, what is done in flight and what was searched for and not found. Read-only."
+    },
+    "guides-not-found": {
+      "label": "Searched and not found (guides)",
+      "aliases": [
+        "searched and not found guides",
+        "searched and not found in the guides"
+      ],
+      "about": "What was searched for in the sources for this measurement guide and not found. Read-only."
+    },
+    "guide-step-source": {
+      "label": "Source of this step",
+      "aliases": [
+        "source of this step",
+        "step source"
+      ],
+      "about": "The source of a guide step: the literal sentence in its language, where and when it was read and its evidence record."
+    },
+    "glossary": {
+      "label": "Glossary",
+      "aliases": [
+        "glossary",
+        "terms",
+        "glossary of terms"
+      ],
+      "about": "Console glossary: each term, such as baseline or light time, with its definition and origin. Read-only."
+    },
+    "habitat": {
+      "label": "Crew and habitat",
+      "aliases": [
+        "crew and habitat",
+        "habitat"
+      ],
+      "about": "Cabin air (CO2, oxygen, pressure, temperature, humidity, noise, gases), light, water, microbes, radiation dose, systems and possible common causes with the crew."
+    },
+    "habitat-source-text": {
+      "label": "Source text (habitat)",
+      "aliases": [
+        "source text habitat",
+        "source text"
+      ],
+      "about": "The literal sentences of the standard that support what is known about a habitat hypothesis, with their requirement and locator. Read-only."
+    },
+    "habitat-countermeasures": {
+      "label": "Environmental countermeasures",
+      "aliases": [
+        "environmental countermeasures",
+        "habitat countermeasures"
+      ],
+      "about": "Shows the environmental countermeasures proposed for a habitat hypothesis, with their data. Read-only."
+    },
+    "habitat-evidence": {
+      "label": "Evidence (habitat)",
+      "aliases": [
+        "evidence habitat",
+        "evidence"
+      ],
+      "about": "Lists the evidence sources that support a habitat hypothesis, with their level and scope. Read-only."
+    },
+    "habitat-limits": {
+      "label": "What the standard says about these limits",
+      "aliases": [
+        "what the standard says about these limits",
+        "standard limits"
+      ],
+      "about": "Shows what the standard says about the limits of a cabin parameter, such as CO2, temperature or noise. Read-only."
+    },
+    "habitat-references": {
+      "label": "References for a habitat parameter",
+      "aliases": [
+        "references for a habitat parameter",
+        "habitat parameter references"
+      ],
+      "about": "Lists the reference requirements read in the standard for a habitat parameter, such as water or microbes. They are shown, not evaluated."
+    },
+    "habitat-personal-light": {
+      "label": "Personal light",
+      "aliases": [
+        "personal light",
+        "personal light exposure"
+      ],
+      "about": "Shows what was read about the light each person receives: that there is no published limit, and the recommendations from Earth. It is not compared with the reading."
+    },
+    "systems-how-to-read": {
+      "label": "How to read it (systems)",
+      "aliases": [
+        "how to read it systems",
+        "how to read the systems"
+      ],
+      "about": "Explains how to read the status of the habitat systems: a person declares it, it is not telemetry, and what its vocabulary is based on. Read-only."
+    },
+    "systems-history": {
+      "label": "Declaration history (systems)",
+      "aliases": [
+        "declaration history systems",
+        "systems history"
+      ],
+      "about": "History of signed declarations of the status of the habitat systems, such as air, water, power or communications, with their module and note. Read-only."
+    },
+    "ultrasound-received": {
+      "label": "Received ultrasounds",
+      "aliases": [
+        "received ultrasounds",
+        "ultrasounds received"
+      ],
+      "about": "On the Ground console, the ultrasounds that have already arrived from the spacecraft, with their measurements and the signs noted. Read-only."
+    },
+    "pain-history": {
+      "label": "Reported pain",
+      "aliases": [
+        "reported pain",
+        "pain reported"
+      ],
+      "about": "On the Ground console, the reported pain that has already arrived: by body area, the current intensity, the previous one and where it is heading. Read-only."
+    },
+    "sharing": {
+      "label": "What is shared and what is not",
+      "aliases": [
+        "what is shared and what is not",
+        "what is shared",
+        "shared data",
+        "what ground sees"
+      ],
+      "about": "Says, by type of data, what goes out to the internet, what Ground sees with the delay, what stays on board and what is not stored, and whether the code guarantees it."
+    },
+    "sharing-item": {
+      "label": "A type of shared data",
+      "aliases": [
+        "a type of shared data",
+        "one type of shared data"
+      ],
+      "about": "One data type from the sharing view: where it goes and which part of the code enforces it, or that it does not guarantee it."
+    },
+    "sharing-purposes": {
+      "label": "Purposes and hosts",
+      "aliases": [
+        "purposes and hosts",
+        "what goes out to the internet"
+      ],
+      "about": "The purposes for which EMMA may go out to the internet, with their servers, and whether it is now in offline mode."
+    },
+    "sharing-cut": {
+      "label": "Routes with the delay cutoff",
+      "aliases": [
+        "routes with the delay cutoff",
+        "delay cutoff routes"
+      ],
+      "about": "The routes Ground requests with the light delay cutoff, and in which direction each one goes."
+    },
+    "ground-planner": {
+      "label": "On-board planner",
+      "aliases": [
+        "on board planner",
+        "crew leisure",
+        "planner summary"
+      ],
+      "about": "For Ground, with the delay: per person and day, tasks done and streak, calendar events and leisure, messages, pastimes from their sheet and reminders. Descriptive figures only."
+    }
+  }
+}

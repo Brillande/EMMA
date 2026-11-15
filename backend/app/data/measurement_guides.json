@@ -1,0 +1,524 @@
+{
+  "_nota": "Instrucciones paso a paso para tomarse las medidas que EMMA vigila (unidad 3, 2026-11-03; el enunciado del reto: «Do not assume that astronauts know everything about how to assess their health»). Son instrucciones de CÓMO SE MIDE, no de qué hacer con el resultado: ningún paso da un rango, un umbral ni una conducta ante una cifra (invariante 7). Cada paso (`text`) lo redacta EMMA en español y lo sostiene al menos una frase leída en su fuente (`basis`): o bien `{ref, quote, where, read_on}` —la frase exacta en su idioma, el sitio del documento, la ficha del registro (data/evidence_refs.json) y el día de lectura—, o bien `{statement}`, el identificador de una frase ya leída de data/instruments_read.json (la PVT), que no se copia otra vez. Lo que se buscó y no se encontró va en `not_found`: un paso sin fuente no se escribe. `in_flight` es lo leído de cómo cambia la medida en vuelo; si no se leyó nada, lo dice `not_found`. `indicators` son claves del catálogo (app/ingest/codes.py). El cargador (app/guides.py) rechaza un paso sin frase, una ficha que no está en el registro, una fecha que no es fecha, un indicador que no está en el catálogo y un texto que el filtro de lenguaje (app/text_guard.py) bloquea. La ecografía no está aquí: sus ventanas, signos y lista de comprobación son de los protocolos de app/imaging/protocols.py (GET /api/imaging/protocols), y la guía los enlaza en `elsewhere`. Nada de esto entra en el análisis ni en `rules_version`. Las pruebas psicomotrices y cognitivas son las de NASA: la batería Cognition del protocolo Standard Measures, con la PVT como décima prueba (guía `cognition-battery`, 2026-11-03). No se toman del DSM-5-TR, por decisión de alcance y no por una lectura del manual, que no se ha leído: el DSM-5-TR es un manual de criterios diagnósticos, en el que la agitación o el enlentecimiento psicomotor los observa un clínico, y no indica una batería de pruebas que pasar; tomarlo como pauta convertiría estas guías en diagnóstico (invariante 7). Ya estaba descartado en docs/contexto/prioridades-evento.md §5, y lo recoge docs/contexto/README.md («No se adopta, y por qué»).",
+  "elsewhere": [
+    {
+      "id": "ultrasound-protocols",
+      "text": "Ecografía: la ventana, los signos y la lista de comprobación de cada protocolo están en su propio panel.",
+      "route": "/api/imaging/protocols",
+      "module": "backend/app/imaging/protocols.py"
+    }
+  ],
+  "guides": [
+    {
+      "id": "blood-pressure",
+      "title": "Tensión arterial con tensiómetro de brazo",
+      "indicators": ["systolic-bp", "diastolic-bp"],
+      "steps": [
+        {
+          "text": "Vacía la vejiga antes de medir.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "Empty your bladder beforehand", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "No midas en los 30 minutos siguientes a una comida, a la cafeína o al tabaco, ni justo después de hacer ejercicio o en un momento de estrés.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "DO NOT take your blood pressure when you are under stress, have had a meal, caffeine, or used tobacco in the past 30 minutes, or have exercised recently.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Descansa al menos 5 minutos antes de medir; 10 es mejor.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "Rest for at least 5 minutes, 10 minutes is better, before blood pressure is taken.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Siéntate con la espalda apoyada, las piernas sin cruzar y los pies en el suelo.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "Sit in a chair with your back supported. Your legs should be uncrossed, and your feet on the floor.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Apoya el brazo de modo que la parte de arriba quede a la altura del corazón. El brazo, descubierto y sin la manga recogida apretándolo.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "Your arm should be supported so that your upper arm is at heart level. Roll up your sleeve so that your arm is bare. Be sure the sleeve is not bunched up and squeezing your arm.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Ajusta el manguito alrededor de la parte de arriba del brazo, con su borde inferior a 2,5 cm por encima del pliegue del codo.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "You or your provider will wrap the blood pressure cuff snugly around your upper arm. The lower edge of the cuff should be 1 inch (2.5 cm) above the skin fold at the bend of your elbow.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Toma 2 o 3 lecturas seguidas, con 1 minuto entre una y otra y sin levantarte, y apunta la hora de cada una.",
+          "basis": [
+            {"ref": "medlineplus-blood-pressure-measurement", "quote": "Take 2 or 3 readings at a sitting. Take the readings 1 minute apart. Remain seated. When checking your blood pressure on your own, note the time of the readings.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Cómo se adapta en microgravedad la postura de la fuente (sentado, con los pies en el suelo): no se ha leído ninguna fuente que lo diga. Los pasos son los de Tierra."
+      ]
+    },
+    {
+      "id": "body-temperature",
+      "title": "Temperatura con termómetro electrónico",
+      "indicators": ["body-temperature"],
+      "steps": [
+        {
+          "text": "Limpia el termómetro antes y después de usarlo, con agua fría y jabón o con alcohol.",
+          "basis": [
+            {"ref": "medlineplus-temperature-measurement", "quote": "Always clean the thermometer before and after using. You can use cool, soapy water or rubbing alcohol.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Espera al menos 1 hora después de un ejercicio intenso o de un baño caliente, y de 20 a 30 minutos después de fumar, comer o beber algo caliente o frío.",
+          "basis": [
+            {"ref": "medlineplus-temperature-measurement", "quote": "Wait at least 1 hour after heavy exercise or a hot bath before measuring body temperature. Wait for 20 to 30 minutes after smoking, eating, or drinking a hot or cold liquid.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En la boca: la punta bajo la lengua y la boca cerrada, respirando por la nariz y sujetando el termómetro con los labios. Déjalo 3 minutos o hasta que pite.",
+          "basis": [
+            {"ref": "medlineplus-temperature-measurement", "quote": "Mouth: Place the probe under the tongue and close the mouth. Breathe through the nose. Use the lips to hold the thermometer tightly in place. Leave the thermometer in the mouth for 3 minutes or until the device beeps.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En la axila: coloca el termómetro, aprieta el brazo contra el cuerpo y espera 5 minutos o hasta que pite.",
+          "basis": [
+            {"ref": "medlineplus-temperature-measurement", "quote": "Armpit: Place the thermometer in the armpit. Press the arm against the body. Wait for 5 minutes before reading or when the device beeps.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Apunta dónde la tomaste (boca, axila o frente): la cifra cambia según el sitio.",
+          "basis": [
+            {"ref": "medlineplus-temperature-measurement", "quote": "Which type of measurement was taken (oral, rectal, forehead, or armpit)", "where": "Normal Results, en la lista de lo que hace variar la temperatura normal", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-temperature-measurement", "quote": "Be sure to tell your health care provider which type of temperature measurement you used when discussing a fever.", "where": "Normal Results", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Qué termómetro hay a bordo y cómo se usa en vuelo: no se ha leído ninguna fuente que lo diga. Los pasos son los de Tierra."
+      ]
+    },
+    {
+      "id": "pulse-oximetry",
+      "title": "Saturación de oxígeno con pulsioxímetro",
+      "indicators": ["oxygen-saturation"],
+      "steps": [
+        {
+          "text": "Antes de medir, quita el esmalte oscuro del dedo que vas a usar: tapa la luz del aparato.",
+          "basis": [
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Dark nail polish on the finger being tested can block the light emitted from the oximeter.", "where": "Will I need to do anything to prepare for the test?", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Pon el pulsioxímetro en la punta de un dedo. La luz puede enrojecer la yema; no duele.",
+          "basis": [
+            {"ref": "medlineplus-pulse-oximetry", "quote": "A small electronic device called a pulse oximeter will be clipped to a part of your body, usually your fingertip.", "where": "What happens during pulse oximetry?", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "The light may make your fingertip look red, but you won't feel any pain.", "where": "What happens during pulse oximetry?", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Espera unos segundos: el aparato da la frecuencia cardiaca y el nivel de oxígeno.",
+          "basis": [
+            {"ref": "medlineplus-pulse-oximetry", "quote": "After a few seconds, the oximeter will provide a readout of your heart rate (pulse) and oxygen level.", "where": "What happens during pulse oximetry?", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Lo que puede falsear la lectura, según la fuente: las uñas postizas, una pigmentación de la piel más oscura, la mala circulación, la piel fría y el tabaco.",
+          "basis": [
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Other things that may cause inaccurate results can include:", "where": "Will I need to do anything to prepare for the test?", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Artificial nails", "where": "Will I need to do anything to prepare for the test?, en la lista que abre la frase anterior", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "A darker skin pigmentation (color)", "where": "Will I need to do anything to prepare for the test?, en la lista que abre la frase anterior", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Poor circulation", "where": "Will I need to do anything to prepare for the test?, en la lista que abre la frase anterior", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Cold skin", "where": "Will I need to do anything to prepare for the test?, en la lista que abre la frase anterior", "read_on": "2026-11-03"},
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Tobacco use", "where": "Will I need to do anything to prepare for the test?, en la lista que abre la frase anterior", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "La lectura puede quedar entre un 2 % y un 4 % por encima o por debajo del oxígeno real en sangre.",
+          "basis": [
+            {"ref": "medlineplus-pulse-oximetry", "quote": "Pulse oximetry results may be 2% to 4% higher or lower than your actual blood oxygen level.", "where": "Is there anything else I need to know about pulse oximetry?", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Si en vuelo cambia algo de cómo se toma la pulsioximetría: no se ha leído ninguna fuente que lo diga. Los pasos son los de Tierra."
+      ]
+    },
+    {
+      "id": "capillary-glucose",
+      "title": "Glucosa en sangre capilar con glucómetro",
+      "indicators": ["glucose-capillary"],
+      "steps": [
+        {
+          "text": "Comprueba que el glucómetro está cargado y listo para usar.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Make sure the meter is charged and ready to use.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Con las manos frías, caliéntalas antes de lavarlas: el frío reduce la sangre que llega a la yema y cuesta sacar bastante para la tira.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "When your hands are cold, this could restrict the blood flow to your fingertips. If you have trouble getting enough blood on the test strip, try warming up your hands before you wash them.", "where": "More tips to keep in mind", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Lávate las manos con agua tibia y jabón, y sécalas bien, antes de cada medida.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Wash your hands with soap and warm water, and dry well before each test.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Masajea o sacude la mano para que llegue sangre al dedo.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Massage or shake out your hand to get blood into your finger.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Pincha el dedo con la lanceta y, apretando desde la base del dedo, deja con suavidad una gota pequeña de sangre en la tira.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Use a lance to prick your finger. Squeezing from the base of the finger, gently place a small amount of blood onto the test strip.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Mete la tira en el glucómetro: la lectura aparece a los pocos segundos.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Place the strip in the meter. After a few seconds, the blood sugar reading will appear.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Apunta la cifra y lo que pueda haberla afectado, entre ello si estabas en ayunas o cuándo comiste por última vez: la fuente dice que de eso depende cómo se lee.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Track and record your results. You may want to keep notes about anything that might have affected your reading.", "where": "How to monitor", "read_on": "2026-11-04"},
+            {"ref": "medlineplus-blood-sugar-test", "quote": "After you have not eaten anything for at least 8 hours (fasting)", "where": "How to Prepare for the Test, en la lista de cómo puede hacerse la prueba", "read_on": "2026-11-04"},
+            {"ref": "medlineplus-blood-sugar-test", "quote": "If you had a random blood glucose test, a normal result depends on when you last ate.", "where": "Normal Results", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Tira la lanceta y la tira a la basura, y no compartas el equipo de medida, sobre todo las lancetas, con nadie.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Dispose of the lancet and strip in a trash container.", "where": "How to monitor", "read_on": "2026-11-04"},
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Do not share blood sugar monitoring equipment, especially lancets, with anyone, even other family members.", "where": "How to monitor", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Guarda las tiras en su envase bien cerrado: la humedad y las temperaturas extremas las estropean.",
+          "basis": [
+            {"ref": "cdc-monitoring-blood-sugar", "quote": "Test strips can be damaged if exposed to moisture, humidity, or extreme temperatures. Keep the container closed tightly when you're not using your test strips, and be mindful where you store them.", "where": "More tips to keep in mind", "read_on": "2026-11-04"}
+          ]
+        },
+        {
+          "text": "Esta cifra es de sangre capilar del dedo. La glucosa de una analítica de vena es otra medida, que la fuente da por más exacta, y EMMA la registra con otro código: no se mezclan.",
+          "basis": [
+            {"ref": "medlineplus-blood-sugar-test", "quote": "Blood glucose measured by a blood test from a vein is considered more accurate than blood glucose measured from a fingerstick with a blood glucose meter, or blood glucose measured by a continuous glucose monitor.", "where": "Normal Results", "read_on": "2026-11-04"}
+          ]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Si hay glucómetro a bordo de la ISS y si se usa en vuelo: no se ha leído ninguna fuente que lo diga. Lo que apareció al buscarlo (2026-11-04) fueron monitores continuos de glucosa llevados por tripulaciones privadas, otro instrumento con otro código, y no se leyeron.",
+        "Cómo se pincha el dedo y se lleva la gota a la tira en microgravedad: no se ha leído ninguna fuente que lo diga. Los pasos son los de Tierra.",
+        "Cuánta sangre pide la tira y cuántos segundos tarda la lectura: depende del glucómetro, y la fuente solo dice «a small amount» y «a few seconds»."
+      ]
+    },
+    {
+      "id": "body-mass",
+      "title": "Peso y masa corporal",
+      "indicators": ["body-weight"],
+      "steps": [],
+      "in_flight": [
+        {
+          "text": "En la estación espacial la masa corporal no se mide con una báscula: en microgravedad es difícil, y se usan dos medidores de masa, el ruso BMMD (por la oscilación de un muelle) y el SLAMMD de NASA (por la segunda ley de Newton, F = ma).",
+          "basis": [
+            {"ref": "zwart-2014-body-mass", "quote": "Determining body mass becomes difficult in a microgravity environment.", "where": "Resumen (BACKGROUND), registro de PubMed", "read_on": "2026-11-03"},
+            {"ref": "zwart-2014-body-mass", "quote": "We report data from two mass measurement devices on the International Space Station (ISS): the Russian body mass measuring device (BMMD), which uses spring oscillation physics, and NASA's Space Linear Acceleration Mass Measurement Device (SLAMMD), which uses Newton's second law of motion (F = ma).", "where": "Resumen (METHODS), registro de PubMed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Antes del vuelo la referencia se tomó con báscula, y los dos medidores de a bordo no dan la misma cifra: en ese estudio, 1,1 kg de diferencia media entre las medidas más próximas de uno y otro.",
+          "basis": [
+            {"ref": "zwart-2014-body-mass", "quote": "significant body mass loss occurred compared to preflight (gravimetric scale)", "where": "Resumen (RESULTS), registro de PubMed", "read_on": "2026-11-03"},
+            {"ref": "zwart-2014-body-mass", "quote": "The mean difference between the two devices was 1.1 kg when the closest SLAMMD and BMMD measurements were compared (6.9 ± 6.2 d apart).", "where": "Resumen (RESULTS), registro de PubMed", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "not_found": [
+        "Los pasos para medirse en el SLAMMD o en el BMMD (postura, sujeción, repeticiones): se buscó el 2026-11-03 una ficha de NASA con el procedimiento y no se encontró; sin fuente no se escriben.",
+        "Los pasos para pesarse en una báscula en Tierra: no se ha leído ninguna fuente."
+      ]
+    },
+    {
+      "id": "heart-rate-hrv",
+      "title": "Frecuencia cardiaca y variabilidad (pulso a mano y wearable)",
+      "indicators": ["heart-rate", "hrv-sdnn", "hrv-rmssd"],
+      "steps": [
+        {
+          "text": "Para la frecuencia en reposo, descansa antes al menos 10 minutos.",
+          "basis": [
+            {"ref": "medlineplus-pulse", "quote": "To determine the resting heart rate, you must have been resting for at least 10 minutes.", "where": "How to Prepare for the Test", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "A mano, en la muñeca: pon los dedos índice y corazón en la cara interna de la muñeca contraria, bajo la base del pulgar, y aprieta con los dedos planos hasta notar el pulso.",
+          "basis": [
+            {"ref": "medlineplus-pulse", "quote": "To measure the pulse at your wrist, place your index and middle finger over the underside of your opposite wrist, below the base of the thumb. Press with flat fingers until you feel the pulse.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Cuenta los latidos durante 1 minuto entero, o durante 30 segundos y multiplica por 2: son los latidos por minuto.",
+          "basis": [
+            {"ref": "medlineplus-pulse", "quote": "Once you find the pulse, count the beats for 1 full minute. Or, count the beats for 30 seconds and multiply by 2. This will give the beats per minute.", "where": "How the Test is Performed", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "El SDNN (una medida de la variabilidad) solo se compara entre registros de la misma duración.",
+          "basis": [
+            {"ref": "task-force-hrv-1996", "quote": "it is inappropriate to compare SDNN measures obtained from recordings of different durations", "where": "Texto completo, en la copia de Internet Archive de la página del artículo (ver la nota de la ficha)", "read_on": "2026-10-23"}
+          ]
+        },
+        {
+          "text": "Registra cada vez en condiciones y en un entorno parecidos.",
+          "basis": [
+            {"ref": "task-force-hrv-1996", "quote": "When long-term ECGs are used in clinical studies, individual subjects should be recorded under fairly similar conditions and in a fairly similar environment", "where": "Texto completo, en la copia de Internet Archive de la página del artículo (ver la nota de la ficha)", "read_on": "2026-10-23"}
+          ]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Cómo se coloca y se ajusta cada wearable: lo dice el manual de su fabricante, y EMMA no lo ha leído.",
+        "Si la regla de la misma duración vale también para el RMSSD: la frase leída de la norma habla del SDNN.",
+        "Si en vuelo cambia algo de cómo se toma el pulso: no se ha leído ninguna fuente que lo diga."
+      ]
+    },
+    {
+      "id": "pvt",
+      "title": "Prueba de vigilancia psicomotora (PVT)",
+      "indicators": ["pvt-mean-rt", "pvt-lapses"],
+      "steps": [
+        {
+          "text": "La prueba breve (PVT-B) dura 3 minutos; la estándar, 10.",
+          "basis": [{"statement": "pvtb-duration-isi"}]
+        },
+        {
+          "text": "Los estímulos salen a intervalos al azar: de 1 a 4 segundos en la PVT-B y de 2 a 10 en la de 10 minutos. Se mide el tiempo de reacción a cada uno.",
+          "basis": [{"statement": "pvtb-isi"}, {"statement": "pvt10-isi"}]
+        },
+        {
+          "text": "Pulsar sin estímulo, o en menos de 100 milisegundos, cuenta como salida en falso.",
+          "basis": [{"statement": "false-start-100"}]
+        },
+        {
+          "text": "Si pasan 30 segundos sin respuesta, la prueba avisa y lo cuenta como lapso.",
+          "basis": [{"statement": "timeout-30s"}]
+        }
+      ],
+      "in_flight": [],
+      "not_found": [
+        "Qué versión de la prueba pasa hoy la tripulación de la ISS: no se ha leído (lo dice también lo leído de la PVT, GET /api/pvt/protocol)."
+      ]
+    },
+    {
+      "id": "sleep-actigraphy",
+      "title": "Sueño con actígrafo de muñeca",
+      "indicators": ["sleep-duration", "sleep-efficiency"],
+      "steps": [],
+      "in_flight": [
+        {
+          "text": "En la estación espacial, el sueño y la vigilia se registran con un actígrafo en la muñeca, que mide las aceleraciones de sus movimientos.",
+          "basis": [
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "To monitor sleep-wake behaviors, study participants wear an actigraphy device that tracks accelerations caused by wrist movements.", "where": "Sleep logs and actigraphy", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En vuelo se registra por tandas de 14 días, separadas 60 días; durante cada tanda se lleva día y noche, salvo en las salidas extravehiculares o cuando la operación no lo permite.",
+          "basis": [
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During flight, actigraphy data are collected for 14-day periods that are spaced 60 days apart.", "where": "Sleep logs and actigraphy", "read_on": "2026-11-03"},
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During these collection periods, actigraphy is performed 24/7, except during extravehicular activities or other operational constraints.", "where": "Sleep logs and actigraphy", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "El inicio y el final de cada sueño los marca el programa de análisis, con un umbral de vigilia que se elige en él; la eficiencia es el sueño total respecto al tiempo en cama.",
+          "basis": [
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "The actigraphy analysis software includes settings for selecting a wake threshold and for detecting sleep intervals and sleep onset and end.", "where": "Sleep logs and actigraphy", "read_on": "2026-11-03"},
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Total sleep duration relative to time in bed (sleep efficiency)", "where": "Sleep logs and actigraphy, en la lista de variables del sueño", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "not_found": [
+        "Cómo se pone y se lleva el actígrafo (qué muñeca, cómo se ajusta, cuándo se quita): lo dice el manual de su fabricante, y EMMA no lo ha leído ni dice qué actígrafo es el suyo.",
+        "Qué umbral de vigilia usa el análisis del que llegan la duración y la eficiencia del sueño: la fuente dice que el programa deja elegirlo, no cuál se usa.",
+        "Pasos para medir el sueño en Tierra: no se ha leído ninguna fuente. EMMA no lee hoy el sueño de las exportaciones de Apple Health ni de Google Fit."
+      ]
+    },
+    {
+      "id": "mood-self-report",
+      "title": "Ánimo por autoinforme",
+      "indicators": ["mood-valence"],
+      "steps": [],
+      "in_flight": [
+        {
+          "text": "Lo leído de cómo se autoinforma el estado en la estación espacial es de otro instrumento, el Reaction Self Test: justo antes de cada PVT-B, escalas en pantalla de 11 puntos sobre calidad del sueño (solo por la mañana), carga de trabajo (solo por la noche), estrés, fatiga mental, agotamiento físico, cansancio y somnolencia. El ánimo no está en esa lista.",
+          "basis": [{"statement": "rst-what"}, {"statement": "rst-vas-domains"}]
+        }
+      ],
+      "not_found": [
+        "Las anclas de la escala de ánimo de EMMA, de 0 a 10 (0, «el ánimo más negativo»; 10, «el ánimo más positivo»), son una decisión de diseño de EMMA sin validar: la escala no es la versión de ningún cuestionario de ánimo, y ninguna fuente dice cómo se responde ni qué significa cada punto. Por eso esta guía no da pasos.",
+        "Un cuestionario de ánimo publicado que se pase en vuelo, con sus puntos y sus anclas: no se ha leído ninguno."
+      ]
+    },
+    {
+      "id": "cognition-battery",
+      "title": "Batería Cognition de NASA (diez pruebas, con la PVT)",
+      "indicators": [
+        "cognition-mpt-speed",
+        "cognition-volt-speed", "cognition-volt-accuracy",
+        "cognition-f2b-speed", "cognition-f2b-accuracy",
+        "cognition-am-speed", "cognition-am-accuracy",
+        "cognition-lot-speed", "cognition-lot-accuracy",
+        "cognition-ert-speed", "cognition-ert-accuracy",
+        "cognition-mrt-speed", "cognition-mrt-accuracy",
+        "cognition-dsst-speed", "cognition-dsst-accuracy",
+        "cognition-bart-speed", "cognition-bart-risk",
+        "pvt-mean-rt", "pvt-lapses"
+      ],
+      "steps": [
+        {
+          "text": "La batería son diez pruebas breves, que se pasan en su orden estándar: MPT, VOLT, F2B, AM, LOT, ERT, MRT, DSST, BART y, la última, la PVT.",
+          "basis": [{"statement": "basner-standard-order"}, {"statement": "ssm-ctb-ten-tests"}]
+        },
+        {
+          "text": "De cada una de las diez pruebas hay 15 versiones distintas.",
+          "basis": [{"statement": "basner-15-forms-10-tests"}]
+        },
+        {
+          "text": "Una sesión entera duró de media 37 minutos en el estudio de 25 astronautas de la ISS (con una desviación típica de 25 minutos).",
+          "basis": [{"statement": "cog-session-minutes"}]
+        },
+        {
+          "text": "Antes de ocho de las diez pruebas hay una ronda de práctica que puede hacerse justo antes de la prueba: sirve a quien la pasa por primera vez o hace tiempo que no la pasa.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Eight of the ten tests have practice bouts that can be performed immediately prior to test administration—this is useful for first-time participants and those who have not taken the tests for a longer period of time.", "where": "Discussion", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En el portátil se responde con el panel táctil, sin conectar un ratón: en el espacio no lo hay.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Subjects were asked to use the trackpad of the laptop and not to attach a computer mouse, as the latter is not available in space.", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En el estudio normativo de la batería, en Tierra, se pidió no pasarla en la primera hora después de despertar, ni tras más de 16 horas despierto, ni estando enfermo.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Participants were instructed not to take the test within one hour of waking up or after being awake more than 16 hours.", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"},
+            {"ref": "basner-2015-cognition-battery", "quote": "They were also instructed not to perform Cognition if they were sick.", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "En ese mismo estudio, la prueba se pasaba en un sitio sin distracciones, y se anotaba lo que pudiera explicar algo raro en los datos, como una distracción.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Astronauts/astronaut candidates were asked to take the test in an environment without distractions.", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"},
+            {"ref": "basner-2015-cognition-battery", "quote": "All participants were instructed to leave comments that could explain any irregularity in the data (e.g., distractions).", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Antes de cada pasada, un cuestionario recogía las horas de sueño de ese día, los estimulantes y depresores tomados en las 6 horas anteriores y el nivel de alerta.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Sleep times on the day of test administration, the consumption of stimulants and depressants in the 6 hours preceding the test, and alertness levels were assessed with a questionnaire prior to test administration.", "where": "Methods, Procedure (estudio normativo en Tierra)", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "Salir de la batería a medias no obliga a empezar de nuevo: el programa recuerda la última prueba terminada y la próxima vez arranca por la siguiente.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "If a user skips out of the battery before all tests are finished, the software will remember the last completed test bout and start with the next test the next time it is started.", "where": "Discussion", "read_on": "2026-11-03"}
+          ]
+        },
+        {
+          "text": "De cada prueba se registra la velocidad, que es la media de los tiempos de respuesta en milisegundos, y la precisión. La MPT no tiene precisión, y en la BART la segunda cifra es de riesgo, una proporción de 0 a 1.",
+          "basis": [
+            {"statement": "cog-speed-definition"}, {"statement": "cog-accuracy-proportion"},
+            {"statement": "cog-mpt-no-accuracy"}, {"statement": "cog-bart-risk"}
+          ]
+        },
+        {
+          "text": "1. MPT (Motor Praxis Task): pulsas en cuadrados que salen al azar en la pantalla, cada vez más pequeños. Mide la velocidad sensoriomotora: lo rápido que pulsas cada cuadrado.",
+          "basis": [{"statement": "cog-test-mpt"}, {"statement": "basner-mp-speed"}]
+        },
+        {
+          "text": "2. VOLT (Visual Object Learning Task): memorizas figuras tridimensionales y después eliges las que viste entre figuras ya vistas y nuevas. Mide el aprendizaje y la memoria visual.",
+          "basis": [{"statement": "cog-test-volt"}]
+        },
+        {
+          "text": "3. F2B (Fractal 2-Back): salen figuras una tras otra y respondes cuando la de ahora es igual a la que salió dos antes. Mide la memoria de trabajo no verbal.",
+          "basis": [{"statement": "cog-test-f2b"}, {"statement": "cog-f2b-accuracy"}]
+        },
+        {
+          "text": "4. AM (Abstract Matching): emparejas objetos con una de dos parejas según unas reglas abstractas que no se dicen. Mide la abstracción, la resolución de problemas y la formación de conceptos.",
+          "basis": [{"statement": "cog-test-am"}]
+        },
+        {
+          "text": "5. LOT (Line Orientation Task): giras una línea hasta dejarla paralela a otra; las líneas cambian de longitud y de orientación. Mide la orientación visoespacial.",
+          "basis": [{"statement": "cog-test-lot"}, {"statement": "cog-lot-accuracy"}]
+        },
+        {
+          "text": "6. ERT (Emotion Recognition Task): ves fotos de caras y eliges una de cinco etiquetas: alegre, triste, enfadado, con miedo o sin emoción. Mide el reconocimiento de las emociones en la cara.",
+          "basis": [{"statement": "cog-test-ert"}]
+        },
+        {
+          "text": "7. MRT (Matrix Reasoning Task): en una cuadrícula hay un patrón al que le falta una pieza, y eliges la que encaja. Mide el razonamiento abstracto no verbal y el reconocimiento de patrones.",
+          "basis": [{"statement": "cog-test-mrt"}]
+        },
+        {
+          "text": "8. DSST (Digit Symbol Substitution Task): con una leyenda que une cada dígito con un símbolo, eliges lo antes posible el número del símbolo que sale. Dura 90 segundos. Mide el rastreo visual complejo, el seguimiento visual y la velocidad de procesamiento.",
+          "basis": [{"statement": "cog-test-dsst"}]
+        },
+        {
+          "text": "9. BART (Balloon Analog Risk Test): inflas un globo animado o recoges la recompensa; el globo revienta tras un número de bombeos que no conoces y que cambia en cada intento. Mide la conducta ante el riesgo.",
+          "basis": [{"statement": "cog-test-bart"}, {"statement": "cog-bart-risk"}]
+        },
+        {
+          "text": "10. PVT (Psychomotor Vigilance Test): vigilas un recuadro y pulsas la barra espaciadora en cuanto aparece en él un contador de milisegundos, lo más rápido que puedas y sin pulsar cuando no hay estímulo. Sus pasos están también en la guía propia de la PVT.",
+          "basis": [
+            {"ref": "basner-2015-cognition-battery", "quote": "Subjects are instructed to monitor a box on the screen, and hit the space bar once a millisecond counter appears in the box and starts incrementing.", "where": "Methods, Equipment (descripción de la PVT)", "read_on": "2026-11-03"},
+            {"ref": "basner-2015-cognition-battery", "quote": "Subjects are instructed to be as fast as possible without hitting the spacebar without a stimulus (i.e., false starts or errors of commission).", "where": "Methods, Equipment (descripción de la PVT)", "read_on": "2026-11-03"}
+          ]
+        }
+      ],
+      "in_flight": [
+        {
+          "text": "En la estación espacial la batería corre en un portátil de la HRF, en el módulo Columbus; en el estudio de 25 astronautas se pasó en portátiles Hewlett Packard Z-Book 15 G2 en todas las sesiones.",
+          "basis": [{"statement": "basner-iss-columbus"}, {"statement": "cog-laptops"}]
+        },
+        {
+          "text": "En ese estudio se pasó una vez antes del vuelo, dos en vuelo (en los 30 días siguientes al lanzamiento y en los 30 anteriores al regreso) y dos después (en los 10 y en los 30 días siguientes al aterrizaje).",
+          "basis": [{"statement": "cog-participants-timing"}]
+        },
+        {
+          "text": "En el protocolo Standard Measures de NASA, la batería está entre las medidas de salud y rendimiento conductual; en las misiones de 105 a 240 días, los datos se toman durante el primer mes, a mitad de vuelo y durante el último mes.",
+          "basis": [
+            {"statement": "ssm-bhp-measures"},
+            {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During standard-duration ISS missions (105–240 days), data is collected during the first month, at mid-flight, and during the last month of the mission.", "where": "«Experimental Design»", "read_on": "2026-10-31"}
+          ]
+        },
+        {
+          "text": "Al acabar cada prueba, el resultado se cifra, se guarda en el disco del portátil y, si hay conexión, se envía a un servidor central.",
+          "basis": [{"statement": "basner-results-stored"}]
+        },
+        {
+          "text": "Según el informe de evidencia del HRP, en la ISS la batería se usa en estudios de investigación, para describir el rendimiento cognitivo en vuelos largos y afinarla de cara a un posible uso operativo.",
+          "basis": [{"statement": "bmed-cognition-iss"}, {"statement": "bmed-cognition-subtests"}]
+        }
+      ],
+      "not_found": [
+        "Las instrucciones que da el programa en la pantalla de cada prueba, palabra por palabra: no se han leído. Lo que hace cada prueba sale de los artículos que la describen.",
+        "Si en vuelo se piden las mismas condiciones que en el estudio normativo de Tierra (la hora tras despertar, las 16 horas despierto, el sitio sin distracciones): ninguna fuente leída lo dice.",
+        "Qué intervalos entre estímulos usa la PVT de la batería que pasa hoy la tripulación: el artículo de la batería (2015) da de 2 a 5 segundos para su versión de 3 minutos, y lo leído de la PVT-B (2011) da de 1 a 4; no se ha leído cuál corre hoy en la ISS."
+      ]
+    }
+  ]
+}

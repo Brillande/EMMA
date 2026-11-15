@@ -1,0 +1,47 @@
+{
+ "fuente": "bateria-2026-11-11T2331.csv",
+ "fases": [
+  {
+   "fase": "reposo",
+   "duracion_s": 20.0,
+   "muestras": 20,
+   "equipo_w_media": 41.4,
+   "equipo_julios": 828.0
+  },
+  {
+   "fase": "cargar_modelo",
+   "duracion_s": 6.06,
+   "muestras": 6,
+   "equipo_w_media": 69.84,
+   "equipo_julios": 422.9
+  },
+  {
+   "fase": "modelo_cargado_reposo",
+   "duracion_s": 20.0,
+   "muestras": 20,
+   "equipo_w_media": 57.18,
+   "equipo_julios": 1143.7
+  },
+  {
+   "fase": "generar_300_tokens",
+   "duracion_s": 14.35,
+   "muestras": 14,
+   "equipo_w_media": 86.22,
+   "equipo_julios": 1236.9
+  },
+  {
+   "fase": "descargar_modelo",
+   "duracion_s": 0.02,
+   "muestras": 0,
+   "equipo_w_media": null,
+   "equipo_julios": null
+  },
+  {
+   "fase": "reposo_final",
+   "duracion_s": 15.0,
+   "muestras": 14,
+   "equipo_w_media": 56.15,
+   "equipo_julios": 842.4
+  }
+ ]
+}

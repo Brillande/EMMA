@@ -1,0 +1,64 @@
+{
+  "target": "app/api/timeline.py",
+  "test": [
+    "tests/test_waiting.py::test_the_ground_route_cuts_by_until_and_signs_nothing",
+    "tests/test_waiting.py::test_the_ground_route_hands_the_ground_state_and_its_cut_to_the_wiring",
+    "tests/test_waiting.py::test_the_shared_wiring_hands_the_cut_to_every_piece",
+    "tests/test_waiting.py::test_the_ground_route_refuses_an_instant_without_time_zone",
+    "tests/test_waiting.py::test_the_route_swallows_only_the_absence_of_data",
+    "tests/test_waiting.py::test_the_reports_are_cut_once_per_request",
+    "tests/test_waiting.py::test_readings_without_an_analysable_date_are_nothing_to_analyse_too"
+  ],
+  "mutations": [
+    {
+      "label": "la ruta de Tierra cuenta con el estado de a bordo",
+      "old": "            settings, store, subject=subject, epoch=None, cumulative_dose_msv=None, until=until\n        )\n    except HTTPException as exc:\n        if exc.status_code not in _NOTHING_TO_ANALYSE:\n            raise\n        return {\"threshold_days\"",
+      "new": "            settings, store, subject=subject, epoch=None, cumulative_dose_msv=None, until=None\n        )\n    except HTTPException as exc:\n        if exc.status_code not in _NOTHING_TO_ANALYSE:\n            raise\n        return {\"threshold_days\""
+    },
+    {
+      "label": "la ruta de Tierra no pasa su corte a lo que espera",
+      "old": "    return waiting_for(status, store, subject, until)",
+      "new": "    return waiting_for(status, store, subject)"
+    },
+    {
+      "label": "un instante sin zona horaria se acepta y se queda sin respuesta",
+      "old": "    «nada espera» (§5.37.13).\"\"\"\n    _aware(until)",
+      "new": "    «nada espera» (§5.37.13).\"\"\""
+    },
+    {
+      "label": "las rutinas de Tierra cuentan hasta la lectura de a bordo",
+      "old": "        status, store, _routines(store, subject, until), subject,",
+      "new": "        status, store, _routines(store, subject, None), subject,"
+    },
+    {
+      "label": "las incongruencias de Tierra salen de informes que no han llegado",
+      "old": "    reports = waiting.reports_known(store, subject, until)",
+      "new": "    reports = waiting.reports_known(store, subject, None)"
+    },
+    {
+      "label": "lo firmado en el registro no se corta para Tierra",
+      "old": "        until=until, reports=reports,\n    )",
+      "new": "        reports=reports,\n    )"
+    },
+    {
+      "label": "la ruta se traga cualquier error del estado como «nada espera»",
+      "old": "        if exc.status_code not in _NOTHING_TO_ANALYSE:\n            raise\n",
+      "new": ""
+    },
+    {
+      "label": "la ruta convierte la falta de datos en un error",
+      "old": "        if exc.status_code not in _NOTHING_TO_ANALYSE:\n            raise\n",
+      "new": "        raise\n"
+    },
+    {
+      "label": "lo que espera vuelve a cortar los informes que ya cortó la ruta",
+      "old": "        until=until, reports=reports,\n    )",
+      "new": "        until=until,\n    )"
+    },
+    {
+      "label": "una lectura sin fecha analizable se sirve como error del panel",
+      "old": "_NOTHING_TO_ANALYSE = frozenset({404, 422})",
+      "new": "_NOTHING_TO_ANALYSE = frozenset({404})"
+    }
+  ]
+}

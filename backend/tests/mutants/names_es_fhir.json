@@ -1,0 +1,11 @@
+{
+  "target": "app/ingest/fhir.py",
+  "test": ["tests/test_names_es.py"],
+  "mutations": [
+    {
+      "label": "la Observation FHIR lleva el nombre de EMMA en vez del de LOINC",
+      "old": "                \"text\": self.code.display,",
+      "new": "                \"text\": self.code.display_es,"
+    }
+  ]
+}

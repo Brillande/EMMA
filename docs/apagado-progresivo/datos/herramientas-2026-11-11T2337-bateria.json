@@ -1,0 +1,47 @@
+{
+ "fuente": "bateria-2026-11-11T2331.csv",
+ "fases": [
+  {
+   "fase": "reposo",
+   "duracion_s": 15.0,
+   "muestras": 14,
+   "equipo_w_media": 42.56,
+   "equipo_julios": 638.3
+  },
+  {
+   "fase": "ocr_pagina_A4_1",
+   "duracion_s": 1.15,
+   "muestras": 1,
+   "equipo_w_media": 35.86,
+   "equipo_julios": 41.4
+  },
+  {
+   "fase": "ocr_pagina_A4_2",
+   "duracion_s": 1.15,
+   "muestras": 2,
+   "equipo_w_media": 62.12,
+   "equipo_julios": 71.2
+  },
+  {
+   "fase": "whisper_dictado_1",
+   "duracion_s": 6.07,
+   "muestras": 6,
+   "equipo_w_media": 64.63,
+   "equipo_julios": 392.2
+  },
+  {
+   "fase": "whisper_dictado_2",
+   "duracion_s": 4.05,
+   "muestras": 4,
+   "equipo_w_media": 63.27,
+   "equipo_julios": 256.0
+  },
+  {
+   "fase": "reposo_final",
+   "duracion_s": 15.0,
+   "muestras": 14,
+   "equipo_w_media": 40.27,
+   "equipo_julios": 604.1
+  }
+ ]
+}

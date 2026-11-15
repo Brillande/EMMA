@@ -1,0 +1,219 @@
+{
+  "target": "app/reports/deid.py",
+  "test": [
+    "tests/test_reports.py",
+    "tests/test_deid_corpus.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin la regla de EMMA para nombres con tratamiento",
+      "old": "    named, extra = _HONORIFIC_NAME.subn(MARK, str(masked))",
+      "new": "    named, extra = str(masked), 0"
+    },
+    {
+      "label": "un texto que no verifica se usa igual",
+      "old": "    if not verified or masked is None:\n        withheld = Deidentified(\"\", int(count) + emma_count, False, (str(reason),))\n        return withheld, (emma_masked,)\n",
+      "new": ""
+    },
+    {
+      "label": "tramos: al tramo tapado le falta su último carácter (el recall estricto baja)",
+      "old": "            covered = (origin[start][0], origin[end - 1][1])",
+      "new": "            covered = (origin[start][0], origin[end - 1][0])"
+    },
+    {
+      "label": "tramos: un texto retenido se mide como si no se hubiera tapado nada",
+      "old": "        return (Span(0, len(text), LAYER_WITHHELD),)",
+      "new": "        return ()"
+    },
+    {
+      "label": "tramos: se aceptan aunque el texto tapado no acabe como el original",
+      "old": "    if last <= cursor or not source.endswith(literals[-1]):",
+      "new": "    if last <= cursor:"
+    },
+    {
+      "label": "tramos: se ignora que Polaris normaliza antes de tapar",
+      "old": "        if layer == LAYER_POLARIS and current.strip():",
+      "new": "        if False:"
+    },
+    {
+      "label": "tramos: una marca heredada de la capa anterior se cuenta como tramo nuevo sin serlo, y el nuevo se pierde",
+      "old": "            if source[start:end] != MARK:",
+      "new": "            if source[start:end] == MARK:"
+    },
+    {
+      "label": "sin la regla de EMMA para el IBAN",
+      "old": "    text = _IBAN.sub(checked(_iban_ok), text)\n",
+      "new": ""
+    },
+    {
+      "label": "sin la regla de EMMA para la tarjeta",
+      "old": "    text = _CARD.sub(checked(_luhn_ok), text)\n",
+      "new": ""
+    },
+    {
+      "label": "sin la regla de EMMA para el pasaporte",
+      "old": "    text, passports = _PASSPORT.subn(lambda match: match.group(1) + MARK, text)",
+      "new": "    passports = 0"
+    },
+    {
+      "label": "sin la regla de EMMA para la fecha ISO con hora",
+      "old": "    text, dates = _ISO_DATETIME.subn(MARK, text)",
+      "new": "    dates = 0"
+    },
+    {
+      "label": "el IBAN se tapa sin mirar su dígito de control",
+      "old": "    return int(digits) % 97 == 1",
+      "new": "    return True"
+    },
+    {
+      "label": "la tarjeta se tapa sin mirar Luhn",
+      "old": "    return total % 10 == 0",
+      "new": "    return True"
+    },
+    {
+      "label": "la capa NER se pide aunque no esté instalada",
+      "old": "    if not (venv / \"ner-ok.json\").is_file():\n        return False\n",
+      "new": ""
+    },
+    {
+      "label": "la capa NER no se pide nunca",
+      "old": "        emma_masked, ner=ner_ready()",
+      "new": "        emma_masked, ner=False"
+    },
+    {
+      "label": "sin la regla de EMMA para titular y tarjeta sanitaria con etiqueta",
+      "old": "    text, labelled = _LABELLED.subn(lambda match: match.group(1) + MARK, text)",
+      "new": "    labelled = 0"
+    },
+    {
+      "label": "sin la regla de EMMA para el familiar nombrado",
+      "old": "    related, relatives = _mask_relatives(named)",
+      "new": "    related, relatives = named, 0"
+    },
+    {
+      "label": "parentesco: si tras tapar aún se ve un familiar nombrado, el texto sale igual",
+      "old": "    if _mask_relatives(related)[1]:",
+      "new": "    if False:"
+    },
+    {
+      "label": "parentesco: se tapa también el parentesco, que es dato clínico",
+      "old": "        return match.group(\"lead\") + MARK + match.group(\"names\")[length:]",
+      "new": "        return MARK + match.group(\"names\")[length:]"
+    },
+    {
+      "label": "parentesco: sin determinante basta una palabra con mayúscula (se tapa 'Hermano: Vitiligo')",
+      "old": "    if not words or (evidence < 2 and not match.group(\"det\")):",
+      "new": "    if not words:"
+    },
+    {
+      "label": "parentesco: un nombre de pila con sufijo clínico (Paloma) se toma por enfermedad",
+      "old": "    if folded in _NAMES_WITH_A_CLINICAL_SUFFIX:\n        return False\n",
+      "new": ""
+    },
+    {
+      "label": "parentesco: se tapa el nombre de un centro o de una calle ('Hospital Madre Teresa')",
+      "old": "    if match.group(\"kin\")[0].isupper() and _PLACE_BEFORE.search(line_before):\n        return 0\n",
+      "new": ""
+    },
+    {
+      "label": "parentesco: la marca que dejó Polaris tras el nombre de pila no se funde (tramo sin el apellido)",
+      "old": "        evidence += 1\n        end = token.end()",
+      "new": "        evidence += 1\n        end = token.end() if value != MARK else end"
+    },
+    {
+      "label": "parentesco: la etiqueta del campo siguiente se toma por apellido ('Mujer   Grupo Sanguineo: A+')",
+      "old": "    r\"{0,7})(?!\\w)(?![ \\t]*:)\"",
+      "new": "    r\"{0,7})\""
+    },
+    {
+      "label": "parentesco: no se mira la lista de enfermedades, epónimos y fármacos",
+      "old": "            if folded in _CLINICAL or (not words and _not_a_first_name(folded)):",
+      "new": "            if not words and _not_a_first_name(folded):"
+    },
+    {
+      "label": "parentesco: no se miran estados ni sufijos en la primera palabra ('El padre Fallecido')",
+      "old": "            if folded in _CLINICAL or (not words and _not_a_first_name(folded)):",
+      "new": "            if folded in _CLINICAL:"
+    },
+    {
+      "label": "parentesco: estados y sufijos cortan también los apellidos ('Mayor', 'Coloma' a la vista)",
+      "old": "            if folded in _CLINICAL or (not words and _not_a_first_name(folded)):",
+      "new": "            if folded in _CLINICAL or _not_a_first_name(folded):"
+    },
+    {
+      "label": "parentesco: no se miran los sufijos de término médico ('su tía Glaucoma')",
+      "old": "        or folded.endswith(_CLINICAL_SUFFIXES)\n",
+      "new": ""
+    },
+    {
+      "label": "parentesco: un estado en plural pasa por nombre ('sus padres Fallecidos')",
+      "old": "        or folded.removesuffix(\"s\") in _NOT_A_FIRST_NAME\n",
+      "new": ""
+    },
+    {
+      "label": "parentesco: 'mujer', 'mama' y 'papa' cuentan sin posesivo (sexo de la paciente, 'la Mama Derecha')",
+      "old": "    if any(word in kin for word in (\"mujer\", \"mama\", \"papa\")) and not possessive:\n        return 0\n",
+      "new": ""
+    },
+    {
+      "label": "nombre delante del parentesco: sin la segunda pasada ('con Rosa Beltrán, su cuñada' a la vista)",
+      "old": "    return _NAME_KIN.sub(before, text), count",
+      "new": "    return text, count"
+    },
+    {
+      "label": "nombre delante del parentesco: se tapa también el parentesco, que es dato clínico",
+      "old": "        return match.group(\"names\")[:start] + MARK + tail",
+      "new": "        return match.group(\"names\")[:start] + MARK"
+    },
+    {
+      "label": "nombre delante del parentesco: sin posesivo ni 'del paciente' también vale ('Medicina Interna, la madre')",
+      "old": "    if not (match.group(\"poss\") or match.group(\"patient\")):\n        return -1\n",
+      "new": ""
+    },
+    {
+      "label": "nombre delante del parentesco: no se mira si va tras una calle o una plaza ('la plaza San Juan, su madre')",
+      "old": "    if _PLACE_BEFORE.search(line_before):\n        return -1\n",
+      "new": ""
+    },
+    {
+      "label": "nombre delante del parentesco: lo que abre la frase se tapa con el nombre ('Hoy Rosa Beltrán')",
+      "old": "    while tokens and tokens[0].group(0).lower().translate(_FOLD) in _SENTENCE_OPENERS:\n        tokens.pop(0)\n",
+      "new": ""
+    },
+    {
+      "label": "nombre delante del parentesco: un centro se toma por un nombre ('Hospital Clínico, su madre')",
+      "old": "    if words[0] in _PLACE_WORDS or _not_a_first_name(words[0]):",
+      "new": "    if _not_a_first_name(words[0]):"
+    },
+    {
+      "label": "nombre delante del parentesco: estados y sufijos médicos no cuentan ('Antecedentes Familiares, su madre')",
+      "old": "    if words[0] in _PLACE_WORDS or _not_a_first_name(words[0]):",
+      "new": "    if words[0] in _PLACE_WORDS:"
+    },
+    {
+      "label": "nombre delante del parentesco: no se mira la lista clínica ('Diabetes Mellitus, su madre')",
+      "old": "    if any(word in _CLINICAL for word in words):\n        return -1\n",
+      "new": ""
+    },
+    {
+      "label": "nombre delante del parentesco: un nombre de pila suelto basta en cualquier sitio ('en Madrid, su madre')",
+      "old": "    if len(tokens) < 2 and not _PERSON_LEAD.search(line_before + names[: tokens[0].start()]):",
+      "new": "    if False:"
+    },
+    {
+      "label": "nombre delante del parentesco: lo quitado al abrir la frase no cuenta como lo de delante ('Acompañada de Lucía')",
+      "old": "    if len(tokens) < 2 and not _PERSON_LEAD.search(line_before + names[: tokens[0].start()]):",
+      "new": "    if len(tokens) < 2 and not _PERSON_LEAD.search(line_before):"
+    },
+    {
+      "label": "nombre delante del parentesco: no puede empezar por la marca de Polaris ('con [REDACTADO]-Gomez, su madre')",
+      "old": "    rf\"(?<![\\w-])(?P<names>(?:{re.escape(MARK)}{_NAME_JOIN})?{_NAME_WORD}\"",
+      "new": "    rf\"(?<![\\w-])(?P<names>{_NAME_WORD}\""
+    },
+    {
+      "label": "nombre: el guion no une la marca de Polaris con el resto del apellido ('[REDACTADO]-Gomez')",
+      "old": "_NAME_JOIN = r\"(?:[ \\t]+(?:(?:de(?:[ \\t]+l[ao]s?)?|del|y|e)[ \\t]+)?|-)\"",
+      "new": "_NAME_JOIN = r\"(?:[ \\t]+(?:(?:de(?:[ \\t]+l[ao]s?)?|del|y|e)[ \\t]+)?)\""
+    }
+  ]
+}

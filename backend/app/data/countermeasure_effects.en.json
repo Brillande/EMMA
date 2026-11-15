@@ -1,0 +1,11 @@
+{
+  "_nota": "Inglés de `countermeasure_effects.json` (`core/i18n.py`): castellano exacto → inglés, valor entero por valor entero. El fichero castellano no se toca; las claves, los ids y las frases literales de una fuente no se traducen. Lo aplica `i18n.localized` al servir.",
+  "strings": {
+    "El esfuerzo eleva el pulso durante la sesión y justo después; por eso la medida de seguimiento se toma en reposo.": "Exertion raises heart rate during the session and just after; that is why the follow-up measurement is taken at rest.",
+    "La nota de efectos de la propia entrada (diseño EMMA): habla del esfuerzo, no de una fuente que lo cuantifique.": "The entry's own effects note (EMMA design): it speaks of exertion, not of a source that quantifies it.",
+    "El esfuerzo eleva la presión durante la sesión y justo después; una lectura tomada entonces no es de reposo.": "Exertion raises blood pressure during the session and just after; a reading taken then is not a resting one.",
+    "Del calcio, la fuente dice «Excess may cause kidney stones»: lo dice del exceso del nutriente, no de revisar la ingesta, que mira también si sobra.": "Of calcium, the source says «Excess may cause kidney stones»: it says so of an excess of the nutrient, not of reviewing the intake, which also looks at whether there is too much.",
+    "OCHMO-MTB-013 Rev D (p. 15, columna «Cons»), citada en la nota de efectos de la entrada; leída el 2026-10-14.": "OCHMO-MTB-013 Rev D (p. 15, «Cons» column), cited in the entry's effects note; read on 2026-10-14.",
+    "De la vitamina D, la fuente dice «Requires supplementation, risk of hypercalcemia»: lo dice del nutriente, no de revisar la ingesta.": "Of vitamin D, the source says «Requires supplementation, risk of hypercalcemia»: it says so of the nutrient, not of reviewing the intake."
+  }
+}

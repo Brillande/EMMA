@@ -1,0 +1,43 @@
+{
+ "target": "app/analysis/context.py",
+ "test": [
+  "tests/test_habitat_flow.py"
+ ],
+ "mutations": [
+  {
+   "label": "una hipotesis sin revisar se da por confirmada",
+   "old": "        return AWAITING_HUMAN, _AWAITING_REVIEW",
+   "new": "        return DONE, _AWAITING_REVIEW"
+  },
+  {
+   "label": "la recuperacion se da por hecha con tripulantes todavia fuera de nominal",
+   "old": "    recovered = recovery[\"habitat_within_limit\"] and not still",
+   "new": "    recovered = recovery[\"habitat_within_limit\"]"
+  },
+  {
+   "label": "la recuperacion se da por hecha con el parametro todavia fuera de limite",
+   "old": "    recovered = recovery[\"habitat_within_limit\"] and not still",
+   "new": "    recovered = not still"
+  },
+  {
+   "label": "una hipotesis sin excursion aparece pendiente de confirmar",
+   "old": "    if hypothesis.get(\"excursion\") is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "donde solo esta la cita del limite no se dice",
+   "old": "    return DONE, note or f\"{_count(cited, 'fuente citada', 'fuentes citadas')}.\"",
+   "new": "    return DONE, f\"{_count(cited, 'fuente citada', 'fuentes citadas')}.\""
+  },
+  {
+   "label": "al CO2, que tiene fuentes leidas, se le pone la nota de solo limite",
+   "old": "    if hypothesis.get(\"excursion\") is None or hypothesis.get(\"what_is_known\") is not None:",
+   "new": "    if hypothesis.get(\"excursion\") is None:"
+  },
+  {
+   "label": "una hipotesis descartada se sigue como si se hubiera confirmado",
+   "old": "        return NOT_APPLICABLE, _DISCARDED",
+   "new": "        return IN_PROGRESS, _DISCARDED"
+  }
+ ]
+}

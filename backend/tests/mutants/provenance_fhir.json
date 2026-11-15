@@ -1,0 +1,15 @@
+{"target": "app/ingest/fhir.py", "test": ["tests/test_observation_provenance.py"],
+ "mutations": [
+  {"label": "un valor inferido sin modelo se acepta",
+   "old": "if self.observation_type is not ObservationType.MEASURED and not self.model_version:",
+   "new": "if False:"},
+  {"label": "Inspiration4 se rotula como simulado",
+   "old": "    if source == \"simulator:inspiration4\":\n        return EvidenceContext.SPACEFLIGHT",
+   "new": "    if source == \"simulator:inspiration4\":\n        return EvidenceContext.SIMULATED"},
+  {"label": "el despliegue reetiqueta tambien lo simulado",
+   "old": "obs if obs.evidence is EvidenceContext.SIMULATED or obs.source.startswith(\"simulator:\")",
+   "new": "obs if False"},
+  {"label": "la etiqueta de tipo no viaja en FHIR",
+   "old": "ObservationType(raw_type) if raw_type else ObservationType.MEASURED",
+   "new": "ObservationType.MEASURED"}
+ ]}

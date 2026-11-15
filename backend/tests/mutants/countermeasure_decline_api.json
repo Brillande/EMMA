@@ -1,0 +1,23 @@
+{"target": "app/api/countermeasures.py",
+ "test": ["tests/test_countermeasure_decline.py", "-k",
+          "without_reason_is_a_422 or unknown_countermeasure or adopted_and_open or not_recommended or another_source or changes_no_level"],
+ "mutations": [
+  {"label": "se dice que no a lo que esta adoptado y en seguimiento",
+   "old": "    if following is not None:\n        raise HTTPException(",
+   "new": "    if False:\n        raise HTTPException("},
+  {"label": "un motivo en blanco pasa la validacion de la peticion",
+   "old": "        if not text:\n            raise ValueError(",
+   "new": "        if False:\n            raise ValueError("},
+  {"label": "una contramedida que no existe no se dice: cae en el 409 de no recomendada",
+   "old": "    except KeyError as exc:\n        raise HTTPException(\n            status_code=422,",
+   "new": "    except KeyError as exc:\n        raise HTTPException(\n            status_code=409,"},
+  {"label": "se dice que no a lo que no estaba recomendado",
+   "old": "    if offered is None:\n        raise HTTPException(",
+   "new": "    if offered is None:\n        offered = {\"domain\": \"behavioral\"}\n    if False:\n        raise HTTPException("},
+  {"label": "cuenta un no firmado por otra fuente",
+   "old": "if _counts(item, None)]",
+   "new": "if True]"},
+  {"label": "el no se firma como una adopcion y abre un seguimiento",
+   "old": "            payload.subject, DECLINED, payload.countermeasure_id, domain,",
+   "new": "            payload.subject, ADOPTED, payload.countermeasure_id, domain,"}
+ ]}

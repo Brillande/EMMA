@@ -1,0 +1,54 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_volume_redaction.py",
+  "tests/test_contrast_phase.py::test_its_phases_and_segmentations_are_carried_along_and_nothing_else"
+ ],
+ "mutations": [
+  {
+   "label": "redactar el estudio deja su segmentacion, con los pixeles del estudio en su binario",
+   "old": "_CARRIED_WITH_STUDY = (VOLUME_PHASE_ENTRY_TYPE, VOLUME_SEGMENTATION_ENTRY_TYPE)",
+   "new": "_CARRIED_WITH_STUDY = (VOLUME_PHASE_ENTRY_TYPE,)"
+  },
+  {
+   "label": "la segmentacion se redacta y su binario se queda en la base",
+   "old": "        if blob is not None:\n            session.delete(blob)",
+   "new": "        if blob is not None and redaction.target.entry_type != VOLUME_SEGMENTATION_ENTRY_TYPE:\n            session.delete(blob)"
+  },
+  {
+   "label": "la segmentacion se redacta en memoria y su fila sigue con su resumen en disco",
+   "old": "        if row is not None:\n            row.payload = None\n            row.redacted = True\n        observation_row",
+   "new": "        if row is not None and redaction.target.entry_type != VOLUME_SEGMENTATION_ENTRY_TYPE:\n            row.payload = None\n            row.redacted = True\n        observation_row"
+  },
+  {
+   "label": "la lapida de la segmentacion no se escribe en disco",
+   "old": "        session.add(_ledger_row(redaction.tombstone))",
+   "new": "        if redaction.target.entry_type != VOLUME_SEGMENTATION_ENTRY_TYPE:\n            session.add(_ledger_row(redaction.tombstone))"
+  },
+  {
+   "label": "se arrastran las segmentaciones de otro estudio",
+   "old": "            and entry.payload.get(\"study_index\") == ledger_index\n",
+   "new": ""
+  },
+  {
+   "label": "una segmentacion ya redactada se intenta redactar otra vez con el estudio",
+   "old": "            if entry.entry_type in _CARRIED_WITH_STUDY\n            and isinstance(entry.payload, dict)\n",
+   "new": "            if entry.entry_type in _CARRIED_WITH_STUDY\n"
+  },
+  {
+   "label": "la lapida de la segmentacion no dice de que estudio viene",
+   "old": "                                f\"redactado con el estudio del asiento {ledger_index}: {reason}\",",
+   "new": "                                reason,"
+  },
+  {
+   "label": "el resultado no dice que segmentaciones se redactaron con el estudio",
+   "old": "                    redaction = replace(redaction, dependents=dependents)",
+   "new": "                    pass"
+  },
+  {
+   "label": "cada segmentacion se redacta en su propio commit: un fallo a mitad borra su binario",
+   "old": "                            for index in cited\n                        )\n                        session.commit()",
+   "new": "                            for index in cited\n                            if session.commit() is None\n                        )\n                        session.commit()"
+  }
+ ]
+}

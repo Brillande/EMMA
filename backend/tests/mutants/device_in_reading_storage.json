@@ -1,0 +1,32 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_device_in_reading.py::test_readings_signed_before_the_field_still_verify",
+  "tests/test_device_in_reading.py::test_a_reading_without_device_serializes_byte_for_byte_as_before",
+  "tests/test_device_in_reading.py::test_new_readings_chain_after_the_old_ones",
+  "tests/test_device_in_reading.py::test_the_device_is_signed_only_when_it_exists",
+  "tests/test_device_in_reading.py::test_the_device_survives_the_store_and_is_read_from_what_was_signed"
+ ],
+ "mutations": [
+  {
+   "label": "toda lectura firma la clave `device`, aunque no haya dispositivo: lo ya firmado deja de reproducirse",
+   "old": "        **({\"device\": observation.device} if observation.device is not None else {}),\n",
+   "new": "        \"device\": observation.device,\n"
+  },
+  {
+   "label": "el dispositivo no entra en lo firmado",
+   "old": "        **({\"device\": observation.device} if observation.device is not None else {}),\n",
+   "new": ""
+  },
+  {
+   "label": "al leer lo firmado se pierde el dispositivo",
+   "old": "        device=payload.get(\"device\"),\n",
+   "new": "        device=None,\n"
+  },
+  {
+   "label": "un asiento anterior al campo no se puede leer",
+   "old": "        device=payload.get(\"device\"),\n",
+   "new": "        device=payload[\"device\"],\n"
+  }
+ ]
+}

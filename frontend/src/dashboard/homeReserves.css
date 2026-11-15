@@ -1,0 +1,201 @@
+/*
+ * «Reservas» de «Inicio» (`HomeReserves.tsx`, lote «reservas» de 2026-11-14): la fila de recursos,
+ * medicamentos, nutrición y abastecimiento de la maqueta ISS, con el estilo de «Inicio». Las tarjetas
+ * caen en la rejilla de 12 columnas de `.ref-home` y heredan `ref-card`, `ref-h`, `ref-h3` y el anillo
+ * de `referenceDashboard.css`; aquí solo el reparto y lo propio de sus piezas.
+ *
+ * Todo color sale de la paleta (`--c-*`) o de las variables `--ref-*` de «Inicio». Lo que es dato
+ * (las marcas de «no disponible» y de dato ausente) lleva el color de su marca, no uno de aquí.
+ */
+
+.ref-home .res-status { grid-column: span 4; }
+.ref-home .res-medications { grid-column: span 3; }
+.ref-home .res-nutrition { grid-column: span 3; }
+.ref-home .res-resupply { grid-column: span 2; }
+
+/* La maqueta V2 de la ISS (pestaña «Distancia y nodos», 2026-11-14): sin nutrición, 4 / 4 / 4. */
+@media (min-width: 1401px) {
+  .ref-home.nodes-home .res-status,
+  .ref-home.nodes-home .res-medications,
+  .ref-home.nodes-home .res-resupply { grid-column: span 4; }
+}
+
+@media (max-width: 1400px) {
+  .ref-home .res-status,
+  .ref-home .res-medications { grid-column: span 6; }
+  .ref-home .res-nutrition,
+  .ref-home .res-resupply { grid-column: span 6; }
+}
+
+@media (max-width: 900px) {
+  .ref-home .res-status,
+  .ref-home .res-medications,
+  .ref-home .res-nutrition,
+  .ref-home .res-resupply { grid-column: span 12; }
+}
+
+/* Una fila por categoría: dibujo, nombre, anillo y autonomía con sus dos píldoras. */
+
+.res-categories {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.res-category {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 3.6rem minmax(0, 1.3fr);
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge, var(--c-line)) 60%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ref-card, var(--c-surface)) 80%, transparent);
+}
+
+.res-category-art {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ref-teal, var(--c-cyan)) 22%, transparent);
+}
+
+.res-category-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.res-category .ref-ring {
+  width: 3.6rem;
+  height: 3.6rem;
+}
+
+.res-ring-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.res-ring-empty {
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 4px dotted color-mix(in srgb, var(--c-gray) 70%, transparent);
+  border-radius: 50%;
+}
+
+.res-category-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.res-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.res-pill {
+  display: inline-block;
+  padding: 0 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--c-text-secondary) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-line) 35%, transparent);
+  white-space: nowrap;
+}
+
+/* El mando de declarar y su formulario pequeño. */
+
+.res-declare {
+  margin-top: 0.4rem;
+}
+
+.res-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.res-form input,
+.res-form select {
+  flex: 1 1 9rem;
+  min-width: 0;
+}
+
+/* La tabla de medicamentos: filas finas con filete, como las de «Radiación». */
+
+.res-scroll {
+  max-height: 14rem;
+  overflow: auto;
+}
+
+.res-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.res-table th,
+.res-table td {
+  padding: 0.15rem 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge, var(--c-line)) 45%, transparent);
+  text-align: left;
+  font-weight: 400;
+  vertical-align: top;
+}
+
+.res-table thead th {
+  color: var(--c-text-secondary);
+}
+
+/* Pares rótulo-valor de nutrición y abastecimiento. */
+
+.res-kv {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0 0 0.35rem;
+}
+
+.res-kv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 0.4rem;
+}
+
+.res-next .res-kv {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.5rem;
+}
+
+.res-kv dt {
+  color: var(--c-text-secondary);
+}
+
+.res-kv dd {
+  margin: 0;
+}
+
+.res-food p {
+  margin: 0.15rem 0;
+}
+
+.res-coverage ul {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.res-coverage li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.3rem;
+}

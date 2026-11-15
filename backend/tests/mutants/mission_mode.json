@@ -1,0 +1,124 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_mission_mode.py"
+ ],
+ "mutations": [
+  {
+   "label": "mirar el nivel y firmar ya no van bajo el cerrojo: dos bajadas cruzadas se firman las dos",
+   "old": "        with self._lock:\n            current = self.mission_mode()\n            mission_mode_rules.check_change(",
+   "new": "        if True:\n            current = self.mission_mode()\n            mission_mode_rules.check_change("
+  },
+  {
+   "label": "el cambio se encadena en memoria y no se escribe en disco",
+   "old": "            entry = self._record_action(MISSION_MODE_ENTRY_TYPE, payload, identity)",
+   "new": "            entry = self.ledger.append(MISSION_MODE_ENTRY_TYPE, payload, identity)"
+  },
+  {
+   "label": "el almacen firma una cita de un sistema que no es la energia ni las comunicaciones",
+   "old": "        mission_mode_rules.check_cited(cited_system)\n",
+   "new": ""
+  },
+  {
+   "label": "el almacen firma un cambio sin mirar el nivel vigente",
+   "old": "            mission_mode_rules.check_change(current[\"level\"], level, reason, declared_by)\n",
+   "new": ""
+  },
+  {
+   "label": "cuenta un asiento que no firmo la consola, y lo de despues del corte de Tierra",
+   "old": "            if action_counts(item, until)\n",
+   "new": "            if True\n"
+  },
+  {
+   "label": "se cita una declaracion del sistema que no firmo la consola",
+   "old": "                    item for item in self.system_statuses() if action_counts(item, None)",
+   "new": "                    item for item in self.system_statuses()"
+  },
+  {
+   "label": "la respuesta de un cambio lleva la version de antes",
+   "old": "            version = current[\"version\"] + 1  # la de este asiento, no la de uno posterior",
+   "new": "            version = current[\"version\"]  # la de este asiento, no la de uno posterior"
+  },
+  {
+   "label": "lo citado no se entrega al leer el ledger",
+   "old": "_MISSION_MODE_OPTIONAL = (\"cited_system\", \"cited_state\")",
+   "new": "_MISSION_MODE_OPTIONAL = ()"
+  },
+  {
+   "label": "un asiento firmado fuera del vocabulario se entrega y cuenta en la version",
+   "old": "            if problem is not None:\n",
+   "new": "            if False:\n"
+  },
+  {
+   "label": "bajar ya no exige motivo",
+   "target": "app/core/mission_modes.py",
+   "old": "    if rank(new) > rank(current) and not any(char.isalnum() for char in reason):",
+   "new": "    if False:"
+  },
+  {
+   "label": "subir puede saltar niveles",
+   "target": "app/core/mission_modes.py",
+   "old": "    if rank(new) < rank(current) - 1:",
+   "new": "    if False:"
+  },
+  {
+   "label": "se puede firmar otra vez el nivel vigente",
+   "target": "app/core/mission_modes.py",
+   "old": "    if new == current:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "el nivel lo cambia alguien sin nombre",
+   "target": "app/core/mission_modes.py",
+   "old": "    if not any(char.isalpha() for char in declared_by):\n        raise ValueError(\"el nivel lo cambia una persona con nombre\")",
+   "new": "    if False:\n        raise ValueError(\"el nivel lo cambia una persona con nombre\")"
+  },
+  {
+   "label": "se añade a mano una medida que gasta consumibles",
+   "target": "app/core/mission_modes.py",
+   "old": "            if consumables == _CONSUMES:",
+   "new": "            if False:"
+  },
+  {
+   "label": "bajar de nivel puede añadir medidas",
+   "target": "app/core/mission_modes.py",
+   "old": "        if not expected[lower] <= expected[upper]:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un calculado se espera aunque no se esperen sus entradas",
+   "target": "app/core/mission_modes.py",
+   "old": "        if raw[key][\"mode\"] == _DERIVED and set(raw[key][\"inputs\"]) <= expected",
+   "new": "        if raw[key][\"mode\"] == _DERIVED"
+  },
+  {
+   "label": "se cita como estado del sistema entero lo declarado en un modulo",
+   "target": "app/core/mission_modes.py",
+   "old": "    return str(first[\"state\"]) if first[\"module\"] is None else habitat_systems.UNDECLARED",
+   "new": "    return str(first[\"state\"])"
+  },
+  {
+   "label": "el aviso sale tambien en nominal",
+   "target": "app/core/mission_modes.py",
+   "old": "    if key == NOMINAL:\n        return None",
+   "new": "    if False:\n        return None"
+  },
+  {
+   "label": "solo se mira el ultimo asiento: uno malo de antes cuenta en la version",
+   "old": "        for item in entries:\n            # Firmado, pero fuera del vocabulario",
+   "new": "        for item in entries[-1:]:\n            # Firmado, pero fuera del vocabulario"
+  },
+  {
+   "label": "una cita a medias se entrega",
+   "target": "app/core/mission_modes.py",
+   "old": "    if (system is None) != (state is None):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una cita de un estado que no existe se entrega",
+   "target": "app/core/mission_modes.py",
+   "old": "        system not in habitat_systems.SYSTEMS or state not in habitat_systems.STATES",
+   "new": "        system not in habitat_systems.SYSTEMS"
+  }
+ ]
+}

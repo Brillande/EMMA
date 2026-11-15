@@ -1,0 +1,63 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_sensor_bindings.py::test_a_declaration_is_one_signed_entry_in_the_ledger",
+  "tests/test_sensor_bindings.py::test_the_store_refuses_what_cannot_be_signed",
+  "tests/test_sensor_bindings.py::test_a_malformed_entry_is_not_delivered",
+  "tests/test_sensor_bindings.py::test_a_missing_field_is_a_malformed_entry",
+  "tests/test_sensor_bindings.py::test_what_was_already_signed_still_verifies_and_reads",
+  "tests/test_sensor_bindings.py::test_declaring_writes_one_console_entry_and_the_latest_holds"
+ ],
+ "mutations": [
+  {
+   "label": "el vinculo se encadena en memoria y no se escribe en disco",
+   "old": "        return self._record_action(SENSOR_BINDING_ENTRY_TYPE, payload, identity)",
+   "new": "        return self.ledger.append(SENSOR_BINDING_ENTRY_TYPE, payload, identity)"
+  },
+  {
+   "label": "se persiste sin ledger: el vinculo se guarda aparte y aun asi se da por vigente",
+   "old": "        return self._record_action(SENSOR_BINDING_ENTRY_TYPE, payload, identity)\n\n    def sensor_bindings(self) -> list[dict[str, Any]]:\n        \"\"\"Las declaraciones de vinculo sensor-tripulante, tal y como estan firmadas.\"\"\"\n        return self._actions(",
+   "new": "        self.__dict__.setdefault(\"_off_ledger\", []).append(dict(payload))\n        return self.ledger.entries[-1]\n\n    def sensor_bindings(self) -> list[dict[str, Any]]:\n        \"\"\"Las declaraciones de vinculo sensor-tripulante, tal y como estan firmadas.\"\"\"\n        if self.__dict__.get(\"_off_ledger\"):\n            return [{**item, \"ledger_index\": 0, \"recorded\": \"2026-01-01T00:00:00+00:00\", \"signer\": \"crew-console\"} for item in self._off_ledger]\n        return self._actions("
+  },
+  {
+   "label": "el almacen firma lo que la regla no deja firmar",
+   "old": "        key = binding_rules.check(source, action, crew, device)",
+   "new": "        key = device"
+  },
+  {
+   "label": "un vinculo sin el nombre de quien lo declara",
+   "old": "        if not any(char.isalpha() for char in declared_by):\n            raise ValueError(\"un vínculo lo declara una persona con nombre\")\n",
+   "new": ""
+  },
+  {
+   "label": "un `since` sin zona horaria se firma",
+   "old": "            \"subject\": CREW_SUBJECT, \"source\": source, \"action\": action,\n            \"since\": _utc_text(since), \"note\": note.strip(), \"declared_by\": declared_by.strip(),",
+   "new": "            \"subject\": CREW_SUBJECT, \"source\": source, \"action\": action,\n            \"since\": since.isoformat(), \"note\": note.strip(), \"declared_by\": declared_by.strip(),"
+  },
+  {
+   "label": "el identificador se firma tal y como llego, sin normalizar",
+   "old": "            payload[\"device\"] = key",
+   "new": "            payload[\"device\"] = str(device)"
+  },
+  {
+   "label": "el vinculo se archiva bajo el tripulante y no bajo la tripulacion",
+   "old": "            \"subject\": CREW_SUBJECT, \"source\": source, \"action\": action,",
+   "new": "            \"subject\": crew or CREW_SUBJECT, \"source\": source, \"action\": action,"
+  },
+  {
+   "label": "un `crew` que no es texto se entrega",
+   "old": "_SENSOR_BINDING_OPTIONAL = (\"device\", \"crew\")",
+   "new": "_SENSOR_BINDING_OPTIONAL = (\"device\",)"
+  },
+  {
+   "label": "un asiento de vinculo sin nota se entrega como bien formado",
+   "old": "_SENSOR_BINDING_FIELDS = (\"subject\", \"source\", \"action\", \"since\", \"note\", \"declared_by\")",
+   "new": "_SENSOR_BINDING_FIELDS = (\"subject\", \"source\", \"action\", \"since\", \"declared_by\")"
+  },
+  {
+   "label": "la lectura de vinculos entrega asientos de otro tipo",
+   "old": "            CREW_SUBJECT, SENSOR_BINDING_ENTRY_TYPE, _SENSOR_BINDING_FIELDS,",
+   "new": "            CREW_SUBJECT, HYPOTHESIS_ENTRY_TYPE, _SENSOR_BINDING_FIELDS,"
+  }
+ ]
+}

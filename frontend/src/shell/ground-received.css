@@ -1,0 +1,659 @@
+/*
+ * Tierra, «Estado recibido» e «Historial», bajo la concha de la maqueta: la cabecera del retardo
+ * (`.delay-banner`), el estado recibido (`.summary`, `.domains`, `.domain`), las notas a bordo
+ * (`.ground-note-form`), la comprobación de previsiones y la recuperación (`.recovery`), la historia de
+ * misiones, de imagen y de dolor. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que se vio (capturas del 2026-11-07 con la concha nueva, `ground-01-received` y
+ * `ground-02-history`, 1672 × 941): los paneles ya eran tarjetas de la maqueta y el mobiliario común
+ * (`furniture.css`) ya vestía las fichas del retardo, los mandos, las entradas, la cabecera de las
+ * tablas y las insignias; «Los cinco peligros» y «Proyecciones» ya los visten `hazards.css` y
+ * `body.css` también aquí. Pero lo propio de Tierra seguía con la consola clásica, y lo primero que
+ * se ve había perdido su señal: la cabecera del retardo ya no llevaba su filete cian, porque la
+ * concha pone `--ref-edge` a los cuatro lados de todo `.panel` con la misma especificidad que
+ * `.delay-banner` y cargando después. Ese cian es lo que dice que todo lo que Tierra ve es caducado
+ * por construcción (va un tiempo de luz por detrás): es la señal más importante de esta consola.
+ * En «Último estado recibido», la insignia del nivel iba como píldora suelta al lado de la frase y
+ * las ocho tarjetas de dominio llevaban el gris realzado, el borde `--c-line` y el radio de 10 px
+ * de la clásica (las de «Cuerpo» ya las viste `body.css`, acotadas a su panel). En «Notas a
+ * bordo», cada campo era rótulo y control en la misma línea con el área de texto suelta debajo del
+ * suyo, el mando de firmar pegado al último campo y, en lo firmado, una raya gris y el texto a pelo.
+ * En las tablas de las dos pestañas (comprobación de proyecciones, recuperación, ecografías, dolor,
+ * misión a misión), la tabla flotaba sin marco; cada toma posvuelo era texto corrido separado por
+ * 12 px; y el aviso de solape del historial, un filete amarillo con el texto a pelo. En el escenario
+ * en curso «Historial» está casi vacío (ningún estudio, ningún informe, nada posvuelo, ninguna misión
+ * previa): esas piezas se comprobaron con marcado de muestra inyectado por CDP, no en el backend.
+ *
+ * Por qué así: cada pieza toma la forma que la maqueta da a la suya. La insignia del resumen, el
+ * «hero» de «Estado de riesgo» (`.ref-level-now`: el dibujo dentro de su anillo, el marco teñido
+ * del nivel), como el titular de la tripulación en `hazards.css`; las tarjetas de dominio, la tarjeta
+ * de `.ref-card` con el filete del nivel que ya ponía `styles.css`, como en «Cuerpo»; cada campo de
+ * la nota, una baldosa con el rótulo encima y el control debajo (la de los campos del diario en
+ * `log.css`); el pie del formulario y las frases del enlace, separados por un filete; lo que Tierra
+ * firmó, en su propia caja, como en las notas de a bordo (`routines.css`); las tablas, dentro del
+ * marco de la tira de datos de la ruta (`.ref-stats`), como las de «Calidad y sensores»
+ * (`data.css`); cada toma posvuelo, una ficha pequeña con el marco de la maqueta; el aviso de
+ * solape, la caja de una anunciación con su filete amarillo intacto.
+ *
+ * El tablero (decisión del usuario, 2026-11-07; capturas del 2026-11-08 a 1672 y 1300 px, con las
+ * listas de «Historial» y las notas servidas con muestras por CDP, dominio `Fetch`, sin tocar el
+ * backend): las dos pestañas eran una columna de paneles largos a todo el ancho. Ahora van en la
+ * rejilla de `board.css` (colocación abajo) y cada panel monta, solo bajo la concha (`BoardOnly`), sus
+ * piezas con los datos que ya tenía: el anillo de cuántas proyecciones cayeron dentro de su margen y,
+ * por fila, el margen como tramo con lo medido como marca; las píldoras de notas firmadas, a bordo y
+ * en camino; las fichas de ecografías y medidas llegadas; las del dolor llegado con la curva de la
+ * intensidad; una píldora por estado de vuelta al rango; y las fichas de misiones previas, dosis
+ * sumada y misiones sin dosis. La propuesta de poner las notas a 5 columnas junto a las proyecciones
+ * se probó y se descartó: el formulario y lo firmado medían tres veces lo de al lado.
+ *
+ * Lo que no se toca (NASA-STD-3001 F.5-1): el cian del dato caducado o ausente (el filete y la cifra
+ * de la cabecera, «todavía no ha llegado», «sin dosis declarada»), el gris de lo no disponible, el
+ * color de cada nivel (`.level`, el filete `data-level` de las tarjetas de dominio: aquí solo tiñe el
+ * marco de su propia insignia, y el nominal se queda con el teal del marco común, sin color de
+ * alerta), el color de toda marca (`.mark.c-*`: el rombo azul de «fuera», el triángulo amarillo de
+ * un solape o de un rechazo), la cursiva de lo caducado y el amarillo del filete de `.history-notice`.
+ * Las marcas de estado sin color (el anillo punteado de «sin informes», la flecha de carga, el
+ * visto) siguen sin color: solo el signo del tiempo de luz (`signal-arcs`), que es la firma de esta
+ * consola y no un estado, pasa a `--ref-teal`. Los mandos, las entradas, las fichas, las insignias
+ * y las cabeceras de tabla son del mobiliario: aquí solo la caja que los rodea, y todo mando y
+ * entrada conserva su alto táctil.
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha va en
+ * `:where()`, que no cuenta, y cada regla se acota a su panel (`.panel[data-ui="…"]`) porque
+ * `.summary`, `.domain`, `.ground-notes`, `.quality-table` y `.limits-table` tienen otra dueña en
+ * otra sección. Donde la pieza ya tenía borde (`.delay-banner`, `.domain`, `.ground-notes > li`) no
+ * se usa el atajo `border`: solo el color del lado que cambia; lo que no lo tenía (el hero, las
+ * baldosas, los marcos de tabla, las fichas posvuelo, la caja del texto firmado, los tres lados
+ * nuevos del aviso) lo estrena y, al final, se engrosa a 2 px en baja visión y alto contraste como
+ * hace `styles.css` con el panel. La tarjeta de dominio repite las reglas de `body.css` y el marco de
+ * tabla las de `data.css` en vez de compartirlas: cada unidad escribe solo su hoja; juntarlas en
+ * `furniture.css` es decisión de la fusión.
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): `ground-received` y `ground-history` ---- */
+
+/* «Estado recibido»: el estado y los cinco peligros arriba, a todo el ancho; debajo, en una fila, las
+   notas (3: con el formulario detrás de su mando quedan las píldoras y lo firmado), las proyecciones
+   (4) y su comprobación (5: el anillo y una fila por indicador, la tabla detrás de su mando). Antes las
+   notas iban a todo el ancho con el formulario abierto y la pestaña medía 2725 px (2026-11-08). En el
+   cuerpo intermedio, uno bajo otro. */
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="ground-notes-composer"]) {
+  --span: 3;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="predictions"]) {
+  --span: 4;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="forecast-check"]) {
+  --span: 5;
+  --span-mid: 12;
+}
+
+/* «Historial»: ecografías, dolor y el historial misión a misión en una fila de tres (con poco o nada
+   llegado son tarjetas cortas, y a media anchura dejaban la mitad del alto vacío); la recuperación, una
+   tabla ancha, y la línea base, a todo el ancho debajo (a 7 columnas medía 550 px junto a una tarjeta
+   casi vacía). */
+:where(.app[data-look="reference"] #ground-panel-history) > .slot:has(> .slot-body > :is([data-ui="ultrasound-received"], [data-ui="pain-history"], [data-ui="ground-mission-history"])) {
+  --span: 4;
+  --span-mid: 12;
+}
+
+/* ---- Quinta ronda del lote «muestra» (R5-8, 2026-11-09, «todavía hay margen de mejora») ----
+   Lo que se vio a 1672 × 941: «Estado recibido» medía 1701 px. Las nueve tarjetas de dominio iban
+   de cuatro en cuatro en tres filas (la tercera, una sola tarjeta y un hueco de tres), y la del
+   dominio con motivos, a un cuarto de ancho, partía su motivo en cuatro renglones; en la fila de
+   abajo, las proyecciones a 4 columnas no dejaban sitio a sus barras al lado del texto (por debajo
+   de 30 rem bajan debajo, `body.css`) y la fila medía 540 px junto a unas notas casi vacías. Ahora:
+   cinco tarjetas de dominio por fila y la que lleva motivos ocupa dos (el motivo en dos renglones,
+   siempre a la vista; con `dense`, la última tarjeta sube al hueco que deja la doble y no abre una
+   tercera fila); las notas, que con el formulario tras su mando son dos frases, a 2 columnas; las
+   proyecciones a 5, con sus barras al lado; la comprobación a 5, con cada indicador en uno o dos
+   renglones (a 4 eran tres o cuatro). En el intermedio (1300 px) iban las tres una bajo otra; ahora
+   las notas a todo el ancho y las proyecciones y su comprobación, a medias, una junto a otra (a 31 rem
+   las barras siguen al lado del texto). Nada se pliega. */
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="ground-notes-composer"]) {
+  --span: 2;
+}
+
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > :is([data-ui="predictions"], [data-ui="forecast-check"])) {
+  --span: 5;
+  --span-mid: 6;
+}
+
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received .panel[data-ui="received-state"] > .domains {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received .panel[data-ui="received-state"] > .domains > .domain:has(> .drivers) {
+    grid-column: span 2;
+  }
+}
+
+/* Las filas de las proyecciones, con menos aire: a 5 columnas, el texto de cada deriva va en dos o tres
+   renglones y el relleno de `body.css` sumaba 30 px a la fila de abajo. */
+:where(.app[data-look="reference"] #ground-panel-received) .panel[data-ui="predictions"] .predictions > li {
+  padding: 0.25rem 0;
+  line-height: 1.3;
+}
+
+/* ---- Hábitat de Tierra (R5-8, 2026-11-09) ----
+   Va en esta hoja, la de Tierra, y no en `mission.css` (la de «Misión y hábitat» de a bordo, que
+   carga antes): todo se acota a `#ground-panel-habitat`, y a bordo nada cambia. Lo que se vio a
+   1672 × 941: el «Nivel de misión» (un anillo, una píldora y una frase) era una caja de 460-690 px
+   con el anillo flotando en medio: el hábitat cruza la fila del nivel y la de las preguntas
+   (`mission.css`) y Chrome reparte su alto entre las dos (se probó `auto 1fr` y `fit-content(1px)`
+   para la fila del nivel, sin efecto). Aquí sus piezas van arriba y no repartidas por la caja; las
+   baldosas de cabina, de agua y de dosis, más bajas; los marcos de dentro, con menos relleno; la
+   hipótesis, hasta abajo de su fila; las preguntas, con menos aire. No se pliega nada: las respuestas
+   de los gemelos son dato (trampa de R2-2). */
+:where(.app[data-look="reference"] #ground-panel-habitat) .mission-mode {
+  align-content: start;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .panel[data-ui="habitat"] .board-stats > .stat-tile {
+  padding: 0.35rem 0.55rem 0.4rem;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .panel[data-ui="habitat"] .board-stats .stat-label {
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .panel[data-ui="habitat"] .board-stats .stat-value {
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .panel[data-ui="habitat"] :is(.habitat-radiation, .crew-radiation, .grid-2 > div, .hypotheses[role="group"]) {
+  padding: 0.45rem 0.65rem 0.5rem;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat) .panel[data-ui="habitat"] > .board-stats {
+  margin-bottom: 0.6rem;
+}
+
+/* La hipótesis va junto a la atmósfera y la tripulación (`mission.css`), que miden más: su tarjeta
+   llega hasta abajo de la fila en vez de dejar un hueco sin marco debajo. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-habitat) .panel[data-ui="habitat"] > .hypotheses:not([role]):has(+ .grid-2) {
+  align-self: stretch;
+  grid-auto-rows: 1fr;
+}
+
+/* Las preguntas de los gemelos, en la columna estrecha: el título de cada una a la letra del cuerpo
+   y menos aire entre ellas; la respuesta, entera y a la vista. */
+:where(.app[data-look="reference"] #ground-panel-habitat .panel[data-ui="twin-questions"][data-twin-questions]) > [data-twin] {
+  margin-top: 0.45rem;
+  padding: 0.4rem 0.6rem 0.45rem;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat .panel[data-ui="twin-questions"][data-twin-questions]) > [data-twin] > h3 {
+  padding-bottom: 0.2rem;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"] #ground-panel-habitat .panel[data-ui="twin-questions"][data-twin-questions]) > [data-twin] > :is(p, .board-tally) {
+  margin-top: 0.25rem;
+  line-height: 1.35;
+}
+
+/* Dentro de «Último estado recibido», con el cuerpo ancho: el nivel y su frase a la izquierda (3 de
+   12) y las tarjetas de dominio a la derecha (9 de 12, tres por fila), como el titular y los dominios de «Inicio».
+   Solo cuando han llegado los dominios; sin ellos, la frase en cian sigue sola. Por debajo de 64 rem
+   (el intermedio de `board.css`) y en baja visión, uno bajo otro como antes. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"]:has(> .domains) {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    column-gap: 0.9rem;
+    align-items: start;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"]:has(> .domains) > h2 {
+    grid-column: 1 / -1;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"]:has(> .domains) > .summary {
+    margin-bottom: 0;
+  }
+
+  /* Las notas, en 3 de 12 columnas: el formulario (abierto con su mando) va en una columna; a dos,
+     como cuando iban a todo el ancho, el selector del destinatario se salía de su baldosa y la firma
+     quedaba en una caja de 90 px. Lo firmado, en baldosas si caben. */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="ground-notes-composer"] .ground-note-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="ground-notes-composer"] .ground-notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    column-gap: 0.9rem;
+  }
+}
+
+/* ---- Las piezas del tablero de estas dos pestañas ---- */
+
+/* «¿Acertaron las proyecciones?»: el anillo de cuántas cayeron dentro de su margen, neutro como el
+   medidor (el panel no lleva color de alerta: es calibración del propio modelo; el degradado verde
+   del anillo de «Inicio» lo pintaría de nominal). La cifra de dentro y su `aria-label` lo dicen. */
+:where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-board {
+  margin: 0.3rem 0 0.4rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-board .ref-ring-fill {
+  stroke: var(--c-text-secondary);
+  filter: none;
+}
+
+/* Al lado del anillo, una fila por indicador: el nombre, el margen como tramo con lo medido como
+   marca, y la marca de dentro o fuera con su palabra (la de la tabla). Si el panel se estrecha, la
+   lista pasa debajo del anillo (`.board-row` envuelve). */
+:where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-rows {
+  flex: 1 1 16rem;
+  min-width: 0;
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-rows > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(4rem, 6rem) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+/* Sin tramo (todo a cero), la marca sigue en la última columna. */
+:where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-rows > li > .mark:last-child {
+  grid-column: 3;
+}
+
+/* Las píldoras de las notas y de la vuelta al rango: el filete toma el color real de la marca que
+   llevan (ninguno nuevo): el cian del dato ausente, el azul de «fuera» y el gris de lo desconocido. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="ground-notes-composer"] .notes-tally, .panel[data-ui="recovery"] .return-tally) {
+  margin: 0.3rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"]) :is(.notes-tally, .return-tally) > .board-pill:has(> .c-cyan) {
+  --lvl: var(--c-cyan);
+}
+
+:where(.app[data-look="reference"]) :is(.notes-tally, .return-tally) > .board-pill:has(> .c-blue) {
+  --lvl: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) :is(.notes-tally, .return-tally) > .board-pill:has(> .c-gray) {
+  --lvl: var(--c-gray);
+}
+
+:where(.app[data-look="reference"]) :is(.notes-tally, .return-tally) > .board-pill:has(> .c-yellow) {
+  --lvl: var(--c-yellow);
+}
+
+/* Las fichas con cifra (ecografías y dolor llegados, misiones previas): baldosas del tamaño de su
+   cifra, sin estirarse a medio panel (`auto-fill`). */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="ultrasound-received"] .arrived-board,
+    .panel[data-ui="pain-history"] .pain-board,
+    .panel[data-ui="ground-mission-history"] .history-board
+  ) {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  margin: 0.4rem 0 0.6rem;
+}
+
+/* El historial misión a misión va en 5 de 12 columnas: sus tres fichas caben en una fila con una
+   baldosa más estrecha y la cifra a 1,45 rem (la dosis lleva decimales y unidad), como las tiras del
+   diario en `log.css`. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-mission-history"] .history-board {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ground-mission-history"] .history-board .stat-value {
+  font-size: 1.45rem;
+}
+
+/* La curva de la intensidad bajo su cifra: el trazo en el verde azulado del marco (`--vital` solo
+   está definida en la lista de «Signos vitales» de «Inicio»; sin ella el trazo no se vería). */
+:where(.app[data-look="reference"]) .panel[data-ui="pain-history"] .pain-board .ref-spark {
+  --vital: var(--ref-teal);
+  margin-top: 0.2rem;
+}
+
+/* ---- Retardo aplicado: el filete cian vuelve; las frases del enlace, en filas con filete ---- */
+
+/* Solo el color: el grosor de 4 px es el de `styles.css`, y en baja visión su regla para los paneles
+   sin nivel (más específica) sigue mandando, como en la concha clásica. Es una reparación local: la
+   raíz está en `consoleShell.css` (su regla de `.panel` tiene la misma especificidad que cualquier
+   clase suelta de `styles.css` y carga después), y le pasa igual a `.panel.error` con su rojo, que
+   no es de esta sección; lo señaló la revisión de esta unidad, y arreglarlo de raíz (excluir los
+   paneles con filete semántico de esa regla) es decisión de la fusión. */
+:where(.app[data-look="reference"]) .panel.delay-banner {
+  border-left-color: var(--c-cyan);
+}
+
+/* Las frases del enlace (declarado y simulado) van cada una en su fila bajo las fichas
+   (`styles.css`); el filete las separa de lo de arriba, como las filas de «Notas» de la maqueta. */
+:where(.app[data-look="reference"]) .panel.delay-banner > p.delay-link {
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+/* El signo del tiempo de luz en las frases del tránsito (la cabecera, las ecografías, el historial
+   misión a misión, las notas): la firma de esta consola, en el color de los signos de la maqueta.
+   Solo ese dibujo, y nunca dentro de una marca con color. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel.delay-banner,
+    .panel[data-ui="ultrasound-received"],
+    .panel[data-ui="ground-mission-history"],
+    .panel[data-ui="ground-notes-composer"]
+  )
+  > p
+  > .mark:not([class*="c-"])
+  > .pictogram[data-pictogram="signal-arcs"] {
+  color: var(--ref-teal);
+}
+
+/* ---- Último estado recibido: la insignia como el «hero» de la maqueta; las tarjetas de dominio ---- */
+
+/* La insignia en su renglón y la frase del backend debajo, como el titular de la tripulación. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary {
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+}
+
+/* El marco teñido del nivel (`--lvl`), como `.ref-level-now`; el nominal se queda con el teal del
+   marco común. No tenía borde: aquí nace. Gana a la píldora del mobiliario por especificidad. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary > .level {
+  --lvl: var(--ref-teal);
+  gap: 0.6rem;
+  max-width: 100%;
+  padding: 0.35rem 1rem 0.35rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--lvl) 50%, transparent);
+  border-radius: 8px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lvl) 28%, transparent), color-mix(in srgb, var(--lvl) 8%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--lvl) 30%, transparent);
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+/* El mismo reparto que el filete de `styles.css`, leído de la clase de color que ya lleva la insignia. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary > .level.c-blue {
+  --lvl: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary > .level.c-yellow {
+  --lvl: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary > .level.c-red {
+  --lvl: var(--c-red);
+}
+
+/* El dibujo dentro de su anillo (`.ref-hero-icon`), del color que ya tenía la insignia. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .summary > .level > .pictogram {
+  box-sizing: content-box;
+  padding: 0.22em;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 10px color-mix(in srgb, currentColor 45%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .domains {
+  gap: 0.6rem;
+}
+
+/* La tarjeta de «Inicio» en tres lados; el izquierdo lo sigue poniendo `styles.css` con el color del
+   nivel (el grosor no se nombra: lo pone la clásica, y en los modos de pantalla, su regla). Una línea
+   (2026-11-08): el nombre en su renglón, la insignia y la puntuación pequeña en el siguiente y los
+   motivos del backend, cuando los hay, a todo el ancho y siempre a la vista (con el nombre y la
+   insignia juntos, «Cardiovascular» o «Musculoesquelético» los partían y unas tarjetas quedaban en
+   dos renglones y otras en tres). Medían 110 px cada una y nueve llenaban la pantalla; la insignia baja de 1,25 rem a la letra del cuerpo sin perder su
+   dibujo, su color ni su palabra. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.5rem;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain > h3 {
+  flex: 1 0 100%;
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain > h3 .pictogram {
+  font-size: 1.25em;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain > .level {
+  font-size: 0.95rem;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain > .drivers {
+  flex: 1 0 100%;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) .panel[data-ui="received-state"] .domain > .secondary {
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .domain {
+  padding: 0.45rem 0.7rem 0.5rem;
+  border-top-color: var(--ref-edge);
+  border-right-color: var(--ref-edge);
+  border-bottom-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* El nominal no lleva color de alerta en su filete: el del marco. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .domain[data-level="nominal"] {
+  border-left-color: var(--ref-edge);
+}
+
+/* El dibujo del dominio solo nombra (`DomainName`, sin color): en el color de los signos de la
+   maqueta. La insignia de nivel sigue con el suyo. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .domain > h3 > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Los motivos del backend, con la viñeta en el color del marco: un marcador no significa nada. */
+:where(.app[data-look="reference"]) .panel[data-ui="received-state"] .domain .drivers > li::marker {
+  color: var(--ref-teal);
+}
+
+/* ---- Notas a bordo: cada campo es una baldosa; el pie del formulario y lo firmado, separados ---- */
+
+/* El rótulo con su dibujo en la primera fila y el control en la segunda, a todo el ancho, como los
+   campos del diario. Rejilla y no caja flexible: el dibujo, el texto suelto y el control son tres
+   hijos del rótulo. Sin negrita: el control es hijo suyo y hereda la letra. No tenía borde. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-form > label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.3rem 0.4rem;
+  padding: 0.55rem 0.7rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+}
+
+/* El hueco entre el dibujo y la palabra ya lo pone la rejilla. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-form > label > .pictogram {
+  margin-right: 0;
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-form > label > :is(select, textarea, input) {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+/* El texto y la firma, al ancho que ya tenía el área de texto en la clásica. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-form > label > :is(textarea, input) {
+  width: min(100%, 640px);
+}
+
+/* El pie del formulario (firmar y enviar), separado de los campos por un filete, como la columna de
+   mandos de una alerta. El mando es del mobiliario. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-form > div {
+  padding-top: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--ref-edge) 50%, transparent);
+}
+
+/* Lo firmado: las filas de «Notas» de la maqueta; la raya de arriba ya existía, solo el color. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-notes {
+  margin-top: 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-notes > li {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.6rem 0;
+  border-top-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-notes > li > p {
+  margin: 0;
+}
+
+/* El texto tal cual se firmó (`pre-wrap` sigue puesto por `styles.css`), en su propia caja, aparte
+   del rótulo y de la firma con su tránsito. No tenía borde. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-notes-composer"] .ground-note-text {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* ---- Las tablas de Tierra: dentro del marco de la tira de datos de la ruta (`.ref-stats`) ---- */
+
+/* La comprobación de proyecciones, la recuperación posvuelo, las ecografías y el dolor recibidos y
+   las misiones previas. Un poco de aire alrededor: el mobiliario redondea las esquinas de la
+   cabecera y, pegada al marco, quedaba una cuña sin fondo entre las dos curvas. Las que se
+   desplazan en pantalla estrecha (`.table-scroll`, `overflow-x`) lo siguen haciendo dentro del marco. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel:is([data-ui="forecast-check"], [data-ui="recovery"], [data-ui="ultrasound-received"], [data-ui="pain-history"]) .quality-table,
+    .panel[data-ui="ground-mission-history"] .limits-table
+  ) {
+  padding: 0.3rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* ---- Recuperación posvuelo: cada toma, una ficha pequeña; su marca (anillo o rombo azul) es la suya ---- */
+
+:where(.app[data-look="reference"]) .panel[data-ui="recovery"] .recovery-point {
+  margin: 0.15rem 0.35rem 0.15rem 0;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* ---- Historial misión a misión: el aviso de solape, en la caja de una anunciación ---- */
+
+/* El filete amarillo de la izquierda es de `styles.css` y no se nombra; los otros tres lados nacen
+   aquí. El relleno de la izquierda era de 10 px: pasa al del resto de la caja. */
+:where(.app[data-look="reference"]) .panel[data-ui="ground-mission-history"] .history-notice {
+  margin: 0.4rem 0;
+  padding: 0.35rem 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los bordes que nacen en esta hoja se engrosan a 2 px como el del panel en `styles.css`. El hero
+   conserva el color de su nivel; el aviso de solape, su filete amarillo (por eso sus lados van
+   nombrados y no con el atajo). */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel[data-ui="received-state"] .summary > .level,
+    .panel[data-ui="ground-notes-composer"] .ground-note-form > label,
+    .panel[data-ui="ground-notes-composer"] .ground-note-text,
+    .panel:is([data-ui="forecast-check"], [data-ui="recovery"], [data-ui="ultrasound-received"], [data-ui="pain-history"]) .quality-table,
+    .panel[data-ui="ground-mission-history"] .limits-table,
+    .panel[data-ui="recovery"] .recovery-point
+  ) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"])) .panel[data-ui="ground-mission-history"] .history-notice {
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+}
+
+/* En baja visión, además, el color del texto secundario, como el panel; la tarjeta de dominio
+   repite el refuerzo de `styles.css` en sus tres lados (aquí se le cambió el color), sin tocar el
+   filete del nivel. */
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel[data-ui="ground-notes-composer"] .ground-note-form > label,
+    .panel[data-ui="ground-notes-composer"] .ground-note-text,
+    .panel:is([data-ui="forecast-check"], [data-ui="recovery"], [data-ui="ultrasound-received"], [data-ui="pain-history"]) .quality-table,
+    .panel[data-ui="ground-mission-history"] .limits-table,
+    .panel[data-ui="recovery"] .recovery-point
+  ) {
+  border-color: var(--c-text-secondary);
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) .panel[data-ui="received-state"] .domain {
+  border-top-color: var(--c-text-secondary);
+  border-right-color: var(--c-text-secondary);
+  border-bottom-color: var(--c-text-secondary);
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) .panel[data-ui="ground-mission-history"] .history-notice {
+  border-top-color: var(--c-text-secondary);
+  border-right-color: var(--c-text-secondary);
+  border-bottom-color: var(--c-text-secondary);
+}
+
+/* ---- La franja del retardo, más baja (2026-11-08, «que se parezca bastante más a la referencia») ---- */
+
+/* Va encima de todas las pestañas de Tierra y medía 200 px: dos cifras MET a 2 rem en fichas altas y
+   la frase del enlace a tamaño de panel. Como una tira de «Inicio»: fichas compactas, la cifra a
+   1,45 rem (sigue en cian y en cursiva cuando es lo que Tierra tiene: dato caducado, intacto) y las
+   frases a 0,92 rem, por encima del suelo de letra. Nada se quita. Fuera de baja visión. */
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner {
+  gap: 0.4rem 1.2rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.55rem;
+  font-size: 0.92rem;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner > .stat-tiles {
+  gap: 0.4rem;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner .stat-tile {
+  padding: 0.35rem 0.7rem 0.4rem;
+}
+
+.app[data-look="reference"]:not([data-low-vision="on"]) .panel.delay-banner .stat-value {
+  font-size: 1.45rem;
+}

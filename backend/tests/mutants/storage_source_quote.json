@@ -1,0 +1,31 @@
+{
+  "target": "app/core/storage.py",
+  "test": ["tests/test_source_quote.py", "tests/test_countersign_strict.py"],
+  "mutations": [
+    {
+      "label": "la frase vista no queda en el asiento de la segunda firma",
+      "old": "                    **_quoted(source_quote, seen_quote, strict=True),",
+      "new": "                    **_quoted(None, seen_quote, strict=True),"
+    },
+    {
+      "label": "se firma aunque la bóveda dé otra frase que la que se vio",
+      "old": "        if any(seen.get(key) != quote.get(key) for key in (\"estado\", \"frase\")):",
+      "new": "        if False:"
+    },
+    {
+      "label": "la huella del texto de la bóveda no se comprueba contra la que se vio",
+      "old": "        if seen.get(\"sha256\") != quote.get(\"sha256\"):",
+      "new": "        if False:"
+    },
+    {
+      "label": "se firma la frase de un informe redactado entre la lectura y la firma",
+      "old": "        if source_quote is not None and source_quote.get(\"frase\"):",
+      "new": "        if False:"
+    },
+    {
+      "label": "el asiento dice que la frase se vio aunque la firma no lo declare",
+      "old": "    return {\"source_quote\": {**quote, \"vista\": seen is not None}}",
+      "new": "    return {\"source_quote\": {**quote, \"vista\": True}}"
+    }
+  ]
+}

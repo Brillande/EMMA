@@ -1,0 +1,26 @@
+{
+ "fuente": "bateria-brillo-2026-11-12T0223.csv",
+ "fases": [
+  {
+   "fase": "brillo_100_1",
+   "duracion_s": 60.0,
+   "muestras": 59,
+   "equipo_w_media": 46.35,
+   "equipo_julios": 2781.0
+  },
+  {
+   "fase": "brillo_0",
+   "duracion_s": 60.0,
+   "muestras": 58,
+   "equipo_w_media": 35.43,
+   "equipo_julios": 2126.0
+  },
+  {
+   "fase": "brillo_100_2",
+   "duracion_s": 60.0,
+   "muestras": 58,
+   "equipo_w_media": 42.36,
+   "equipo_julios": 2541.5
+  }
+ ]
+}

@@ -1,0 +1,83 @@
+{
+ "target": "app/analysis/alert_flow.py",
+ "test": [
+  "tests/test_alert_flow.py"
+ ],
+ "mutations": [
+  {
+   "label": "una alerta sin lecturas dice que midio",
+   "old": "    if readings:\n        return DONE",
+   "new": "    if True:\n        return DONE"
+  },
+  {
+   "label": "una alerta por tendencia sin lecturas en la ventana se da por evento externo",
+   "old": "    if detail.get(\"trends\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el contexto compuesto no cuenta como paso hecho",
+   "old": "    if not context:",
+   "new": "    if True:"
+  },
+  {
+   "label": "sin lectura ni tendencia fuera de lo esperado se dice que detecto",
+   "old": "    if not changed and not trends:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el reconocimiento firmado no cuenta como decision humana",
+   "old": "    if alert.get(\"acknowledged\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el estado declarado (en arreglo, resuelta) se calla",
+   "old": "    if resolution.get(\"state\") in _RESOLUTION_DISPLAY:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una alerta atendida sigue pendiente de una persona",
+   "old": "    if not said:\n        return AWAITING_HUMAN",
+   "new": "    if True:\n        return AWAITING_HUMAN"
+  },
+  {
+   "label": "un seguimiento con la ventana cumplida no espera a nadie",
+   "old": "    if \"due\" in states:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un seguimiento en ventana se da por hecho",
+   "old": "    elif \"in_window\" in states:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "una adopcion cerrada anterior al inicio cuenta para la alerta",
+   "old": "or (onset is not None and dt.datetime.fromisoformat(item[\"adopted_at\"]) >= onset)",
+   "new": "or True"
+  },
+  {
+   "label": "una adopcion de otro dominio cuenta para la alerta",
+   "old": "        if item[\"domain\"] == domain\n        and (",
+   "new": "        if True\n        and ("
+  },
+  {
+   "label": "una adopcion abierta anterior al inicio deja de contar (se pierde el seguimiento en curso)",
+   "old": "            item[\"state\"] != \"closed\"\n            or",
+   "new": "            False\n            or"
+  },
+  {
+   "label": "sin inicio, una adopcion cerrada cuenta para la alerta",
+   "old": "(onset is not None and",
+   "new": "(onset is None or"
+  },
+  {
+   "label": "la palabra del estado deja de ser la de las hipotesis",
+   "old": "\"state_display\": i18n.tr(STEP_STATE_DISPLAY[state], STEP_STATE_DISPLAY_EN[state])",
+   "new": "\"state_display\": state"
+  },
+  {
+   "label": "los pasos salen en otro orden que el de la base de conocimiento",
+   "old": "    (\"sense\", \"Medir\", \"SENSE\"),\n    (\"contextualize\", \"Contextualizar\", \"CONTEXTUALIZE\"),",
+   "new": "    (\"contextualize\", \"Contextualizar\", \"CONTEXTUALIZE\"),\n    (\"sense\", \"Medir\", \"SENSE\"),"
+  }
+ ]
+}

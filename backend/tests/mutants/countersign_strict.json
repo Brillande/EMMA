@@ -1,0 +1,41 @@
+{
+  "target": "app/core/storage.py",
+  "test": ["tests/test_countersign_strict.py"],
+  "mutations": [
+    {
+      "label": "la segunda firma deja de ser estricta",
+      "old": "                    **_quoted(source_quote, seen_quote, strict=True),",
+      "new": "                    **_quoted(source_quote, seen_quote, strict=False),"
+    },
+    {
+      "label": "el almacén calcula el rechazo y escribe igual",
+      "old": "            raise CountersignRefused(refused)",
+      "new": "            pass"
+    },
+    {
+      "label": "la primera firma se endurece también",
+      "old": "                    **_quoted(source_quote, seen_quote, strict=False),",
+      "new": "                    **_quoted(source_quote, seen_quote, strict=True),"
+    },
+    {
+      "label": "la regla vuelve a obligar solo a quien cita un informe",
+      "old": "    if strict:\n        refused = refusal(quote, seen)",
+      "new": "    if strict and quote is not None and quote.get(\"estado\") != NOT_APPLICABLE:\n        refused = refusal(quote, seen)"
+    },
+    {
+      "label": "una fuente que no es un informe se compara con lo «visto» y da 409 en vez del rechazo",
+      "old": "    if quote is not None and quote.get(\"estado\") != NOT_APPLICABLE and seen is not None:",
+      "new": "    if quote is not None and seen is not None:"
+    },
+    {
+      "label": "la primera firma guarda la frase de un informe redactado entre medias",
+      "old": "ya está firmado\")\n            self._require_cited_report(source_quote)",
+      "new": "ya está firmado\")"
+    },
+    {
+      "label": "la frase vista no queda en el asiento de la primera firma",
+      "old": "                    **_quoted(source_quote, seen_quote, strict=False),",
+      "new": "                    **_quoted(None, seen_quote, strict=False),"
+    }
+  ]
+}

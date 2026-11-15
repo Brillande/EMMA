@@ -1,0 +1,6 @@
+{"target": "app/core/versioning.py", "test": ["tests/test_context_round2.py"],
+ "mutations": [
+  {"label": "los umbrales de nivel no entran en la version",
+   "old": "        \"_LEVEL_THRESHOLDS\",\n",
+   "new": ""}
+ ]}

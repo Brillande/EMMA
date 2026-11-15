@@ -1,0 +1,68 @@
+{
+ "target": "app/environment/habitat.py",
+ "test": [
+  "tests/test_habitat_sources.py"
+ ],
+ "mutations": [
+  {
+   "label": "el nivel de ambiente general deja de ser el de la fila leida (350 lx)",
+   "old": "        \"General Horizontal Ambient Lighting | >= 350 | 1, 5\", low=350.0,",
+   "new": "        \"General Horizontal Ambient Lighting | >= 350 | 1, 5\", low=300.0,"
+  },
+  {
+   "label": "el maximo del sueno se ensena como un minimo",
+   "old": "        \"Crew Sleep | <=0.02 | 4,5\", high=0.02,",
+   "new": "        \"Crew Sleep | <=0.02 | 4,5\", low=0.02,"
+  },
+  {
+   "label": "al valor que la tabla da sin comparador se le pone un minimo",
+   "old": "        \"General Ambient Lighting | Melanopic EDI Lux: 250\", stated=250.0,",
+   "new": "        \"General Ambient Lighting | Melanopic EDI Lux: 250\", low=250.0,"
+  },
+  {
+   "label": "la EDI melanopica se presenta como la iluminancia que lee EMMA",
+   "old": "        \"Crew Pre-Sleep | Melanopic EDI Lux: 8 +/- 2\", low=6.0, high=10.0,\n        same_quantity=False,",
+   "new": "        \"Crew Pre-Sleep | Melanopic EDI Lux: 8 +/- 2\", low=6.0, high=10.0,\n        same_quantity=True,"
+  },
+  {
+   "label": "un requisito de solo mostrar se publica como evaluado",
+   "old": "            \"source_row\": self.source_row, \"evaluated\": False,",
+   "new": "            \"source_row\": self.source_row, \"evaluated\": True,"
+  },
+  {
+   "label": "los requisitos se ensenan sin el rotulo de que EMMA no conoce la tarea",
+   "old": "            \"reference_label\": self.reference_label if self.reference_requirements else None,",
+   "new": "            \"reference_label\": None,"
+  },
+  {
+   "label": "la luz vuelve a decir que no hay ninguna fuente leida",
+   "old": "            limit_note=LIGHT_NO_GENERAL_LIMIT, reference_requirements=LIGHT_REQUIREMENTS,",
+   "new": "            reference_requirements=LIGHT_REQUIREMENTS,"
+  },
+  {
+   "label": "la luz pierde los requisitos leidos",
+   "old": "            limit_note=LIGHT_NO_GENERAL_LIMIT, reference_requirements=LIGHT_REQUIREMENTS,",
+   "new": "            limit_note=LIGHT_NO_GENERAL_LIMIT,"
+  },
+  {
+   "label": "la nota de la luz deja de decir que no se evalua",
+   "old": "    \"la lectura se muestra y no se evalúa.\"\n)\n_AREA_AVERAGE",
+   "new": "    \"la lectura se compara con el nivel de ambiente general.\"\n)\n_AREA_AVERAGE"
+  },
+  {
+   "label": "el ruido vuelve a atribuirse al documento del ECLSS, que no lo trae",
+   "old": "            limits=(Limit(None, 85.0, \"[V2 6077]\", HEALTH, label=NOISE_LABEL),),\n            limit_source=NOISE_SOURCE,",
+   "new": "            limits=(Limit(None, 85.0, \"[V2 6077]\", HEALTH, label=NOISE_LABEL),),"
+  },
+  {
+   "label": "una ficha sin URL arranca el modulo",
+   "old": "        if registry.get(spec.source.id).url is None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "la URL del documento se escribe aqui en vez de salir del registro",
+   "old": "        return {**self.to_dict(), \"url\": url}",
+   "new": "        return {**self.to_dict(), \"url\": \"https://www.nasa.gov/\"}"
+  }
+ ]
+}

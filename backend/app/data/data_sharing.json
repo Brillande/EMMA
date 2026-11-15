@@ -1,0 +1,394 @@
+{
+  "_nota": "Qué se comparte y qué no, por categoría de dato (app/sharing.py lo carga, GET /api/sharing lo sirve). Cada fila dice a dónde llega el dato, si lo impone el código y, si no del todo, por qué. Las pruebas comprueban la tabla contra el código: los propósitos y hosts contra la lista blanca de core/egress.py, las rutas con corte contra las de la aplicación, cada símbolo y cada prueba citados contra su módulo (tests/test_sharing.py) y cada fichero de la consola citado y cada panel que Tierra no monta contra los .tsx (tests/test_sharing_console.py). Una fila que diga más de lo que el código hace es un fallo, no una errata.",
+  "note": "Qué sale de este equipo, qué ve Tierra y qué se queda a bordo o en esta consola, por tipo de dato. Cada fila dice si lo impone el código; cuando no del todo, lo dice y por qué. En este prototipo las dos consolas corren en la misma máquina: no hay un enlace real con Tierra, y el retardo se aplica pidiendo los datos hasta un corte.",
+  "destinations": [
+    {"id": "internet", "label": "Sale a internet"},
+    {"id": "ground", "label": "Lo ve Tierra, con el retardo"},
+    {"id": "board", "label": "Se queda a bordo"},
+    {"id": "device", "label": "Solo en esta consola"},
+    {"id": "nowhere", "label": "No se guarda"}
+  ],
+  "enforcement": [
+    {"id": "code", "label": "Lo impone el código"},
+    {"id": "partial", "label": "Lo impone el código en parte"},
+    {"id": "none", "label": "No lo impone el código"}
+  ],
+  "items": [
+    {
+      "id": "internet-queries",
+      "title": "Consultas a internet",
+      "destination": "internet",
+      "text": "Solo salen consultas de datos públicos, por los propósitos de abajo y a sus hosts. Antes de salir, la dirección y la consulta pasan por el borde de Polaris: no sale ningún dato de salud ni el señuelo. Con el modo sin red o con el modo seguro no sale nada.",
+      "enforcement": "code",
+      "limit": "JPL Horizons sale por astroquery, con su propia librería: la puerta autoriza antes de llamar, pero la petición no la hace ella. La prueba de que ningún otro módulo abre un cliente HTTP recorre backend/app/, no la copia de Polaris.",
+      "code": [
+        {"module": "app.core.egress", "symbol": "ALLOWLIST"},
+        {"module": "app.core.egress", "symbol": "authorize"}
+      ],
+      "tests": [
+        "tests/test_egress.py::test_a_host_off_the_allowlist_fails_loudly",
+        "tests/test_egress.py::test_offline_blocks_and_the_client_can_degrade",
+        "tests/test_egress.py::test_safe_mode_blocks_every_exit",
+        "tests/test_egress.py::test_health_data_in_a_query_does_not_leave",
+        "tests/test_sharing.py::test_no_other_module_of_the_app_opens_an_http_client"
+      ],
+      "console": [],
+      "ground_absent": []
+    },
+    {
+      "id": "console-page",
+      "title": "La página de la consola",
+      "destination": "device",
+      "text": "La aplicación compilada solo se conecta a su propio origen (la CSP dice connect-src 'self'): el registro de uso que MediaPipe manda a Google no sale.",
+      "enforcement": "partial",
+      "limit": "En desarrollo (npm run dev) no hay CSP; solo blockForeignFetch para fetch, y solo desde que se enciende la cámara o la escucha.",
+      "code": [],
+      "tests": [],
+      "console": [
+        {"file": "frontend/vite.config.ts", "contains": "connect-src 'self'"},
+        {"file": "frontend/src/lib/faceCamera.ts", "contains": "export function blockForeignFetch"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "local-model",
+      "title": "El modelo de lenguaje local",
+      "destination": "board",
+      "text": "El borrador de ecografía y el asistente hablan con Ollama en este equipo. Una dirección del modelo que no sea de este mismo equipo (loopback) se rechaza al crear el cliente.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [
+        {"module": "app.interpret.llm", "symbol": "LOOPBACK_HOSTS"}
+      ],
+      "tests": [
+        "tests/test_interpret.py::test_a_remote_model_is_refused"
+      ],
+      "console": [],
+      "ground_absent": []
+    },
+    {
+      "id": "readings",
+      "title": "Lecturas, diario, dolor, pruebas y estado",
+      "destination": "ground",
+      "text": "Cada observación se firma a bordo en el registro encadenado. La consola de Tierra la ve cuando ha pasado un tiempo de luz desde su hora: pide hasta el corte las rutas que lo aceptan, listadas abajo (la hora de a bordo menos el retardo de un sentido) y lo posterior no se dibuja ni se cuenta. Con el enlace con Tierra simulado declarado caído a bordo, el corte se queda en la caída: lo firmado después espera a bordo, se cuenta como pendiente de enviar y llega a Tierra, en el orden en que se firmó, un tiempo de luz después de declararse restablecido (/api/link-sync). El estado, las alertas y lo que se recomienda en Tierra salen de lo ya llegado.",
+      "enforcement": "partial",
+      "limit": "El corte lo pide la consola de Tierra: el backend sirve sin corte a quien no lo pide y no autentica a nadie. En este prototipo las dos consolas corren en la misma máquina y no hay enlace de bajada real: el enlace caído lo declara una persona y se simula, no se mide.",
+      "code": [
+        {"module": "app.core.storage", "symbol": "ObservationStore.query"},
+        {"module": "app.core.link_sync", "symbol": "ground_cut"}
+      ],
+      "tests": [
+        "tests/test_sharing.py::test_every_route_with_the_delay_cut_is_declared",
+        "tests/test_link_sync.py::test_the_cut_is_never_ahead_of_the_light_cut_nor_of_the_last_instant_with_link"
+      ],
+      "console": [
+        {"file": "frontend/src/lib/crew.ts", "contains": "export function groundCut"},
+        {"file": "frontend/src/dashboard/useConsoleData.ts", "contains": "groundCut(onboard.data.reference_time"},
+        {"file": "frontend/src/lib/crew.ts", "contains": "export function linkedCut"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "personal-notes",
+      "title": "Notas personales",
+      "destination": "ground",
+      "text": "EMMA no tiene notas marcadas como personales. Todo lo que se firma (el diario, un informe de dolor y su nota, quién reconoce una alerta) va al registro de a bordo, y la consola de Tierra lo puede ver cuando llega.",
+      "enforcement": "none",
+      "limit": "No hay forma de reservar una nota solo para la tripulación. Si hace falta, es una decisión pendiente, no algo que EMMA haga hoy.",
+      "code": [],
+      "tests": [],
+      "console": [],
+      "ground_absent": []
+    },
+    {
+      "id": "ground-notes",
+      "title": "Notas de Tierra a bordo",
+      "destination": "board",
+      "text": "Las firma Tierra y llegan a bordo con el retardo: a bordo se piden hasta el reloj menos un tiempo de luz, y lo firmado después no se entrega ni se cuenta.",
+      "enforcement": "partial",
+      "limit": "El corte lo pide la consola de a bordo; el backend entrega todo a quien no lo pide.",
+      "code": [
+        {"module": "app.api.ground_notes", "symbol": "ground_notes_router"}
+      ],
+      "tests": [],
+      "console": [
+        {"file": "frontend/src/lib/crew.ts", "contains": "export function arrivalCut"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "drafts",
+      "title": "Borradores del modelo local",
+      "destination": "board",
+      "text": "Se piden a bordo, se firman en el registro como borrador (los bloqueados, sin su texto) y nunca entran en el análisis ni en una alerta. La consola de Tierra no tiene el panel de borradores.",
+      "enforcement": "partial",
+      "limit": "Que Tierra no los vea es porque su consola no los pide: el backend los da a quien los pida, sin corte.",
+      "code": [
+        {"module": "app.core.storage", "symbol": "ObservationStore.record_draft"}
+      ],
+      "tests": [
+        "tests/test_interpret.py::test_a_draft_that_fails_a_barrier_is_never_shown"
+      ],
+      "console": [],
+      "ground_absent": ["frontend/src/imaging/DraftPanel.tsx"]
+    },
+    {
+      "id": "originals",
+      "title": "Informes escaneados, ecografías y volúmenes",
+      "destination": "board",
+      "text": "El original se guarda firmado a bordo y su texto se lee con OCR en este equipo. La consola de Tierra no abre esos paneles: ve las medidas firmadas de una ecografía y las cifras de una analítica que una persona confirmó, como cualquier otra lectura.",
+      "enforcement": "partial",
+      "limit": "Que Tierra no vea el original es porque su consola no lo pide: el backend lo da a quien lo pida.",
+      "code": [
+        {"module": "app.reports.ocr", "symbol": null}
+      ],
+      "tests": [],
+      "console": [],
+      "ground_absent": [
+        "frontend/src/imaging/UltrasoundPanel.tsx",
+        "frontend/src/reports/ReportsPanel.tsx",
+        "frontend/src/volumes/VolumesPanel.tsx"
+      ]
+    },
+    {
+      "id": "assistant-history",
+      "title": "La conversación con el asistente",
+      "destination": "device",
+      "text": "Los últimos turnos viven en la memoria de la página, no en el almacén del navegador, y se borran al cambiar de consola o de tripulante y al poner la privacidad. Cada turno los manda al backend de este equipo, que responde y no escribe nada en el registro.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [
+        {"module": "app.assistant.turn", "symbol": "MAX_HISTORY"}
+      ],
+      "tests": [
+        "tests/test_assistant.py::test_a_turn_writes_nothing_in_the_ledger"
+      ],
+      "console": [
+        {"file": "frontend/src/assistant/memory.ts", "contains": "export const MEMORY_LIMIT"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "audio-before-wake",
+      "title": "El audio antes de decir «EMMA»",
+      "destination": "nowhere",
+      "text": "Lo oye Vosk dentro del navegador, en memoria, y no se graba ni se manda. El modelo de Vosk viene en el paquete.",
+      "enforcement": "partial",
+      "limit": "Lo dice el módulo de la escucha; esta tabla no tiene una prueba que lo compruebe. Sin probar con una persona ni con el ruido de una nave.",
+      "code": [],
+      "tests": [],
+      "console": [
+        {"file": "frontend/src/assistant/wake/listener.ts", "contains": "blockForeignFetch"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "audio-after-wake",
+      "title": "La frase después de «EMMA»",
+      "destination": "board",
+      "text": "Se graba hasta el silencio o el tope y va al backend de este equipo, que la pasa a Ogg en una carpeta temporal que se borra y la transcribe con Whisper aquí. El audio no se guarda.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [
+        {"module": "app.assistant.audio", "symbol": "wav_to_ogg"},
+        {"module": "app.voice", "symbol": "transcribe"}
+      ],
+      "tests": [
+        "tests/test_voice.py::test_the_transcription_comes_back_as_a_draft_and_is_not_stored"
+      ],
+      "console": [],
+      "ground_absent": []
+    },
+    {
+      "id": "camera-frames",
+      "title": "Los fotogramas de la cámara",
+      "destination": "nowhere",
+      "text": "La cámara solo se enciende con «Seguir la cara (demo)» y la privacidad la apaga. El vídeo no entra en la página: ningún fotograma se dibuja, se guarda ni se manda; solo se usa el ángulo de la recta entre los ojos. Se pide vídeo sin audio.",
+      "enforcement": "partial",
+      "limit": "Que ningún fotograma se guarde lo asegura el diseño del módulo; esta tabla no tiene una prueba que lo compruebe.",
+      "code": [],
+      "tests": [],
+      "console": [
+        {"file": "frontend/src/lib/faceCamera.ts", "contains": "audio: false"},
+        {"file": "frontend/src/components/displayModes.ts", "contains": "followFace: flag(\"followFace\") && !privacy"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "display-preferences",
+      "title": "Las preferencias de pantalla",
+      "destination": "device",
+      "text": "Baja visión, esencial, giro, voz y privacidad se guardan en el almacén del navegador de este equipo; no pasan por el registro ni llegan al backend.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [],
+      "tests": [],
+      "console": [
+        {"file": "frontend/src/components/displayModes.ts", "contains": "localStorage"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "privacy-mode",
+      "title": "El modo privacidad",
+      "destination": "device",
+      "text": "Tapa en esta pantalla nombres, cifras personales y notas, y apaga la cámara y la escucha. No cambia lo que se guarda ni lo que ve Tierra: es para quien mira la pantalla.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [],
+      "tests": [],
+      "console": [
+        {"file": "frontend/src/components/displayModes.ts", "contains": "wakeWord: flag(\"wakeWord\") && !privacy"},
+        {"file": "frontend/src/lib/privacyNames.ts", "contains": "export const PRIVATE_NAME_HIGHLIGHT"}
+      ],
+      "ground_absent": []
+    },
+    {
+      "id": "logs",
+      "title": "Las trazas del programa",
+      "destination": "board",
+      "text": "Las trazas y las líneas de acceso no llevan contenido personal: la consulta de una dirección se omite y una excepción deja solo su tipo y su lugar.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [
+        {"module": "app.core.log_privacy", "symbol": "install"}
+      ],
+      "tests": [
+        "tests/test_logs_privacy.py::test_the_app_installs_it"
+      ],
+      "console": [],
+      "ground_absent": []
+    },
+    {
+      "id": "egress-trace",
+      "title": "La traza de salidas a internet",
+      "destination": "board",
+      "text": "Una línea por petición con la hora, el propósito, el host, la ruta y el veredicto; nunca la consulta ni el cuerpo. Se guarda en la caché de este equipo.",
+      "enforcement": "code",
+      "limit": null,
+      "code": [
+        {"module": "app.core.egress", "symbol": "authorize"}
+      ],
+      "tests": [
+        "tests/test_egress.py::test_an_allowed_request_goes_out_and_the_trace_keeps_no_query"
+      ],
+      "console": [],
+      "ground_absent": []
+    }
+  ],
+  "internet": {
+    "purposes": [
+      {
+        "purpose": "space-weather",
+        "what": "Eventos de clima espacial de DONKI (NASA).",
+        "carries": "La ventana de fechas y la clave de la API.",
+        "hosts": ["api.nasa.gov"]
+      },
+      {
+        "purpose": "space-weather-series",
+        "what": "Series continuas de flujo de protones (GOES) y de viento solar, de CCMC iSWA (NASA) por HAPI.",
+        "carries": "El conjunto de datos público, sus parámetros y la ventana de fechas.",
+        "hosts": ["iswa.gsfc.nasa.gov"]
+      },
+      {
+        "purpose": "radiation",
+        "what": "Dosis medidas en vuelo, de RadLab (OSDR).",
+        "carries": "La nave, el instrumento y la ventana de fechas.",
+        "hosts": ["visualization.osdr.nasa.gov"]
+      },
+      {
+        "purpose": "osdr-data",
+        "what": "La ficha de los estudios de OSDR que EMMA cita, para compararla con la de EMMA.",
+        "carries": "El identificador público del estudio (p. ej. OSD-288).",
+        "hosts": ["visualization.osdr.nasa.gov"]
+      },
+      {
+        "purpose": "ephemeris",
+        "what": "Posiciones de JPL Horizons, para el tiempo de luz: los días que el cálculo local (SPICE) no calcula y la precarga, que sirve de contraste.",
+        "carries": "El objeto y la fecha.",
+        "hosts": ["ssd-api.jpl.nasa.gov", "ssd.jpl.nasa.gov"]
+      },
+      {
+        "purpose": "spice-kernels",
+        "what": "Solo el guion que descarga los núcleos SPICE públicos de NAIF (JPL) para calcular el retardo sin red; la aplicación no sale por aquí.",
+        "carries": "La dirección del fichero.",
+        "hosts": ["naif.jpl.nasa.gov"]
+      },
+      {
+        "purpose": "orbit",
+        "what": "Posición de la ISS de SSCweb (NASA), solo con el perfil de órbita baja.",
+        "carries": "El identificador público de la ISS, dos instantes y el sistema de coordenadas.",
+        "hosts": ["sscweb.gsfc.nasa.gov"]
+      },
+      {
+        "purpose": "citations",
+        "what": "Comprobar en su registro la cita con que se firma un borrador, y cotejar con NTRS los informes técnicos de la NASA del registro de evidencia.",
+        "carries": "El identificador citado (PMID, DOI, NCT o número de NTRS).",
+        "hosts": ["api.crossref.org", "api.datacite.org", "clinicaltrials.gov", "doi.org", "eutils.ncbi.nlm.nih.gov", "ntrs.nasa.gov"]
+      },
+      {
+        "purpose": "datasets",
+        "what": "Solo los guiones de validación descargan un dataset; la aplicación no sale por aquí.",
+        "carries": "La dirección del fichero.",
+        "hosts": ["zenodo.org"]
+      },
+      {
+        "purpose": "planner-quotes",
+        "what": "La cita del día de la hoja diaria del planificador (Marplanner); solo con red, nunca en modo sin red.",
+        "carries": "Nada nuestro: la petición es la cita de hoy, sin parámetros.",
+        "hosts": ["zenquotes.io"]
+      },
+      {
+        "purpose": "planner-onthisday",
+        "what": "Las efemérides «tal día como hoy» de la hoja diaria del planificador (Marplanner); solo con red.",
+        "carries": "El mes y el día de hoy, y el idioma de la hoja (inglés o español).",
+        "hosts": ["en.wikipedia.org", "es.wikipedia.org"]
+      }
+    ],
+    "http_clients": [
+      {"file": "app/core/egress.py", "why": "La puerta: todo lo que sale a internet."},
+      {"file": "app/interpret/llm.py", "why": "El modelo local, solo en loopback."},
+      {"file": "app/planner_ground.py", "why": "El resumen del planificador para Tierra, en el escritorio: un servicio local en loopback."},
+      {"file": "app/planner_link.py", "why": "El planificador (Marplanner), solo en loopback: sus pantallas en la consola."}
+    ]
+  },
+  "ground_cut": {
+    "note": "Las rutas que aceptan el corte del retardo (until). Tierra pide hasta su corte lo que baja; a bordo se piden hasta el suyo las notas que sube Tierra.",
+    "directions": [
+      {"id": "down", "label": "De a bordo a Tierra"},
+      {"id": "up", "label": "De Tierra a bordo"}
+    ],
+    "routes": [
+      {"path": "/api/alerts/history", "direction": "down"},
+      {"path": "/api/anatomy/state", "direction": "down"},
+      {"path": "/api/baseline-profile", "direction": "down"},
+      {"path": "/api/correlations", "direction": "down"},
+      {"path": "/api/inventory", "direction": "down"},
+      {"path": "/api/crew", "direction": "down"},
+      {"path": "/api/crew/compare", "direction": "down"},
+      {"path": "/api/crew/members", "direction": "down"},
+      {"path": "/api/crew/mission-history", "direction": "down"},
+      {"path": "/api/crew/radiation", "direction": "down"},
+      {"path": "/api/crew/sex", "direction": "down"},
+      {"path": "/api/export/{kind}.pdf", "direction": "down"},
+      {"path": "/api/ground-notes", "direction": "up"},
+      {"path": "/api/habitat", "direction": "down"},
+      {"path": "/api/habitat/systems", "direction": "down"},
+      {"path": "/api/imaging/studies", "direction": "down"},
+      {"path": "/api/location/anchors", "direction": "down"},
+      {"path": "/api/mission-mode", "direction": "down"},
+      {"path": "/api/mission/profile", "direction": "down"},
+      {"path": "/api/mission/profiles", "direction": "down"},
+      {"path": "/api/observations", "direction": "down"},
+      {"path": "/api/pain/reports", "direction": "down"},
+      {"path": "/api/planner/ground-summary", "direction": "down"},
+      {"path": "/api/resources", "direction": "down"},
+      {"path": "/api/sensor-bindings", "direction": "down"},
+      {"path": "/api/status", "direction": "down"},
+      {"path": "/api/timeline/chronicle", "direction": "down"},
+      {"path": "/api/timeline/routines", "direction": "down"},
+      {"path": "/api/timeline/waiting", "direction": "down"},
+      {"path": "/api/twins", "direction": "down"}
+    ]
+  }
+}

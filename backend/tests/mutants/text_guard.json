@@ -1,0 +1,94 @@
+{
+  "target": "app/text_guard.py",
+  "test": [
+    "tests/test_text_guard.py",
+    "tests/test_interpret.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin afirmaciones absolutas (honestidad_lint)",
+      "old": "_PATTERNS[\"overclaim\"] = _OVERCLAIM\n",
+      "new": ""
+    },
+    {
+      "label": "sin verbos de acción clínica (decision_alto_riesgo)",
+      "old": "_PATTERNS[\"order\"] = (*_PATTERNS[\"order\"], *_ACTION)",
+      "new": "pass"
+    },
+    {
+      "label": "las preguntas ya no se eximen",
+      "old": "    return question.sub(lambda match: \" \" * len(match.group(0)), plain)",
+      "new": "    return plain"
+    },
+    {
+      "label": "sin deliberación afirmada",
+      "old": "for pattern in _DELIBERATE_COMPILED:",
+      "new": "for pattern in ():"
+    },
+    {
+      "label": "las listas completas de Polaris vuelven a bloquear",
+      "old": "_PATTERNS[\"order\"] = (*_PATTERNS[\"order\"], *_ACTION)\n",
+      "new": "_PATTERNS[\"order\"] = (*_PATTERNS[\"order\"], *_ACTION)\n_PATTERNS[\"polaris\"] = tuple(_HONESTY._TRIGGERS)\n"
+    },
+    {
+      "label": "los avisos de Polaris desaparecen",
+      "old": "            unique.setdefault((finding.start, finding.end), finding)",
+      "new": "            pass"
+    },
+    {
+      "label": "una coletilla de pregunta tapa la orden que la precede",
+      "old": "_BARE_QUESTION = re.compile(r\"[^.!?\\n,;:¿(—–-]*\\?\")",
+      "new": "_BARE_QUESTION = re.compile(r\"[^.!?\\n(—–-]*\\?\")"
+    },
+    {
+      "label": "un «¿» suelto tapa lo que sigue a su frase",
+      "old": "_OPENED_QUESTION = re.compile(r\"¿[^?¿.!\\n]*\\?\")",
+      "new": "_OPENED_QUESTION = re.compile(r\"¿[^?¿]*\\?\")"
+    },
+    {
+      "label": "un imperativo con el pronombre pegado no cuenta",
+      "old": "ATTACHED_PRONOUNS = r\"(?:(?:se|me|te|nos|le|les)(?:la|lo|las|los)?|la|lo|las|los)?\"",
+      "new": "ATTACHED_PRONOUNS = r\"\""
+    },
+    {
+      "label": "un imperativo con dos pronombres pegados no cuenta",
+      "old": "(?:la|lo|las|los)?|la|lo",
+      "new": "|la|lo"
+    },
+    {
+      "label": "un «?» sin «¿» vuelve pregunta un veredicto en imperativo",
+      "old": "findings.extend(_found(\"diagnosis\", pattern, unopened))",
+      "new": "findings.extend(_found(\"diagnosis\", pattern, said))"
+    },
+    {
+      "label": "la pregunta abierta deja de ir de «¿» a «?» con sus comas",
+      "old": "    return _blanked(_OPENED_QUESTION, plain)",
+      "new": "    return plain"
+    },
+    {
+      "label": "la pregunta sin «¿» deja de eximir",
+      "old": "    return _blanked(_BARE_QUESTION, outside_opened_questions(plain))",
+      "new": "    return outside_opened_questions(plain)"
+    },
+    {
+      "label": "«adminístrelo» no se lee como administrar",
+      "old": "r\"\\badministr(?:ar|e|en)\" + ATTACHED_PRONOUNS + r\"\\b\"",
+      "new": "r\"\\badministr(?:ar|e|en)\\b\""
+    },
+    {
+      "label": "«suspéndala» no se lee como orden",
+      "old": "reduzca)n?\" + ATTACHED_PRONOUNS + r\"\\b\"",
+      "new": "reduzca)n?\\b\""
+    },
+    {
+      "label": "una raya o un paréntesis no cortan la cláusula",
+      "old": "_BARE_QUESTION = re.compile(r\"[^.!?\\n,;:¿(—–-]*\\?\")",
+      "new": "_BARE_QUESTION = re.compile(r\"[^.!?\\n,;:¿]*\\?\")"
+    },
+    {
+      "label": "el plural del imperativo no cuenta",
+      "old": "|reduzca)n?",
+      "new": "|reduzca)"
+    }
+  ]
+}

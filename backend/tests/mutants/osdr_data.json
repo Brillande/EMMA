@@ -1,0 +1,103 @@
+{
+  "target": "app/evidence/osdr_data.py",
+  "test": [
+    "tests/test_osdr_data.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin red sale igual a pedir la ficha",
+      "old": "        if self.settings.offline:\n            raise OfflineDataUnavailable(",
+      "new": "        if False:\n            raise OfflineDataUnavailable("
+    },
+    {
+      "label": "una caché reciente se vuelve a pedir",
+      "old": "        if cached is not None and (self.settings.offline or not cached.is_stale(FRESH_FOR)):",
+      "new": "        if cached is not None and self.settings.offline:"
+    },
+    {
+      "label": "con la red caída no se usa la caché vieja",
+      "old": "            if cached is not None:\n                return self._rehydrate(cached)\n            raise OfflineDataUnavailable(f\"OSDR inaccesible",
+      "new": "            raise OfflineDataUnavailable(f\"OSDR inaccesible"
+    },
+    {
+      "label": "la caché se sirve como lectura nueva",
+      "old": "            data=record, fetched_at=cached.fetched_at, source=cached.source, from_cache=True",
+      "new": "            data=record, fetched_at=cached.fetched_at, source=cached.source, from_cache=False"
+    },
+    {
+      "label": "un error HTTP se lee como un cuerpo",
+      "old": "        response.raise_for_status()\n",
+      "new": "\n"
+    },
+    {
+      "label": "una forma inesperada se lee como estudio vacío",
+      "old": "    if not isinstance(inner, dict):\n        raise httpx.DecodingError(",
+      "new": "    if not isinstance(inner, dict):\n        inner = {}\n    if False:\n        raise httpx.DecodingError("
+    },
+    {
+      "label": "un ensayo sin lista de muestras cuenta cero",
+      "old": "        if not isinstance(samples, dict):\n            raise httpx.DecodingError(",
+      "new": "        if not isinstance(samples, dict):\n            continue\n            raise httpx.DecodingError("
+    },
+    {
+      "label": "se cuentan muestras repetidas entre ensayos o por ensayo",
+      "old": "        sample_count=len(names),",
+      "new": "        sample_count=len(assays),"
+    },
+    {
+      "label": "el ratón deja de ser animal",
+      "old": "    \"Mus musculus\": \"animal\",",
+      "new": "    \"Mus musculus\": \"human\","
+    },
+    {
+      "label": "un modelo animal no dice que no son astronautas",
+      "old": "las muestras no son de astronautas ni de",
+      "new": "las muestras son de"
+    },
+    {
+      "label": "un organismo desconocido se adivina",
+      "old": "        if not found or None in found:\n            return None",
+      "new": "        found.discard(None)\n        if not found:\n            return None"
+    },
+    {
+      "label": "una discrepancia de muestras se calla",
+      "old": "            \"match\" if claimed[0] == record.sample_count else \"mismatch\",",
+      "new": "            \"match\","
+    },
+    {
+      "label": "una discrepancia de título o fecha se calla",
+      "old": "    return _check(field, label, emma, osdr, \"match\" if emma == osdr else \"mismatch\")",
+      "new": "    return _check(field, label, emma, osdr, \"match\")"
+    },
+    {
+      "label": "humano y animal frente a ratón se da por discrepancia",
+      "old": "    elif ref.population == \"human_and_animal\":",
+      "new": "    elif False:"
+    },
+    {
+      "label": "una discrepancia no cambia el estado",
+      "old": "    status = \"disagrees\" if disagrees else \"agrees\"",
+      "new": "    status = \"agrees\""
+    },
+    {
+      "label": "una ficha que no es de OSDR se compara igual",
+      "old": "    return found.group(1) if found else None",
+      "new": "    return found.group(1) if found else \"OSD-0\""
+    },
+    {
+      "label": "sin red sin caché se inventa una lectura",
+      "old": "            \"available\": False,",
+      "new": "            \"available\": True,"
+    },
+    {
+      "label": "la nota de una fecha de mision se pega a otro valor",
+      "old": "    if record.mission.get(known[\"field\"]) != known[\"osdr\"]:\n        return []",
+      "new": "    if False:\n        return []"
+    },
+    {
+      "label": "la nota revisada de la mision no se ensena",
+      "old": "        \"mission_notes\": mission_notes(record),",
+      "new": "        \"mission_notes\": [],"
+    }
+  ]
+}

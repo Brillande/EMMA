@@ -1,0 +1,6 @@
+{"target": "app/api/mission.py", "test": ["tests/test_context_round2.py"],
+ "mutations": [
+  {"label": "se revisa una hipotesis que no esta en el estado",
+   "old": "    if not offered:\n        raise HTTPException(",
+   "new": "    if False:\n        raise HTTPException("}
+ ]}

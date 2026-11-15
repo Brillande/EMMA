@@ -1,0 +1,41 @@
+{
+  "target": "app/environment/donki.py",
+  "test": ["tests/test_spe_demo_offline.py"],
+  "mutations": [
+    {
+      "label": "la instantánea se usa aunque no se haya pedido",
+      "old": "        if not self.settings.donki_snapshot:\n            return None",
+      "new": "        if False:\n            return None"
+    },
+    {
+      "label": "la instantánea no filtra la ventana pedida",
+      "old": "            if start <= event.time.date() <= end",
+      "new": "            if True"
+    },
+    {
+      "label": "la edad de la instantánea no dice lo que es",
+      "old": "        return f\"{self.note} ({CachedPayload.describe_age(self)})\"",
+      "new": "        return CachedPayload.describe_age(self)"
+    },
+    {
+      "label": "la instantánea lleva la hora de ahora y no la de su descarga",
+      "old": "            data=events, fetched_at=snapshot.retrieved_at, source=snapshot.label,",
+      "new": "            data=events, fetched_at=dt.datetime.now(dt.UTC), source=snapshot.label,"
+    },
+    {
+      "label": "sin la consulta exacta no se recurre a la instantánea",
+      "old": "                self._latest(event_type, start, end), self._snapshot(event_type, start, end)\n",
+      "new": "                self._latest(event_type, start, end),\n"
+    },
+    {
+      "label": "sin la consulta exacta gana la más vieja",
+      "old": "        return max(found, key=lambda payload: payload.fetched_at, default=None)",
+      "new": "        return min(found, key=lambda payload: payload.fetched_at, default=None)"
+    },
+    {
+      "label": "sin la consulta exacta la consulta guardada tapa siempre a la instantánea",
+      "old": "        return max(found, key=lambda payload: payload.fetched_at, default=None)",
+      "new": "        return found[0] if found else None"
+    }
+  ]
+}

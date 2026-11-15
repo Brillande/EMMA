@@ -1,0 +1,63 @@
+{
+ "target": "app/analysis/context.py",
+ "test": [
+  "tests/test_habitat_sources.py"
+ ],
+ "mutations": [
+  {
+   "label": "una cifra de una cita literal cambia sin volver a leer la fuente",
+   "old": "                \"The 85 dBA overall SPL defines the hazardous noise limit during all phases \"",
+   "new": "                \"The 80 dBA overall SPL defines the hazardous noise limit during all phases \""
+  },
+  {
+   "label": "la fila del amoniaco atribuye otro efecto",
+   "old": "                \"30 d 3 (2) | 180 d 3 (2) | 1000 d 3 (2) | Organ: Eye, CNS | Effect: \"\n                \"Irritation, Headache\",",
+   "new": "                \"30 d 3 (2) | 180 d 3 (2) | 1000 d 3 (2) | Organ: Eye, CNS | Effect: \"\n                \"Irritation, Depression\","
+  },
+  {
+   "label": "el texto de la norma se presenta sin decir que no es un estudio ni un diagnostico",
+   "old": "    hypothesis[\"what_is_known_basis\"] = KNOWLEDGE_BASIS",
+   "new": "    hypothesis[\"what_is_known_basis\"] = None"
+  },
+  {
+   "label": "el texto sale sin sus frases literales",
+   "old": "    hypothesis[\"what_is_known_sources\"] = [item.to_dict() for item in sources]",
+   "new": "    hypothesis[\"what_is_known_sources\"] = []"
+  },
+  {
+   "label": "el documento leido no se cita en la evidencia de la hipotesis",
+   "old": "        *(item.to_dict() for item in _STANDARD_EVIDENCE[excursion[\"parameter\"]]),",
+   "new": ""
+  },
+  {
+   "label": "lo que escribe la norma pisa lo que ya se sabia del CO2",
+   "old": "    if excursion is None or hypothesis.get(\"what_is_known\") is not None:\n        return\n    found = _STANDARD_KNOWLEDGE.get(excursion[\"parameter\"])",
+   "new": "    if excursion is None:\n        return\n    found = _STANDARD_KNOWLEDGE.get(\"cabin-noise\")"
+  },
+  {
+   "label": "del oxigeno se afirma un efecto que la norma no describe",
+   "old": "        \"y no describe un efecto por salir de él: lo justifica porque los límites \"",
+   "new": "        \"y describe hipoxia al salir de él: lo justifica porque los límites \""
+  },
+  {
+   "label": "la advertencia del documento de SMAC desaparece del texto",
+   "old": "_SMAC_CAVEAT = (\n    \"El documento advierte de que superar un SMAC no implica un daño seguro: indica que la \"",
+   "new": "_SMAC_CAVEAT = (\n    \"El documento advierte de que superar un SMAC implica un daño: indica que la \""
+  },
+  {
+   "label": "la fecha de lectura de una cita no es la del dia en que se leyo",
+   "old": "            \"quote\": self.quote, \"read_on\": self.read_on or SOURCES_READ_ON,",
+   "new": "            \"quote\": self.quote, \"read_on\": \"2026-01-01\","
+  },
+  {
+   "label": "una cita de la segunda lectura se fecha en la primera",
+   "old": "            \"quote\": self.quote, \"read_on\": self.read_on or SOURCES_READ_ON,",
+   "new": "            \"quote\": self.quote, \"read_on\": SOURCES_READ_ON,"
+  },
+  {
+   "label": "la nota de la tabla 6.2-1 cambia el minimo absoluto sin volver a leerla",
+   "old": "                \"hypoxia range of 122 mmHg/2.36 psia\",",
+   "new": "                \"hypoxia range of 112 mmHg/2.36 psia\","
+  }
+ ]
+}

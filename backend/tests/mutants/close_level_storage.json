@@ -1,0 +1,23 @@
+{"target": "app/core/storage.py",
+ "test": ["tests/test_close_level.py", "-k",
+          "only_a_closure or refuses_half or signed_before_the_change"],
+ "mutations": [
+  {"label": "se firma un nivel al cerrar sin el instante de su estado",
+   "old": "        if (level_at_close is None) != (closed_reference_time is None):\n",
+   "new": "        if False:\n"},
+  {"label": "una adopcion o un no adoptar llevan nivel al cerrar",
+   "old": "        if level_at_close is not None and action != \"closed\":\n",
+   "new": "        if False:\n"},
+  {"label": "el cierre no guarda el nivel",
+   "old": "                **at_close,\n",
+   "new": ""},
+  {"label": "el nivel guardado no se entrega al leer las decisiones",
+   "old": "            subject, FOLLOWUP_ENTRY_TYPE, _FOLLOWUP_FIELDS,\n            (*_FOLLOWUP_OPTIONAL, *_DECIDED_WITH_OPTIONAL),\n",
+   "new": "            subject, FOLLOWUP_ENTRY_TYPE, _FOLLOWUP_FIELDS,\n            _DECIDED_WITH_OPTIONAL,\n"},
+  {"label": "el campo nuevo se exige: los cierres ya firmados dejan de leerse",
+   "old": "            subject, FOLLOWUP_ENTRY_TYPE, _FOLLOWUP_FIELDS,\n            (*_FOLLOWUP_OPTIONAL, *_DECIDED_WITH_OPTIONAL),\n",
+   "new": "            subject, FOLLOWUP_ENTRY_TYPE, (*_FOLLOWUP_FIELDS, *_FOLLOWUP_OPTIONAL),\n            _DECIDED_WITH_OPTIONAL,\n"},
+  {"label": "todo cierre lleva los campos, vacios si no hay copia: deja de ser el asiento de antes",
+   "old": "        at_close: dict[str, str] = {}\n",
+   "new": "        at_close: dict[str, str] = {\"level_at_close\": \"\", \"closed_reference_time\": \"\"} if action == \"closed\" else {}\n"}
+ ]}

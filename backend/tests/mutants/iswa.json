@@ -1,0 +1,56 @@
+{
+  "target": "app/environment/iswa.py",
+  "test": ["tests/test_iswa.py"],
+  "mutations": [
+    {
+      "label": "un relleno se sirve como valor",
+      "old": "        if fill is not None and fill != \"null\" and value == float(fill):\n            return None",
+      "new": "        if False:\n            return None"
+    },
+    {
+      "label": "un parámetro ausente se da por una serie de huecos",
+      "old": "            raise HapiBodyError(f\"la respuesta no trae el parámetro {channel.parameter}\")",
+      "new": "            continue"
+    },
+    {
+      "label": "otra unidad se reetiqueta como pfu",
+      "old": "        if units != channel.hapi_units:",
+      "new": "        if False:"
+    },
+    {
+      "label": "un estado HAPI de error se lee como serie",
+      "old": "    if not isinstance(status, dict) or status.get(\"code\") != 1200:",
+      "new": "    if not isinstance(status, dict):"
+    },
+    {
+      "label": "con red, una consulta reciente vuelve a salir",
+      "old": "        if usable is not None and (self.settings.offline or not usable.is_stale(FRESH_FOR)):",
+      "new": "        if usable is not None and self.settings.offline:"
+    },
+    {
+      "label": "un fallo de red no usa la serie guardada",
+      "old": "            if usable is not None:\n                return usable\n            raise OfflineDataUnavailable(\n                f\"iSWA inaccesible",
+      "new": "            raise OfflineDataUnavailable(\n                f\"iSWA inaccesible"
+    },
+    {
+      "label": "la edad de la última muestra no se declara",
+      "old": "        \"last_sample_age_seconds\": last_age,",
+      "new": "        \"last_sample_age_seconds\": 0,"
+    },
+    {
+      "label": "la ventana pedida no recorta la serie",
+      "old": "    samples = [row for row in payload.data if _parse_time(row[\"time\"]) >= since]",
+      "new": "    samples = list(payload.data)"
+    },
+    {
+      "label": "una serie viva se declara viva aunque salga de la caché",
+      "old": "        \"live\": not payload.from_cache,",
+      "new": "        \"live\": True,"
+    },
+    {
+      "label": "una caché que no es una serie se sirve",
+      "old": "        usable = cached if cached is not None and isinstance(cached.data, list) else None",
+      "new": "        usable = cached"
+    }
+  ]
+}

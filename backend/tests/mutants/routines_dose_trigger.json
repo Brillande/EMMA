@@ -1,0 +1,31 @@
+{
+  "target": "app/routines.py",
+  "test": ["tests/test_spe_demo_offline.py", "tests/test_routines.py"],
+  "mutations": [
+    {
+      "label": "la dosis de a bordo no acorta nada",
+      "old": "    dose = dose_in_force(observations, now) if in_force is None else None",
+      "new": "    dose = None"
+    },
+    {
+      "label": "la dosis manda aunque haya evento de DONKI",
+      "old": "    dose = dose_in_force(observations, now) if in_force is None else None",
+      "new": "    dose = dose_in_force(observations, now)\n    in_force = None if dose is not None else in_force"
+    },
+    {
+      "label": "se juzga una lectura de dosis del futuro",
+      "old": "        if item.key == DOSE_KEY and item.effective <= now",
+      "new": "        if item.key == DOSE_KEY"
+    },
+    {
+      "label": "una lectura de dosis de confianza baja acorta",
+      "old": "        and item.confidence >= LOW_CONFIDENCE_THRESHOLD\n    ]",
+      "new": "    ]"
+    },
+    {
+      "label": "basta con que alguna lectura cruce, no la última",
+      "old": "    last = max(readings, key=lambda item: item.effective)",
+      "new": "    last = max(readings, key=lambda item: item.value)"
+    }
+  ]
+}

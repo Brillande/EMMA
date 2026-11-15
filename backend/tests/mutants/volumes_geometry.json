@@ -1,0 +1,23 @@
+{
+  "target": "app/volumes/geometry.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "espaciado desde la diagonal del afín (fallo de Polaris con afín oblicuo)",
+      "old": "return np.asarray(np.linalg.norm(affine[:3, :3], axis=0), dtype=np.float64)",
+      "new": "return np.asarray(np.abs(np.diag(affine)[:3]), dtype=np.float64)"
+    },
+    {
+      "label": "las lesiones ya no se recortan al órgano",
+      "old": "    components, count = ndimage.label(lesion_mask & inside)",
+      "new": "    components, count = ndimage.label(lesion_mask)"
+    },
+    {
+      "label": "el estado de una lesión lo decide EMMA y no `evolucion` de Polaris",
+      "old": "    states = _visor3d().evolucion(pairs, lesions_after)",
+      "new": "    states = {item[\"id\"]: {\"estado\": \"estable\", \"id_previo\": None} for item in lesions_after}"
+    }
+  ]
+}

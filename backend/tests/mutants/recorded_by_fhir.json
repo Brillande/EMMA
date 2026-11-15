@@ -1,0 +1,58 @@
+{
+ "target": "app/ingest/fhir.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "el FHIR de una lectura que nadie anotó gana un `performer` vacío",
+   "old": "                if self.recorded_by is not None else {}\n",
+   "new": "                if True else {}\n"
+  },
+  {
+   "label": "el FHIR calla quién anotó una lectura que lo lleva",
+   "old": "                if self.recorded_by is not None else {}\n",
+   "new": "                if False else {}\n"
+  },
+  {
+   "label": "el FHIR inventa una referencia a un recurso que no existe",
+   "old": "{\"performer\": [{\"display\": self.recorded_by}]}",
+   "new": "{\"performer\": [{\"reference\": \"Practitioner/1\", \"display\": self.recorded_by}]}"
+  },
+  {
+   "label": "el FHIR inventa un sistema de identificadores de operadores",
+   "old": "{\"performer\": [{\"display\": self.recorded_by}]}",
+   "new": "{\"performer\": [{\"identifier\": {\"system\": \"urn:emma:operator\", \"value\": self.recorded_by}, \"display\": self.recorded_by}]}"
+  },
+  {
+   "label": "al leer un FHIR se pierde quién anotó",
+   "old": "            recorded_by=(resource.get(\"performer\") or [{}])[0].get(\"display\"),\n",
+   "new": "            recorded_by=None,\n"
+  },
+  {
+   "label": "un nombre vacío o en blanco vale como anotador",
+   "old": "            not isinstance(self.recorded_by, str) or not self.recorded_by.strip()\n",
+   "new": "            not isinstance(self.recorded_by, str)\n"
+  },
+  {
+   "label": "un nombre solo de espacios vale como anotador",
+   "old": "            not isinstance(self.recorded_by, str) or not self.recorded_by.strip()\n",
+   "new": "            not isinstance(self.recorded_by, str) or not self.recorded_by\n"
+  },
+  {
+   "label": "algo que no es texto vale como anotador",
+   "old": "            not isinstance(self.recorded_by, str) or not self.recorded_by.strip()\n",
+   "new": "            not str(self.recorded_by).strip()\n"
+  },
+  {
+   "label": "las lecturas de la prueba no se marcan con quien tecleó",
+   "old": "    return [replace(obs, recorded_by=operator) for obs in observations]",
+   "new": "    return list(observations)"
+  },
+  {
+   "label": "el atajo de construcción pierde quién anotó",
+   "old": "        recorded_by=recorded_by,\n",
+   "new": ""
+  }
+ ]
+}

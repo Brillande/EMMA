@@ -1,0 +1,161 @@
+{
+ "target": "app/analysis/cycle_phase.py",
+ "test": [
+  "tests/test_cycle_nuisance.py::test_the_phase_needs_three_starts",
+  "tests/test_cycle_nuisance.py::test_the_luteal_window_is_counted_back_from_every_recent_length",
+  "tests/test_cycle_nuisance.py::test_an_atypical_or_irregular_cycle_is_not_placed",
+  "tests/test_cycle_nuisance.py::test_the_offset_is_causal",
+  "tests/test_cycle_nuisance.py::test_the_rise_is_her_own_bounded_by_what_was_read_and_from_closed_cycles_only",
+  "tests/test_cycle_nuisance.py::test_the_offset_moves_the_base_never_the_reading_nor_the_danger_limit",
+  "tests/test_cycle_nuisance.py::test_the_phase_adjustment_is_in_the_trend_too",
+  "tests/test_cycle_nuisance.py::test_with_exactly_the_discounted_rise_the_base_is_the_reading_in_both_phases",
+  "tests/test_cycle_nuisance.py::test_the_cycle_is_a_nuisance_and_not_a_reference_deterioration",
+  "tests/test_cycle_nuisance.py::test_the_gate_opens_only_with_all_three_and_says_what_is_missing",
+  "tests/test_cycle_nuisance.py::test_what_cannot_open_the_gate_does_not",
+  "tests/test_cycle_nuisance.py::test_a_slow_real_drift_is_not_taken_for_her_luteal_rise",
+  "tests/test_cycle_physiology.py::test_the_loader_rejects_what_breaks_its_contract"
+ ],
+ "mutations": [
+  {
+   "label": "sin desplazamiento: la fase lútea no descuenta nada",
+   "old": "        return self.luteal_rise(key, moment)",
+   "new": "        return 0.0"
+  },
+  {
+   "label": "el desplazamiento se aplica en la fase folicular y no en la lútea",
+   "old": "        if self.phase_at(moment).phase != ADJUSTED_PHASE:",
+   "new": "        if self.phase_at(moment).phase == ADJUSTED_PHASE:"
+  },
+  {
+   "label": "la subida propia deja de estar acotada al rango leído",
+   "old": "            personal[(opening, key)] = sign * min(max(rise, smallest), largest)",
+   "new": "            personal[(opening, key)] = sign * rise"
+  },
+  {
+   "label": "el ciclo en curso entra en su propia subida (una fiebre se descuenta a sí misma)",
+   "old": "                for closed_cycle in range(max(0, opening - RECENT_CYCLES), opening)",
+   "new": "                for closed_cycle in range(max(0, opening - RECENT_CYCLES), opening + 1)"
+  },
+  {
+   "label": "sin interpolar la folicular: una deriva lenta se toma por subida lútea",
+   "old": "    weight = (luteal_day - before_day) / (after_day - before_day)",
+   "new": "    weight = 0.0"
+  },
+  {
+   "label": "la subida propia del ciclo en curso se usa antes de conocer sus primeros días",
+   "old": "        if opening < 0 or moment < self.starts[opening] + dt.timedelta(days=AFTER_DAYS):",
+   "new": "        if opening < 0:"
+  },
+  {
+   "label": "basta con dos inicios para situar la fase",
+   "old": "MIN_STARTS = 3",
+   "new": "MIN_STARTS = 2"
+  },
+  {
+   "label": "una regla retrasada se sigue tratando como lútea",
+   "old": "        if day >= window.shortest:\n            return PhaseAt(None, \"overdue\", day, window.typical)\n",
+   "new": ""
+  },
+  {
+   "label": "un ciclo irregular se sitúa igual",
+   "old": "        if luteal_from >= window.shortest:\n            return PhaseAt(None, \"irregular\", day, window.typical)\n",
+   "new": ""
+  },
+  {
+   "target": "app/analysis/baseline.py",
+   "label": "la base no se lleva a la fase de la lectura (sin desplazamiento en la base)",
+   "old": "                shift = phase_offset(key, obs.effective) if phase_offset is not None else 0.0",
+   "new": "                shift = 0.0"
+  },
+  {
+   "target": "app/analysis/baseline.py",
+   "label": "signo invertido: la base se lleva a la fase al revés",
+   "old": "                    value + shift\n                    for value in confident[start_index:end_index] if value is not None",
+   "new": "                    value - shift\n                    for value in confident[start_index:end_index] if value is not None"
+  },
+  {
+   "target": "app/analysis/baseline.py",
+   "label": "signo invertido al quitar la fase de la ventana",
+   "old": "        None if value is None else value - phase_offset(obs.key, obs.effective)",
+   "new": "        None if value is None else value + phase_offset(obs.key, obs.effective)"
+  },
+  {
+   "target": "app/analysis/baseline.py",
+   "label": "el desplazamiento toca la lectura y el límite de peligro",
+   "old": "                    severity, direction, basis, limit = _grade_against_personal(\n                        obs, baseline, code\n                    )",
+   "new": "                    severity, direction, basis, limit = _grade_against_personal(\n                        __import__(\"dataclasses\").replace(obs, value=obs.value - shift),\n                        baseline, code,\n                    )"
+  },
+  {
+   "target": "app/analysis/trend.py",
+   "label": "la tendencia sin el desplazamiento",
+   "old": "        series = without_phase(series, phase_offset)",
+   "new": "        series = without_phase(series, None)"
+  },
+  {
+   "target": "app/analysis/cycle_phase.py",
+   "label": "signo invertido al quitar la fase de la serie de la tendencia",
+   "old": "        adjusted.append(replace(obs, value=obs.value - shift) if shift else obs)",
+   "new": "        adjusted.append(replace(obs, value=obs.value + shift) if shift else obs)"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "el estado calcula la tendencia sin el desplazamiento",
+   "old": "    trends = trends_by_indicator(observations, phase_offset=cycle.offset)",
+   "new": "    trends = trends_by_indicator(observations)"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "el estado calcula la base sin el desplazamiento",
+   "old": "    deviations = engine.evaluate_rolling(observations, phase_offset=cycle.offset)",
+   "new": "    deviations = engine.evaluate_rolling(observations)"
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "la puerta se abre sin estado reproductivo «ciclo regular»",
+   "old": "    if status != REGULAR_CYCLE_STATUS:\n        return _closed(NOT_REGULAR)\n",
+   "new": ""
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "la puerta acepta 1,5 como ciclo regular",
+   "old": "    if status != REGULAR_CYCLE_STATUS:",
+   "new": "    if int(status) != REGULAR_CYCLE_STATUS:"
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "la puerta se abre sin sexo femenino declarado",
+   "old": "    if declared[\"sex\"] != FEMALE:\n        return _closed(NOT_FEMALE)\n",
+   "new": ""
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "un inicio predicho o de baja confianza abre la puerta",
+   "old": "        item for item in stored if decides(item) and not item.is_low_confidence",
+   "new": "        item for item in stored"
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "un asiento de sexo mal formado tumba el estado",
+   "old": "    except TamperedRecordError:",
+   "new": "    except ZeroDivisionError:"
+  },
+  {
+   "target": "app/api/cycle_phase.py",
+   "label": "un 0 de inicio de regla cuenta como inicio",
+   "old": "        if item.key == MENSTRUATION_START.key and item.value == cycle_phase.START_MARK",
+   "new": "        if item.key == MENSTRUATION_START.key"
+  },
+  {
+   "target": "app/validation/injection.py",
+   "label": "el ciclo entra en los deterioros de referencia",
+   "old": "    \"colapso de HRV (-30 ms SDNN)\": hrv_collapse,\n}",
+   "new": "    \"colapso de HRV (-30 ms SDNN)\": hrv_collapse,\n    \"ciclo\": lambda onset: cyclic(onset)[0],\n}"
+  },
+  {
+   "target": "app/evidence/cycle_physiology.py",
+   "label": "la parte entera de un decimal vuelve a contar como cifra escrita (el 59 de 59.98)",
+   "old": "(?![\\d]|\\.\\d)",
+   "new": "(?![\\d])"
+  }
+ ]
+}

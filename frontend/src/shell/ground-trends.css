@@ -1,0 +1,292 @@
+/*
+ * Tierra, «Tendencias», bajo la concha de la maqueta: la sección (`[data-ui="trends"]`, `.summary`,
+ * `.charts`) y el contenedor y la leyenda de cada gráfica (`TrendChart`). Lo que uPlot pinta en el
+ * lienzo no se cambia desde aquí. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que se vio (capturas del 2026-11-07, `ground-03-trends` con la concha nueva, 1672 × 941; el
+ * escenario compartido no da ni un error de carga ni lecturas de baja confianza, así que esos dos
+ * estados se miraron con marcado de muestra inyectado en la página, con las clases de los `.tsx`):
+ * la sección no es un panel, y su cabecera —el título «Tendencias», «Ventana:», los tres mandos de
+ * la ventana y la frase de cómo ampliar— flotaba a pelo sobre el fondo azul marino, alineada por la
+ * línea base, con la frase pegada al último mando; debajo, cada gráfica ya era una tarjeta de la
+ * maqueta (`figure.panel.chart`) y el mobiliario común vestía los mandos y la insignia de medido /
+ * inferido / predicho, pero por dentro seguía la consola clásica: el título del indicador suelto
+ * sobre el lienzo, sin nada que lo separase de la gráfica, y la leyenda como dos renglones de texto
+ * colgando bajo el eje, sin marco que dijera que son la clave de lo dibujado. Al lado de «Inicio»,
+ * cuya «Tendencia (24 h)» va en tarjeta con su título `.ref-h`, parecían dos interfaces.
+ *
+ * Por qué así: la cabecera de la sección toma la tarjeta de la maqueta (`.ref-card`: borde
+ * `--ref-edge`, 9 px, degradado y resplandor), con el título a la izquierda como `.ref-h` y la frase
+ * de ayuda empujada al borde derecho como `.ref-updated`; los tres mandos de la ventana, del mismo
+ * ancho, como la fila de ubicaciones (`.ref-place-row`), porque son tres opciones de una misma
+ * elección. Dentro de cada gráfica, el título del indicador pasa a `.ref-h3` sobre su filete, y la
+ * leyenda, a la tira de datos de la ruta (`.ref-stats`: el «marco», filete atenuado, 8 px, azul
+ * marino), que es lo que la maqueta hace con una fila de claves y cifras. El aviso de carga fallida
+ * (`p.panel.error`) recupera su filete rojo: `.error` lo pone con `border-left` en `styles.css`, y el
+ * `border-color` que la concha da a todo `.panel` (misma especificidad, cargado después) lo tapaba;
+ * el rojo es color con significado (F.5-1) y no se pierde. Pasa en todo `.panel.error` de la
+ * interfaz: generalizarlo en `furniture.css` es decisión de la fusión; aquí solo el de esta sección.
+ *
+ * Lo que no se toca: el lienzo de uPlot y su contenedor inmediato (`.series-chart > div`), que uPlot
+ * mide con `clientWidth` y vuelve a medir con su `ResizeObserver`: ni relleno, ni borde, ni filtro,
+ * ni mezcla, ni transformación; las curvas, los ejes, la rejilla, las bandas de precaución y la
+ * franja cian de «en tránsito» salen de `TrendChart.tsx` con los tokens de la paleta y son del lote
+ * del tema del gráfico, no de esta hoja. Tampoco los colores de la leyenda, que son los de cada
+ * serie en el lienzo y deben coincidir: el texto de «recibido en Tierra», el secundario del rango de
+ * referencia, el rojo del límite de peligro, el cian de «en tránsito» (dato aún no recibido: en
+ * Tierra casi todo lo es) y el amarillo con triángulo de la baja confianza; ni la insignia del tipo
+ * de observación, que es del mobiliario; ni el anillo con punto de la ventana elegida (`Chosen`,
+ * F.5.10 e). El marco va alrededor de la pieza y nunca detrás de una insignia. Los mandos conservan
+ * su alto táctil (`styles.css` lo fija por `[id^="ground-panel-"]`, y el mobiliario también).
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha va en
+ * `:where()`, que no cuenta, y cada regla se acota a `[data-ui="trends"]` porque `.summary`,
+ * `.chart` y `.legend` aparecen en otras secciones con otra dueña (el titular de «Estado recibido»,
+ * la comparación entre tripulantes del hábitat, la cadena de regiones de la anatomía). La cabecera
+ * y la leyenda no tenían borde en la hoja clásica: aquí nacen con el atajo y, al final, se engrosan
+ * a 2 px en baja visión y alto contraste, como hace `styles.css` con el panel. El filete rojo del
+ * error solo se devuelve en el modo normal: en baja visión `styles.css` lo pasa al color del texto
+ * secundario con más especificidad, en la concha clásica igual, y aquí no se discute.
+ */
+
+/* ---- Cabecera de la sección: la tarjeta de la maqueta, con el título a un lado y la ayuda al otro ---- */
+
+/* La fila se alinea por el centro y no por la línea base: con mandos de alto táctil al lado de un
+   título, la línea base dejaba el título hundido. El margen inferior iguala el hueco de la rejilla
+   de gráficas, para que la cabecera sea una tarjeta más del mismo ritmo. */
+:where(.app[data-look="reference"]) [data-ui="trends"] > .summary {
+  align-items: center;
+  margin-bottom: var(--gap);
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* El título, como el de un panel del mobiliario (`.ref-h`): un punto más pequeño que el `h2` clásico. */
+:where(.app[data-look="reference"]) [data-ui="trends"] > .summary > h2 {
+  margin: 0 0.3rem 0 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+/* Los tres mandos de la ventana, del mismo ancho: una sola elección con tres opciones, como la fila
+   de ubicaciones. Forma, filete y anillo de «elegido» son del mobiliario. */
+:where(.app[data-look="reference"]) [data-ui="trends"] > .summary > button.command {
+  min-width: 6.5rem;
+}
+
+/* La frase de cómo ampliar, al borde derecho de la tarjeta, como la hora de actualización de la
+   maqueta (`.ref-updated`); si la fila se parte, baja sola a su renglón. */
+:where(.app[data-look="reference"]) [data-ui="trends"] > .summary > .secondary:last-child {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+/* ---- El aviso de carga fallida conserva su filete rojo (ver la cabecera) ---- */
+
+/* Un `p` sin margen (`styles.css`) que va entre la cabecera y la rejilla: sin el hueco de la
+   rejilla debajo, su tarjeta tocaba la primera fila de gráficas. */
+:where(.app[data-look="reference"]) [data-ui="trends"] > .panel.error {
+  margin-bottom: var(--gap);
+  border-left-color: var(--c-red);
+}
+
+/* ---- Cada gráfica: el título del indicador sobre su filete; la leyenda, en el marco ---- */
+
+/* La tarjeta es la del panel (concha). El título toma `.ref-h3` con el filete de la tarjeta debajo,
+   que separa la palabra del lienzo; los títulos largos siguen partiéndose en dos líneas. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .series-chart > h3 {
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1.05rem;
+}
+
+/* La leyenda (F.5.8 d) en el marco de la tira de datos: sigue siendo una fila que se parte, con las
+   entradas centradas en su renglón para que la insignia del tipo de observación no cuelgue. El
+   color de cada entrada no cambia (ver la cabecera). */
+:where(.app[data-look="reference"]) [data-ui="trends"] .series-chart > .legend {
+  align-items: center;
+  gap: 0.3rem 1rem;
+  margin-top: 0.7rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* ---- El tablero: las gráficas en su rejilla y la tira de cifras de cada una ---- */
+
+/* Una pantalla por sección (muestra, 2026-11-08). Lo que se vio: con dos columnas y gráficas de
+   220 px, las ocho de Tierra medían ~2450 px de página (más de dos vistas y media), y cada tarjeta
+   gastaba un tercio de su alto en la tira de cifras y la leyenda a renglón ancho. La muestra pone su
+   «Tendencia (24 h)» y sus «Signos vitales» en tarjetas bajas, varias a la vista. Por eso: tres
+   columnas con el cuerpo completo (~70 rem a 1672 px), gráficas de 170 px (`TrendChart`, solo en
+   Tierra y bajo esta concha) y tarjetas de relleno corto; dos columnas en el intermedio (≤ 64 rem,
+   ~47 rem a 1300 px) y una en un cuerpo estrecho y en baja visión. El contenedor del lienzo no se
+   toca: uPlot lo mide con su `ResizeObserver`. */
+:where(.app[data-look="reference"] #ground-panel-trends) [data-ui="trends"] > .charts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+/* Quinta ronda (R5-8, 2026-11-09): con tres columnas las ocho gráficas iban en tres filas, la última
+   con dos y un hueco, y la pestaña medía 1788 px. Con el cuerpo ancho (más de 75 rem: 1672 px), cuatro
+   columnas y dos filas llenas, como las fichas en fila de la maqueta (~21 rem cada una: la tira de
+   cifras sigue en sus tres columnas). En el intermedio (una ventana de 1300 px, ~62 rem), tres en vez
+   de dos: a 20 rem cada una cabe la tira, y la pestaña no pasa de tres filas. */
+@container board (min-width: 75.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] > .charts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* A un cuarto de ancho, menos hueco entre las columnas de la tira, y la tarjeta y su título con un
+     poco menos de aire: «baja confianza» va ahí en dos renglones y la fila crecía 18 px. */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] .trend-stats {
+    column-gap: 0.45rem;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] .series-chart.panel {
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] .series-chart > h3 {
+    margin-bottom: 0.35rem;
+  }
+}
+
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"] #ground-panel-trends) [data-ui="trends"] > .charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container board (min-width: 56rem) and (max-width: 64rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] > .charts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container board (max-width: 40rem) {
+  :where(.app[data-look="reference"] #ground-panel-trends) [data-ui="trends"] > .charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"] #ground-panel-trends) [data-ui="trends"] > .charts {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* La tarjeta, con relleno corto: a un tercio de ancho el relleno del panel común comía trazo. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .series-chart.panel {
+  padding: 0.55rem 0.7rem 0.6rem;
+}
+
+/* El título del indicador un punto menor: los nombres largos del catálogo (la variabilidad de la
+   frecuencia cardiaca, el dolor en escala verbal) se parten en dos renglones, no en cuatro. El
+   dibujo del indicador va delante y el color es el del texto: neutro, como la serie. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .series-chart > h3 {
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.3rem;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+/* La tira de cifras de la ventana (`TrendChart`, `.ref-stats.trend-stats`), entre el título y el
+   lienzo, como los «Signos vitales» de la muestra: la última lectura recibida, cifra grande con su
+   unidad al lado, ocupa la izquierda en dos renglones; las otras tres o cuatro (lecturas, baja
+   confianza, mínimo, máximo) van en pequeño a su derecha, de dos en dos. Antes eran cinco casillas
+   iguales en fila que a un tercio de ancho se partían en tres renglones. La cifra nunca se recorta
+   ni se parte: si no cabe, la unidad baja de renglón. La clase `.ref-stats` trae reglas de la tira de
+   ruta de «Inicio» (rejilla de cinco columnas, recorte con puntos suspensivos): aquí se anulan. El
+   color de cada casilla no se toca: el cian del dato ausente y el amarillo con triángulo de las
+   lecturas dudosas son los de su marca, y la cursiva del caducado se hereda. Rótulos y cifras al
+   suelo de letra del proyecto (0,875 rem; antes 0,72 y 0,85): a un tercio de ancho, en 1672 y 1300 px,
+   «baja confianza» sigue en un renglón. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 1.15fr) repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.15rem 0.6rem;
+  margin: 0 0 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-color: color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats > div {
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats > div:first-child {
+  grid-row: span 2;
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats dt {
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Quinta ronda (R5-8): a un cuarto de ancho (1672 px) y a un tercio en el intermedio (1300 px),
+   «baja confianza» no cabía en un renglón y salía 7-11 px de su casilla; ahí se parte en dos. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats > div:nth-child(n + 2) > dt {
+  white-space: normal;
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats dd {
+  overflow: visible;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: normal;
+  text-overflow: clip;
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats dd .num {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* La cifra principal: grande, con la unidad en su tamaño de lectura al lado. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats > div:first-child dd {
+  font-size: 0.9rem;
+}
+
+:where(.app[data-look="reference"]) [data-ui="trends"] .trend-stats > div:first-child dd .num {
+  font-size: 1.75em;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* La leyenda (F.5.8 d), compacta: poco relleno, porque se repite en cada tarjeta;
+   ninguna entrada se pliega (el cian de «en tránsito» explica la franja de dato aún no recibido, y
+   el rojo, la línea de peligro) y ninguna cambia de color. Letra al suelo del proyecto (0,875 rem;
+   antes 0,75): cada entrada sigue en su renglón. */
+:where(.app[data-look="reference"]) [data-ui="trends"] .series-chart > .legend {
+  gap: 0.1rem 0.7rem;
+  margin-top: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los marcos que nacen en esta hoja se engrosan a 2 px como el del panel en `styles.css`, y en baja
+   visión pasan al color del texto secundario. Van al final para ganar por orden con la misma
+   especificidad que las reglas de arriba. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is([data-ui="trends"] > .summary, [data-ui="trends"] .series-chart > .legend, [data-ui="trends"] .trend-stats) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is([data-ui="trends"] > .summary, [data-ui="trends"] .series-chart > .legend, [data-ui="trends"] .trend-stats) {
+  border-color: var(--c-text-secondary);
+}

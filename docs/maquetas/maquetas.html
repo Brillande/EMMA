@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Maquetas EMMA</title>
+<!--
+  Maquetas de las pestañas de EMMA con el estilo de la maqueta de «Inicio» (2026-11-14).
+  Son imágenes de concepto: las cifras son de ejemplo y no salen del backend. Cada pestaña se
+  abre con su ancla (#hazards, #routines…) y `capturar.ps1` las saca a PNG a 1672×941.
+-->
+<style>
+:root{
+  --bg:#050d1b; --pn:rgba(9,27,50,.78); --pn2:rgba(13,38,66,.85); --ln:#1d5f88; --ln2:#2a87b8;
+  --tx:#e8f2ff; --tx2:#a9c0d8; --tx3:#7f97b2; --cy:#36d6ff; --ok:#3fd47e; --am:#f6b931; --rd:#ff4a4a;
+  --R:#8f5cf7; --I:#2f86e6; --D:#17b6a4; --G:#e2a21b; --E:#43c24c; --mg:#e45bd0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1672px;height:941px;overflow:hidden}
+body{font-family:"Segoe UI",system-ui,sans-serif;color:var(--tx);font-size:14px;
+  background:
+    radial-gradient(1px 1px at 12% 22%,#fff8,transparent 60%),radial-gradient(1px 1px at 33% 71%,#fff6,transparent 60%),
+    radial-gradient(1px 1px at 58% 12%,#fff7,transparent 60%),radial-gradient(1.5px 1.5px at 78% 64%,#fff5,transparent 60%),
+    radial-gradient(1px 1px at 91% 31%,#fff8,transparent 60%),radial-gradient(1px 1px at 46% 88%,#fff5,transparent 60%),
+    radial-gradient(1200px 700px at 70% -10%,#0d2a4d 0%,transparent 60%),
+    radial-gradient(900px 600px at 100% 100%,#0a2340 0%,transparent 60%),var(--bg);}
+.app{display:grid;grid-template-columns:276px 1fr;grid-template-rows:62px 1fr;height:941px}
+/* cabecera */
+.hd{grid-column:1/3;display:flex;align-items:center;gap:18px;padding:0 18px 0 16px;border-bottom:1px solid #12395a;
+  background:linear-gradient(180deg,#081a31,#06142a)}
+.logo{display:flex;align-items:center;gap:10px;width:254px}
+.logo svg{filter:drop-shadow(0 0 6px #36d6ff)}
+.logo b{font-family:Bahnschrift,"Segoe UI";font-size:27px;letter-spacing:1px;line-height:1;display:block}
+.logo small{display:block;font-size:11px;line-height:1.1;color:#dbe8f7}
+.tag{border-left:2px solid #2a6f9a;padding-left:18px;font-size:19px;color:#cfe0f3;flex:1;white-space:nowrap}
+.hd .ic{opacity:.95}
+.badge{position:relative}.badge i{position:absolute;top:-6px;right:-7px;background:var(--rd);color:#fff;font:700 11px "Segoe UI";
+  border-radius:9px;padding:0 5px;font-style:normal}
+.who{border:1.5px solid #4a7aa3;border-radius:18px;padding:4px 14px;display:flex;gap:8px;align-items:center;font-size:16px}
+.console-sw{display:flex;border:1px solid #2a6f9a;border-radius:16px;overflow:hidden;font-size:13px}
+.console-sw span{padding:5px 12px;color:var(--tx2)}.console-sw .on{background:#11507a;color:#fff}
+/* carril */
+.rail{position:relative;padding:14px 12px 0;overflow:hidden;border-right:1px solid #10304d;
+  background:linear-gradient(180deg,#071630 0%,#061226 100%)}
+.rail a{display:flex;align-items:center;gap:14px;padding:11px 14px;font-size:17.5px;color:#e3eefb;
+  border-bottom:1px solid #10304d;text-decoration:none;position:relative;z-index:2}
+.rail a.on{background:linear-gradient(90deg,#127a94,#0e5876);border-radius:8px;border:1px solid #2bb6d8;
+  box-shadow:0 0 14px #1fb5e066 inset,0 0 10px #1590c055}
+.rail a .ic{width:24px;height:24px}
+.rail .grp{font-size:11.5px;letter-spacing:.12em;color:var(--tx3);padding:12px 14px 4px;text-transform:uppercase}
+.earth{position:absolute;left:-210px;bottom:-330px;width:620px;height:620px;border-radius:50%;z-index:1;
+  background:radial-gradient(circle at 62% 30%,#2a6fb3 0%,#123e74 30%,#0a2347 55%,#051327 75%);
+  box-shadow:0 0 50px 12px #2f8fe066,inset -30px 30px 80px #6fc6ff33}
+.earth::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(2px 2px at 55% 40%,#ffd27a,transparent),radial-gradient(2px 2px at 60% 46%,#ffcf6e,transparent),
+  radial-gradient(1.5px 1.5px at 66% 38%,#ffd88a,transparent),radial-gradient(2px 2px at 70% 52%,#ffcb66,transparent),
+  radial-gradient(1.5px 1.5px at 52% 55%,#ffd27a,transparent),radial-gradient(2px 2px at 74% 44%,#ffcf6e,transparent),
+  radial-gradient(1.5px 1.5px at 63% 60%,#ffd88a,transparent),radial-gradient(1.5px 1.5px at 48% 47%,#ffd27a,transparent)}
+.mission{position:absolute;left:14px;right:14px;bottom:16px;z-index:3;font-size:12.5px;color:#cfe0f3;
+  background:#061529cc;border:1px solid #1d5f88;border-radius:10px;padding:9px 12px;line-height:1.45}
+.mission b{color:#fff}
+/* principal */
+.main{padding:12px 14px 12px 12px;display:grid;gap:10px;overflow:hidden;min-height:0}
+.bar{display:flex;align-items:center;gap:14px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;
+  padding:8px 14px;box-shadow:0 0 12px #1ea7e022 inset}
+.bar h1{font-size:21px;font-weight:600;display:flex;align-items:center;gap:10px}
+.bar .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #2a6f9a;border-radius:14px;padding:3px 11px;font-size:13px;color:#d7e7f8;background:#0a2140}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--ok);box-shadow:0 0 6px currentColor}
+.grid{display:grid;gap:10px;min-height:0}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:9px 12px 10px;min-height:0;overflow:hidden;
+  box-shadow:0 0 0 1px #0b2f4a inset,0 0 16px #1aa6e01c inset,0 0 8px #0a6fa022;display:flex;flex-direction:column;gap:7px}
+.pn>h3{font-size:16.5px;font-weight:600;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.pn>h3 .sp{flex:1}.pn>h3 small{font-weight:400;color:var(--tx2);font-size:12.5px}
+.pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px}
+.in{background:var(--pn2);border:1px solid #1a5279;border-radius:8px;padding:8px 10px}
+.row{display:flex;align-items:center;gap:10px}.row .sp{flex:1}
+.col{display:flex;flex-direction:column;gap:6px}
+.t2{color:var(--tx2)}.t3{color:var(--tx3);font-size:12.5px}.sm{font-size:12.5px}.xs{font-size:11.5px}
+.big{font-family:Bahnschrift,"Segoe UI";font-size:34px;line-height:1}
+.mid{font-family:Bahnschrift,"Segoe UI";font-size:22px;line-height:1}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #2f86b8;border-radius:7px;padding:4px 11px;font-size:13px;
+  background:linear-gradient(180deg,#0f3a5e,#0b2b48);color:#e8f4ff;white-space:nowrap}
+.btn.pri{background:linear-gradient(180deg,#1689ad,#0f6688);border-color:#38c5ea}
+.btn.lnk{border:none;background:none;color:var(--cy);padding:0}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:11px;padding:1px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.p-ok{background:#1f9c55;color:#fff}.p-am{background:#f6b931;color:#1a1300}.p-rd{background:#e23b3b;color:#fff}
+.p-ne{background:#173d60;color:#d7e7f8;border:1px solid #2a6f9a;font-weight:500}.p-gy{background:#3a4656;color:#d0d8e2}
+.p-cy{background:#0b4a5e;color:#8fe9ff;border:1px solid #2bb6d8}.p-mg{background:#5a1d55;color:#ffc6f4;border:1px solid var(--mg)}
+.lv{display:flex;align-items:center;gap:12px;border-radius:9px;padding:9px 12px;border:1.5px solid}
+.lv.ok{background:linear-gradient(90deg,#0f5a37,#0c4a2e);border-color:#3fd47e}
+.lv.am{background:linear-gradient(90deg,#5a4307,#3d2e07);border-color:#f6b931}
+.lv.rd{background:linear-gradient(90deg,#5d1414,#3f0d0d);border-color:#ff4a4a}
+.lv b{font-family:Bahnschrift;font-size:26px;letter-spacing:.5px}
+.ridge{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;font:700 17px Bahnschrift;color:#fff;flex:none}
+.R{background:var(--R)}.I{background:var(--I)}.D{background:var(--D)}.G{background:var(--G)}.E{background:var(--E)}
+.ridgec{border-radius:10px;padding:9px 11px;border:1.5px solid;display:flex;flex-direction:column;gap:6px}
+.ridgec.R{background:linear-gradient(160deg,#3b2470,#24164a);border-color:var(--R)}
+.ridgec.I{background:linear-gradient(160deg,#14365e,#0d2442);border-color:var(--I)}
+.ridgec.D{background:linear-gradient(160deg,#0f4a48,#0a3030);border-color:var(--D)}
+.ridgec.G{background:linear-gradient(160deg,#55400c,#352707);border-color:var(--G)}
+.ridgec.E{background:linear-gradient(160deg,#1f4d16,#13310e);border-color:var(--E)}
+.meter{height:8px;border-radius:5px;background:#0d2a46;overflow:hidden;border:1px solid #16466c}
+.meter i{display:block;height:100%;border-radius:5px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{color:var(--tx3);font-weight:500;text-align:left;padding:3px 6px;border-bottom:1px solid #1a4a70;font-size:12px}
+td{padding:4.5px 6px;border-bottom:1px solid #12385a}
+.mono{font-family:Consolas,monospace;font-size:12px;color:#9fd8ff}
+.ck{width:16px;height:16px;border:1.5px solid #6c8fb0;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ck.on{background:var(--ok);border-color:var(--ok)}
+.filete{border-left:4px solid}
+.tabsm{display:flex;gap:4px}.tabsm span{border:1px solid #2a6f9a;border-radius:6px;padding:2px 10px;font-size:12.5px;color:var(--tx2)}
+.tabsm span.on{background:#11507a;color:#fff;border-color:#38c5ea}
+.ph{border-radius:8px;border:1px solid #1a5279;position:relative;overflow:hidden;background:#020812}
+.foot{font-size:11.5px;color:var(--tx3)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}.kv span:nth-child(odd){color:var(--tx2)}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+/* ---------- iconos de línea ---------- */
+const P={
+ home:'M3 11 12 4l9 7M5 10v10h5v-6h4v6h5V10',
+ alert:'M12 3 2 20h20L12 3zM12 10v5M12 17.5v.5',
+ list:'M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1',
+ body:'M12 3.5a2 2 0 1 1 0 .1M7 9h10M12 8v7M9 21l3-6 3 6M7 9l-2 6M17 9l2 6',
+ globe:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+ sensor:'M4 12h3l2-5 4 10 2-5h5',
+ book:'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5zM4 19a2 2 0 0 1 2-2h13',
+ image:'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6M15.5 8.5a1 1 0 1 0 0 .1',
+ cal:'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5',
+ lib:'M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-1 3 15-3.5 1z',
+ inbox:'M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z',
+ hist:'M12 7v5l3 2M3.5 12a8.5 8.5 0 1 0 2.5-6M3 4v4h4',
+ trend:'M3 17l6-6 4 4 8-8M15 7h6v6',
+ chart:'M4 20V10M10 20V4M16 20v-7M21 20H3',
+ hab:'M3 12a9 5 0 0 0 18 0 9 5 0 0 0-18 0M7 12h10M12 7v10',
+ frame:'M12 3 3 8l9 5 9-5zM3 13l9 5 9-5',
+ ledger:'M7 3h10v18H7zM10 7h4M10 11h4M10 15h4M4 6h3M4 18h3M17 6h3M17 18h3',
+ bell:'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20h4',
+ help:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7M12 16.5v.5',
+ wifi:'M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5v.1',
+ user:'M12 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM4 21a8 8 0 0 1 16 0',
+ heart:'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z',
+ rad:'M12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M12 3a9 9 0 0 1 7.8 4.5L13.7 11M4.2 7.5A9 9 0 0 1 12 3M4.2 16.5 10.3 13M19.8 16.5 13.7 13M12 21v-7',
+ shield:'M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z',
+ check:'M5 12l4 4 10-10',
+ clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v5l3 2',
+ link:'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+ drop:'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z',
+ thermo:'M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0z',
+ lungs:'M12 4v8M12 10c-2 0-3-2-5-2-2 0-3 4-3 8 0 2 1 4 3 4s5-2 5-6M12 10c2 0 3-2 5-2 2 0 3 4 3 8 0 2-1 4-3 4s-5-2-5-6',
+ doc:'M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7',
+ cube:'M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12 4 7.5',
+ msg:'M4 5h16v11H9l-5 4z',
+ search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l5 5',
+ brain:'M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a3 3 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1',
+ food:'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 2-2 7 0 9v9',
+ bt:'M7 7l10 10-5 4V3l5 4L7 17',
+ sat:'M4 14l6 6M7 11l6 6M10 8l6 6 4-4-6-6zM2 20l3-3',
+ lock:'M6 11h12v10H6zM8 11V8a4 4 0 0 1 8 0v3',
+ down:'M6 9l6 6 6-6',
+ right:'M9 6l6 6-6 6',
+ plus:'M12 5v14M5 12h14',
+ moon:'M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10z',
+ send:'M3 11 21 3l-8 18-2-8z',
+ printer:'M7 8V3h10v5M5 8h14v8H5zM7 14h10v7H7z',
+ star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
+ eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6'
+};
+const ic=(n,c='#7fdcff',s=20,w=1.8)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"><path d="${P[n]}"/></svg>`;
+
+/* ---------- utilidades ---------- */
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+function spark(w,h,c,{base=.5,amp=.35,n=60,wave=0,fill=false,band=null,s=3}={}){
+  seed=s*977+11;let pts=[];for(let i=0;i<n;i++){const x=i/(n-1)*w;
+   let v=base+(wave?Math.sin(i/n*Math.PI*2*wave)*amp*.6:0)+(rnd()-.5)*amp;v=Math.max(.05,Math.min(.95,v));pts.push([x,h-v*h]);}
+  const d=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;overflow:visible;max-width:${w}px">
+   ${band?`<rect x="0" y="${h-band[1]*h}" width="${w}" height="${(band[1]-band[0])*h}" fill="#36d6ff" opacity=".10"/>`:''}
+   ${fill?`<polygon points="0,${h} ${d} ${w},${h}" fill="${c}" opacity=".16"/>`:''}
+   <polyline points="${d}" fill="none" stroke="${c}" stroke-width="1.8" vector-effect="non-scaling-stroke" style="filter:drop-shadow(0 0 3px ${c})"/></svg>`;
+}
+function axes(w,h,ylab,xlab){let g='';ylab.forEach((t,i)=>{const y=i/(ylab.length-1)*h;
+  g+=`<line x1="30" x2="${w}" y1="${y}" y2="${y}" stroke="#1b4b72" stroke-dasharray="2 4"/><text x="0" y="${y+4}" fill="#9fb6cf" font-size="11">${t}</text>`});
+  xlab.forEach((t,i)=>{const x=30+i/(xlab.length-1)*(w-50);g+=`<text x="${x}" y="${h+15}" fill="#9fb6cf" font-size="11">${t}</text>`});return g;}
+function chart(w,h,series,ylab,xlab,opt={}){
+  let s='';series.forEach((sr,k)=>{seed=sr.s*991+3;const n=sr.n||70;let d='';
+   for(let i=0;i<n;i++){const x=30+i/(n-1)*(w-34);let v=sr.base+(sr.slope||0)*i/n+(rnd()-.5)*sr.amp+(sr.wave?Math.sin(i/4)*sr.wave:0);
+    d+=`${x.toFixed(1)},${(h-v*h).toFixed(1)} `;}
+   s+=`<polyline points="${d}" fill="none" stroke="${sr.c}" stroke-width="1.8" ${sr.dash?'stroke-dasharray="5 4"':''} style="filter:drop-shadow(0 0 3px ${sr.c})"/>`});
+  const band=opt.band?`<rect x="30" y="${h-opt.band[1]*h}" width="${w-34}" height="${(opt.band[1]-opt.band[0])*h}" fill="#3fd47e" opacity=".10" stroke="#3fd47e55" stroke-dasharray="3 3"/>`:'';
+  const mark=opt.mark?`<line x1="${opt.mark*w}" x2="${opt.mark*w}" y1="0" y2="${h}" stroke="#f6b931" stroke-dasharray="4 3"/><text x="${opt.mark*w+4}" y="11" fill="#f6b931" font-size="11">${opt.markt||''}</text>`:'';
+  return `<svg width="${w}" height="${h+18}" style="display:block;overflow:visible">${axes(w,h,ylab,xlab)}${band}${mark}${s}</svg>`;
+}
+const meter=(p,c)=>`<div class="meter"><i style="width:${p}%;background:${c};box-shadow:0 0 6px ${c}"></i></div>`;
+const ring=(v,max,c,size=96,lab='')=>{const r=size/2-8,C=2*Math.PI*r,f=v/max;return `<svg width="${size}" height="${size}">
+ <circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="#123a5c" stroke-width="9" fill="none"/>
+ <circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"
+  stroke-dasharray="${C*f} ${C}" transform="rotate(-90 ${size/2} ${size/2})" style="filter:drop-shadow(0 0 5px ${c})"/>
+ <text x="50%" y="48%" text-anchor="middle" fill="#fff" font-family="Bahnschrift" font-size="${size*.27}">${lab||v}</text>
+ <text x="50%" y="66%" text-anchor="middle" fill="#9fb6cf" font-size="11">/ ${max}</text></svg>`};
+const pn=(area,icon,title,body,{extra='',cls='',c='#7fdcff'}={})=>
+ `<section class="pn ${cls}" style="grid-area:${area}"><h3>${ic(icon,c,20)} ${title}<span class="sp"></span>${extra}</h3><div class="pb">${body}</div></section>`;
+const ck=(on,t,m='')=>`<div class="row sm"><span class="ck ${on?'on':''}">${on?ic('check','#fff',12,3):''}</span><span>${t}</span><span class="sp"></span><span class="t3">${m}</span></div>`;
+const lvl={ok:['p-ok','Normal'],am:['p-am','Precaución'],rd:['p-rd','Alerta'],gy:['p-gy','No disponible'],cy:['p-cy','Caducado']};
+const L=(k,t)=>`<span class="pill ${lvl[k][0]}">${t||lvl[k][1]}</span>`;
+
+/* ---------- figura holográfica (dibujo, no dato) ---------- */
+function figure(h=330,mark=null){
+ return `<svg width="${h*.5}" height="${h}" viewBox="0 0 100 200" style="filter:drop-shadow(0 0 8px #36a8ff)">
+ <defs><radialGradient id="th" cx="50%" cy="34%" r="60%"><stop offset="0" stop-color="#ff2a1a"/><stop offset=".16" stop-color="#ffb21a"/>
+  <stop offset=".32" stop-color="#d8ff2a"/><stop offset=".5" stop-color="#2aff9a"/><stop offset=".72" stop-color="#1aa8ff"/><stop offset="1" stop-color="#1a4dff"/></radialGradient>
+  <linearGradient id="lg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2affb0"/><stop offset=".5" stop-color="#1ab4ff"/><stop offset="1" stop-color="#1a50ff"/></linearGradient></defs>
+ <g stroke="#9fe8ff" stroke-width=".6" stroke-opacity=".7">
+ <ellipse cx="50" cy="15" rx="8.5" ry="10.5" fill="url(#lg)"/>
+ <path d="M45 24h10l1 6 14 4c4 1 5 4 5.5 8l4 30 3 22-5 1-6-24-3-16-1 26 2 34 1 44h-12l-4-46-1-12-1 12-4 46H33l1-44 2-34-1-26-3 16-6 24-5-1 3-22 4-30c.5-4 1.5-7 5.5-8l14-4z" fill="url(#th)"/>
+ </g>
+ <g stroke="#cff6ff" stroke-opacity=".35" stroke-width=".5" fill="none"><path d="M50 30v62M40 44c5 3 15 3 20 0M38 60h24M40 74h20M41 100l-2 50M59 100l2 50"/></g>
+ ${mark?`<circle cx="${mark[0]}" cy="${mark[1]}" r="6" fill="none" stroke="#3fd47e" stroke-width="1.6"/><circle cx="${mark[0]}" cy="${mark[1]}" r="2" fill="#3fd47e"/>`:''}
+ </svg>`;
+}
+
+/* ---------- concha ---------- */
+const CREW=[['home','home','Inicio'],['hazards','alert','Peligros y alertas'],['routines','list','Rutinas y notas'],['body','body','Cuerpo'],
+ ['mission','globe','Misión y hábitat'],['data','sensor','Calidad y sensores'],['log','book','Diario y pruebas'],['imaging','image','Imagen e informes'],
+ ['planner','cal','Planificador'],['library','lib','Biblioteca']];
+const GROUND=[['received','inbox','Estado recibido'],['history','hist','Historial'],['trends','trend','Tendencias'],['ghabitat','hab','Hábitat'],
+ ['framework','frame','Marco y fuentes'],['ledger','ledger','Registro y documentos'],['glibrary','lib','Biblioteca']];
+
+function shell(key,tab){
+ const ground=GROUND.some(g=>g[0]===key);const list=ground?GROUND:CREW;
+ return `<header class="hd"><div class="logo">
+   <svg width="62" height="46" viewBox="0 0 62 46"><ellipse cx="31" cy="23" rx="28" ry="19" fill="none" stroke="#36d6ff" stroke-width="2.4"/>
+   <path d="M6 24h12l4-9 5 17 5-22 4 14h20" fill="none" stroke="#7fe9ff" stroke-width="2.2"/></svg>
+   <div><b>EMMA</b><small>Environment and Medical<br>Monitoring Assistant</small></div></div>
+  <div class="tag">${ground?'Consola de Tierra · Seguimiento con el retardo de la señal':'Monitorización · Prevención · Rendimiento · Salud de la Tripulación'}</div>
+  <div class="console-sw"><span class="${ground?'':'on'}">A bordo</span><span class="${ground?'on':''}">Tierra</span></div>
+  ${ic('wifi','#e8f2ff',26)}<span class="badge">${ic('bell','#f6b931',26)}<i>${ground?2:1}</i></span>${ic('help','#e8f2ff',26)}
+  <div class="who">${ic('user','#e8f2ff',18)} ${ground?'Cirujano de vuelo':'C-01'}</div></header>
+ <nav class="rail">${ground?'<div class="grp">Consola de Tierra</div>':''}
+  ${list.map(([k,i,l])=>`<a class="${k===key?'on':''}">${ic(i,k===key?'#ffffff':'#8fd8ff',24)}<span>${l}</span></a>`).join('')}
+  <div class="earth"></div>
+  <div class="mission"><b>Entorno: ISS · LEO</b><br>Día de misión 134 · Expedición 74<br>${ground?'Señal ida: <b>0,0 s</b> (sin retardo en LEO)':'Último enlace con Tierra: hace 6 min'}</div>
+ </nav>
+ <main class="main" style="grid-template-rows:auto 1fr">
+  <div class="bar"><h1>${ic(tab.icon,'#36d6ff',24)} ${tab.title}</h1><span class="t2 sm">${tab.sub||''}</span><span class="sp"></span>${tab.chips||''}
+   <span class="chip"><span class="dot"></span> Última actualización: hace 1 min</span></div>
+  <div class="grid" style='grid-template-columns:${tab.cols};grid-template-rows:${tab.rows};grid-template-areas:${tab.areas}'>${tab.body()}</div>
+ </main>`;
+}
+
+/* ---------- pestañas de a bordo ---------- */
+const T={};
+T.hazards={icon:'alert',title:'Peligros y alertas',sub:'RIDGE · NASA-STD-3001',
+ chips:'<span class="chip">Tripulante: <b>C-01</b></span>',
+ cols:'1.25fr 1fr 1fr',rows:'auto auto 1fr',areas:'"sum sum tiles" "cards cards cards" "alerts recs recs"',
+ body:()=>pn('sum','shield','Resumen',`<div class="row" style="gap:16px">
+   <div class="lv am" style="min-width:250px">${ic('alert','#f6b931',40,2.2)}<div><b>PRECAUCIÓN</b><div class="sm">2 dominios fuera de lo nominal</div></div></div>
+   <div class="col" style="flex:1"><div class="sm">Dosis diaria por encima de lo habitual tras el aumento de flujo de protones; vigilancia del sueño por fragmentación de 3 noches.</div>
+   <div class="row xs t2">Dominios por nivel:
+    <span class="pill p-ok">9 normal</span><span class="pill p-am">2 precaución</span><span class="pill p-rd">0 alerta</span><span class="pill p-gy">1 no disponible</span></div>
+   <div style="display:flex;height:9px;border-radius:5px;overflow:hidden;gap:2px">${'ok,ok,ok,am,ok,ok,am,ok,ok,ok,gy,ok'.split(',').map(k=>`<i style="flex:1;background:${{ok:'#3fd47e',am:'#f6b931',gy:'#5c6878'}[k]}"></i>`).join('')}</div></div></div>`,{c:'#3fd47e'})
+ +pn('tiles','chart','Ahora',`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+   ${[['Alertas activas','2','#f6b931'],['Sin reconocer','1','#ff6a6a'],['Seguimientos abiertos','3','#36d6ff'],['Silenciadas','0','#a9c0d8']].map(([t,v,c])=>
+   `<div class="in"><div class="t3">${t}</div><div class="big" style="color:${c};font-size:30px">${v}</div></div>`).join('')}</div>`)
+ +pn('cards','rad','Peligros RIDGE',`<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+   ${[['R','Radiación','am','0,65 mSv/día','Q medio medido · DosTel','Flujo de protones ≥ 10 MeV en aumento'],
+      ['I','Inmunidad','ok','Sin cambios','Línea base · 21 días','Cortisol salival dentro de rango'],
+      ['D','Desempeño','am','PVT +18 ms','Mediana frente a línea base','Lapsos 2 → 5 en la última semana'],
+      ['G','Gravedad','ok','−0,4 %/mes','Densidad ósea estimada','Ejercicio ARED cumplido 6/7 días'],
+      ['E','Entorno','ok','CO₂ 2,9 mmHg','Módulo Columbus','Ruido 58 dBA · HR 41 %']].map(([k,n,l,v,s,r])=>
+   `<div class="ridgec ${k}"><div class="row"><span class="ridge ${k}">${k}</span><b style="font-size:16px">${n}</b><span class="sp"></span>${L(l)}</div>
+    <div class="mid">${v}</div><div class="t3">${s}</div>${spark(220,30,l==='am'?'#f6b931':'#3fd47e',{s:k.charCodeAt(0),amp:.4})}<div class="xs t2">${r}</div></div>`).join('')}</div>`)
+ +pn('alerts','bell','Alertas activas',`
+   <div class="row xs"><span class="pill p-ne">2 activas</span><span class="pill p-ne">1 sin reconocer</span><span class="pill p-ne">0 silenciadas</span></div>
+   ${[['am','R · Radiación','Hoy 07:42','Dosis diaria 0,65 mSv sobre 0,42 de referencia personal',false],
+      ['am','D · Desempeño','Ayer 22:10','Tiempo de reacción del PVT por encima de la línea base 3 días seguidos',true]].map(([l,d,t,m,ok])=>
+   `<div class="in filete" style="border-left-color:var(--am)"><div class="row">${L(l)}<b>${d}</b><span class="sp"></span><span class="t3">${t}</span></div>
+    <div class="sm" style="margin:5px 0">${m}</div><div class="row">${ok?'<span class="pill p-ne">Reconocida · C-01</span>':'<span class="btn pri">Reconocer</span>'}<span class="btn">Silenciar 1 h</span><span class="btn lnk">Ver motivo ›</span></div></div>`).join('')}
+   <div class="t3">Cada reconocimiento queda firmado en el registro con el tripulante en consola.</div>`,{c:'#f6b931'})
+ +pn('recs','check','Qué hacer',`<div class="row xs"><span class="pill p-ne">${ic('check','#7fdcff',13)} 3 recomendaciones</span><span class="pill p-ne">${ic('clock','#7fdcff',13)} 3 seguimientos abiertos</span></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
+   ${[['Considerar el refugio en el módulo con más blindaje durante el pico previsto','R','HRP · Riesgo de radiación','Evidencia: magnitud documentada'],
+      ['Valorar adelantar el periodo de sueño 30 min y reducir luz azul antes de dormir','D','HRP · Sueño y ritmos','Evidencia: sentido documentado'],
+      ['Repetir el PVT de 3 min mañana a la misma hora para confirmar la tendencia','D','Protocolo PVT-B','Evidencia: magnitud documentada']].map(([t,k,src,ev])=>
+   `<div class="in filete" style="border-left-color:var(--mg);display:flex;flex-direction:column;gap:6px"><div class="row"><span class="ridge ${k}" style="width:24px;height:24px;font-size:14px">${k}</span><span class="pill p-mg">Propuesta automática</span></div>
+    <div class="sm">${t}</div><div class="t3">${src} · ${ev}</div><div class="row" style="margin-top:auto"><span class="btn pri">Adoptar</span><span class="btn">Declinar</span></div></div>`).join('')}</div>
+   <div class="t3">Apoyo a la decisión: la tripulación y el cirujano de vuelo deciden.</div>`,{c:'#3fd47e'})};
+
+T.routines={icon:'list',title:'Rutinas y notas',sub:'Lo que toca hoy y esta semana',
+ cols:'1.2fr 1fr 1fr',rows:'auto 1fr 1fr',areas:'"week week week" "rout wait follow" "rout ground ground"',
+ body:()=>pn('week','cal','Esta semana',`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
+   ${[['Lun 10','PVT · Diario',0],['Mar 11','Cortisol salival',0],['Mié 12','Ecografía ocular',0],['Jue 13','PVT · Peso',0],['Vie 14','Hoy',1],['Sáb 15','Batería cognitiva',0],['Dom 16','Descanso',0]].map(([d,t,on])=>
+   `<div class="in" style="${on?'border-color:#38c5ea;box-shadow:0 0 12px #36d6ff55 inset':''}"><div class="sm"><b>${d}</b></div><div class="t3">${t}</div>
+    <div style="display:flex;gap:3px;margin-top:6px">${[...Array(on?3:2)].map((_,i)=>`<i style="height:5px;flex:1;border-radius:3px;background:${['#8f5cf7','#17b6a4','#2f86e6'][i]}"></i>`).join('')}</div></div>`).join('')}</div>`)
+ +pn('rout','check','Rutinas de hoy',`
+   ${ck(1,'Diario de la mañana','07:30')}${ck(1,'Peso corporal (masa corporal en microgravedad)','07:45')}${ck(1,'Ejercicio resistivo ARED · 60 min','09:00')}
+   ${ck(0,'PVT de 3 minutos','13:00')}${ck(0,'Muestra de saliva · cortisol','16:00')}${ck(0,'Cicloergómetro CEVIS · 30 min','17:30')}${ck(0,'Escala de sueño y somnolencia','21:30')}
+   <div class="in"><div class="row sm"><span>Cumplido hoy</span><span class="sp"></span><b>3 / 7</b></div>${meter(43,'#36d6ff')}</div>
+   <div class="in"><div class="row sm"><span>Racha de ejercicio</span><span class="sp"></span><b>12 días</b></div>${meter(86,'#3fd47e')}</div>`,{c:'#3fd47e'})
+ +pn('wait','clock','Esperando',`
+   ${[['Cortisol salival','Muestra pendiente de análisis','am'],['Ecografía ocular','Medida guiada programada','ne'],['Analítica de sangre','Llega con el próximo carguero','gy']].map(([t,s,k])=>
+   `<div class="in row"><div class="col" style="gap:2px"><b class="sm">${t}</b><span class="t3">${s}</span></div><span class="sp"></span>${k==='gy'?L('gy'):k==='am'?'<span class="pill p-ne">16:00</span>':'<span class="pill p-ne">Mié</span>'}</div>`).join('')}`)
+ +pn('follow','link','Seguimientos',`
+   ${[['Refugio durante el pico de protones','Adoptada · 13 nov','Abierto'],['Higiene de sueño','Adoptada · 11 nov','Abierto'],['Hidratación tras ejercicio','Adoptada · 6 nov','Revisar']].map(([t,s,e])=>
+   `<div class="in row"><div class="col" style="gap:2px"><b class="sm">${t}</b><span class="t3">${s}</span></div><span class="sp"></span><span class="pill p-ne">${e}</span><span class="btn">Cerrar</span></div>`).join('')}`)
+ +pn('ground','msg','Notas de Tierra',`
+   ${[['Cirujano de vuelo','Hoy 08:12','Recibido el PVT de ayer. Seguimos la tendencia contigo mañana; sin cambios en el plan.'],
+      ['Psicología operacional','Ayer 18:40','Llamada familiar confirmada para el sábado a las 19:00 (hora de la estación).']].map(([w,t,m])=>
+   `<div class="in"><div class="row sm"><b>${w}</b><span class="t3">· para C-01</span><span class="sp"></span><span class="t3">${t}</span>${ic('lock','#3fd47e',14)}<span class="xs" style="color:#3fd47e">firmada</span></div><div class="sm t2" style="margin-top:4px">${m}</div></div>`).join('')}`)};
+
+T.body={icon:'body',title:'Cuerpo',sub:'Dominios, predicciones y modo anatómico',
+ cols:'1fr 1fr 1.25fr',rows:'1fr 1fr',areas:'"dom dom anat" "pred inf anat"',
+ body:()=>pn('dom','heart','Dominios',`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+   ${[['Cardiovascular','ok','FC reposo 58 bpm'],['Respiratorio','ok','FR 15 rpm'],['Sueño','am','Eficiencia 81 %'],['Musculoesquelético','ok','Fuerza −2 %'],
+      ['Hueso','ok','−0,4 %/mes'],['Visión (SANS)','gy','Sin medida reciente'],['Inmunidad','ok','Cortisol normal'],['Ánimo','ok','Escala 7/10'],
+      ['Cognición','am','PVT +18 ms'],['Nutrición','ok','2 650 kcal/día'],['Termorregulación','ok','36,7 °C'],['Hidratación','ok','Orina 1,6 L']].map(([n,l,v])=>
+   `<div class="in col" style="gap:3px"><div class="row"><b class="sm">${n}</b><span class="sp"></span><span class="dot" style="background:${{ok:'#3fd47e',am:'#f6b931',gy:'#5c6878'}[l]};color:${{ok:'#3fd47e',am:'#f6b931',gy:'#5c6878'}[l]}"></span></div>
+    <span class="t3">${v}</span>${l==='gy'?L('gy'):spark(150,20,l==='am'?'#f6b931':'#36d6ff',{s:n.length,amp:.5})}</div>`).join('')}</div>`,{c:'#ff6a6a'})
+ +pn('pred','trend','Predicciones',`<div class="t3">Solo las que preocupan · horizonte 14 días</div>
+   <div class="in"><div class="row"><b class="sm">Eficiencia de sueño</b><span class="sp"></span>${L('am','Tendencia ↓')}</div>
+    ${chart(300,70,[{s:4,base:.65,slope:-.25,amp:.08,c:'#f6b931'},{s:9,base:.55,slope:-.32,amp:.02,c:'#f6b931',dash:1}],['90 %','80 %','70 %'],['−14 d','hoy','+14 d'],{mark:.55,markt:'hoy'})}</div>
+   <div class="in"><div class="row"><b class="sm">Tiempo de reacción (PVT)</b><span class="sp"></span>${L('am','Tendencia ↑')}</div><div class="t3">Previsto 286 ms en 10 días (línea base 262 ms)</div></div>`)
+ +pn('inf','brain','Inferido',`<div class="t3">Lo que el sistema deduce de varias medidas; no es medida directa</div>
+   ${[['Carga de entrenamiento','Moderada','ok'],['Estrés fisiológico','Ligero aumento','am'],['Recuperación nocturna','Incompleta','am'],['Ritmo circadiano','Desfase +40 min','am']].map(([t,v,l])=>
+   `<div class="in row"><span class="sm">${t}</span><span class="sp"></span><b class="sm">${v}</b><span class="dot" style="background:${l==='ok'?'#3fd47e':'#f6b931'};color:${l==='ok'?'#3fd47e':'#f6b931'}"></span></div>`).join('')}
+   <div class="t3">Cada inferencia enlaza con las medidas que la sostienen.</div>`)
+ +pn('anat','body','Modo anatómico',`<div class="row"><div class="tabsm"><span class="on">Frente</span><span>Espalda</span></div><span class="sp"></span><div class="tabsm"><span>Hace 7 d</span><span>Ayer</span><span class="on">Ahora</span></div></div>
+   <div class="row" style="align-items:stretch;flex:1;gap:14px"><div class="ph" style="flex:1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#0d3358,#03101f 70%)">${figure(560,[50,62])}</div>
+   <div class="col" style="width:230px"><div class="in"><div class="t3">Región seleccionada</div><b>Tórax · corazón</b><div class="sm t2">FC reposo 58 bpm · VFC 54 ms</div>${L('ok')}</div>
+    ${[['Cabeza y ojos','gy'],['Columna lumbar','am'],['Hombro derecho','ok'],['Piernas · gemelos','ok'],['Pies','ok']].map(([t,l])=>`<div class="in row sm"><span>${t}</span><span class="sp"></span>${L(l)}</div>`).join('')}
+    <div class="in"><div class="t3">Contramedida asociada</div><div class="sm">Estiramientos lumbares tras ARED</div><span class="btn pri" style="margin-top:6px">Adoptar</span></div></div></div>`)};
+
+T.mission={icon:'globe',title:'Misión y hábitat',sub:'Autonomía, radiación, recursos y entorno',
+ cols:'1fr 1fr 1fr 1fr',rows:'auto 1fr 1fr',areas:'"mode link dose scales" "res time time twin" "hab hab hab twin"',
+ body:()=>pn('mode','shield','Modo de misión',`<div class="tabsm"><span class="on">Nominal</span><span>Reducido</span><span>Aislado</span></div>
+   <div class="sm t2">Con enlace a Tierra y todas las funciones activas. El nivel se declara desde esta consola y queda firmado.</div>`,{c:'#3fd47e'})
+ +pn('link','link','Enlace con Tierra',`<div class="row"><div class="big">14</div><div class="sm t2">asientos pendientes<br>de enviar</div></div><div class="t3">Último sincronizado: 10:02 · ida 0,0 s (LEO)</div><span class="btn">Declarar enlace</span>`)
+ +pn('dose','rad','Dosímetro',`<div class="row"><div class="col" style="gap:2px"><div class="big" style="color:var(--am)">0,65</div><span class="t3">mSv/día · Q medio en vuelo</span></div><span class="sp"></span>${L('am')}</div>
+   <div class="row sm"><span class="t2">Acumulado misión</span><span class="sp"></span><b>87,1 mSv</b></div>${meter(29,'#8f5cf7')}<div class="t3">29 % del límite de carrera de referencia</div>`,{c:'#8f5cf7'})
+ +pn('scales','sat','Clima espacial (NOAA)',`<div class="row" style="gap:8px">${[['R','1','Apagón radio','am'],['S','0','Tormenta solar','ok'],['G','2','Geomagnética','am']].map(([k,v,t,l])=>
+   `<div class="in col" style="flex:1;align-items:center;gap:2px"><div class="mid" style="color:${l==='am'?'var(--am)':'var(--ok)'}">${k}${v}</div><span class="t3" style="text-align:center">${t}</span></div>`).join('')}</div><div class="t3">Fuente: DONKI · hace 20 min</div>`,{c:'#f6b931'})
+ +pn('res','drop','Recursos',`${[['Agua potable','312 L','42 días',72,'#2f86e6'],['Oxígeno','—','61 días',84,'#36d6ff'],['Comida','186 raciones','47 días',64,'#43c24c'],['Medicación del botiquín','—','Revisión en 9 días',90,'#a9c0d8']].map(([t,v,d,p,c])=>
+   `<div class="col" style="gap:3px"><div class="row sm"><span>${t}</span><span class="sp"></span><span class="t3">${v}</span><b>${d}</b></div>${meter(p,c)}</div>`).join('')}`)
+ +pn('time','clock','Cronología de la misión',`<svg width="100%" height="150" viewBox="0 0 700 150" preserveAspectRatio="none">
+   <line x1="10" x2="690" y1="75" y2="75" stroke="#2a87b8" stroke-width="2"/><line x1="10" x2="420" y1="75" y2="75" stroke="#36d6ff" stroke-width="3" style="filter:drop-shadow(0 0 4px #36d6ff)"/>
+   ${[[10,'Lanzamiento','2 jul','#36d6ff'],[90,'Acoplamiento','3 jul','#36d6ff'],[200,'EVA 1','14 ago','#8f5cf7'],[300,'Evento solar','28 sep','#f6b931'],[420,'Hoy · día 134','13 nov','#3fd47e'],[540,'EVA 2','2 dic','#8f5cf7'],[690,'Regreso','10 dic','#a9c0d8']].map(([x,t,d,c],i)=>
+   `<circle cx="${x}" cy="75" r="7" fill="${c}" style="filter:drop-shadow(0 0 4px ${c})"/><text x="${x}" y="${i%2?110:50}" fill="#e8f2ff" font-size="14" text-anchor="${x<30?'start':x>680?'end':'middle'}">${t}</text><text x="${x}" y="${i%2?126:34}" fill="#9fb6cf" font-size="12" text-anchor="${x<30?'start':x>680?'end':'middle'}">${d}</text>`).join('')}</svg>
+   <div class="row"><span class="btn">${ic('plus','#e8f2ff',14)} Declarar evento</span><span class="t3">Elegir un momento lleva el modo anatómico a esa fecha</span></div>`)
+ +pn('twin','user','Preguntas de gemelos',`<div class="t3">Comparaciones con el estudio NASA Twins (un sujeto, orientativo)</div>
+   ${[['¿Cambia la expresión génica inmunitaria?','Contestado'],['¿Se alargan los telómeros en vuelo?','Sentido documentado'],['¿Se recupera la cognición al volver?','Sentido documentado'],['¿Cambia la microbiota intestinal?','Contestado']].map(([q,e])=>
+   `<div class="in col" style="gap:4px"><span class="sm">${q}</span><span class="pill p-ne" style="align-self:flex-start">${e}</span></div>`).join('')}`)
+ +pn('hab','hab','Hábitat · Módulo Columbus',`<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+   ${[['CO₂','2,9 mmHg','#43c24c',.45],['Temperatura','22,4 °C','#36d6ff',.5],['Humedad','41 %','#2f86e6',.5],['Ruido','58 dBA','#f6b931',.6],['ppO₂','21,3 kPa','#3fd47e',.5]].map(([t,v,c,b],i)=>
+   `<div class="in"><div class="row sm"><span class="t2">${t}</span><span class="sp"></span><b>${v}</b></div>${spark(260,150,c,{s:i+20,base:b,amp:.3,fill:1,band:[.3,.7]})}</div>`).join('')}</div>`,{c:'#43c24c'})};
+
+T.data={icon:'sensor',title:'Calidad y sensores',sub:'Qué se mide, con qué y adónde va',
+ cols:'1fr 1fr 1fr',rows:'1fr 1fr',areas:'"qual base band" "sens sens share"',
+ body:()=>pn('qual','chart','Calidad del dato',`<div class="t3">Completitud de las últimas 24 h</div>
+   ${[['Frecuencia cardiaca','98 %','#3fd47e',98],['Variabilidad (R-R)','91 %','#3fd47e',91],['Temperatura de piel','76 %','#f6b931',76],['SpO₂','—','#36d6ff',0],['Actigrafía (sueño)','88 %','#3fd47e',88],['Presión arterial','—','#5c6878',0]].map(([t,v,c,p])=>
+   `<div class="col" style="gap:3px"><div class="row sm"><span>${t}</span><span class="sp"></span>${p?`<b>${v}</b>`:c==='#36d6ff'?L('cy','Caducado · 9 h'):L('gy')}</div>${meter(p||100,p?c:c+'55')}</div>`).join('')}`,{c:'#36d6ff'})
+ +pn('base','user','Línea base personal',`<div class="t3">Contra qué se juzga cada lectura · 21 días previos al vuelo + 30 en vuelo</div>
+   <table><tr><th>Indicador</th><th>Línea base</th><th>Banda</th><th>Lecturas</th></tr>
+   ${[['FC reposo','57 bpm','52–63','1 204'],['VFC (RMSSD)','52 ms','41–64','1 180'],['Temperatura','36,6 °C','36,2–37,0','880'],['Sueño','7 h 05','6 h 20–7 h 50','51'],['PVT mediana','262 ms','241–284','38']].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>
+   <div class="t3">Lecturas con artefacto o fuera de llevar puesto: no cuentan.</div>`)
+ +pn('band','bt','Banda de pulso',`<div class="row"><span class="pill p-ok">${ic('bt','#fff',13)} Conectada</span><span class="t3">Polar H10 · BLE</span><span class="sp"></span><span class="btn">Desconectar</span></div>
+   <div class="row"><div class="big" style="color:#ff6a6a">68</div><span class="t2">bpm<br><span class="t3">en vivo</span></span><span class="sp"></span>${ic('heart','#ff4a4a',40,2)}</div>
+   ${spark(380,60,'#ff4a4a',{s:2,amp:.7,n:90,wave:6})}<div class="row sm"><span class="t2">R-R última ventana</span><span class="sp"></span><b>882 ms · RMSSD 49 ms</b></div>
+   <div class="t3">Firma como tripulante real «real-01»; lo simulado no se mezcla.</div>`,{c:'#ff6a6a'})
+ +pn('sens','link','Sensores vinculados',`<table><tr><th>Sensor</th><th>Mide</th><th>Tripulante</th><th>Desde</th><th>Batería</th><th>Estado</th></tr>
+   ${[['Polar H10','FC, R-R','C-01','2 jul','74 %','ok'],['Bio-Monitor (camiseta)','ECG, FR, temperatura','C-01','2 jul','52 %','ok'],['Actímetro de muñeca','Sueño, actividad','C-01','2 jul','31 %','am'],['Pulsioxímetro','SpO₂','C-01','5 jul','—','cy'],['Báscula SLAMMD','Masa corporal','Compartido','2 jul','Red','ok'],['Tensiómetro','Presión arterial','Compartido','—','—','gy']].map(([a,b,c,d,e,l])=>
+   `<tr><td><b>${a}</b></td><td class="t2">${b}</td><td>${c}</td><td>${d}</td><td>${e}</td><td>${L(l,l==='am'?'Batería baja':l==='cy'?'Sin datos · 9 h':undefined)}</td></tr>`).join('')}</table>
+   <div class="row"><span class="btn">${ic('plus','#e8f2ff',14)} Vincular sensor</span><span class="t3">Cada vínculo y desvínculo queda firmado en el registro.</span></div>`)
+ +pn('share','send','Adónde va cada dato',`
+   ${[['Sensores y consola','#36d6ff'],['Registro firmado (local)','#3fd47e'],['Análisis a bordo','#8f5cf7'],['Consola de Tierra · con el enlace','#f6b931']].map(([t,c],i)=>
+   `<div class="in row" style="border-color:${c}"><span class="dot" style="background:${c};color:${c}"></span><span class="sm">${t}</span></div>${i<3?`<div style="text-align:center;color:#2a87b8;line-height:.6">▼</div>`:''}`).join('')}
+   <div class="t3">Nada sale a internet. Los borradores del modelo local no entran en el análisis.</div>`)};
+
+T.log={icon:'book',title:'Diario y pruebas',sub:'Lo que se rellena a mano y las pruebas cortas',
+ cols:'1fr 1fr 1fr 1fr',rows:'1fr 1fr',areas:'"diary food pain pvt" "desc desc cog cog"',
+ body:()=>pn('diary','book','Diario',`${[['Sueño','6/10'],['Ánimo','7/10'],['Energía','6/10'],['Estrés','4/10']].map(([t,v],i)=>
+   `<div class="col" style="gap:3px"><div class="row sm"><span>${t}</span><span class="sp"></span><b>${v}</b></div>${meter(parseInt(v)*10,['#2f86e6','#3fd47e','#17b6a4','#f6b931'][i])}</div>`).join('')}
+   <div class="in sm t2">«Desperté dos veces por el ruido del ventilador. Buen entrenamiento.»</div><span class="btn pri">Guardar entrada</span>`)
+ +pn('food','food','Aceptabilidad de la comida',`<div class="t3">Escala hedónica de 9 puntos</div>
+   ${[['Desayuno · avena','7'],['Comida · pollo teriyaki','8'],['Cena · estofado','5']].map(([t,v])=>`<div class="in row sm"><span>${t}</span><span class="sp"></span>
+   <span style="display:flex;gap:2px">${[...Array(9)].map((_,i)=>`<i style="width:9px;height:12px;border-radius:2px;background:${i<v?'#43c24c':'#163a5c'}"></i>`).join('')}</span><b>${v}</b></div>`).join('')}
+   <div class="row sm"><span class="t2">Media 7 días</span><span class="sp"></span><b>6,9</b></div>`,{c:'#43c24c'})
+ +pn('pain','body','Dolor',`<div class="row" style="align-items:center"><div class="ph" style="width:110px;height:200px;display:flex;justify-content:center;align-items:center;background:radial-gradient(#0d3358,#03101f)">${figure(190,[50,96])}</div>
+   <div class="col" style="flex:1"><div class="in"><div class="t3">Zona</div><b class="sm">Lumbar</b><div class="t3">Tipo: sordo · tras ejercicio</div></div>
+   <div class="t3">Intensidad (0–10)</div><div style="display:flex;gap:2px">${[...Array(11)].map((_,i)=>`<i style="flex:1;height:16px;border-radius:2px;background:${i==3?'#f6b931':'#163a5c'};font:10px 'Segoe UI';color:#fff;font-style:normal;text-align:center">${i}</i>`).join('')}</div><span class="btn pri">Registrar</span></div></div>`,{c:'#f6b931'})
+ +pn('pvt','clock','PVT · 3 minutos',`<div class="row"><div class="col" style="gap:2px"><span class="t3">Mediana</span><div class="big">280<span class="sm"> ms</span></div></div><span class="sp"></span>
+   <div class="col" style="gap:2px;text-align:right"><span class="t3">Lapsos (&gt;500 ms)</span><div class="big" style="color:var(--am)">5</div></div></div>
+   ${spark(320,60,'#36d6ff',{s:31,amp:.6,n:50})}<div class="row sm"><span class="t2">Línea base</span><span class="sp"></span><b>262 ms · 2 lapsos</b></div><span class="btn pri">Empezar prueba</span>`)
+ +pn('desc','chart','Descriptivos · 30 días',`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+   ${[['Sueño (h)','6 h 34','#2f86e6'],['Ánimo','6,8','#3fd47e'],['PVT (ms)','271','#36d6ff'],['Dolor medio','1,9','#f6b931']].map(([t,v,c],i)=>
+   `<div class="in"><div class="row sm"><span class="t2">${t}</span><span class="sp"></span><b>${v}</b></div>${spark(250,70,c,{s:40+i,amp:.4,n:30,fill:1})}<div class="t3">mín · media · máx en el detalle</div></div>`).join('')}</div>`)
+ +pn('cog','brain','Batería cognitiva',`<table><tr><th>Prueba</th><th>Dominio</th><th>Última</th><th>Resultado</th><th></th></tr>
+   ${[['Memoria visual','Memoria','10 nov','Dentro de base','ok'],['Matrices abstractas','Razonamiento','10 nov','Dentro de base','ok'],['Línea de orientación','Espacial','3 nov','Dentro de base','ok'],['Reconocimiento emocional','Social','3 nov','Dentro de base','ok'],['Riesgo (globos)','Toma de riesgo','27 oct','Sin dato reciente','gy']].map(([a,b,c,d,l])=>
+   `<tr><td><b>${a}</b></td><td class="t2">${b}</td><td>${c}</td><td>${L(l,d)}</td><td><span class="btn">Hacer</span></td></tr>`).join('')}</table>`,{c:'#8f5cf7'})};
+
+T.imaging={icon:'image',title:'Imagen e informes',sub:'Ecografía a bordo, informes escaneados y volúmenes de referencia',
+ cols:'1.2fr 1fr',rows:'1fr 1fr',areas:'"us vol" "rep vol"',
+ body:()=>pn('us','image','Ecografía · medida guiada',`<div class="row" style="align-items:stretch;flex:1;gap:12px">
+   <div class="ph" style="flex:1.3;background:radial-gradient(ellipse 80% 90% at 50% 0%,#0000 0%,#000 100%),#020812">
+    <svg width="100%" height="100%" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet"><defs><radialGradient id="us" cx="50%" cy="0%" r="100%"><stop offset="0" stop-color="#bbb"/><stop offset=".5" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs>
+    <path d="M200 6 L60 226 A240 240 0 0 0 340 226 Z" fill="url(#us)" opacity=".75"/>
+    <ellipse cx="200" cy="120" rx="70" ry="54" fill="#050505"/><ellipse cx="200" cy="190" rx="14" ry="30" fill="#151515"/>
+    <line x1="186" x2="214" y1="188" y2="188" stroke="#36d6ff" stroke-width="2"/><circle cx="186" cy="188" r="3" fill="#36d6ff"/><circle cx="214" cy="188" r="3" fill="#36d6ff"/>
+    <text x="222" y="185" fill="#36d6ff" font-size="13">5,4 mm</text><text x="10" y="20" fill="#9fb6cf" font-size="11">OD · 7,5 MHz · fantoma</text></svg></div>
+   <div class="col" style="flex:1"><div class="in"><div class="t3">Protocolo</div><b>Vaina del nervio óptico</b><div class="t3">3 mm por detrás del globo</div></div>
+    ${ck(1,'Colocar la sonda transversal')}${ck(1,'Encontrar el globo ocular')}${ck(1,'Medir a 3 mm')}${ck(0,'Repetir en el ojo izquierdo')}
+    <div class="in row"><span class="sm">Diámetro (OD)</span><span class="sp"></span><b>5,4 mm</b></div><div class="row"><span class="btn pri">Guardar en el registro</span><span class="btn">DICOM</span></div></div></div>`)
+ +pn('rep','doc','Informes escaneados',`<table><tr><th>Documento</th><th>Páginas</th><th>OCR</th><th>Des-identificación</th></tr>
+   ${[['Analítica previa al vuelo','3','Hecho','Hecho'],['Informe oftalmológico','2','Hecho','Hecho'],['Revisión dental','1','En curso','Pendiente']].map(([a,b,c,d])=>
+   `<tr><td><b>${a}</b></td><td>${b}</td><td>${c==='Hecho'?L('ok','Hecho'):'<span class="pill p-ne">En curso</span>'}</td><td>${d==='Hecho'?L('ok','Hecho'):'<span class="pill p-ne">Pendiente</span>'}</td></tr>`).join('')}</table>
+   <div class="row"><span class="btn">${ic('plus','#e8f2ff',14)} Añadir informe</span><span class="t3">OCR local · nada sale de la nave</span></div>`,{c:'#a9c0d8'})
+ +pn('vol','cube','Volúmenes de referencia · visor 3D',`<div class="ph" style="flex:1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 50%,#0b2a48,#02070f 70%)">
+   <svg width="360" height="360" viewBox="0 0 200 200"><defs><radialGradient id="org" cx="40%" cy="35%"><stop offset="0" stop-color="#ff9e7a"/><stop offset=".6" stop-color="#b2442e"/><stop offset="1" stop-color="#5a1a12"/></radialGradient>
+    <radialGradient id="kid" cx="40%" cy="35%"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#8a5a16"/></radialGradient></defs>
+    <path d="M60 40c30-12 70-10 92 6 10 22 2 46-20 56-24 10-58 4-74-12C48 78 46 54 60 40z" fill="url(#org)" opacity=".92"/>
+    <path d="M58 118c-10 6-12 28 2 34 12 5 20-8 18-20-2-10-12-17-20-14z" fill="url(#kid)"/><path d="M142 118c10 6 12 28-2 34-12 5-20-8-18-20 2-10 12-17 20-14z" fill="url(#kid)"/>
+    <path d="M100 100v90" stroke="#e8f2ff" stroke-width="6" stroke-dasharray="7 3" opacity=".7"/></svg></div>
+   <div class="row"><div class="tabsm"><span class="on">Hígado</span><span>Riñones</span><span>Columna</span></div><span class="sp"></span><span class="t2 sm">Hígado 1 540 mL · Riñón I 158 mL</span></div>
+   <div class="in xs t2">TAC de referencia previo al vuelo. Imagen para comparar en Tierra, no diagnóstico a bordo. Segmentación: TotalSegmentator (local).</div>`,{c:'#ff9e7a'})};
+
+T.planner={icon:'cal',title:'Planificador',sub:'Tareas, menú, calendario y recordatorios · no es dato de salud',
+ cols:'1fr 1fr 1.3fr',rows:'1fr 1fr',areas:'"chores menu cal" "rem msg cal"',
+ body:()=>pn('chores','check','Tareas de hoy',`${ck(1,'Limpiar filtros del Columbus','C-01')}${ck(0,'Inventario de comida','C-02')}${ck(0,'Cambiar el cartucho del agua','C-03')}${ck(1,'Fotos para divulgación','C-01')}
+   <div class="in row sm"><span>Racha de tareas</span><span class="sp"></span><b>9 días</b>${ic('star','#f6b931',16)}</div>`,{c:'#3fd47e'})
+ +pn('menu','food','Menú de hoy',`${[['Desayuno','Avena con fruta · café'],['Comida','Pollo teriyaki · arroz'],['Cena','Estofado de ternera · pan'],['Merienda','Galletas de nueces']].map(([t,m])=>
+   `<div class="in row"><b class="sm" style="width:80px">${t}</b><span class="sm t2">${m}</span></div>`).join('')}<span class="btn">${ic('printer','#e8f2ff',14)} Imprimir menú</span>`,{c:'#43c24c'})
+ +pn('cal','cal','Calendario · semana',`<div style="display:grid;grid-template-columns:44px repeat(7,1fr);gap:3px;font-size:12px;flex:1">
+   <span></span>${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map((d,i)=>`<b style="text-align:center;${i==4?'color:#36d6ff':''}">${d}</b>`).join('')}
+   ${['08','10','12','14','16','18','20'].map((h,r)=>`<span class="t3">${h}:00</span>`+[...Array(7)].map((_,c)=>{
+     const ev={'0,0':['Ejercicio','#17b6a4'],'0,2':['Ejercicio','#17b6a4'],'0,4':['Ejercicio','#17b6a4'],'1,1':['EVA prep','#8f5cf7'],'2,3':['Ciencia','#2f86e6'],'3,4':['PVT','#36d6ff'],'4,1':['Ciencia','#2f86e6'],'5,5':['Película','#e45bd0'],'6,5':['Llamada familia','#f6b931'],'5,2':['Lectura','#e45bd0'],'6,6':['Juegos','#e45bd0']}[r+','+c];
+     return `<div style="min-height:44px;border:1px solid #12385a;border-radius:5px;${ev?`background:${ev[1]}33;border-color:${ev[1]};padding:3px 4px;font-size:11.5px`:''}">${ev?ev[0]:''}</div>`}).join('')).join('')}</div>`)
+ +pn('rem','bell','Recordatorios',`${[['16:00','Muestra de saliva'],['18:30','Regar el experimento Veggie'],['Sáb 19:00','Llamada familiar']].map(([t,m])=>`<div class="in row sm"><b style="width:80px">${t}</b><span>${m}</span></div>`).join('')}<span class="btn">${ic('plus','#e8f2ff',14)} Nuevo</span>`,{c:'#f6b931'})
+ +pn('msg','msg','Mensajes de la tripulación',`${[['C-02','¿Alguien ha visto la llave de 10 mm?'],['C-03','Película el sábado: votad en la hoja.'],['C-01','Hecho lo de los filtros ✔']].map(([w,m])=>`<div class="in sm"><b>${w}</b> <span class="t2">${m}</span></div>`).join('')}`)};
+
+T.library={icon:'lib',title:'Biblioteca',sub:'Contramedidas y guías con su evidencia',
+ chips:`<span class="chip">${ic('search','#a9c0d8',14)} Buscar contramedida o guía…</span>`,
+ cols:'1.6fr 1fr',rows:'1fr',areas:'"cm guides"',
+ body:()=>pn('cm','lib','Contramedidas',`<div class="row"><div class="tabsm"><span class="on">Todas</span><span>R</span><span>I</span><span>D</span><span>G</span><span>E</span></div></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+   ${[['R','Refugio en el módulo con más blindaje','Reduce la dosis durante eventos de partículas solares','Magnitud documentada'],
+      ['I','Higiene del sueño y control del estrés','Apoya la función inmunitaria frente al cortisol elevado','Sentido documentado'],
+      ['D','Siesta corta planificada','Mejora la vigilancia en guardias largas','Magnitud documentada'],
+      ['G','Ejercicio resistivo ARED','Frena la pérdida de densidad ósea y masa muscular','Magnitud documentada'],
+      ['G','Presión negativa en tren inferior','Propuesta para el desplazamiento de fluidos (SANS)','Contestado'],
+      ['E','Ajuste de ventilación local','Baja el CO₂ en el saco de dormir','Sentido documentado'],
+      ['D','Luz azul por la mañana','Ayuda a estabilizar el ritmo circadiano','Sentido documentado'],
+      ['I','Dieta rica en antioxidantes','Posible apoyo frente a la radiación','Contestado']].map(([k,t,d,e])=>
+   `<div class="in row" style="align-items:flex-start;gap:10px"><span class="ridge ${k}">${k}</span><div class="col" style="gap:3px;flex:1"><b class="sm">${t}</b><span class="t2 xs">${d}</span>
+    <div class="row xs"><span class="pill p-ne">${e}</span><span class="t3">HRP · OSDR</span><span class="sp"></span><span class="btn lnk">Ver fuentes ›</span></div></div></div>`).join('')}</div>`,{c:'#8f5cf7'})
+ +pn('guides','doc','Guías y procedimientos',`${[['Ecografía ocular guiada','12 pasos · 15 min'],['Toma de muestra de saliva','6 pasos · 5 min'],['PVT de 3 minutos','3 pasos · 4 min'],['Vinculación de un sensor BLE','5 pasos'],['Respuesta a un evento solar','9 pasos'],['Botiquín: inventario y caducidades','Lista'],['Modo aislado: qué cambia','Lectura · 6 min']].map(([t,m])=>
+   `<div class="in row"><span>${ic('doc','#7fdcff',18)}</span><b class="sm">${t}</b><span class="sp"></span><span class="t3">${m}</span>${ic('right','#7fdcff',16)}</div>`).join('')}`)};
+
+/* ---------- pestañas de Tierra ---------- */
+T.received={icon:'inbox',title:'Estado recibido',sub:'Lo que la tripulación tenía cuando salió la señal',
+ chips:'<span class="chip" style="border-color:#f6b931;color:#ffd77a">Retardo de la señal: 0,0 s (LEO)</span>',
+ cols:'1.2fr 1fr 1fr',rows:'auto 1fr 1fr',areas:'"sum sum crew" "ridge ridge crew" "alerts notes notes"',
+ body:()=>pn('sum','shield','Resumen recibido',`<div class="row" style="gap:16px"><div class="lv am" style="min-width:250px">${ic('alert','#f6b931',40,2.2)}<div><b>PRECAUCIÓN</b><div class="sm">Recibido 10:02 · enviado 10:02</div></div></div>
+   <div class="sm" style="flex:1">2 dominios fuera de lo nominal a bordo: radiación (dosis diaria) y desempeño (PVT). 1 alerta sin reconocer por la tripulación.</div></div>`)
+ +pn('crew','user','Tripulación',`${[['C-01','Ing. de Misión','am'],['C-02','Comandante','ok'],['C-03','Especialista de carga','ok'],['C-04','Médico de a bordo','ok']].map(([c,r,l])=>
+   `<div class="in row"><span class="ridge" style="background:#11507a;width:38px;height:38px;border-radius:50%;font-size:13px">${c}</span><div class="col" style="gap:1px"><b class="sm">${c}</b><span class="t3">${r}</span></div><span class="sp"></span>${L(l)}</div>`).join('')}`)
+ +pn('ridge','rad','RIDGE recibido',`<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+   ${[['R','Radiación','am','0,65 mSv/d'],['I','Inmunidad','ok','Sin cambios'],['D','Desempeño','am','PVT +18 ms'],['G','Gravedad','ok','−0,4 %/mes'],['E','Entorno','ok','CO₂ 2,9 mmHg']].map(([k,n,l,v])=>
+   `<div class="ridgec ${k}"><div class="row"><span class="ridge ${k}">${k}</span><b>${n}</b><span class="sp"></span>${L(l)}</div><div class="mid">${v}</div>${spark(220,40,l==='am'?'#f6b931':'#3fd47e',{s:k.charCodeAt(0)+5,amp:.4})}</div>`).join('')}</div>`)
+ +pn('alerts','bell','Alertas recibidas',`${[['am','R · Radiación','07:42','Sin reconocer'],['am','D · Desempeño','Ayer 22:10','Reconocida por C-01']].map(([l,d,t,s])=>
+   `<div class="in filete" style="border-left-color:var(--am)"><div class="row">${L(l)}<b>${d}</b><span class="sp"></span><span class="t3">${t}</span></div><div class="t3" style="margin-top:4px">${s}</div></div>`).join('')}
+   <div class="t3">En Tierra se ve y se anota; reconocer es cosa de a bordo.</div>`,{c:'#f6b931'})
+ +pn('notes','msg','Notas para la tripulación',`<div class="in" style="min-height:70px;color:var(--tx3)" >Escribe una nota para C-01 o para toda la tripulación…</div>
+   <div class="row"><div class="tabsm"><span class="on">C-01</span><span>Toda la tripulación</span></div><span class="sp"></span><span class="t3">Llega con el próximo enlace · firmada</span><span class="btn pri">${ic('send','#fff',14)} Enviar</span></div>
+   <div class="in sm"><b>Enviada 08:12</b> <span class="t2">Recibido el PVT de ayer. Seguimos la tendencia contigo mañana.</span> <span class="pill p-ok">Entregada</span></div>`)};
+
+T.history={icon:'hist',title:'Historial',sub:'Alertas, decisiones y eventos de la misión',
+ chips:'<div class="tabsm"><span>48 h</span><span class="on">7 d</span><span>Misión</span></div>',
+ cols:'1fr 280px',rows:'1fr',areas:'"tab side"',
+ body:()=>pn('tab','hist','Eventos',`<table><tr><th>Cuándo</th><th>Tripulante</th><th>Dominio</th><th>Evento</th><th>Nivel</th><th>Quién</th></tr>
+   ${[['14 nov 07:42','C-01','R','Alerta: dosis diaria sobre referencia','am','Sistema'],['13 nov 22:10','C-01','D','Alerta: PVT sobre línea base','am','Sistema'],['13 nov 22:31','C-01','D','Alerta reconocida','am','C-01'],
+      ['13 nov 09:15','C-01','R','Contramedida adoptada: refugio en el pico','ne','C-01'],['12 nov 18:02','C-03','E','Aviso de CO₂ resuelto','ok','Sistema'],['12 nov 11:40','C-02','G','Ejercicio ARED completado','ok','C-02'],
+      ['11 nov 21:05','C-01','D','Contramedida adoptada: higiene de sueño','ne','C-01'],['11 nov 08:00','—','E','Evento declarado: aumento de flujo de protones','am','C-04'],['10 nov 16:22','C-04','I','Muestra de cortisol analizada','ok','Sistema'],
+      ['9 nov 13:30','C-02','D','Batería cognitiva dentro de base','ok','Sistema'],['8 nov 10:10','—','E','Enlace con Tierra restablecido','ok','Sistema'],['7 nov 19:45','C-03','G','Molestia lumbar registrada (3/10)','am','C-03']].map(([a,b,k,d,l,w])=>
+   `<tr><td class="t2">${a}</td><td>${b}</td><td><span class="ridge ${k}" style="width:22px;height:22px;font-size:13px">${k}</span></td><td>${d}</td><td>${l==='ne'?'<span class="pill p-ne">Decisión</span>':L(l)}</td><td class="t2">${w}</td></tr>`).join('')}</table>`)
+ +pn('side','chart','En 7 días',`${[['Alertas','4','#f6b931'],['Reconocidas','3','#3fd47e'],['Contramedidas adoptadas','2','#36d6ff'],['Eventos declarados','1','#8f5cf7']].map(([t,v,c])=>
+   `<div class="in"><div class="t3">${t}</div><div class="big" style="color:${c}">${v}</div></div>`).join('')}<div class="t3">Cada fila sale del registro firmado; nada se edita.</div>`)};
+
+T.trends={icon:'trend',title:'Tendencias',sub:'C-01 · comparado con su línea base',
+ chips:'<div class="tabsm"><span>48 h</span><span class="on">7 d</span><span>Misión</span></div><span class="chip">Tripulante: <b>C-01</b> '+ic('down','#a9c0d8',14)+'</span>',
+ cols:'1fr 1fr',rows:'1fr 1fr 1fr',areas:'"a b" "c d" "e f"',
+ body:()=>[['a','heart','FC en reposo',['70','60','50'],{s:1,base:.45,amp:.12,c:'#ff6a6a'},[.3,.6],'58 bpm','ok'],
+   ['b','heart','Variabilidad (RMSSD)',['70','50','30'],{s:2,base:.5,amp:.2,slope:-.12,c:'#36d6ff'},[.35,.75],'49 ms','ok'],
+   ['c','moon','Eficiencia de sueño',['95 %','85 %','75 %'],{s:3,base:.5,amp:.2,slope:-.2,c:'#2f86e6'},[.45,.85],'81 %','am'],
+   ['d','clock','PVT · mediana',['320','280','240'],{s:4,base:.35,amp:.15,slope:.3,c:'#f6b931'},[.2,.6],'280 ms','am'],
+   ['e','rad','Dosis diaria',['0,8','0,5','0,2'],{s:5,base:.4,amp:.1,slope:.3,c:'#8f5cf7'},[.2,.6],'0,65 mSv','am'],
+   ['f','thermo','Temperatura de piel',['37,4','36,8','36,2'],{s:6,base:.5,amp:.2,c:'#43c24c'},[.3,.7],'36,7 °C','ok']].map(([a,i,t,y,sr,b,v,l])=>
+   pn(a,i,t,`${chart(640,108,[{...sr,n:84}],y,['8 nov','10 nov','12 nov','14 nov'],{band:b})}`,{extra:`<b>${v}</b> ${L(l)} <small>banda verde: línea base</small>`})).join('')};
+
+T.ghabitat={icon:'hab',title:'Hábitat',sub:'Entorno de la estación y resumen de bienestar',
+ cols:'1fr 1fr 1fr',rows:'1fr 1fr',areas:'"env env env" "leis tasks msgs"',
+ body:()=>pn('env','hab','Entorno por módulo',`<table><tr><th>Módulo</th><th>CO₂</th><th>Temperatura</th><th>Humedad</th><th>Ruido</th><th>ppO₂</th><th>Tendencia CO₂ (7 d)</th></tr>
+   ${[['Columbus','2,9 mmHg','22,4 °C','41 %','58 dBA','21,3 kPa','ok'],['Destiny','3,4 mmHg','23,1 °C','44 %','61 dBA','21,1 kPa','am'],['Harmony (dormitorios)','3,1 mmHg','22,0 °C','43 %','52 dBA','21,2 kPa','ok'],['Kibo','2,7 mmHg','22,8 °C','40 %','57 dBA','21,4 kPa','ok'],['Unity','—','—','—','—','—','gy']].map(([m,...r])=>{const l=r.pop();
+   return `<tr><td><b>${m}</b></td>${r.map((c,i)=>`<td style="${i==0&&l==='am'?'color:#f6b931':''}">${c}</td>`).join('')}<td>${l==='gy'?L('gy'):spark(220,24,l==='am'?'#f6b931':'#43c24c',{s:m.length,amp:.4})}</td></tr>`}).join('')}</table>`,{c:'#43c24c'})
+ +pn('leis','star','Ocio en el calendario',`<div class="t3">Horas por semana · apoyo psicológico</div><div class="row" style="align-items:flex-end;gap:10px;height:120px">
+   ${[['C-01',6.5],['C-02',8],['C-03',4],['C-04',7]].map(([c,h])=>`<div class="col" style="flex:1;align-items:center;gap:4px"><b class="sm">${h} h</b><i style="width:100%;height:${h*11}px;border-radius:5px 5px 0 0;background:linear-gradient(#e45bd0,#5a1d55)"></i><span class="t3">${c}</span></div>`).join('')}</div>`,{c:'#e45bd0'})
+ +pn('tasks','check','Tareas y rachas',`${[['C-01','9 días','12 hechas'],['C-02','14 días','15 hechas'],['C-03','2 días','6 hechas'],['C-04','7 días','10 hechas']].map(([c,r,t])=>`<div class="in row sm"><b>${c}</b><span class="t2">${t}</span><span class="sp"></span>${ic('star','#f6b931',14)}<b>${r}</b></div>`).join('')}`,{c:'#3fd47e'})
+ +pn('msgs','msg','Mensajes y recordatorios',`${[['Mensajes entre la tripulación','38','esta semana'],['Recordatorios creados','11','esta semana'],['Pasatiempos anotados','Lectura, juegos, fotografía','']].map(([t,v,s])=>`<div class="in"><div class="t3">${t}</div><div class="row"><b class="${v.length<4?'mid':'sm'}">${v}</b><span class="t3">${s}</span></div></div>`).join('')}
+   <div class="t3">Solo recuentos: el contenido de los mensajes no baja a Tierra.</div>`)};
+
+T.framework={icon:'frame',title:'Marco y fuentes',sub:'Qué norma se sigue y de dónde sale cada dato',
+ cols:'1fr 1fr 1fr',rows:'1fr 1fr',areas:'"norm ev src" "norm ev src"',
+ body:()=>pn('norm','shield','Marco normativo',`${[['NASA-STD-3001 Vol. 2','Interfaz: Apéndice F (colores y estados)'],['IEC 62304','Desarrollado conforme a Clase B; borrador del modelo local en Clase C'],['ISO 14971','Archivo de gestión de riesgos'],['HL7 FHIR R4','Toda medida como Observation'],['LOINC','Códigos verificados en su ficha oficial']].map(([t,d])=>
+   `<div class="in col" style="gap:3px"><b class="sm">${t}</b><span class="t2 xs">${d}</span></div>`).join('')}<div class="in xs" style="border-color:#f6b931">No está certificado: no reclama certificación de un organismo notificado.</div>`)
+ +pn('ev','book','Respaldo del modelo',`<div class="t3">Cada parámetro del simulador declara su respaldo</div>
+   <div class="row" style="gap:8px">${[['Magnitud documentada','14','#3fd47e'],['Sentido documentado','9','#36d6ff'],['Contestado','4','#f6b931']].map(([t,v,c])=>`<div class="in col" style="flex:1;gap:2px"><div class="big" style="color:${c}">${v}</div><span class="xs t2">${t}</span></div>`).join('')}</div>
+   <table><tr><th>Parámetro</th><th>Respaldo</th></tr>${[['Deriva de FC en reposo','Magnitud documentada'],['Caída de SDNN en vuelo','Sin respaldo · no se usa'],['Pérdida ósea mensual','Magnitud documentada'],['Factor de calidad Q','Medido · DosTel'],['Cambio de cortisol','Contestado']].map(r=>`<tr><td>${r[0]}</td><td class="t2">${r[1]}</td></tr>`).join('')}</table>`,{c:'#3fd47e'})
+ +pn('src','globe','Fuentes de datos',`${[['SPICE (núcleo de432s)','Tiempo de luz · local','ok'],['JPL Horizons','Contraste y respaldo','ok'],['NASA DONKI','Clima espacial','ok'],['NASA OSDR','Estudios de referencia','ok'],['HRP Evidence','Riesgos y contramedidas','ok'],['MMASH','Validación en Tierra (sanos)','ok'],['Datos de vitales de astronautas','No existe API pública','gy']].map(([t,d,l])=>
+   `<div class="in row"><div class="col" style="gap:1px"><b class="sm">${t}</b><span class="t3">${d}</span></div><span class="sp"></span>${L(l,l==='ok'?'Disponible':'No disponible')}</div>`).join('')}
+   <div class="t3">Solo entran datos: ninguna consulta lleva información de la tripulación.</div>`)};
+
+T.ledger={icon:'ledger',title:'Registro y documentos',sub:'Log encadenado y firmado',
+ chips:`<span class="chip" style="border-color:#3fd47e;color:#9ff0c0">${ic('lock','#3fd47e',14)} Integridad verificada · 4 812 asientos</span>`,
+ cols:'1.5fr 1fr',rows:'auto 1fr',areas:'"chain docs" "tab docs"',
+ body:()=>pn('chain','link','Cadena',`<div class="row" style="gap:6px">${['a41f…9c','7be0…12','c3d9…e8','09fa…5b','e612…a0'].map((h,i)=>
+   `<div class="in col" style="flex:1;gap:2px;${i==4?'border-color:#38c5ea;box-shadow:0 0 10px #36d6ff44 inset':''}"><span class="t3">#${4808+i}</span><span class="mono">${h}</span><span class="xs" style="color:#3fd47e">${ic('check','#3fd47e',12,3)} firma</span></div>${i<4?ic('right','#2a87b8',18):''}`).join('')}</div>`,{c:'#3fd47e'})
+ +pn('tab','list','Últimos asientos',`<table><tr><th>#</th><th>Hora</th><th>Tipo</th><th>Firmado por</th><th>Huella</th></tr>
+   ${[['4812','10:02','observation · FC','emma-ingest','e612…a0'],['4811','09:58','alert-ack','C-01','09fa…5b'],['4810','09:41','countermeasure-adopt','C-01','c3d9…e8'],['4809','09:30','observation · SpO₂','emma-ingest','7be0…12'],['4808','09:12','ground-note','Cirujano de vuelo','a41f…9c'],['4807','08:00','ephemeris','emma-ephemeris','5d22…71'],['4806','07:45','observation · masa','emma-ingest','b08c…3e'],['4805','07:30','diary','C-01','f1a7…c4']].map(r=>
+   `<tr>${r.map((c,i)=>`<td class="${i==4?'mono':i==0||i==1?'t2':''}">${c}</td>`).join('')}</tr>`).join('')}</table>`)
+ +pn('docs','doc','Documentos',`${[['Especificación del registro','record-integrity.md'],['Clasificación de seguridad del software','software-safety-classification.md'],['Gestión de riesgos','risk-management-file.md'],['Validación externa','external-validation.md'],['Estado del arte de la interfaz','hmi-state-of-the-art.md'],['Informe de exportación del registro','JSON firmado']].map(([t,f])=>
+   `<div class="in row"><span>${ic('doc','#7fdcff',18)}</span><div class="col" style="gap:1px"><b class="sm">${t}</b><span class="t3">${f}</span></div><span class="sp"></span>${ic('right','#7fdcff',16)}</div>`).join('')}
+   <span class="btn">Exportar registro verificable</span>`)};
+
+T.glibrary={...T.library};
+
+/* ---------- arranque ---------- */
+const key=(location.hash||'#hazards').slice(1);
+document.getElementById('app').innerHTML=shell(key,T[key]);
+</script>
+</body>
+</html>

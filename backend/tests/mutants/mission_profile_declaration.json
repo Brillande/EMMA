@@ -1,0 +1,91 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_mission_profile_declaration.py"
+ ],
+ "mutations": [
+  {
+   "label": "mirar el entorno y firmar ya no van bajo el cerrojo: dos declaraciones cruzadas se firman las dos",
+   "old": "        with self._lock:\n            current = self.mission_profile(None, configured)",
+   "new": "        if True:\n            current = self.mission_profile(None, configured)"
+  },
+  {
+   "label": "el almacen firma un cambio sin mirar el entorno vigente ni el catalogo",
+   "old": "            mission_profile_rules.check_change(current[\"id\"], profile, declared_by)\n",
+   "new": ""
+  },
+  {
+   "label": "el asiento no dice el entorno que dejaba atras: se firma el nuevo",
+   "old": "                \"previous\": current[\"id\"],\n                \"reason\": reason.strip(),",
+   "new": "                \"previous\": profile,\n                \"reason\": reason.strip(),"
+  },
+  {
+   "label": "cuenta un asiento que no firmo la consola, y lo de despues del corte de Tierra",
+   "old": "                MISSION_PROFILE_SUBJECT, MISSION_PROFILE_ENTRY_TYPE, _MISSION_PROFILE_FIELDS,\n            )\n            if action_counts(item, until)  # lo de la consola y, con `until`, hasta el corte\n",
+   "new": "                MISSION_PROFILE_SUBJECT, MISSION_PROFILE_ENTRY_TYPE, _MISSION_PROFILE_FIELDS,\n            )\n            if True\n"
+  },
+  {
+   "label": "un asiento firmado fuera del catalogo se entrega y cuenta en la version",
+   "old": "            problem = mission_profile_rules.entry_problem(item)\n            if problem:\n                raise TamperedRecordError(f\"asiento {item['ledger_index']}: {problem}\")\n        if not entries:",
+   "new": "            problem = mission_profile_rules.entry_problem(item)\n            if False:\n                raise TamperedRecordError(f\"asiento {item['ledger_index']}: {problem}\")\n        if not entries:"
+  },
+  {
+   "label": "vale el primer asiento y no el ultimo",
+   "old": "        last = max(entries, key=lambda item: item[\"ledger_index\"])\n        return {\n            \"id\": last[\"profile\"],",
+   "new": "        last = min(entries, key=lambda item: item[\"ledger_index\"])\n        return {\n            \"id\": last[\"profile\"],"
+  },
+  {
+   "label": "la respuesta de un cambio lleva la version de antes",
+   "old": "            entry = self._record_action(MISSION_PROFILE_ENTRY_TYPE, payload, identity)\n            version = current[\"version\"] + 1",
+   "new": "            entry = self._record_action(MISSION_PROFILE_ENTRY_TYPE, payload, identity)\n            version = current[\"version\"]"
+  },
+  {
+   "label": "el entorno vigente puede volver a firmarse",
+   "target": "app/core/mission_profile_changes.py",
+   "old": "    if new == current:\n        raise MissionProfileConflict",
+   "new": "    if False:\n        raise MissionProfileConflict"
+  },
+  {
+   "label": "se firma un entorno que no esta en el catalogo",
+   "target": "app/core/mission_profile_changes.py",
+   "old": "    if new not in mission_profiles.EXPECTED_IDS:\n        raise ValueError(",
+   "new": "    if False:\n        raise ValueError("
+  },
+  {
+   "label": "lo firma cualquiera, sin nombre",
+   "target": "app/core/mission_profile_changes.py",
+   "old": "    if not any(char.isalpha() for char in declared_by):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un asiento que repite el entorno que dejaba atras se da por bueno",
+   "target": "app/core/mission_profile_changes.py",
+   "old": "    if entry[\"profile\"] == entry[\"previous\"]:\n        return",
+   "new": "    if False:\n        return"
+  },
+  {
+   "label": "el estado sigue sirviendo el perfil de la configuracion",
+   "target": "app/api/routes.py",
+   "old": "                    str(profile_state[\"id\"]), settings,",
+   "new": "                    settings.mission_profile, settings,"
+  },
+  {
+   "label": "la matriz sigue senalando el perfil de la configuracion",
+   "target": "app/api/mission_profiles.py",
+   "old": "    return mission_profiles.compare(declared)",
+   "new": "    return mission_profiles.compare(settings.mission_profile)"
+  },
+  {
+   "label": "la cronica no cuenta los cambios de entorno",
+   "target": "app/timeline.py",
+   "old": "            mission, until, item, None, \"sistema\", \"mission-profile-change\",",
+   "new": "            mission, until, item, None, \"sistema\", \"mission-mode-change\","
+  },
+  {
+   "label": "la cronica entrega un asiento inservible",
+   "target": "app/timeline.py",
+   "old": "        problem = mission_profile_changes.entry_problem(item)\n        if problem is not None:",
+   "new": "        problem = mission_profile_changes.entry_problem(item)\n        if False:"
+  }
+ ]
+}

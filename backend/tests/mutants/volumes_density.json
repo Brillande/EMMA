@@ -1,0 +1,68 @@
+{
+  "target": "app/volumes/geometry.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "una lesión de pocos vóxeles recibe cifra de densidad (el mínimo no se aplica)",
+      "old": "    if values.size < DENSITY_MIN_VOXELS:",
+      "new": "    if values.size < 0:"
+    },
+    {
+      "label": "el mínimo deja fuera a la lesión que tiene justo los vóxeles que se piden",
+      "old": "    if values.size < DENSITY_MIN_VOXELS:",
+      "new": "    if values.size <= DENSITY_MIN_VOXELS:"
+    },
+    {
+      "label": "la densidad recalculada sale del crudo del fichero, sin scl_slope ni scl_inter",
+      "old": "            segmentation, np.asarray(ct.dataobj), np.asarray(labels.dataobj),",
+      "new": "            segmentation, np.asarray(ct.dataobj.get_unscaled()), np.asarray(labels.dataobj),"
+    },
+    {
+      "label": "la referencia cuenta también los vóxeles de las lesiones y del resto de estructuras",
+      "old": "            \"nombre\": reference_name, **_hu(ct[np.isin(labels, list(parenchyma_labels))]),",
+      "new": "            \"nombre\": reference_name, **_hu(ct[labels > 0]),"
+    },
+    {
+      "label": "cada lesión se mide con la máscara de otra etiqueta",
+      "old": "_hu(ct[labels == LESION_LABEL_BASE + int(item[\"id\"])])",
+      "new": "_hu(ct[labels == LESION_LABEL_BASE + int(item[\"id\"]) - 1])"
+    },
+    {
+      "label": "se dan unidades Hounsfield de un estudio que no es un TAC",
+      "old": "    if modality != HU_MODALITY:",
+      "new": "    if modality is None:"
+    },
+    {
+      "label": "la cifra sale sin decir que el estudio no declara la fase de contraste",
+      "old": "        \"notas\": [DENSITY_NOTE, PHASE_UNDECLARED],",
+      "new": "        \"notas\": [DENSITY_NOTE],"
+    },
+    {
+      "label": "lo que se llama mediana es la media, que el borde de la lesión arrastra",
+      "old": "        \"mediana_hu\": round(float(median), 1),",
+      "new": "        \"mediana_hu\": round(float(sample.mean()), 1),"
+    },
+    {
+      "label": "la dispersión publicada no es la de los vóxeles de la máscara (percentil 90 por el 75)",
+      "old": "    low, median, high = np.percentile(sample, [10, 50, 90])",
+      "new": "    low, median, high = np.percentile(sample, [10, 50, 75])"
+    },
+    {
+      "label": "un zip ilegible tumba la lista de segmentaciones en vez de decir que no hay densidad",
+      "old": "    except Exception as exc:  # noqa: BLE001 — un zip ilegible no impide listar la segmentación",
+      "new": "    except KeyError as exc:  # noqa: BLE001 — un zip ilegible no impide listar la segmentación"
+    },
+    {
+      "label": "el texto que acompaña a la lesión pequeña le pone nombre a la lesión",
+      "old": "NOT_ASSESSABLE = \"no valorable\"",
+      "new": "NOT_ASSESSABLE = \"probable quiste\""
+    },
+    {
+      "label": "medir la densidad modifica el resumen que recibe (el firmado dejaría de ser el firmado)",
+      "old": "    measured = [\n        {**item, DENSITY_KEY: _hu(",
+      "new": "    measured = [\n        item.update({DENSITY_KEY: None}) or {**item, DENSITY_KEY: _hu("
+    }
+  ]
+}

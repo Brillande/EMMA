@@ -1,0 +1,22 @@
+{"target": "app/analysis/alert_context.py",
+ "test": ["tests/test_exercise_context.py", "-k", "not identical"],
+ "mutations": [
+  {"label": "sin lecturas de ejercicio la fuente se da por con dato",
+   "old": "        return items, _source(spec.kind, spec.display, NO_DATA, 0, spec.no_data)",
+   "new": "        return items, _source(spec.kind, spec.display, WITH_DATA, 0, spec.no_data)"},
+  {"label": "con un indicador de ejercicio sin lecturas la fuente se da por completa",
+   "old": "            spec.kind, spec.display, PARTIAL, len(items),",
+   "new": "            spec.kind, spec.display, WITH_DATA, len(items),"},
+  {"label": "el ejercicio deja de ser fuente del contexto",
+   "old": "        _exercise(exercise, window, anchor),",
+   "new": "        # sin ejercicio"},
+  {"label": "el ejercicio posterior al instante del estado entra en la ventana",
+   "old": "    recorded = exercise_in_window(observations, window[0], window[1])",
+   "new": "    recorded = exercise_in_window(observations, window[0], anchor.moment + WINDOW_AFTER)"},
+  {"label": "el ejercicio de antes de la ventana entra",
+   "old": "    recorded = exercise_in_window(observations, window[0], window[1])",
+   "new": "    recorded = exercise_in_window(observations, window[0] - WINDOW_BEFORE, window[1])"},
+  {"label": "el ejercicio se lista sin el rotulo de no-causa",
+   "old": "        \"label\": i18n.loc(LABEL),\n        \"title\": title,",
+   "new": "        \"label\": \"\",\n        \"title\": title,"}
+ ]}

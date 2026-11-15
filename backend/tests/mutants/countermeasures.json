@@ -1,0 +1,15 @@
+{"target": "app/advisor/countermeasures.py", "test": ["tests/test_countermeasures.py"],
+ "mutations": [
+  {"label": "una contramedida 'respaldada' sin protocolo se carga",
+   "old": "    if raw[\"basis\"] == \"evidence-backed\" and not reference:\n        raise fail(",
+   "new": "    if False:\n        raise fail("},
+  {"label": "un tiempo con cifra y 'sin fuente' se acepta",
+   "old": "    if minutes is not None and time_basis == NO_SOURCE:",
+   "new": "    if False:"},
+  {"label": "un indicador de seguimiento inventado se acepta",
+   "old": "    if unknown:\n        raise fail(",
+   "new": "    if False:\n        raise fail("},
+  {"label": "el refugio se ofrece por nivel de dominio",
+   "old": "        if item.domain is domain and item.id != SHELTER_ID",
+   "new": "        if item.domain is domain"}
+ ]}

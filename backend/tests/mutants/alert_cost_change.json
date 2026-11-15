@@ -1,0 +1,73 @@
+{
+ "target": "app/analysis/alert_support.py",
+ "test": [
+  "tests/test_alert_flow.py"
+ ],
+ "mutations": [
+  {
+   "label": "las comprobaciones se reordenan (aqui, por titulo)",
+   "old": "    for item in recommendations:\n        if item.domain is not domain:",
+   "new": "    for item in sorted(recommendations, key=lambda rec: rec.action):\n        if item.domain is not domain:"
+  },
+  {
+   "label": "los decimales se deciden con la cifra sin redondear",
+   "old": "    decimals = 0 if round(abs(percent), 1) >= 10 else 1",
+   "new": "    decimals = 0 if abs(percent) >= 10 else 1"
+  },
+  {
+   "label": "la nota de lo sin clasificar se calla",
+   "old": "if check_cost.has_unclassified(item[\"cost\"] for item in checks)",
+   "new": "if False"
+  },
+  {
+   "label": "la nota de que no se reordenan se calla",
+   "old": "\"order_note\": i18n.loc(COST_ORDER_NOTE) if checks else None",
+   "new": "\"order_note\": None"
+  },
+  {
+   "label": "el cambio relativo se divide por el valor y no por la mediana",
+   "old": "    percent = (deviation.value - median) / median * 100",
+   "new": "    percent = (deviation.value - median) / deviation.value * 100"
+  },
+  {
+   "label": "el cambio relativo se calcula frente a otro cuantil que la mediana",
+   "old": "deviation.baseline.quantile(0.5)",
+   "new": "deviation.baseline.quantile(0.4)"
+  },
+  {
+   "label": "una lectura juzgada contra el rango poblacional recibe cambio relativo",
+   "old": "    if deviation.used_population_range:\n        return _not_computed(",
+   "new": "    if False:\n        return _not_computed("
+  },
+  {
+   "label": "una escala que no es de razon recibe cambio relativo",
+   "old": "    if reason is not None:\n        return _not_computed(",
+   "new": "    if False:\n        return _not_computed("
+  },
+  {
+   "label": "con mediana 0 se divide igual",
+   "old": "    if median <= 0:",
+   "new": "    if median < 0:"
+  },
+  {
+   "label": "el sentido del cambio se invierte",
+   "old": "sense = \"por encima\" if percent > 0 else \"por debajo\"",
+   "new": "sense = \"por encima\" if percent < 0 else \"por debajo\""
+  },
+  {
+   "label": "las excepciones por clave (desfase, caida ortostatica, densidad) se ignoran",
+   "old": "    if key in NOT_RATIO_KEYS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una unidad sin escala declarada se calcula igual",
+   "old": "    if unit not in RATIO_UNITS:\n        return UNDECLARED_SCALE",
+   "new": "    if False:\n        return UNDECLARED_SCALE"
+  },
+  {
+   "label": "un porcentaje no avisa de que no son puntos porcentuales",
+   "old": "    if code.unit == \"%\":",
+   "new": "    if False:"
+  }
+ ]
+}

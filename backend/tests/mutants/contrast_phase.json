@@ -1,0 +1,92 @@
+{
+ "target": "app/volumes/contrast_phase.py",
+ "test": [
+  "tests/test_contrast_phase.py::test_the_vocabulary_is_closed_and_undeclared_cannot_be_signed",
+  "tests/test_contrast_phase.py::test_the_latest_console_declaration_holds_and_the_earlier_ones_stay",
+  "tests/test_contrast_phase.py::test_a_declaration_that_does_not_count_is_as_if_nobody_had_said_anything",
+  "tests/test_contrast_phase.py::test_outside_a_ct_the_phase_does_not_apply",
+  "tests/test_contrast_phase.py::test_the_declared_phase_goes_next_to_the_density_and_touches_no_figure",
+  "tests/test_contrast_phase.py::test_someone_who_looked_and_does_not_know_is_not_the_same_as_nobody_saying",
+  "tests/test_contrast_phase.py::test_without_a_declaration_or_without_density_nothing_changes",
+  "tests/test_contrast_phase.py::test_two_phases_are_the_same_only_if_both_are_known_and_equal",
+  "tests/test_contrast_phase.py::test_a_comparison_with_a_study_that_is_not_a_ct_says_so",
+  "tests/test_contrast_phase.py::test_what_is_said_about_the_phase_describes_and_neither_orders_nor_classifies"
+ ],
+ "mutations": [
+  {
+   "label": "cualquier texto no vacio vale como fase",
+   "old": "    if phase not in PHASES:",
+   "new": "    if not phase:"
+  },
+  {
+   "label": "«sin declarar» se puede firmar como una fase mas",
+   "old": "    UNKNOWN: \"no se sabe\",\n}",
+   "new": "    UNKNOWN: \"no se sabe\",\n    \"undeclared\": \"sin declarar\",\n}"
+  },
+  {
+   "label": "cuenta una declaracion que no firmo la consola",
+   "old": "        if item.get(\"signer\") == signer\n",
+   "new": "        if True\n"
+  },
+  {
+   "label": "la declaracion de otro estudio se le pone a este",
+   "old": "        and item.get(\"study_index\") == study.get(\"ledger_index\")\n",
+   "new": ""
+  },
+  {
+   "label": "cuenta una declaracion que cita otro volumen que el firmado",
+   "old": "        and item.get(\"study_sha256\") == study.get(\"sha256\")\n",
+   "new": ""
+  },
+  {
+   "label": "cuenta una declaracion que la ruta no habria firmado",
+   "old": "        and well_formed(item)\n",
+   "new": ""
+  },
+  {
+   "label": "una declaracion sin nombre se da por bien formada",
+   "old": "    return item.get(\"phase\") in PHASES and any(",
+   "new": "    return item.get(\"phase\") in PHASES or any("
+  },
+  {
+   "label": "manda la primera declaracion y no la ultima",
+   "old": "        \"current\": told[-1] if told else None,",
+   "new": "        \"current\": told[0] if told else None,"
+  },
+  {
+   "label": "la fase se da por aplicable fuera de un TAC",
+   "old": "    applicable = study.get(\"modality\") == MODALITY",
+   "new": "    applicable = True"
+  },
+  {
+   "label": "con la fase declarada se sigue diciendo que el estudio no la declara",
+   "old": "    notes = [note for note in block.get(\"notas\", []) if note != undeclared_note]",
+   "new": "    notes = list(block.get(\"notas\", []))"
+  },
+  {
+   "label": "se anota la fase en un bloque que no tiene densidad",
+   "old": "    if current is None or not isinstance(block, dict) or not block.get(\"disponible\"):",
+   "new": "    if current is None or not isinstance(block, dict):"
+  },
+  {
+   "label": "«no se sabe» se enseña como una fase declarada mas",
+   "old": "    told = (UNKNOWN_NOTE if current[\"code\"] == UNKNOWN else DECLARED_NOTE).format(",
+   "new": "    told = (DECLARED_NOTE).format("
+  },
+  {
+   "label": "dos estudios de fase desconocida se dan por adquiridos en la misma",
+   "old": "    if first is None or second is None or UNKNOWN in (first[\"code\"], second[\"code\"]):",
+   "new": "    if first is None or second is None:"
+  },
+  {
+   "label": "dos fases distintas se dan por la misma",
+   "old": "    if first[\"code\"] != second[\"code\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "la comparacion con un estudio que no es un TAC no lo dice",
+   "old": "    if not (before[\"applicable\"] and after[\"applicable\"]):",
+   "new": "    if False:"
+  }
+ ]
+}

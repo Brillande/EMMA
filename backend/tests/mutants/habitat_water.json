@@ -1,0 +1,71 @@
+{
+ "target": "app/environment/habitat.py",
+ "test": [
+  "tests/test_habitat_water.py"
+ ],
+ "mutations": [
+  {
+   "label": "el SWEG de 100 dias del TOC vuelve al limite antiguo (3 mg/L) sin releer la fuente",
+   "old": "    _sweg(\"Total Organic Carbon\", 14, \"100 days\", 5.0, \"G.I. Gastric upset\",",
+   "new": "    _sweg(\"Total Organic Carbon\", 14, \"100 days\", 3.0, \"G.I. Gastric upset\","
+  },
+  {
+   "label": "el SWEG de 1000 dias de la plata deja de ser el de la fila leida",
+   "old": "    _sweg(\"Silver\", 13, \"1000 days\", 0.4, \"Skin Argyria\", _SWEG_PROLONGED),",
+   "new": "    _sweg(\"Silver\", 13, \"1000 days\", 0.6, \"Skin Argyria\", _SWEG_PROLONGED),"
+  },
+  {
+   "label": "el valor de contingencia de 1 dia se presenta como de consumo prolongado",
+   "old": "    _sweg(\"Silver\", 13, \"1 day\", 5.0, \"Nose RWC\", _SWEG_ACUTE),",
+   "new": "    _sweg(\"Silver\", 13, \"1 day\", 5.0, \"Nose RWC\", _SWEG_PROLONGED),"
+  },
+  {
+   "label": "un SWEG, que es un maximo, se ensena como un minimo",
+   "old": "        condition, f\"{chemical} | {period} | {value:g} mg/L | {effect}\", high=value,",
+   "new": "        condition, f\"{chemical} | {period} | {value:g} mg/L | {effect}\", low=value,"
+  },
+  {
+   "label": "el agua potable recibe una cifra microbiana que la norma no da",
+   "old": "        \"including drinking, food rehydration, personal hygiene, and medical needs.\",\n    ),",
+   "new": "        \"including drinking, food rehydration, personal hygiene, and medical needs.\",\n        high=50.0,\n    ),"
+  },
+  {
+   "label": "las bacterias del agua pasan a la tabla de la atmosfera de cabina",
+   "old": "            reference_label=MICROBIAL_LABEL, reference_source=MICROBIAL_SOURCE, group=WATER,",
+   "new": "            reference_label=MICROBIAL_LABEL, reference_source=MICROBIAL_SOURCE, group=CABIN,"
+  },
+  {
+   "label": "un grupo que no esta en la lista se acepta",
+   "old": "        if self.group not in GROUPS:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un requisito de referencia sin el rotulo de por que no se evalua se acepta",
+   "old": "        if self.reference_requirements and (\n            self.reference_label is None or self.reference_source is None\n        ):",
+   "new": "        if False and (\n            self.reference_label is None or self.reference_source is None\n        ):"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "una muestra de agua declarada despues mueve el ahora de la cabina y cierra la excursion vigente",
+   "old": "    judged = cabin_readings(readings) or readings",
+   "new": "    judged = readings"
+  },
+  {
+   "target": "app/core/versioning.py",
+   "label": "lo que solo se muestra entra en la huella de reglas",
+   "old": "            for key, spec in sorted(PARAMETERS.items())\n        },",
+   "new": "            for key, spec in sorted({**PARAMETERS, **__import__('app.environment.habitat', fromlist=['DISPLAY_ONLY']).DISPLAY_ONLY}.items())\n        },"
+  },
+  {
+   "target": "app/analysis/alert_context.py",
+   "label": "una muestra de agua cuenta como lectura de cabina en el contexto de una alerta",
+   "old": "        item.parameter for item in cabin_readings(readings)\n",
+   "new": "        item.parameter for item in readings\n"
+  },
+  {
+   "label": "la luz deja de contar como cabina",
+   "old": "    return [item for item in readings if parameter(item.parameter).group == CABIN]",
+   "new": "    return [item for item in readings if item.parameter in PARAMETERS]"
+  }
+ ]
+}

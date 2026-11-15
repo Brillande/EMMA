@@ -1,0 +1,28 @@
+{
+  "target": "../polaris/tools/kpi_ned.py",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "una herramienta dormida de la copia lanza un proceso al importarse y la ficha no lo declara",
+      "old": "import json\nimport os\nimport sys\nimport time\n",
+      "new": "import json\nimport os\nimport sys\nimport time\nimport subprocess\nsubprocess.run([sys.executable, \"-c\", \"\"], check=False)\n"
+    },
+    {
+      "label": "una herramienta dormida de la copia escribe un fichero al importarse",
+      "old": "import json\nimport os\nimport sys\nimport time\n",
+      "new": "import json\nimport os\nimport sys\nimport time\nopen(os.path.join(os.environ[\"BTP_REPO\"], \"huella.txt\"), \"w\").close()\n"
+    },
+    {
+      "label": "una herramienta dormida de la copia crea una carpeta al importarse",
+      "old": "import json\nimport os\nimport sys\nimport time\n",
+      "new": "import json\nimport os\nimport sys\nimport time\nos.makedirs(os.path.join(os.environ[\"BTP_REPO\"], \"huella\"), exist_ok=True)\n"
+    },
+    {
+      "label": "una herramienta dormida de la copia intenta una conexión al importarse",
+      "old": "import json\nimport os\nimport sys\nimport time\n",
+      "new": "import json\nimport os\nimport sys\nimport time\nsys.audit(\"socket.connect\", None, (\"203.0.113.1\", 443))\n"
+    }
+  ]
+}

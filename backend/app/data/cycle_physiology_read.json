@@ -1,0 +1,340 @@
+{
+  "_nota": "Cuánto cambia cada indicador con la fase del ciclo menstrual en mujeres con ciclo natural, frase a frase. La referencia es la fase folicular: cada fase se da como diferencia frente a ella. Cada `quote` es la frase exacta del resumen o del texto, copiada con la fuente delante el día `read_on`, en su idioma; «[…]» marca un trozo omitido de la frase (estadísticos), y lo demás es literal. `literal` es el trozo que dice el sentido y está escrito en la frase; `phase_note` dice cómo se lee la fase cuando la frase no la nombra («across the cycle», «toward the end»). `literal_about` = `reference` cuando el literal habla de la fase de referencia y no de la fase de la fila («lower in the follicular phase» dice que la menstruación está más alta). `magnitude` es la cifra que da la frase: `low`/`high` en la unidad del catálogo; si es una resta de dos medias publicadas, `derived_from` lleva los pares [fase, referencia] y cada número está escrito en una frase leída de la misma fuente; `key` de la cifra es el indicador del catálogo que mide (una SDNN no da la cifra de la RMSSD); `compared_with` de la cifra, si lo lleva, es su referencia cuando no es la de la frase, y entonces `reference_from` es la frase del mismo estudio que da la media de esa referencia; `means` es la media que una frase da para cada fase, escrita en ella, y la resta toma de ahí la de la referencia. La clase de cada indicador y fase usa el vocabulario de las derivas del simulador (ingest/simulator.py, EVIDENCE_CLASSES): `established` (magnitud documentada), `direction_only` (sentido documentado, sin cifra que valga para el indicador), `contested` (las frases leídas no coinciden) y `unsupported` (buscado y no encontrado, con lo leído al buscar). `dissent` son las frases leídas que no van en el sentido de la fila, con `dissent_note` que dice por qué no la vuelven «discutida». Nada de esto entra hoy en la base, el riesgo, los niveles ni las alertas: es lo que leerán la línea base consciente de la fase (unidad B3 del lote ciclo) y el simulador. Lo valida app/evidence/cycle_physiology.py.",
+  "read_on": "2026-11-14",
+  "reference_phase": "follicular",
+  "sources": {
+    "jain-2016-amenorrhea-astronauts": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC, no."
+    },
+    "baker-2020-temperature-menstrual-review": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el XML de PMC solo traía la cabecera y el resumen."
+    },
+    "maijala-2019-oura-finger-temperature": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI)."
+    },
+    "shilaih-2018-wrist-temperature-cycle": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI)."
+    },
+    "goodale-2019-wearable-menses-physiology": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed y, en el texto completo de PMC (PMC6495289), los resultados de temperatura de muñeca, frecuencia cardiaca y variabilidad y la discusión de la variabilidad."
+    },
+    "alzueta-2022-oura-menstrual-cycle": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed y, en el texto completo de PMC (PMC9005074), los métodos del anillo, la tabla 2 y los resultados de frecuencia cardiaca y RMSSD."
+    },
+    "giersch-2020-menstrual-thermoregulation-meta": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "schmalenberger-2019-vagal-menstrual-meta": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed y, en el texto completo de PMC (PMC6912442), la extracción de datos (RMSSD antes que HF)."
+    },
+    "dejager-2026-wearable-hrv-cycle-review": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed y, en el texto completo de PMC (PMC13198475), los resultados de RMSSD y SDNN en mujeres con ciclo natural."
+    },
+    "yazar-2016-hrv-menstrual-phase": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI)."
+    },
+    "tenan-2014-resting-hrv-cycle": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    }
+  },
+  "suppression": {
+    "ref": "jain-2016-amenorrhea-astronauts",
+    "where": "resumen",
+    "quote": "During long-duration missions, female astronauts have often continuously taken the combined oral contraceptive pill to induce amenorrhea.",
+    "text": "En misiones largas, muchas astronautas han tomado la píldora anticonceptiva combinada de forma continua para no tener la regla. Con supresión menstrual no hay fase que seguir: esta variación se refiere a mujeres con ciclo natural."
+  },
+  "findings": [
+    {
+      "id": "baker-core-luteal",
+      "ref": "baker-2020-temperature-menstrual-review",
+      "where": "resumen",
+      "quote": "Core body temperature changes across the ovulatory menstrual cycle, such that it is 0.3°C to 0.7°C higher in the post-ovulatory luteal phase when progesterone is high compared with the pre-ovulatory follicular phase.",
+      "literal": "0.3°C to 0.7°C higher in the post-ovulatory luteal phase",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "rises",
+      "measure": "temperatura central",
+      "population": "mujeres con ciclo ovulatorio (revisión de la literatura)",
+      "magnitude": {"key": "body-temperature", "low": 0.3, "high": 0.7, "unit": "Cel"}
+    },
+    {
+      "id": "maijala-oral-luteal",
+      "ref": "maijala-2019-oura-finger-temperature",
+      "where": "resumen, resultados",
+      "quote": "Nocturnal skin temperatures and oral temperatures differed between follicular and luteal phases with higher temperatures in the luteal phase, with a difference of 0.30 °C (SD 0.12) for skin and 0.23 °C (SD 0.09) for oral temperature (p < 0.001).",
+      "literal": "higher temperatures in the luteal phase",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "rises",
+      "measure": "temperatura oral al despertar (0,30 °C en la piel del dedo)",
+      "population": "22 mujeres, anillo Oura y temperatura oral",
+      "magnitude": {"key": "body-temperature", "low": 0.23, "high": 0.23, "unit": "Cel"}
+    },
+    {
+      "id": "giersch-core-luteal",
+      "ref": "giersch-2020-menstrual-thermoregulation-meta",
+      "where": "resumen, resultados",
+      "quote": "Pooled effect size showed significantly greater initial Tint (1.231±0.186, p<0.01) and post-exercise Tint (0.455±0.153, p<0.01) in the luteal compared to follicular phases.",
+      "literal": "significantly greater initial Tint",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "rises",
+      "measure": "temperatura interna (rectal o esofágica) antes del ejercicio; tamaño de efecto, no grados",
+      "population": "9 estudios, 83 personas (metaanálisis)"
+    },
+    {
+      "id": "shilaih-wrist-luteal",
+      "ref": "shilaih-2018-wrist-temperature-cycle",
+      "where": "resumen",
+      "quote": "The average early-luteal phase temperature was 0.33°C higher than in the fertile window.",
+      "literal": "0.33°C higher than in the fertile window",
+      "phase": "luteal",
+      "compared_with": "fertile window",
+      "direction": "rises",
+      "measure": "temperatura de piel de muñeca durante el sueño",
+      "population": "136 mujeres eumenorreicas, 437 ciclos"
+    },
+    {
+      "id": "alzueta-skin-luteal",
+      "ref": "alzueta-2022-oura-menstrual-cycle",
+      "where": "resumen, resultados",
+      "quote": "Distal skin temperature and HR, measured during sleep, showed a biphasic pattern across the menstrual cycle, with increased HR (p < 0.03) and body temperature (p < 0.001) in the mid- and late-luteal phases relative to menses and ovulation.",
+      "literal": "increased HR (p < 0.03) and body temperature",
+      "phase": "luteal",
+      "compared_with": "menses and ovulation",
+      "direction": "rises",
+      "measure": "temperatura distal de piel durante el sueño",
+      "population": "26 mujeres sanas con ciclo ovulatorio, anillo Oura"
+    },
+    {
+      "id": "goodale-wrist-menses",
+      "ref": "goodale-2019-wearable-menses-physiology",
+      "where": "resultados, temperatura de muñeca",
+      "quote": "Regressing nightly WST on menstrual phases using the 50th percentile data revealed women had a significantly lower WST in the follicular phase (mean 33.87 °C [SD 0.84]; […]) and fertile window (mean 33.88 °C [SD 0.78]; […]) compared with menses (mean 34.11 °C [SD 0.84]).",
+      "literal": "significantly lower WST in the follicular phase",
+      "literal_about": "reference",
+      "phase": "menstrual",
+      "compared_with": "follicular",
+      "direction": "rises",
+      "measure": "temperatura de piel de muñeca durante el sueño",
+      "population": "237 mujeres suizas, pulsera Ava"
+    },
+    {
+      "id": "goodale-hr-menses",
+      "ref": "goodale-2019-wearable-menses-physiology",
+      "where": "resultados, frecuencia cardiaca",
+      "quote": "In particular, heart rate was significantly lower in the follicular phase (mean 56.56 [SD 6.29] beats per minute [bpm]) compared with the menstrual phase (mean 57.92 [SD 6.27] bpm; […])",
+      "literal": "significantly lower in the follicular phase",
+      "literal_about": "reference",
+      "phase": "menstrual",
+      "compared_with": "follicular",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca nocturna",
+      "population": "237 mujeres suizas, pulsera Ava",
+      "means": {"follicular": 56.56, "menstrual": 57.92},
+      "magnitude": {"key": "heart-rate", "low": 1.36, "high": 1.36, "unit": "/min", "derived_from": [[57.92, 56.56]]}
+    },
+    {
+      "id": "goodale-hr-luteal",
+      "ref": "goodale-2019-wearable-menses-physiology",
+      "where": "resultados, frecuencia cardiaca",
+      "quote": "Nightly heart rate was significantly higher in the early (mean 59.98 [SD 6.50] bpm; […]) and late luteal phases (mean 60.47 [SD 6.45] bpm; […]) than in menses, however.",
+      "literal": "significantly higher in the early",
+      "phase": "luteal",
+      "compared_with": "menses",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca nocturna",
+      "population": "237 mujeres suizas, pulsera Ava",
+      "magnitude": {"key": "heart-rate", "low": 3.42, "high": 3.91, "unit": "/min", "compared_with": "follicular", "reference_from": "goodale-hr-menses", "derived_from": [[59.98, 56.56], [60.47, 56.56]]}
+    },
+    {
+      "id": "alzueta-hr-luteal",
+      "ref": "alzueta-2022-oura-menstrual-cycle",
+      "where": "resumen, resultados",
+      "quote": "Distal skin temperature and HR, measured during sleep, showed a biphasic pattern across the menstrual cycle, with increased HR (p < 0.03) and body temperature (p < 0.001) in the mid- and late-luteal phases relative to menses and ovulation.",
+      "literal": "increased HR",
+      "phase": "luteal",
+      "compared_with": "menses and ovulation",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca durante el sueño",
+      "population": "26 mujeres sanas con ciclo ovulatorio, anillo Oura"
+    },
+    {
+      "id": "tenan-hr-cycle",
+      "ref": "tenan-2014-resting-hrv-cycle",
+      "where": "resumen",
+      "quote": "Both heart rate and breathing rate increased across the cycle (p < .01) while time-domain variability decreased (p = .04).",
+      "literal": "heart rate and breathing rate increased across the cycle",
+      "phase": "luteal",
+      "compared_with": "earlier points of the cycle",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca en reposo (ECG)",
+      "phase_note": "La frase no nombra la fase lútea: dice que la frecuencia sube a lo largo de cinco momentos del ciclo, del principio hacia el final. Se cita como apoyo del sentido, no de la cifra.",
+      "population": "13 mujeres, cinco momentos del ciclo"
+    },
+    {
+      "id": "schmalenberger-vagal-luteal",
+      "ref": "schmalenberger-2019-vagal-menstrual-meta",
+      "where": "resumen",
+      "quote": "A broad meta-analysis (nstudies = 37; nindividuals = 1,004) revealed a significant CVA decrease from the follicular to the luteal phase (d = -0.39, 95% CI (-0.67, -0.11)).",
+      "literal": "significant CVA decrease from the follicular to the luteal phase",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "falls",
+      "measure": "actividad vagal cardiaca (RMSSD antes que HF en la extracción); tamaño de efecto, no milisegundos",
+      "population": "37 estudios, 1004 mujeres premenopáusicas con ciclo natural"
+    },
+    {
+      "id": "dejager-timedomain-luteal",
+      "ref": "dejager-2026-wearable-hrv-cycle-review",
+      "where": "resumen, resultados",
+      "quote": "In naturally menstruating females, HRV was higher at the beginning of the cycle and lower toward the end, with differences in time-domain HRV ranging from 3 to 9%.",
+      "literal": "lower toward the end",
+      "phase": "luteal",
+      "compared_with": "beginning of the cycle",
+      "direction": "falls",
+      "measure": "variabilidad de dominio temporal con wearables (3 a 9 %, sin síntesis cuantitativa)",
+      "phase_note": "La frase no nombra la fase lútea: dice «toward the end» del ciclo frente a «the beginning», que es la segunda mitad (lútea) frente a la primera; la revisión dice que las fases se clasificaron de forma distinta en cada estudio.",
+      "population": "16 estudios con wearables (revisión sistemática viva)"
+    },
+    {
+      "id": "dejager-rmssd-null",
+      "ref": "dejager-2026-wearable-hrv-cycle-review",
+      "where": "resultados, mujeres con ciclo natural",
+      "quote": "Two studies found no significant differences in RMSSD across the cycle under resting conditions",
+      "literal": "no significant differences in RMSSD",
+      "phase": "luteal",
+      "compared_with": "other points of the cycle",
+      "direction": "unchanged",
+      "measure": "RMSSD en reposo con wearables",
+      "phase_note": "La frase dice «across the cycle», sin nombrar la fase lútea: dos estudios sin diferencia de la RMSSD entre las fases que compararon.",
+      "population": "dos estudios de la revisión"
+    },
+    {
+      "id": "alzueta-rmssd-luteal",
+      "ref": "alzueta-2022-oura-menstrual-cycle",
+      "where": "resumen, resultados",
+      "quote": "Correspondingly, rMSSD HRV tended to be lower in the luteal phase.",
+      "literal": "tended to be lower in the luteal phase",
+      "phase": "luteal",
+      "compared_with": "menses",
+      "direction": "falls",
+      "measure": "RMSSD durante el sueño (anillo Oura)",
+      "population": "26 mujeres sanas con ciclo ovulatorio, anillo Oura"
+    },
+    {
+      "id": "yazar-sdnn-luteal",
+      "ref": "yazar-2016-hrv-menstrual-phase",
+      "where": "resumen, resultados",
+      "quote": "The SDNN (136 ± 39 vs. 154 ± 32 ms; p = 0.015) and SDANN (122 ± 36 vs. 142 ± 36 ms; p = 0.004) were significantly lower during the luteal phase than during the follicular phase.",
+      "literal": "significantly lower during the luteal phase",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "falls",
+      "measure": "SDNN de 24 h (Holter), no de una ventana corta",
+      "population": "30 mujeres de 22 a 37 años con ciclos regulares",
+      "means": {"luteal": 136, "follicular": 154},
+      "magnitude": {"key": "hrv-sdnn", "low": -18.0, "high": -18.0, "unit": "ms", "derived_from": [[136, 154]]}
+    },
+    {
+      "id": "yazar-rmssd-null",
+      "ref": "yazar-2016-hrv-menstrual-phase",
+      "where": "resumen, resultados",
+      "quote": "The HRR, rMSSD, and pNN50 were not different between the 2 phases.",
+      "literal": "not different between the 2 phases",
+      "phase": "luteal",
+      "compared_with": "follicular",
+      "direction": "unchanged",
+      "measure": "RMSSD de 24 h (Holter)",
+      "phase_note": "«The 2 phases» del estudio son la folicular y la lútea (frase anterior del mismo resumen).",
+      "population": "30 mujeres de 22 a 37 años con ciclos regulares"
+    }
+  ],
+  "indicators": {
+    "body-temperature": {
+      "luteal": {
+        "evidence": "established",
+        "direction": "rises",
+        "low": 0.23,
+        "high": 0.7,
+        "findings": ["baker-core-luteal", "maijala-oral-luteal", "giersch-core-luteal", "shilaih-wrist-luteal", "alzueta-skin-luteal"],
+        "magnitude_findings": ["baker-core-luteal", "maijala-oral-luteal"],
+        "note": "La cifra sale de la temperatura central (0,3 a 0,7 °C, revisión de Baker) y la oral al despertar (0,23 °C, Maijala). Las de piel (0,30 a 0,33 °C en dedo y muñeca) van en el mismo sentido y no cuentan para la cifra: la piel no es la temperatura del indicador. La diferencia se ve sobre todo durmiendo o al despertar."
+      },
+      "menstrual": {
+        "evidence": "direction_only",
+        "direction": "rises",
+        "low": null,
+        "high": null,
+        "findings": ["goodale-wrist-menses"],
+        "magnitude_findings": [],
+        "note": "Solo temperatura de piel de muñeca (Goodale 2019: más baja en la folicular que en la menstruación); la temperatura central en la menstruación frente a la folicular no se encontró en lo leído."
+      }
+    },
+    "heart-rate": {
+      "luteal": {
+        "evidence": "established",
+        "direction": "rises",
+        "low": 3.42,
+        "high": 3.91,
+        "findings": ["goodale-hr-luteal", "alzueta-hr-luteal", "tenan-hr-cycle"],
+        "magnitude_findings": ["goodale-hr-luteal"],
+        "note": "La cifra frente a la folicular es una resta de medias nocturnas publicadas de un solo estudio (Goodale 2019, autores de la empresa de la pulsera): 59,98 y 60,47 lpm en la lútea temprana y tardía frente a 56,56 en la folicular. Alzueta 2022 da +2,38 y +2,49 lpm en su tabla 2, pero frente a la menstruación. Ninguna revisión sistemática leída da la cifra."
+      },
+      "menstrual": {
+        "evidence": "established",
+        "direction": "rises",
+        "low": 1.36,
+        "high": 1.36,
+        "findings": ["goodale-hr-menses"],
+        "magnitude_findings": ["goodale-hr-menses"],
+        "note": "Un solo estudio (Goodale 2019): 57,92 lpm en la menstruación frente a 56,56 en la folicular, frecuencia nocturna."
+      }
+    },
+    "hrv-rmssd": {
+      "luteal": {
+        "evidence": "direction_only",
+        "direction": "falls",
+        "low": null,
+        "high": null,
+        "findings": ["schmalenberger-vagal-luteal", "dejager-timedomain-luteal", "alzueta-rmssd-luteal"],
+        "magnitude_findings": [],
+        "dissent": ["dejager-rmssd-null", "yazar-rmssd-null"],
+        "dissent_note": "Estudios sueltos sin diferencia significativa de la RMSSD, no en sentido contrario; el metaanálisis de 37 estudios (Schmalenberger 2019) que la prioriza da la bajada. Ninguna fuente leída da la cifra en milisegundos: el metaanálisis da un tamaño de efecto (d = −0,39) y la revisión viva, un 3 a 9 % que no llegó a sintetizar.",
+        "note": "Sentido documentado por dos revisiones sistemáticas; magnitud en milisegundos no documentada. La de Alzueta (−5,47 y −5,96 ms frente a la menstruación) no fue significativa."
+      },
+      "menstrual": {
+        "evidence": "unsupported",
+        "searched": "La diferencia de la RMSSD entre la menstruación y la folicular: el metaanálisis de Schmalenberger 2019 da, en su resumen, solo de la menstruación y la folicular media-tardía a la premenstrual; Alzueta 2022 usa la menstruación como referencia y no da la folicular; el «HRV ratio» de Goodale 2019 no es la RMSSD.",
+        "searched_refs": ["schmalenberger-2019-vagal-menstrual-meta", "alzueta-2022-oura-menstrual-cycle", "goodale-2019-wearable-menses-physiology"]
+      }
+    },
+    "hrv-sdnn": {
+      "luteal": {
+        "evidence": "direction_only",
+        "direction": "falls",
+        "low": null,
+        "high": null,
+        "findings": ["yazar-sdnn-luteal", "dejager-timedomain-luteal"],
+        "magnitude_findings": [],
+        "note": "La única cifra leída (−18 ms, resta de 136 y 154 ms de Yazar 2016) es la SDNN de 24 h de un Holter en 30 mujeres, que no es la SDNN de una ventana corta: no se usa como cifra del indicador. La revisión viva dice que la SDNN siguió la tendencia de la variabilidad en unos dos tercios de los estudios."
+      },
+      "menstrual": {
+        "evidence": "unsupported",
+        "searched": "La SDNN en la menstruación frente a la folicular: Yazar 2016 compara solo folicular y lútea; la revisión viva de de Jager 2026 da la SDNN entre cuartos del ciclo sin aislar la menstruación; el metaanálisis de Schmalenberger 2019 no trata la SDNN.",
+        "searched_refs": ["yazar-2016-hrv-menstrual-phase", "dejager-2026-wearable-hrv-cycle-review"]
+      }
+    }
+  }
+}

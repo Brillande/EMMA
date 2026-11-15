@@ -1,0 +1,16 @@
+{
+  "target": "app/kb.py",
+  "test": ["tests/test_knowledge.py::test_meaning_finds_what_words_do_not", "tests/test_knowledge.py::test_without_the_model_it_falls_back_to_words"],
+  "mutations": [
+    {
+      "label": "kb_embed no se apunta al modelo de EMMA",
+      "old": "    if model_file != embed.MODEL_FILE:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el índice no se rehace al aparecer la capa vectorial",
+      "old": "        accepted = {fingerprint + VECTORS, fingerprint + VECTORS_FAILED}",
+      "new": "        accepted = {fingerprint + VECTORS, fingerprint + VECTORS_FAILED, fingerprint + WORDS}"
+    }
+  ]
+}

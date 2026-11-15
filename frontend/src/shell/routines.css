@@ -1,0 +1,412 @@
+/*
+ * «Rutinas y notas» bajo la concha de la maqueta: esta semana, rutinas y lo que espera
+ * (`TimelinePieces`), el seguimiento de contramedidas (`.followups`) y las notas de Tierra
+ * (`.ground-notes`). Solo bajo `.app[data-look="reference"]`.
+ *
+ * Primera pasada (capturas del 2026-11-07 en la concha nueva, 1672 × 941, con los cinco paneles
+ * llenos): la concha ya ponía a cada panel el marco de la maqueta, pero por dentro seguían con la
+ * consola clásica. Las listas de «Próximos días», «Medidas periódicas» (también la de las rachas,
+ * dentro de su pliegue) y «Espera por una persona» llevaban la viñeta y la sangría de 40 px del
+ * navegador; cada seguimiento era un punto de lista con la acción en negrita y el formulario de
+ * cierre suelto debajo; cada nota de Tierra, una raya gris y el texto firmado a pelo. Aquí las listas
+ * toman las filas de «Próximas acciones» (`.ref-next li`: raya fina entre filas, sin viñeta); cada
+ * seguimiento, el marco de `.ref-card` con la acción como título de tarjeta (`.ref-h3` sobre su
+ * filete) y el cierre en la caja de un formulario; y las notas, las filas de «Notas» de la maqueta
+ * (`.ref-notes li`), con lo que Tierra firmó en su propia caja.
+ *
+ * Segunda pasada, el tablero (decisión del usuario, 2026-11-07: cada sección como «Inicio» pero con
+ * sus apartados). Lo que se vio al capturar de nuevo (2026-11-08, mismo tamaño): los cinco paneles
+ * seguían en una sola columna, cada uno a todo el ancho; «Próximos días» era una franja de tres
+ * líneas de 1123 px, «Medidas periódicas» una lista larga sin ninguna cifra a la vista (cuántas van
+ * al día no se decía: había que contar) y las rachas, un texto corrido por fila. Ahora la sección es
+ * la rejilla de 12 columnas de `board.css`: arriba, «Próximos días» (4) con la cifra grande de lo
+ * que tiene fecha y «Medidas periódicas» (8) con el anillo de las que van al día sobre las que se
+ * deben y las píldoras por estado; «Espera por una persona» a todo el ancho cuando existe; abajo,
+ * «Seguimiento» (8), con las píldoras por estado y el medidor de la ventana de cada seguimiento
+ * abierto, y «Notas de Tierra» (4) con sus recuentos. En el cuerpo intermedio (≤ 72 rem) la primera
+ * fila se parte a mitades y lo largo baja a todo el ancho. «Próximos días» no se estira con la
+ * altura de su vecina: con el pliegue de las rachas abierto, «Medidas periódicas» mide 1000 px y
+ * una tarjeta de tres líneas estirada hasta ahí era un hueco con marco. Un panel que devuelve
+ * `null` («Espera», «Seguimiento» en el escenario) no deja hueco (`board.css`), y su pareja queda
+ * sola en la fila: es lo previsto.
+ *
+ * Tercera pasada, la muestra (Ellande, 2026-11-08: «está muy lejos todavía de la muestra»). Lo que
+ * se vio a 1672 × 941: «Medidas periódicas» era un anillo pequeño, una sola píldora («sin ninguna
+ * lectura 6») y dos frases; «Notas de Tierra», un párrafo largo; y la mitad de la vista, vacía. Ahora
+ * «Medidas periódicas» ocupa las dos filas de la derecha: el anillo grande, un mosaico por estado
+ * (al día, atrasada, sin lectura buena, sin ninguna lectura) con su marca y su recuento, y cada
+ * medida que se debe como ficha con la marca de su estado, como «Próximas acciones» de la muestra.
+ * A la izquierda, «Próximos días» y debajo «Notas de Tierra» (`grid-auto-flow: dense` rellena el
+ * hueco), con las filas de «Notas / bitácora»: hora a la izquierda, nota a la derecha. Lo que es
+ * regla (la base de las notas, el ritmo de diseño de las rachas, el «a fecha de» sin marca) va
+ * detrás de «Ver detalle» (`BoardDetail`).
+ *
+ * Lo que no se toca: el amarillo con triángulo de una medida rota, de dos informes que no coinciden
+ * o de una evaluación que no se puede valorar; el gris de lo que nunca corrió, de la nota que no se
+ * enseña y de la que aún está en camino; el cian del «a fecha de» sin lecturas; el color de la marca
+ * de cada nota, de cada estado de seguimiento y de cada evaluación (`.mark.c-*`, tabla F.5-1). Las
+ * píldoras de recuento toman ese mismo color en su filete (`--lvl`, como `LevelPill`) y ninguno
+ * nuevo; el medidor y la barra de las rachas son neutros (`Meter`, `ImpactBar`). El punto delante de
+ * cada fila es del color del marco: adorno, ni casilla ni señal. Los mandos, las entradas, los
+ * pliegues, las baldosas (`.stat-tile`) y los títulos de panel son del mobiliario común
+ * (`furniture.css`); la entrada y el mando del cierre conservan su alto táctil (`styles.css` lo fija
+ * para `[data-ui="followups"]`).
+ *
+ * Especificidad a propósito baja: el prefijo de la concha va dentro de `:where()`, que no cuenta, y
+ * las reglas ganan a las de `styles.css` solo por cargar después con la misma especificidad. Los
+ * modos de baja visión y alto contraste engordan el borde del panel (`styles.css`); la tarjeta de
+ * cada seguimiento, que aquí nace, los sigue al final de esta hoja. Donde la pieza ya tenía borde en
+ * la hoja clásica (`.ground-notes > li`, `.meter`) no se usa el atajo `border`: solo `border-color`.
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): la pestaña `crew-routines` ---- */
+
+:where(.app[data-look="reference"]) #crew-panel-routines {
+  grid-auto-flow: row dense;
+  /* El alto que «Medidas periódicas» pide de más va a su segunda fila, no a partes iguales: así
+     «Notas de Tierra» sube justo debajo de «Próximos días». La primera fila es la del título de la
+     sección (medido el 2026-11-08: 27 px a lo ancho); con `auto 1fr` el 1fr caía en la fila de
+     «Próximos días» y las notas quedaban 200 px más abajo. */
+  grid-template-rows: auto auto 1fr;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="this-week"]) {
+  --span: 4;
+  --span-mid: 6;
+  align-self: start;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="routines"]) {
+  --span: 8;
+  --span-mid: 12;
+  grid-row: span 2;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="waiting"]) {
+  --span: 12;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="followups"]) {
+  --span: 8;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="ground-notes-onboard"]) {
+  --span: 4;
+  --span-mid: 6;
+  align-self: start;
+}
+
+/* En el cuerpo intermedio (a 1300 px de ventana) «Próximos días» y «Notas de Tierra» van a mitades en
+   una fila y las medidas debajo, a todo el ancho: a mitades, sus fichas en dos columnas la alargaban
+   hasta 1300 px de página. Ahí, y en una columna (baja visión), no tiene dos filas que llenar. */
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="routines"]) {
+    grid-row: auto;
+  }
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) #crew-panel-routines > .slot:has(> .slot-body > [data-ui="routines"]) {
+  grid-row: auto;
+}
+
+/* ---- Las píldoras de recuento son una lista (`ul.board-tally`): sin viñeta ni sangría ---- */
+
+:where(.app[data-look="reference"]) #crew-panel-routines ul.board-tally {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.35rem 0 0.45rem;
+}
+
+/* La marca dentro de la píldora ya separa dibujo y palabra; la cifra va detrás, en negrita como en «Inicio». */
+:where(.app[data-look="reference"]) #crew-panel-routines .board-pill > .num {
+  font-weight: 600;
+}
+
+/* ---- «Próximos días»: la ficha de lo que tiene fecha, sola en su fila de baldosas ---- */
+
+/* Una sola ficha: con `auto-fit` (`board.css`) se estiraba a todo el ancho del panel (557 px para
+   un «0»); con `auto-fill` ocupa una columna de baldosa, como las tiras de «Inicio». */
+:where(.app[data-look="reference"] .panel[data-ui="this-week"]) .board-stats {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  margin: 0.35rem 0 0.5rem;
+}
+
+/* ---- «Medidas periódicas»: el anillo y las píldoras en una fila, encima de la lista ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-board {
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+/* El anillo, grande como el del índice de «Inicio» en la muestra; la cifra de dentro es la que se lee
+   (el `aria-label` la dice). */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-board .ref-ring-col {
+  flex: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-board .ref-ring {
+  width: 7.5rem;
+  height: 7.5rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-board .ref-ring-value {
+  font-size: 2.4rem;
+}
+
+/* Un mosaico por estado: la cifra grande y, debajo, la marca con su palabra. El filete y el fondo
+   toman el color de la marca (`--lvl`, por `markTint`); sin color, el acento de la sección (adorno). */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-tiles {
+  flex: 1 1 18rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr));
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-tile {
+  --lvl: var(--sec-acc);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 4.6rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--lvl) 70%, transparent);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lvl) 16%, var(--ref-card)), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--lvl) 18%, transparent) inset;
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+/* Un estado sin ninguna medida se atenúa (su 0 sigue escrito): lo que hay pesa más que lo que no. */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-tile[data-count="0"] {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--ref-navy) 80%, transparent);
+  box-shadow: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-tile-num {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Cada medida que se debe: una ficha con la marca de su estado, en columnas como las filas de
+   «Próximas acciones» de la muestra. */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 0.3rem 0.45rem;
+  margin: 0.55rem 0 0.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-chip {
+  --lvl: var(--ref-edge);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 1.75rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--lvl) 55%, transparent);
+  border-left-width: 3px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ref-navy) 75%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+/* El nombre en dos líneas como mucho (con una, las dos variabilidades de la frecuencia cardiaca
+   se leían iguales); entero en el `title` y para el lector de pantalla. */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) .routine-chip > .mark {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* La barra de una racha va en la línea, entre la cifra y su «la más larga»: la pista a lo ancho de
+   unas cinco cifras, centrada con el texto. `board.css` la hace `flex`, que aquí partiría la fila. */
+:where(.app[data-look="reference"] .panel[data-ui="routines"]) [data-ui="routine-streaks"] .board-bar {
+  display: inline-flex;
+  width: 4.5rem;
+  vertical-align: middle;
+  margin-right: 0.2rem;
+}
+
+/* ---- Las listas de «Próximos días», «Medidas periódicas» y «Espera»: filas como las de «Próximas acciones» ---- */
+
+:where(.app[data-look="reference"] .panel:is([data-ui="this-week"], [data-ui="routines"], [data-ui="waiting"])) .drivers {
+  list-style: none;
+  margin: 0.45rem 0;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="this-week"], [data-ui="routines"], [data-ui="waiting"])) .drivers > li {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1.05rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="this-week"], [data-ui="routines"], [data-ui="waiting"])) .drivers > li:last-child {
+  border-bottom: 0;
+}
+
+/* El punto va a la altura de la primera línea aunque la fila se parta en dos (`lh`). Su contenido
+   es un espacio de ancho cero, no vacío: WebKit deja de anunciar como lista un `ul` sin viñetas
+   salvo que sus filas tengan algún marcador, y un `::before` con contenido cuenta como tal. */
+:where(.app[data-look="reference"] .panel:is([data-ui="this-week"], [data-ui="routines"], [data-ui="waiting"])) .drivers > li::before {
+  content: "\200B";
+  position: absolute;
+  left: 0;
+  top: calc(0.3rem + 0.5lh - 0.225rem);
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ref-teal);
+  box-shadow: 0 0 4px var(--ref-glow);
+}
+
+/* Las frases sueltas bajo el título de los paneles que las tienen (el «a fecha de», la nota de un
+   evento solar, lo que nunca corrió, el umbral de la espera, la base de las notas) respiran como
+   en una tarjeta de «Inicio» (`.ref-card p`). «Seguimiento» no tiene ninguna: solo su lista. */
+:where(.app[data-look="reference"] .panel:is([data-ui="this-week"], [data-ui="routines"], [data-ui="waiting"], [data-ui="ground-notes-onboard"])) > p {
+  margin: 0.2rem 0;
+}
+
+/* ---- Seguimiento: cada contramedida adoptada es una tarjeta; su cierre firmado, en su caja ---- */
+
+/* Sin `list-style: none`: el `li` en rejilla ya no pinta viñeta, y así el `ul` sigue siendo una
+   lista también para WebKit. */
+:where(.app[data-look="reference"] .panel[data-ui="followups"]) .followups {
+  gap: 0.6rem;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="followups"]) .followups > li {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem 0.8rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* La acción adoptada, título de su tarjeta sobre un filete; el texto es del backend. */
+:where(.app[data-look="reference"] .panel[data-ui="followups"]) .followups > li > strong {
+  display: block;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  font-size: 1.05rem;
+}
+
+/* El medidor de la ventana (`Meter`), sobre la pista de la maqueta como el del dosímetro
+   (`mission.css`): misma especificidad que `.meter` y menos que `.meter.meter-oor`. Ya tenía borde. */
+:where(.app[data-look="reference"] .panel[data-ui="followups"]) .followups > li > .meter-block .meter {
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* El cierre con motivo: la caja de un formulario de la maqueta; la entrada y el mando, del
+   mobiliario. No tenía borde: aquí nace. */
+:where(.app[data-look="reference"] .panel[data-ui="followups"]) .followups > li > .inline-form {
+  margin-top: 0.35rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 85%, transparent);
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* ---- Notas de Tierra: las filas de «Notas» de la maqueta; lo que Tierra firmó, en su propia caja ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes {
+  margin-top: 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes > li {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.6rem 0;
+  border-top-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes > li > p {
+  margin: 0;
+}
+
+/* Tablero: cada nota en una fila de «Notas / bitácora», la hora de firma en su columna. */
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes-board > li {
+  grid-template-columns: 6.2rem minmax(0, 1fr);
+  align-items: start;
+  column-gap: 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-note-time {
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-note-body {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-note-body > p {
+  margin: 0;
+}
+
+/* Ninguna nota: el anillo punteado de «vacío» grande y centrado, con su frase debajo. */
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes-empty {
+  display: grid;
+  justify-items: center;
+  margin: 0.6rem 0;
+  padding: 0.9rem 0.6rem;
+  border: 1px dashed color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  border-radius: 9px;
+  text-align: center;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes-empty > .mark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-notes-empty > .mark > svg {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+/* El texto firmado tal cual (`pre-wrap` sigue puesto por `styles.css`), en una caja que lo separa
+   del rótulo y de la firma; no tenía borde. */
+:where(.app[data-look="reference"] .panel[data-ui="ground-notes-onboard"]) .ground-note-text {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* ---- Baja visión y alto contraste: la tarjeta del seguimiento sigue al panel (`styles.css`) ---- */
+
+/* Mismo grosor que el panel en los dos modos; en baja visión, también su color (el del texto
+   secundario), como hace `styles.css` con el panel. Ninguno de los dos modos pone color de señal. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]) .panel[data-ui="followups"]) .followups > li {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"] .panel[data-ui="followups"]) .followups > li {
+  border-color: var(--c-text-secondary);
+}

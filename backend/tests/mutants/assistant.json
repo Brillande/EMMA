@@ -1,0 +1,295 @@
+{
+  "target": "app/assistant/guards.py",
+  "test": [
+    "tests/test_assistant.py::test_the_figures_barrier",
+    "tests/test_assistant.py::test_the_no_prescription_barrier",
+    "tests/test_assistant.py::test_asking_for_medication_is_recognised",
+    "tests/test_assistant.py::test_forbidden_language_is_not_said",
+    "tests/test_assistant.py::test_a_prescription_is_not_said",
+    "tests/test_assistant.py::test_an_invented_figure_is_not_said",
+    "tests/test_assistant.py::test_a_figure_only_in_the_history_is_not_support",
+    "tests/test_assistant.py::test_an_intent_outside_the_catalog_fails_the_schema",
+    "tests/test_assistant.py::test_the_schema_admits_nothing_outside_the_catalog",
+    "tests/test_assistant.py::test_ground_prepares_no_writes",
+    "tests/test_assistant.py::test_a_diary_value_the_person_did_not_say_is_not_proposed",
+    "tests/test_assistant.py::test_a_mission_level_keeps_only_the_reason_the_person_gave",
+    "tests/test_assistant.py::test_a_pain_zone_the_person_did_not_name_is_not_proposed",
+    "tests/test_assistant.py::test_ground_sees_only_what_has_arrived",
+    "tests/test_assistant.py::test_the_navigation_intents_are_reads_and_no_new_intent_writes",
+    "tests/test_assistant.py::test_a_panel_the_inventory_does_not_have_fails_the_schema",
+    "tests/test_assistant.py::test_a_screen_command_does_not_ask_the_model",
+    "tests/test_assistant.py::test_when_the_model_finds_nothing_the_words_decide",
+    "tests/test_assistant.py::test_the_context_is_reused_until_the_ledger_grows",
+    "tests/test_assistant.py::test_the_glossary_definition_is_read_as_the_backend_writes_it",
+    "tests/test_assistant.py::test_the_general_barrier",
+    "tests/test_assistant.py::test_a_question_about_health_or_the_crew_is_never_general",
+    "tests/test_assistant.py::test_a_general_answer_that_touches_anything_clinical_is_not_said",
+    "tests/test_assistant.py::test_a_panel_named_by_its_own_words_is_not_reinterpreted",
+    "tests/test_assistant.py::test_an_ordinary_sentence_does_not_press_a_screen_command",
+    "tests/test_assistant.py::test_a_medication_question_gets_the_refusal_even_naming_pain_or_a_panel",
+    "tests/test_assistant.py::test_two_panels_cannot_share_a_name",
+    "tests/test_assistant.py::test_the_companion_barrier",
+    "tests/test_assistant.py::test_a_model_reply_about_another_member_is_not_said",
+    "tests/test_assistant.py::test_a_question_about_another_member_is_answered_with_that_person",
+    "tests/test_assistant.py::test_an_ambiguous_companion_question_asks_who_and_the_answer_resolves_it",
+    "tests/test_assistant.py::test_nothing_is_proposed_for_another_member",
+    "tests/test_assistant.py::test_a_radiation_dose_is_not_a_medication_question",
+    "tests/test_assistant.py::test_an_entry_without_a_short_about_does_not_load",
+    "tests/test_assistant.py::test_an_everyday_phrase_does_not_press_the_wrong_command",
+    "tests/test_assistant.py::test_every_example_is_valid_and_a_broken_one_does_not_load",
+    "tests/test_assistant.py::test_a_write_said_from_ground_is_refused_whatever_the_model_says"
+  ],
+  "mutations": [
+    {
+      "label": "el linter de lenguaje deja pasar cualquier respuesta",
+      "old": "    return not check(reply)",
+      "new": "    return True"
+    },
+    {
+      "label": "una cifra en dígitos que no está en el contexto se dice",
+      "old": "    if unsupported_numbers(reply, known):\n        return False",
+      "new": "    if False:\n        return False"
+    },
+    {
+      "label": "una cifra con letras que no se sabe leer pasa",
+      "old": "    if unreadable:\n        return False",
+      "new": "    if False:\n        return False"
+    },
+    {
+      "label": "las cifras escritas con letras no se cotejan",
+      "old": "    return not any(unsupported_numbers(f\"{value:g}\", known) for value in spelled)",
+      "new": "    return True"
+    },
+    {
+      "label": "«setenta y cuatro» se lee como 70",
+      "old": "                value += _UNITS[words[index + 2]]\n",
+      "new": "                pass\n"
+    },
+    {
+      "label": "la barrera de no recetar deja pasar cualquier respuesta",
+      "old": "    return not any(pattern.search(plain) for pattern in _PRESCRIPTION)",
+      "new": "    return True"
+    },
+    {
+      "label": "un fármaco con nombre propio no se reconoce",
+      "old": "    r\"\\b(?:ibuprofeno|",
+      "new": "    r\"\\b(?:xxxxxxxx|"
+    },
+    {
+      "label": "«debes tomar» no se reconoce",
+      "old": "    r\"\\b(?:debe|debes|deben|",
+      "new": "    r\"\\b(?:xxxx|"
+    },
+    {
+      "label": "una pregunta por qué tomar no recibe la negativa fija",
+      "old": "    if any(pattern.search(plain) for pattern in _ASKS_MEDICATION):\n        return True",
+      "new": "    if False:\n        return True"
+    },
+    {
+      "label": "la respuesta del modelo se dice aunque falle una barrera",
+      "target": "app/assistant/turn.py",
+      "old": "    if reply_from_model is not None and all(result.checks.values()) and not fixed:",
+      "new": "    if reply_from_model is not None and not fixed:"
+    },
+    {
+      "label": "una cifra que solo está en el historial sirve de respaldo",
+      "target": "app/assistant/turn.py",
+      "old": "        known = context.text() + \"\\n\" + text",
+      "new": "        known = context.text() + \"\\n\" + text + _history_text(history)"
+    },
+    {
+      "label": "una intención fuera del catálogo pasa el esquema",
+      "target": "app/assistant/catalog.py",
+      "old": "    if intent is None:\n        raise InvalidArgs(f\"intención fuera del catálogo: {intent_id}\")",
+      "new": "    if False:\n        raise InvalidArgs(f\"intención fuera del catálogo: {intent_id}\")"
+    },
+    {
+      "label": "Tierra puede preparar escrituras",
+      "target": "app/assistant/proposals.py",
+      "old": "    if context.console != \"crew\":\n        return Proposal(None, GROUND_REFUSAL)",
+      "new": "    if False:\n        return Proposal(None, GROUND_REFUSAL)"
+    },
+    {
+      "label": "un valor del diario que la persona no dijo se propone",
+      "target": "app/assistant/proposals.py",
+      "old": "    if value not in spoken_numbers(text):",
+      "new": "    if False:"
+    },
+    {
+      "label": "un motivo redactado por el modelo se propone",
+      "target": "app/assistant/proposals.py",
+      "old": "    return reason.strip() if tokens and all(f\" {token}\" in words for token in tokens) else \"\"",
+      "new": "    return reason.strip()"
+    },
+    {
+      "label": "una zona de dolor que la persona no nombró se propone",
+      "target": "app/assistant/proposals.py",
+      "old": "    if not named or not all(_said(token, words) for token in named):",
+      "new": "    if False:"
+    },
+    {
+      "label": "Tierra ve lo de a bordo, sin corte",
+      "target": "app/assistant/context.py",
+      "old": "        if until is not None:\n            assessed = _assess(settings, store, subject, until)",
+      "new": "        if False:\n            assessed = _assess(settings, store, subject, until)"
+    },
+    {
+      "label": "una intención nueva puede escribir sin estar en el contrato",
+      "target": "app/assistant/catalog.py",
+      "old": "        if (kind == \"write\") != (intent_id in WRITE_IDS):",
+      "new": "        if False:"
+    },
+    {
+      "label": "una intención de lectura puede declarar una ruta que escribe",
+      "target": "app/assistant/catalog.py",
+      "old": "        if kind == \"read\" and item.get(\"route\"):",
+      "new": "        if False:"
+    },
+    {
+      "label": "un panel que no está en el inventario pasa el esquema",
+      "target": "app/assistant/catalog.py",
+      "old": "    elif \"enum_from\" in spec and value not in enum_source(str(spec[\"enum_from\"])):",
+      "new": "    elif False:"
+    },
+    {
+      "label": "un mando de pantalla dicho con sus palabras lo decide el modelo",
+      "target": "app/assistant/turn.py",
+      "old": "    if catalog().intents[spoken].keywords_first or _named_exactly(spoken, spoken_args):",
+      "new": "    if _named_exactly(spoken, spoken_args):"
+    },
+    {
+      "label": "si el modelo no encuentra intención, las palabras no deciden",
+      "target": "app/assistant/turn.py",
+      "old": "    if intent == \"none\" and spoken != \"none\" and not general and not answered:",
+      "new": "    if False:"
+    },
+    {
+      "label": "la definición del glosario la parafrasea el modelo",
+      "target": "app/assistant/turn.py",
+      "old": "    fixed = intent in FIXED_REPLY or (intent == \"open_glossary\" and args.get(\"term\"))",
+      "new": "    fixed = intent in FIXED_REPLY"
+    },
+    {
+      "label": "una observación nueva no invalida el contexto guardado",
+      "target": "app/assistant/context.py",
+      "old": "    return (id(settings), id(store), store.epoch, len(store.ledger), subject, console)",
+      "new": "    return (id(settings), id(store), store.epoch, 0, subject, console)"
+    },
+    {
+      "label": "una respuesta general con cifras de unidades clínicas se dice",
+      "target": "app/assistant/guards.py",
+      "old": "    if _CLINICAL_FIGURE.search(normalize(reply)):\n        return False",
+      "new": "    if False:\n        return False"
+    },
+    {
+      "label": "una respuesta general que nombra un indicador o a un tripulante se dice",
+      "target": "app/assistant/guards.py",
+      "old": "    return not (_names_any(reply, clinical_terms()) or _names_any(reply, people))",
+      "new": "    return True"
+    },
+    {
+      "label": "una pregunta de salud o del tripulante se contesta como general",
+      "target": "app/assistant/turn.py",
+      "old": "        general = (not guards.about_crew_or_health(text, crew)\n                   and catalog().intents[spoken].kind != \"write\")",
+      "new": "        general = True"
+    },
+    {
+      "label": "una respuesta general se dice aunque no pase sus barreras",
+      "target": "app/assistant/turn.py",
+      "old": "        if all(result.checks.values()):\n            result.reply, result.reply_source = reply_from_model, \"general\"",
+      "new": "        if True:\n            result.reply, result.reply_source = reply_from_model, \"general\""
+    },
+    {
+      "label": "un panel nombrado por sus palabras lo reinterpreta el modelo",
+      "target": "app/assistant/turn.py",
+      "old": "    if catalog().intents[spoken].keywords_first or _named_exactly(spoken, spoken_args):",
+      "new": "    if catalog().intents[spoken].keywords_first:"
+    },
+    {
+      "label": "una pregunta de qué tomar que nombra un dolor se vuelve una propuesta",
+      "target": "app/assistant/turn.py",
+      "old": "    if guards.asks_for_medication(text) and spoken not in (\"open_tab\", \"open_panel\"):",
+      "new": "    if False:"
+    },
+    {
+      "label": "una pregunta pulsa un mando de pantalla",
+      "target": "app/assistant/catalog.py",
+      "old": "        if question and intent.id in _NOT_FROM_QUESTIONS:\n            continue",
+      "new": "        if False:\n            continue"
+    },
+    {
+      "label": "dos paneles pueden compartir un alias",
+      "target": "app/assistant/catalog.py",
+      "old": "        if taken is not None:",
+      "new": "        if False:"
+    },
+    {
+      "label": "una respuesta del modelo puede hablar de otro tripulante",
+      "old": "    return not names_companion(reply, subject, crew)",
+      "new": "    return True"
+    },
+    {
+      "label": "«tu compañero» no se reconoce como otra persona",
+      "old": "    r\"\\b(?:companer[oa]s?|colegas?|otr[oa]s? tripulantes?|los demas|las demas|\"",
+      "new": "    r\"\\b(?:xxxxxxxx|\""
+    },
+    {
+      "label": "la barrera de cifras no mira de quién son los datos",
+      "target": "app/assistant/turn.py",
+      "old": "                        and guards.companion_ok(reply_from_model, subject, crew)),",
+      "new": "                        and True),"
+    },
+    {
+      "label": "una pregunta por otro tripulante la contesta el modelo con los datos del de la consola",
+      "target": "app/assistant/turn.py",
+      "old": "    if companion is not None:\n        return companion",
+      "new": "    if False:\n        return companion"
+    },
+    {
+      "label": "se propone una escritura para otro tripulante",
+      "target": "app/assistant/turn.py",
+      "old": "    if catalog().intents[spoken].kind == \"write\":\n        return TurnResult(intent=\"none\", args={}, reply=NOT_FOR_OTHERS, reply_source=\"fixed\")",
+      "new": "    if False:\n        return TurnResult(intent=\"none\", args={}, reply=NOT_FOR_OTHERS, reply_source=\"fixed\")"
+    },
+    {
+      "label": "la dosis de radiación recibe la negativa de no recetar",
+      "old": "    return bool(_DOSE_WORD.search(plain)) and not _RADIATION_DOSE.search(plain)",
+      "new": "    return bool(_DOSE_WORD.search(plain))"
+    },
+    {
+      "label": "una «dosis» sin radiación ni panel ya no recibe la negativa",
+      "old": "    return bool(_DOSE_WORD.search(plain)) and not _RADIATION_DOSE.search(plain)",
+      "new": "    return False"
+    },
+    {
+      "label": "un panel sin `about` carga",
+      "target": "app/assistant/catalog.py",
+      "old": "    if not isinstance(about, str) or not about.strip():",
+      "new": "    if False:"
+    },
+    {
+      "label": "un `about` largo carga",
+      "target": "app/assistant/catalog.py",
+      "old": "    if len(about) > ABOUT_MAX or \"\\n\" in about:",
+      "new": "    if False:"
+    },
+    {
+      "label": "«ya se han ido» levanta la privacidad aunque no esté puesta",
+      "target": "app/assistant/catalog.py",
+      "old": "    if modes and modes.get(\"privacy\") and any(",
+      "new": "    if any("
+    },
+    {
+      "label": "un ejemplo con una intención o unos argumentos que no existen carga",
+      "target": "app/assistant/catalog.py",
+      "old": "            if clean != args:\n                raise CatalogError",
+      "new": "            if False:\n                raise CatalogError"
+    },
+    {
+      "label": "una escritura dicha desde Tierra la reinterpreta el modelo",
+      "target": "app/assistant/turn.py",
+      "old": "    if console != \"crew\" and catalog().intents[spoken].kind == \"write\":",
+      "new": "    if False:"
+    }
+  ]
+}

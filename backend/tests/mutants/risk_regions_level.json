@@ -1,0 +1,29 @@
+{
+ "target": "app/risk_entity.py",
+ "test": [
+  "tests/test_risks_view.py::test_a_region_without_its_own_level_is_named_in_the_risk_of_its_level",
+  "tests/test_risks_view.py::test_each_risk_carries_the_six_fields_of_the_specification"
+ ],
+ "mutations": [
+  {
+   "label": "la matriz vuelve a nombrar solo las regiones con el dominio: el higado desaparece de nutricion",
+   "old": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+   "new": "region.to_dict() for region in anatomy.REGIONS if domain in region.domains"
+  },
+  {
+   "label": "la region sin nivel sale en todos los riesgos",
+   "old": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+   "new": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains or region.level_of is not None"
+  },
+  {
+   "label": "la region sin nivel sustituye a la del dominio en vez de sumarse",
+   "old": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+   "new": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains and (region.level_of is not None or all(domain is not r.level_of for r in anatomy.REGIONS))"
+  },
+  {
+   "label": "la region sin nivel se publica sin decir de quien es su nivel",
+   "old": "region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+   "new": "{**region.to_dict(), 'level_note': None} for region in anatomy.REGIONS if domain in region.engine_domains"
+  }
+ ]
+}

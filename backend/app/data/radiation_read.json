@@ -1,0 +1,120 @@
+{
+  "_nota": "Lo leído sobre la radiación que se enseña junto a las tres escalas y no decide nada (decimosexta ronda, E8; base de conocimiento §7): quién da a bordo de Orion el aviso operacional, en qué fase dicen NASA y NOAA que está el ciclo solar, y qué dice una fuente de cuándo termina el refugio. Cada frase está en la nota de su ficha (`data/evidence_refs.json`) y se valida en `evidence/radiation_read.py`. Vive aparte de `countermeasures.json` a propósito: no entra en `rules_version`, no cambia la proyección de dosis (tasa constante) ni ningún nivel. Lo buscado y no encontrado va en `not_found`. Una frase leída otro día que la primera lectura lleva su propio `read_on` (las gráficas del ciclo de NOAA, decimoctava ronda): de ellas entra solo una cifra copiada con su mes, nunca una fase deducida por EMMA.",
+  "read_on": "2026-10-23",
+  "onboard_warning": {
+    "label": "Aviso a bordo",
+    "text": "A bordo de Orion el aviso ante un evento de radiación lo da HERA (Hybrid Electronic Radiation Assessor), el instrumento de radiación de la nave, parte de su sistema de precaución y aviso. EMMA no lee HERA y no sustituye ese aviso: este panel sale de los eventos solares que recibe (DONKI o el escenario simulado) y de la tasa de dosis registrada. Unas diapositivas de 2019 del grupo de análisis de radiación de JSC cuentan el plan de entonces: suena una alarma al superarse el umbral de HERA; con comunicación con Tierra, la consola de radiación decide si hace falta el refugio, y sin ella la tripulación se refugia al sonar la alarma.",
+    "emma_reads_it": false,
+    "quotes": [
+      {
+        "quote": "Orion will be equipped with a radiation-sensing instrument integrated into the vehicle called the Hybrid Electronic Radiation Assessor, or HERA, to provide a warning if crew members need to take shelter in the case of a radiation event, such as a solar flare.",
+        "ref": "nasa-orion-radiation-protection",
+        "where": "párrafo sobre el instrumento de aviso"
+      },
+      {
+        "quote": "On crewed missions, HERA will be part of the spacecraft's Caution and Warning System and will sound a warning in the case of a solar energetic particle event, notifying the crew to take shelter.",
+        "ref": "nasa-artemis1-radiation-research",
+        "where": "párrafo sobre HERA"
+      },
+      {
+        "quote": "Inside Orion, six radiation sensors, part of the Hybrid Electronic Radiation Assessor system designed and built by NASA, measure dose rates in different parts of the cabin.",
+        "ref": "nasa-artemis2-eyes-on-sun",
+        "where": "párrafo sobre las medidas dentro de Orion"
+      },
+      {
+        "quote": "Audible alarm sounds when HERA threshold is exceeded",
+        "ref": "lee-2019-srag-ops",
+        "where": "diapositiva 10, «MPCV Radiation Mitigation Planning»",
+        "read_on": "2026-10-31"
+      },
+      {
+        "quote": "If ground communication is available Radiation Console determines if sheltering is needed, otherwise crew will shelter upon HERA alarm",
+        "ref": "lee-2019-srag-ops",
+        "where": "diapositiva 10, «MPCV Radiation Mitigation Planning»",
+        "read_on": "2026-10-31"
+      }
+    ],
+    "not_found": "Ninguna de las páginas leídas da la cifra de los umbrales de HERA. Leída también, sin citar: «Artemis I Radiation Measurements Validate Orion Safety for Astronauts» (NASA, 9 de octubre de 2024), que repite que el sensor de HERA avisa del refugio. Buscada otra vez el 2026-11-01 la cifra de los umbrales, en las diapositivas de 2019, en el cartel de RadWorks (NTRS 20150021957; sin ficha) y en NTRS, y no se encontró: las diapositivas dicen que hay un umbral, no cuál. EMMA no tiene conexión con HERA ni con la telemetría de Orion.",
+    "scope": "se muestra; EMMA no recibe ese aviso y no cambia el riesgo"
+  },
+  "solar_cycle": {
+    "label": "Ciclo solar",
+    "text": "Nota descriptiva y fechada: el 15 de octubre de 2024 NASA y NOAA anunciaron que el Sol había llegado al periodo de máximo del ciclo 25, y preveían que el máximo durase un año más o menos antes de entrar en la fase de declive; en la fase de declive, dice la misma nota, se ven a menudo tormentas bastante intensas, aunque con menos frecuencia. Es la nota más reciente de NASA o NOAA sobre la fase del ciclo que se encontró: lo que dice del presente es una previsión de 2024, no una medida de hoy. Las gráficas del ciclo del Space Weather Prediction Center de NOAA, leídas el 2026-10-26, no dicen la fase: el último mes con número de manchas suavizado es marzo de 2026, con 94,4, y los meses posteriores van sin él: la página los da como dato aún no disponible o no calculable. EMMA no deduce de esa cifra en qué fase está el ciclo.",
+    "as_of": "2024-10-15",
+    "quotes": [
+      {
+        "quote": "In a teleconference with reporters on Tuesday, representatives from NASA, the National Oceanic and Atmospheric Administration (NOAA), and the international Solar Cycle Prediction Panel announced that the Sun has reached its solar maximum period, which could continue for the next year.",
+        "ref": "nasa-noaa-solar-maximum-2024",
+        "where": "primer párrafo"
+      },
+      {
+        "quote": "Scientists anticipate that the maximum phase will last another year or so before the Sun enters the declining phase",
+        "ref": "nasa-noaa-solar-maximum-2024",
+        "where": "párrafo sobre la duración del máximo"
+      },
+      {
+        "quote": "Additionally, though less frequent, scientists often see fairly significant storms during the declining phase of the solar cycle.",
+        "ref": "nasa-noaa-solar-maximum-2024",
+        "where": "párrafo sobre la actividad tras el máximo"
+      },
+      {
+        "quote": "Solar Cycle 25 sunspot activity has slightly exceeded expectations",
+        "ref": "nasa-noaa-solar-maximum-2024",
+        "where": "declaración de Lisa Upton, copresidenta del Solar Cycle Prediction Panel"
+      },
+      {
+        "quote": "\"smoothed_ssn\": 94.4",
+        "ref": "noaa-swpc-solar-cycle-progression",
+        "where": "gráfica del número de manchas, serie «Smoothed Monthly Values»: el registro de marzo de 2026 («time-tag» 2026-03), el último mes con valor en sus datos (services.swpc.noaa.gov/json/solar-cycle/sunspots-smoothed.json)",
+        "read_on": "2026-10-26"
+      },
+      {
+        "quote": "Data not yet available or not calculable",
+        "ref": "noaa-swpc-solar-cycle-progression",
+        "where": "nota al pie de la pestaña «Data»",
+        "read_on": "2026-10-26"
+      }
+    ],
+    "not_found": "Buscada el 2026-10-23 una nota de NASA o NOAA de 2025 o 2026 que diga si el ciclo 25 está ya en declive, y no se encontró. La página «Solar Cycle Progression» del Space Weather Prediction Center de NOAA no lo dice en su texto: da la predicción actualizada (en la web desde febrero de 2025) y los datos en gráficas. Las gráficas se leyeron el 2026-10-26 en los ficheros de datos que pintan, y tampoco dicen la fase: de ellas se copia solo la última cifra suavizada, con su mes, sin buscar el máximo ni su fecha. La nota del mismo centro del 9 de agosto de 2024 habla de un número de manchas diario, no de la fase. Vuelta a buscar el 2026-11-01 en nasa.gov y noaa.gov, y tampoco se encontró: el aviso de cambio de servicio del Servicio Meteorológico Nacional de Estados Unidos del 27 de febrero de 2025 anuncia la predicción actualizada, sin decir la fase; la presentación de esa predicción en la web de NOAA, sin fecha en lo leído, tampoco la dice; y la dirección de noticias de NOAA probada no existe. La cifra copiada sigue siendo la de la lectura del 2026-10-26, con su mes: los datos llevan ya otra posterior, y copiarla sin más no diría nada de la fase.",
+    "scope": "descriptiva: la proyección al fin de misión sigue suponiendo tasa constante y no lee esta nota ni la cifra de NOAA, ni cambia ningún nivel"
+  },
+  "shelter_exit": {
+    "label": "Fin del refugio",
+    "text": "Ninguna fuente de NASA leída dice cuándo termina el refugio ante un evento de partículas solares: el artículo de Orion de 2016 da hasta 24 h dentro en algunos casos, y el de Artemis II nombra un umbral para recomendar el refugio, no uno para salir. El informe de evidencia de NASA de 2016 habla de refugiarse la mayor parte de un evento que puede durar varios días, sin decir qué lo termina. Un preprint de 2025, sin revisión por pares y con datos del detector RAD del Mars Science Laboratory camino de Marte y en su superficie, no de Orion, da por terminado el evento cuando la tasa de dosis baja del umbral de disparo del 25 % sobre el fondo; con ese criterio, los refugios de los eventos que mide van de unas 5 h 30 min a unos 3 días y 7 h.",
+    "quotes": [
+      {
+        "quote": "If the warning were to sound, the crew would create the shelter within an hour and in some cases would need to stay inside for as long as 24 hours",
+        "ref": "nasa-orion-radiation-protection",
+        "where": "párrafo sobre el aviso y el refugio"
+      },
+      {
+        "quote": "A higher threshold triggers a recommendation for the crew to take shelter.",
+        "ref": "nasa-artemis2-eyes-on-sun",
+        "where": "párrafo sobre los umbrales de dosis"
+      },
+      {
+        "quote": "The end of an SEP event is defined when the dose rate E drops below the 25% trigger threshold.",
+        "ref": "lowe-2025-sep-nowcasting-mars",
+        "where": "sección 3"
+      },
+      {
+        "quote": "Our nowcasting system then informs the astronaut that it is safe to leave the shelter.",
+        "ref": "lowe-2025-sep-nowcasting-mars",
+        "where": "sección 3"
+      },
+      {
+        "quote": "Considering the remaining SEP events, the shelter duration varies between at least about 5 hours and 30 minutes to several days, with a maximum of about 3 days and 7 hours.",
+        "ref": "lowe-2025-sep-nowcasting-mars",
+        "where": "sección 4"
+      },
+      {
+        "quote": "operational protocols where crew would shelter for the majority of event duration which can last for several days",
+        "ref": "ntrs-20160003870",
+        "where": "nota de las tablas 3 y 4 (páginas 9 y 10)",
+        "read_on": "2026-11-01"
+      }
+    ],
+    "not_found": "Buscado el 2026-10-23 un criterio de fin del refugio en fuentes de NASA, y no se encontró: el artículo de Orion de 2016 solo dice que la evaluación incluyó cómo entrar y salir; la página de Artemis II de NASA Science no da duración ni criterio de salida; la carpeta de prensa de Artemis II (página y PDF) solo programa una demostración del refugio; el artículo de NASA de 2022 habla de un chaleco que permitiría salir del refugio y seguir trabajando, no de cuándo acaba el evento. Leído también, sin citar: el diseño de refugios de RadWorks (NTRS 20170002287), que fija cuánto tiempo tienen que poder albergar a la tripulación; es un requisito de diseño, no un criterio de salida, y su cifra no se copia aquí porque esa página no tiene ficha. Las reglas de vuelo de Artemis no son públicas en lo leído. Vuelto a buscar el 2026-11-01: las diapositivas de 2019 del grupo de JSC dicen cuándo refugiarse, no cuándo salir; el informe de evidencia de 2016 tampoco; y «all clear» no da nada en NTRS sobre el fin del refugio. Sigue sin criterio de NASA.",
+    "scope": "se muestra como fuente; EMMA no tiene criterio propio de fin del refugio ni avisa de él, y ni la permanencia que ya enseña ni el riesgo cambian"
+  }
+}

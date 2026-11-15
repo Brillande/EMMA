@@ -1,0 +1,87 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_anatomy.py::test_the_liver_carries_a_research_layer_apart_from_what_is_measured",
+    "tests/test_anatomy.py::test_the_research_relevance_says_no_more_than_the_card",
+    "tests/test_anatomy.py::test_the_research_layer_moves_no_level_and_no_domain_evidence",
+    "tests/test_anatomy.py::test_the_research_layer_only_takes_cards_with_a_read_population",
+    "tests/test_anatomy.py::test_the_two_and_three_year_scans_have_their_milestones",
+    "tests/test_anatomy.py::test_each_milestones_basis_names_exactly_its_milestones",
+    "tests/test_risks_view.py::test_each_region_of_a_risk_carries_the_cards_its_phrase_names"
+  ],
+  "mutations": [
+    {
+      "label": "la capa de investigacion admite una ficha sin poblacion",
+      "old": "        if ref.population is None:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el higado pierde su capa de investigacion",
+      "old": "        research_refs=(LIVER_RESEARCH,),",
+      "new": ""
+    },
+    {
+      "label": "la capa sale sin la frase que dice que no esta medida en el tripulante",
+      "old": "            \"note\": RESEARCH_NOTE,",
+      "new": "            \"note\": None,"
+    },
+    {
+      "label": "la capa sale sin sus fichas",
+      "old": "            \"items\": [item.to_dict() for item in self.research_refs],",
+      "new": "            \"items\": [],"
+    },
+    {
+      "label": "la cadena del higado deja de servir su capa de investigacion",
+      "old": "            \"research\": region.research_dict(),",
+      "new": "            \"research\": None,"
+    },
+    {
+      "label": "la frase de la capa deja de decir que no esta medida en el tripulante",
+      "old": "\"Lo observado en estudios con otras personas o con animales, no medido en este tripulante; \"",
+      "new": "\"Lo observado en estudios con otras personas o con animales y en este tripulante; \""
+    },
+    {
+      "label": "la frase de la capa deja de decir que no cuenta en el nivel",
+      "old": "\"cada ficha dice su población. No afirma que le esté ocurriendo y no cuenta en el nivel ni en \"",
+      "new": "\"cada ficha dice su población. No afirma que le esté ocurriendo ni habla del nivel ni de \""
+    },
+    {
+      "label": "la relevancia del estudio dice mas que su ficha",
+      "old": "        \"un mecanismo en hígado de ratón, no medido en este tripulante: redes de miARN y TGF-β \"",
+      "new": "        \"un mecanismo en hígado de ratón que el tratamiento mejora: redes de miARN y TGF-β \""
+    },
+    {
+      "label": "R+730 y R+1095 quedan fuera aunque la fuente los da",
+      "old": "    MilestoneSource((180, 365, 730, 1095), BONE_DXA_SOURCE, BONE_DXA_SCOPE),",
+      "new": "    MilestoneSource((180, 365), BONE_DXA_SOURCE, BONE_DXA_SCOPE),"
+    },
+    {
+      "label": "la base sigue diciendo que lo posterior a R+365 va junto",
+      "old": "    \"posterior a R+1095 va junto.\"",
+      "new": "    \"posterior a R+365 va junto.\""
+    },
+    {
+      "label": "la base deja de decir que las tomas dependen de la recuperacion",
+      "old": "\"sobre la pérdida ósea, a los 6 meses y a uno, dos y tres años del regreso, o hasta que el \"",
+      "new": "\"sobre la pérdida ósea, a los 6 meses y a uno, dos y tres años del regreso, y el \""
+    },
+    {
+      "label": "la base del sistema humano deja de decir que las fichas van bajo la frase",
+      "target": "app/risk_entity.py",
+      "old": "\"del dominio de su nivel. Bajo la frase de una región van las fichas que esa frase nombra.\"",
+      "new": "\"del dominio de su nivel.\""
+    },
+    {
+      "label": "la capa de investigacion viaja con la frase a la matriz de riesgos",
+      "target": "app/risk_entity.py",
+      "old": "                region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+      "new": "                {**region.to_dict(), \"research\": region.research_dict()} for region in anatomy.REGIONS if domain in region.engine_domains"
+    },
+    {
+      "label": "la matriz de riesgos pierde las fichas de la frase de la vejiga",
+      "target": "app/risk_entity.py",
+      "old": "                region.to_dict() for region in anatomy.REGIONS if domain in region.engine_domains",
+      "new": "                {**region.to_dict(), \"note_refs\": []} for region in anatomy.REGIONS if domain in region.engine_domains"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "target": "app/analysis/context.py",
+  "test": [
+    "tests/test_crew_compare.py"
+  ],
+  "mutations": [
+    {
+      "label": "el resumen de la comparacion deja de decir que no es causa",
+      "old": "        \"label\": COINCIDENCE_LABEL,\n        \"text\": text,",
+      "new": "        \"label\": \"causa compartida\",\n        \"text\": text,"
+    },
+    {
+      "label": "'a la vez' empieza con el primero en desviarse y no con el ultimo",
+      "old": "        \"simultaneous_since\": max(dated).isoformat() if simultaneous else None,",
+      "new": "        \"simultaneous_since\": min(dated).isoformat() if simultaneous else None,"
+    },
+    {
+      "label": "a una deriva, que no tiene inicio, se le inventa un 'desde'",
+      "old": "    simultaneous = len(deviating) >= 2 and undated == 0",
+      "new": "    simultaneous = len(deviating) >= 2"
+    },
+    {
+      "label": "un solo tripulante ya se cuenta como coincidencia",
+      "old": "    elif len(deviating) == 1:",
+      "new": "    elif len(deviating) == 0:"
+    },
+    {
+      "label": "una deriva sostenida no cuenta como desviacion",
+      "old": "        subject for subject, onset in onsets.items() if onset is not None or subject in drifting",
+      "new": "        subject for subject, onset in onsets.items() if onset is not None"
+    },
+    {
+      "label": "sin lecturas de nadie se dice que nadie se desvia",
+      "old": "    if not onsets:",
+      "new": "    if False:"
+    },
+    {
+      "label": "con ubicacion declarada el resumen sigue diciendo que EMMA no la registra",
+      "old": "        \"assumption\": COMPARISON_IGNORES_LOCATION if located else ASSUMPTION,",
+      "new": "        \"assumption\": ASSUMPTION,"
+    }
+  ]
+}

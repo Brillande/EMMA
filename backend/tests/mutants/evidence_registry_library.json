@@ -1,0 +1,15 @@
+{"target": "app/advisor/countermeasures.py",
+ "test": [
+  "tests/test_evidence_registry.py::test_citing_a_reference_that_is_not_registered_fails",
+  "tests/test_evidence_registry.py::test_the_countermeasure_library_cites_by_identifier_only"],
+ "mutations": [
+  {"label": "una ficha escrita en línea en la biblioteca se vuelve a cargar",
+   "old": "        if not isinstance(reference, dict) or set(reference) != {\"ref\", \"relevance\"}:",
+   "new": "        if False:"},
+  {"label": "una cita que no dice qué respalda de la acción se carga",
+   "old": "        if not isinstance(relevance, str) or not relevance.strip():",
+   "new": "        if False:"},
+  {"label": "citar una ficha que no existe deja de ser un fallo de la biblioteca",
+   "old": "            raise fail(str(exc)) from exc",
+   "new": "            protocol_ref = None"}
+ ]}

@@ -1,0 +1,168 @@
+{
+ "target": "app/environment/spice.py",
+ "test": [
+  "tests/test_spice.py"
+ ],
+ "mutations": [
+  {
+   "label": "un núcleo de otro tamaño se carga",
+   "old": "    if size != kernel.size:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un núcleo con otra huella SHA-256 se carga",
+   "old": "    if file_digest(path, \"sha256\") != kernel.sha256:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el MD5 publicado por NAIF deja de comprobarse",
+   "old": "    if kernel.md5 is not None and file_digest(path, \"md5\") != kernel.md5:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un fichero cambiado después de comprobarlo sigue dándose por bueno",
+   "old": "        if known is not None and known[0] == version and known[1]:",
+   "new": "        if known is not None and known[1]:"
+  },
+  {
+   "label": "lo calculado con SPICE se firma como Horizons",
+   "old": "    return f\"SPICE local, núcleo {spk_name()}\"",
+   "new": "    return \"JPL Horizons\""
+  },
+  {
+   "label": "un objetivo sin núcleo se calcula como Marte",
+   "old": "    body = TARGETS.get(target)",
+   "new": "    body = TARGETS.get(target, TARGETS[\"499\"])"
+  },
+  {
+   "label": "un observador que no es el geocentro se calcula desde el geocentro",
+   "old": "    observer = OBSERVERS.get(settings.observer_body)",
+   "new": "    observer = OBSERVERS.get(settings.observer_body, \"399\")"
+  },
+  {
+   "label": "la marca /T-/L sale al revés",
+   "old": "    return \"/T\" if 0 < east < math.pi else \"/L\"",
+   "new": "    return \"/L\" if 0 < east < math.pi else \"/T\""
+  },
+  {
+   "label": "sin spiceypy se da SPICE por disponible",
+   "old": "    if module is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "sin núcleos se da SPICE por disponible",
+   "old": "    if problems:",
+   "new": "    if False:"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "SPICE disponible deja de ir primero: se pregunta antes a Horizons",
+   "old": "        if isinstance(local, CachedPayload):\n            return local if found is None",
+   "new": "        if False:\n            return local if found is None"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "con la caché de Horizons del día, SPICE se sirve sin contrastar",
+   "old": "            return local if found is None else self._contrasted(local, *found)",
+   "new": "            return local"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "la ventana deja de decir de dónde sale",
+   "old": "            \"source\": self.source,",
+   "new": "            \"source\": SOURCE,"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "una entrada de la caché puede decir que es de SPICE",
+   "old": "            target=raw[\"target\"],",
+   "new": "            target=raw[\"target\"], source=raw.get(\"source\", SOURCE),"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la cobertura deja de contar los días que cubre SPICE",
+   "old": "    local_only = [s and not c for s, c in zip(by_spice, covered, strict=True)]",
+   "new": "    local_only = [False for s, c in zip(by_spice, covered, strict=True)]"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "una discrepancia con Horizons se sirve igual con SPICE",
+   "old": "        if contrast.agrees:",
+   "new": "        if True:"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "un día que SPICE no calcula ya no se pide a Horizons",
+   "old": "            return self._horizons_window(epoch, target, key)",
+   "new": "            raise OfflineDataUnavailable(\"sin Horizons\")"
+  },
+  {
+   "target": "app/environment/ephemeris.py",
+   "label": "un día que SPICE no calcula ya no sale de la caché de Horizons",
+   "old": "        if found is not None:\n            cached, window = found",
+   "new": "        if False:\n            cached, window = found"
+  },
+  {
+   "label": "la elongación deja de contrastarse",
+   "old": "    agrees = seconds <= seconds_limit and (elongation is None or elongation <= elongation_limit)",
+   "new": "    agrees = seconds <= seconds_limit"
+  },
+  {
+   "label": "una elongación ausente cuenta como discrepancia",
+   "old": "(elongation is None or elongation <= elongation_limit)",
+   "new": "(elongation is not None and elongation <= elongation_limit)"
+  },
+  {
+   "label": "el tiempo de luz se contrasta en minutos y no en segundos",
+   "old": "    seconds = abs(local.one_way_minutes - reference.one_way_minutes) * 60.0",
+   "new": "    seconds = abs(local.one_way_minutes - reference.one_way_minutes)"
+  },
+  {
+   "label": "una discrepancia dice que se usa SPICE",
+   "old": "        used=local.source if agrees else reference.source,",
+   "new": "        used=local.source,"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la cobertura deja de contar los días que se contrastan",
+   "old": "    contrasted = sum(s and c for s, c in zip(by_spice, covered, strict=True))",
+   "new": "    contrasted = 0"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "un día que SPICE calcula se cuenta como servido por la caché de Horizons",
+   "old": "        \"horizons_cache\": sum(c and not s for s, c in zip(by_spice, covered, strict=True)),",
+   "new": "        \"horizons_cache\": sum(covered),"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "con SPICE cubriendo la misión, la precarga se pide como si hiciera falta",
+   "old": "            else HOW_TO_PRELOAD_AS_CONTRAST if spice_covers_all",
+   "new": "            else HOW_TO_PRELOAD if spice_covers_all"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la cobertura deja de decir para qué sirve precargar con SPICE cubriendo la misión",
+   "old": "        \"preload_role\": PRELOAD_ROLE_WITH_SPICE if spice_covers_all else None,",
+   "new": "        \"preload_role\": None,"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion deja de decir para qué sirve precargar con SPICE",
+   "old": "    if coverage.get(\"preload_role\"):",
+   "new": "    if False:"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "con SPICE, la frase vuelve a ser la de solo la caché de Horizons",
+   "old": "    if served is not None and served[\"spice\"]:",
+   "new": "    if False:"
+  },
+  {
+   "target": "app/api/spice.py",
+   "label": "la ruta de SPICE deja de contrastar con la caché de Horizons",
+   "old": "                if found is not None:",
+   "new": "                if False:"
+  }
+ ]
+}

@@ -1,0 +1,85 @@
+{
+  "target": "app/volumes/skeleton_view.py",
+  "test": [
+    "tests/test_skeleton_view.py"
+  ],
+  "mutations": [
+    {
+      "label": "a Polaris se le da la rejilla RAS, con la que su figura sale cabeza abajo",
+      "old": "PROJECTION_AXES = (\"R\", \"A\", \"I\")",
+      "new": "PROJECTION_AXES = (\"R\", \"A\", \"S\")"
+    },
+    {
+      "label": "la proyección se queda con el hueso más posterior: la vista es desde atrás",
+      "old": "PROJECTION_AXES = (\"R\", \"A\", \"I\")",
+      "new": "PROJECTION_AXES = (\"L\", \"P\", \"I\")"
+    },
+    {
+      "label": "no se comprueba el sentido que la propia proyección dice de sus bordes",
+      "old": "    if not (extent[\"x\"][0] > extent[\"x\"][1] and extent[\"z\"][0] > extent[\"z\"][1]):",
+      "new": "    if False:"
+    },
+    {
+      "label": "un cuerpo en espejo se dibuja",
+      "old": "    if wrong * 2 > len(pairs):",
+      "new": "    if False:"
+    },
+    {
+      "label": "un cuerpo del revés se dibuja",
+      "old": "    if len(column) > 1 and centres[present[column[0]]][2] < centres[present[column[-1]]][2]:",
+      "new": "    if False:"
+    },
+    {
+      "label": "una rejilla oblicua se proyecta por índices",
+      "old": "        raise Unavailable(OBLIQUE)",
+      "new": "        pass"
+    },
+    {
+      "label": "se proyecta un mapa de cualquier tamaño",
+      "old": "        if voxels > MAX_VOXELS:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el hueso cortado por el borde del estudio no se declara",
+      "old": "                if lowest - first <= margin or last - highest <= margin:",
+      "new": "                if False:"
+    },
+    {
+      "label": "el borde del estudio solo se mira de arriba abajo",
+      "old": "            for axis, (first, last) in enumerate(field):",
+      "new": "            for axis, (first, last) in [(2, field[2])]:"
+    },
+    {
+      "label": "de cada eje solo se mira el borde de coordenada mayor",
+      "old": "                if lowest - first <= margin or last - highest <= margin:",
+      "new": "                if last - highest <= margin:"
+    },
+    {
+      "label": "los extremos del hueso se leen sin los términos del afín fuera de la diagonal",
+      "old": "    world = (affine @ corners.T)[:3]\n    return np.stack",
+      "new": "    straight = np.diag(np.diag(affine))\n    straight[:, 3] = affine[:, 3]\n    world = (straight @ corners.T)[:3]\n    return np.stack"
+    },
+    {
+      "target": "app/volumes/spine.py",
+      "label": "el campo del estudio da el tramo de z en los tres ejes",
+      "old": "    return x, y, z",
+      "new": "    return z, z, z"
+    },
+    {
+      "label": "se enseña como esqueleto una segmentación de otro preset",
+      "old": "    if segmentation.get(\"preset\") != PRESET:\n        raise Unavailable(",
+      "new": "    if False:\n        raise Unavailable("
+    },
+    {
+      "label": "se enseña el esqueleto más antiguo y no el último registrado",
+      "old": "    study, segmentation = max(found, key=lambda pair: int(pair[1][\"ledger_index\"]))",
+      "new": "    study, segmentation = min(found, key=lambda pair: int(pair[1][\"ledger_index\"]))"
+    },
+    {
+      "label": "la figura ya calculada se sirve aunque el binario haya dejado de ser el firmado",
+      "old": "    except (KeyError, TamperedRecordError) as exc:\n        raise Unavailable(str(exc.args[0]), ledger_index) from exc",
+      "new": "    except (KeyError, TamperedRecordError) as exc:\n        if _views:\n            return next(iter(_views.values()))\n        raise Unavailable(str(exc.args[0]), ledger_index) from exc"
+    }
+  ],
+  "_nota": "Sin mutante para la proporción física de la imagen (vóxel anisótropo): EMMA publica a vóxel isótropo y con él el mutante es equivalente. Tampoco para la caché sin bordes medidos: solo cambia cuándo se recalcula."
+}

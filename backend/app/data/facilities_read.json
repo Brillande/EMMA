@@ -1,0 +1,340 @@
+{
+  "_nota": "EPM y Biolab, de la instalación a la aplicación (base de conocimiento §9). Cada eslabón lleva frases literales de su fuente, cada una con su ficha del registro y el sitio de la fuente donde está; lo que se buscó y no se encontró va en `missing`, con dónde se buscó, y no se rellena. Leído el 2026-10-22 en las páginas de ESA, en los tres informes descargables del Space Station Research Explorer de NASA (la ficha de cada investigación se pinta con JavaScript y no se pudo leer) y en los dos artículos que ese catálogo da como resultados. `kb_role` y `chain` son texto literal de la base de conocimiento del equipo, no de ESA. Lo carga y lo valida evidence/facilities.py.",
+  "read_on": "2026-10-22",
+  "chain": {
+    "text": "Columbus/EPM y Biolab deben analizarse como cadenas facility → experiment → equipment → parameter → investigator → provider → dataset → publication → application.",
+    "where": "docs/contexto/knowledge-base-v1.md §9"
+  },
+  "facilities": [
+    {
+      "id": "epm",
+      "name": "EPM",
+      "full_name": "European Physiology Modules",
+      "experiment": "Neurospat",
+      "kb_role": {
+        "text": "EPM es más cercano a fisiología humana.",
+        "where": "docs/contexto/knowledge-base-v1.md §9"
+      },
+      "scope_caveat": null,
+      "links": [
+        {
+          "step": "facility",
+          "quotes": [
+            {
+              "quote": "European Physiology Modules are an International Standard Payload Rack, equipped with Science Modules",
+              "ref": "esa-epm",
+              "where": "cuerpo de la página"
+            },
+            {
+              "quote": "Human Research",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Facilities_Report.xlsx, fila EPM, columna Category"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "experiment",
+          "quotes": [
+            {
+              "quote": "which was the first experiment to make full use the European Physiology Modules facility in June 2009",
+              "ref": "esa-iss-status-report-84",
+              "where": "entrada de Neurospat (20 a 22 de diciembre de 2010)"
+            },
+            {
+              "quote": "Effect of Gravitational Context on EEG Dynamics: A Study of Spatial Cognition, Novelty Processing and Sensorimotor Integration",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Experiments_Report.xlsx, fila Neurospat, columna Full Name"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "equipment",
+          "quotes": [
+            {
+              "quote": "Nespoli transferred data to the hard disk of the Multi-Electrode Electroencephalogram Measurement Module",
+              "ref": "esa-iss-status-report-84",
+              "where": "entrada de Neurospat (20 a 22 de diciembre de 2010)"
+            },
+            {
+              "quote": "one of the European Physiology Modules subracks",
+              "ref": "esa-iss-status-report-84",
+              "where": "entrada de Neurospat (20 a 22 de diciembre de 2010)"
+            },
+            {
+              "quote": "was recorded with 58 EEG electrodes with the multi-electrode electroencephalogram mapping module (MEEMM)",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Methods · Wake EEG recordings"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "parameter",
+          "quotes": [
+            {
+              "quote": "Continuous wake EEG was recorded for 70 min during each Neurospat session",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Methods · Wake EEG recordings"
+            },
+            {
+              "quote": "crew members’ three-dimensional perception is affected by long-duration stays in weightlessness",
+              "ref": "esa-iss-status-report-84",
+              "where": "entrada de Neurospat (20 a 22 de diciembre de 2010)"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "investigator",
+          "quotes": [
+            {
+              "quote": "Guy Cheron, Biomechanics Faculty of Movement Science, Université Libre de Bruxelles, Brussels",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Experiments_Report.xlsx, fila Neurospat, columna Principal Investigator(s)"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "provider",
+          "quotes": [
+            {
+              "quote": "OHM Systems, Bremen, Germany",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Facilities_Report.xlsx, fila EPM, columna Developer(s): el desarrollador del rack, copiado tal cual"
+            }
+          ],
+          "missing": {
+            "what": "Quién fabricó o suministró el equipo del experimento (el módulo de EEG).",
+            "searched": [
+              "All_Experiments_Report.xlsx, fila Neurospat, columna Developer(s): vacía",
+              "Petit et al. 2019, métodos: no nombra fabricante",
+              "informe de operaciones n.º 84 de ESA: no lo nombra",
+              "página de EPM de ESA: no nombra ninguna empresa"
+            ]
+          }
+        },
+        {
+          "step": "dataset",
+          "quotes": [
+            {
+              "quote": "All relevant data will be available from the corresponding authors upon request",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Data availability"
+            },
+            {
+              "quote": "and after approval from the European Space Agency Medical Board (ESA-MB)",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Data availability"
+            }
+          ],
+          "missing": {
+            "what": "Un conjunto de datos público de Neurospat.",
+            "searched": [
+              "declaración de disponibilidad de datos de Petit et al. 2019: los datos se piden a los autores",
+              "búsqueda web del 2026-10-22 de un repositorio o una publicación abierta de datos de Neurospat: sin resultado",
+              "página de EPM de ESA y los tres informes del Research Explorer: no nombran datos"
+            ]
+          }
+        },
+        {
+          "step": "publication",
+          "quotes": [
+            {
+              "quote": "Local sleep-like events during wakefulness and their relationship to decreased alertness in astronauts on ISS",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Publications_Report.xlsx, fila Neurospat, tipo Results"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "application",
+          "quotes": [
+            {
+              "quote": "raise awareness on possible impacts on visuomotor performances in space.",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Abstract"
+            },
+            {
+              "quote": "will be key for maintaining astronaut’s cognitive functions and improving missions’ success rate.",
+              "ref": "petit-2019-local-sleep-iss",
+              "where": "Discussion"
+            },
+            {
+              "quote": "increased understanding of terrestrial problems such as ageing, osteoporosis, balance disorders, and loss of muscle.",
+              "ref": "esa-epm",
+              "where": "cuerpo de la página: de la instalación entera, no de Neurospat"
+            }
+          ],
+          "missing": null
+        }
+      ]
+    },
+    {
+      "id": "biolab",
+      "name": "Biolab",
+      "full_name": "Biological Experiment Laboratory",
+      "experiment": "TripleLux-A",
+      "kb_role": {
+        "text": "Biolab es principalmente mecanístico (células, tejidos, pequeños organismos) y su automatización/teleoperación aporta una lección de reducción de crew time",
+        "where": "docs/contexto/knowledge-base-v1.md §9"
+      },
+      "scope_caveat": "Células de rata en cultivo, no personas: esta cadena enseña un mecanismo celular medido en vuelo, no el estado de un tripulante.",
+      "links": [
+        {
+          "step": "facility",
+          "quotes": [
+            {
+              "quote": "Biolab supports biological experiments on micro-organisms, cells, tissue cultures, small plants and small invertebrates.",
+              "ref": "esa-biolab",
+              "where": "cuerpo de la página"
+            },
+            {
+              "quote": "through teleoperations, a scientist on the ground can participate in the preliminary analyses.",
+              "ref": "esa-biolab",
+              "where": "cuerpo de la página"
+            }
+          ],
+          "missing": {
+            "what": "Que la automatización de Biolab se diseñara para reducir el tiempo de tripulación, como dice la base de conocimiento.",
+            "searched": [
+              "página de Biolab de ESA: no aparece «crew time»; dice que el procesamiento automático lo inicia la tripulación"
+            ]
+          }
+        },
+        {
+          "step": "experiment",
+          "quotes": [
+            {
+              "quote": "Next up in Biolab is TripleLux A, with the cell cultures arriving soon on SpX-6.",
+              "ref": "esa-image-2015-triplelux",
+              "where": "pie de la foto"
+            },
+            {
+              "quote": "performed in the BIOLAB laboratory of the ISS COLUMBUS module",
+              "ref": "thiel-2017-macrophage-microgravity",
+              "where": "Abstract"
+            },
+            {
+              "quote": "Gene, Immune and Cellular Responses to Single and Combined Space Flight Conditions - A",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Experiments_Report.xlsx, fila TripleLux-A, columna Full Name"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "equipment",
+          "quotes": [
+            {
+              "quote": "Integrated Advanced Experiment Container (I-AEC) containing PMT detector systems",
+              "ref": "thiel-2017-macrophage-microgravity",
+              "where": "leyenda de la figura 1"
+            },
+            {
+              "quote": "Cells were spun to recreate different levels of gravity, from zero to the level we feel on Earth",
+              "ref": "esa-image-2015-triplelux",
+              "where": "pie de la foto"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "parameter",
+          "quotes": [
+            {
+              "quote": "We measured the oxidative burst reaction in mammalian macrophages",
+              "ref": "thiel-2017-macrophage-microgravity",
+              "where": "Abstract"
+            },
+            {
+              "quote": "was measured by the luminol reaction using photomultiplier detector systems",
+              "ref": "thiel-2017-macrophage-microgravity",
+              "where": "Methods, primer párrafo"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "investigator",
+          "quotes": [
+            {
+              "quote": "Oliver Ullrich, Ph.D., M.D., University of Zurich, Zurich",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Experiments_Report.xlsx, fila TripleLux-A, columna Principal Investigator(s)"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "provider",
+          "quotes": [
+            {
+              "quote": "EADS Astrium, Toulouse, France",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Facilities_Report.xlsx, fila BioLab, columna Developer(s): el desarrollador de la instalación"
+            }
+          ],
+          "missing": {
+            "what": "Quién fabricó o suministró el contenedor de experimento de TripleLux-A.",
+            "searched": [
+              "All_Experiments_Report.xlsx, fila TripleLux-A, columna Developer(s): vacía",
+              "Thiel et al. 2017: nombra el contenedor, no su fabricante",
+              "página de Biolab de ESA: no nombra ninguna empresa"
+            ]
+          }
+        },
+        {
+          "step": "dataset",
+          "quotes": [],
+          "missing": {
+            "what": "Un conjunto de datos de TripleLux-A.",
+            "searched": [
+              "Thiel et al. 2017 (PMC): sin declaración de disponibilidad de datos; solo material suplementario, un PDF",
+              "búsqueda web del 2026-10-22 de TripleLux y de la línea NR8383 en OSDR (osdr.nasa.gov): sin resultado",
+              "página de Biolab de ESA y los tres informes del Research Explorer: no nombran datos"
+            ]
+          }
+        },
+        {
+          "step": "publication",
+          "quotes": [
+            {
+              "quote": "Rapid adaptation to microgravity in mammalian macrophage cells",
+              "ref": "nasa-iss-research-explorer",
+              "where": "All_Publications_Report.xlsx, fila TripleLux-A, tipo Results"
+            }
+          ],
+          "missing": null
+        },
+        {
+          "step": "application",
+          "quotes": [
+            {
+              "quote": "This opens new avenues for the exploration of adaptation of mammalian cells to gravitational changes.",
+              "ref": "thiel-2017-macrophage-microgravity",
+              "where": "Abstract, última frase"
+            }
+          ],
+          "missing": {
+            "what": "Una aplicación médica, en vuelo o en Tierra, declarada por la fuente.",
+            "searched": [
+              "Thiel et al. 2017, resumen y discusión: declara una vía de investigación, no una aplicación",
+              "página de Biolab de ESA y pie de la foto de TripleLux: no nombran aplicaciones"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "not_found": [
+    "La ficha de cada investigación y de cada instalación del Space Station Research Explorer se pinta con JavaScript y no se pudo leer; se leyeron sus tres informes descargables. Los informes no dicen qué experimento usó qué instalación: ese eslabón sale de ESA y de los artículos.",
+    "La página de Biolab de ESA no dice que su automatización se diseñara para reducir el tiempo de tripulación, aunque la base de conocimiento (§9) se lo atribuye: se buscó «crew time» y no aparece.",
+    "El nombre del módulo de EEG no coincide entre fuentes: el informe de ESA dice «Measurement Module» y el artículo, «mapping module». Se copian los dos tal cual.",
+    "El número de electrodos del gorro de Neurospat no coincide entre fuentes: 58 en Petit et al. 2019; los pies de foto de ESA y el blog de NASA, vistos solo en el buscador y no leídos, dan otros. No se toma ninguno como dato.",
+    "El desarrollador de EPM que da el Research Explorer, «OHM Systems, Bremen, Germany», no se pudo contrastar con una página de ESA: ninguna de las leídas nombra empresas. Se copia tal cual."
+  ]
+}

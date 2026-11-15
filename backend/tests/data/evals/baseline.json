@@ -1,0 +1,6 @@
+{
+  "_nota": "Línea base del banco del comité (app/committee_bench.py), medida el 2026-10-04 en esta máquina con Ollama local. Un modelo que baje de su fault_detection o clean_kept es una regresión. qwen3.6:35b-a3b (23 GB) no se midió: el freno de memoria de Polaris no lo carga con 17,5 GB libres.",
+  "gemma4:latest": {"accuracy": 0.84, "ece": 0.097, "fault_detection": 1.0, "clean_kept": 1.0},
+  "qwen3.5:9b": {"accuracy": 0.88, "ece": 0.11, "fault_detection": 0.95, "clean_kept": 1.0},
+  "llama3.1:8b": {"accuracy": 0.6, "ece": 0.195, "fault_detection": 1.0, "clean_kept": 0.4}
+}

@@ -1,0 +1,105 @@
+{
+ "target": "app/ingest/bindings.py",
+ "test": [
+  "tests/test_sensor_bindings.py::test_the_identifier_is_one_and_the_same_for_declaring_and_for_ingesting",
+  "tests/test_sensor_bindings.py::test_what_cannot_be_signed",
+  "tests/test_sensor_bindings.py::test_a_reading_is_judged_against_the_binding_of_its_own_instant",
+  "tests/test_sensor_bindings.py::test_the_notice_speaks_only_of_a_device_bound_to_someone_else",
+  "tests/test_sensor_bindings.py::test_the_whole_source_binding_is_named_as_what_it_is",
+  "tests/test_sensor_bindings.py::test_a_binding_entry_that_names_nobody_gives_nothing_to_compare_with",
+  "tests/test_sensor_bindings.py::test_the_overview_gives_the_latest_signed_per_device_and_keeps_the_history",
+  "tests/test_sensor_bindings.py::test_the_sentence_for_the_chronicle_never_repeats_the_identifier"
+ ],
+ "mutations": [
+  {
+   "label": "«AA:BB» y «aa:bb» son dos relojes: el vinculo declarado no coincide con la lectura",
+   "old": "    key = device.strip().casefold()\n",
+   "new": "    key = device.strip()\n"
+  },
+  {
+   "label": "un texto libre vale como identificador de dispositivo",
+   "old": "    if len(key) > MAX_DEVICE_LENGTH or not _DEVICE.fullmatch(key):",
+   "new": "    if len(key) > MAX_DEVICE_LENGTH:"
+  },
+  {
+   "label": "un identificador sin tope de longitud",
+   "old": "    if len(key) > MAX_DEVICE_LENGTH or not _DEVICE.fullmatch(key):",
+   "new": "    if not _DEVICE.fullmatch(key):"
+  },
+  {
+   "label": "se vincula una fuente que la ingesta no distingue",
+   "old": "    if source not in SOURCES:",
+   "new": "    if False:"
+  },
+  {
+   "label": "se vincula sin decir a que tripulante (solo espacios)",
+   "old": "        if crew is None or not crew.strip():",
+   "new": "        if crew is None:"
+  },
+  {
+   "label": "una retirada que nombra a un tripulante se firma",
+   "old": "    elif crew is not None:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "una lectura antigua se juzga contra el vinculo de hoy, no el de su instante",
+   "old": "        if _scope(item) == (source, device) and _instant(item[\"since\"]) <= moment\n",
+   "new": "        if _scope(item) == (source, device)\n"
+  },
+  {
+   "label": "manda la declaracion de `since` mas tardio y no la firmada mas tarde: no se puede corregir",
+   "old": "    return max(held, key=lambda item: item[\"ledger_index\"]) if held else None",
+   "new": "    return max(held, key=lambda item: _instant(item[\"since\"])) if held else None"
+  },
+  {
+   "label": "el vinculo de un reloj vale para cualquier dispositivo de su fuente",
+   "old": "        if _scope(item) == (source, device) and _instant(item[\"since\"]) <= moment\n",
+   "new": "        if item[\"source\"] == source and _instant(item[\"since\"]) <= moment\n"
+  },
+  {
+   "label": "se avisa de la lectura del propio tripulante vinculado",
+   "old": "        if held is None or held[\"action\"] != BIND or held.get(\"crew\") in (None, subject):",
+   "new": "        if held is None or held[\"action\"] != BIND:"
+  },
+  {
+   "label": "se avisa «vinculado a nadie» de un asiento de vinculo sin tripulante",
+   "old": "held.get(\"crew\") in (None, subject):",
+   "new": "held.get(\"crew\") == subject:"
+  },
+  {
+   "label": "el aviso dice que la lectura no se acepto",
+   "old": "        # La lectura entra siempre: el aviso no decide nada.\n        \"accepted\": True,",
+   "new": "        \"accepted\": False,"
+  },
+  {
+   "label": "el aviso cuenta todas las lecturas como desajustadas",
+   "old": "    mismatched = sum(row[\"readings\"] for row in bound_to)",
+   "new": "    mismatched = len(instants)"
+  },
+  {
+   "label": "la cronica repite el identificador del dispositivo",
+   "old": "        else f\"un dispositivo con identificador de la fuente {item['source_display']}\"",
+   "new": "        else f\"el dispositivo {item['device']} de la fuente {item['source_display']}\""
+  },
+  {
+   "label": "un vinculo retirado sigue entre los vigentes",
+   "old": "        if item[\"bound\"]\n    ]\n",
+   "new": "    ]\n"
+  },
+  {
+   "label": "vale la primera declaracion de un dispositivo y no la ultima",
+   "old": "        latest[_scope(item)] = item\n",
+   "new": "        latest.setdefault(_scope(item), item)\n"
+  },
+  {
+   "label": "el vinculo de fuente entera no dice lo que EMMA no puede distinguir",
+   "old": "\"dispositivos.\" if row[\"device\"] is None else None",
+   "new": "\"dispositivos.\" if False else None"
+  },
+  {
+   "label": "el historial olvida lo que constaba antes",
+   "old": "        last[scope] = crew\n",
+   "new": ""
+  }
+ ]
+}

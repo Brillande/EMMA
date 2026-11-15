@@ -1,0 +1,4 @@
+Informe de alta
+Paciente: Andrés Navarro Prieto   NHC: 98765432
+Ingreso: 01/08/2026   Alta: 05/08/2026
+Médico responsable: Dr. Luis Romero

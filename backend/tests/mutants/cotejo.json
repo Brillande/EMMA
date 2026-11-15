@@ -1,0 +1,23 @@
+{
+  "target": "app/interpret/cotejo.py",
+  "test": [
+    "tests/test_cotejo.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin negación de la presencia (cotejo_invariante)",
+      "old": "if _NEGATION_BEFORE.search(text[max(0, match.start() - 12):match.start()]):",
+      "new": "if False:"
+    },
+    {
+      "label": "las preguntas se cotejan como afirmaciones",
+      "old": "if not sentence or sentence.endswith(\"?\"):",
+      "new": "if not sentence:"
+    },
+    {
+      "label": "no valorable cuenta como ausente",
+      "old": "_ABSENT_VALUES = frozenset({\"ausente\", \"ninguna\", \"no-visto\"})",
+      "new": "_ABSENT_VALUES = frozenset({\"ausente\", \"ninguna\", \"no-visto\", \"no-valorable\"})"
+    }
+  ]
+}

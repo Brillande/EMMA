@@ -1,0 +1,7 @@
+{
+  "_nota": "Inglés de `routines.json` (`core/i18n.py`): castellano exacto → inglés, valor entero por valor entero. El fichero castellano no se toca; las claves, los ids y las frases literales de una fuente no se traducen. Lo aplica `i18n.localized` al servir.",
+  "strings": {
+    "parámetro de diseño": "design parameter",
+    "parámetro de diseño de EMMA: no se ha leído un procedimiento de NASA que fije esta cadencia durante un evento solar": "EMMA design parameter: no NASA procedure that sets this cadence during a solar event has been read"
+  }
+}

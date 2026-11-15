@@ -1,0 +1,51 @@
+{
+  "target": "app/polaris/compat/winlock.py",
+  "test": ["tests/test_polaris_windows_reds.py"],
+  "mutations": [
+    {
+      "label": "un proceso terminado del que alguien guarda un asa se da por vivo",
+      "old": "    if state == _WAIT_OBJECT_0:\n        return False",
+      "new": "    if state == _WAIT_OBJECT_0:\n        return True"
+    },
+    {
+      "label": "de un PID que ya no es de nadie no se sabe si vive",
+      "old": "        if error == _INVALID_PARAMETER:\n            return False",
+      "new": "        if error == _INVALID_PARAMETER:\n            return None"
+    },
+    {
+      "label": "un proceso que no se deja abrir se da por muerto y se le quita el candado",
+      "old": "            return True  # existe, pero es de otro usuario",
+      "new": "            return False  # existe, pero es de otro usuario"
+    },
+    {
+      "label": "la sonda no juzga a nadie: el candado de un muerto se espera el plazo entero",
+      "old": "    return alive(pid), pid",
+      "new": "    return None, pid"
+    },
+    {
+      "label": "el dueño no insiste al soltar si alguien está leyendo quién lo tiene",
+      "old": "                if not busy or time.monotonic() >= deadline:",
+      "new": "                if True:"
+    },
+    {
+      "label": "_lock se queda con el os de siempre",
+      "old": "        module.os = _OsForLocks()",
+      "new": "        pass"
+    },
+    {
+      "label": "install toca cualquier módulo que le pasen",
+      "old": "    if sys.platform != \"win32\" or not _is_the_lock(module):",
+      "new": "    if sys.platform != \"win32\":"
+    },
+    {
+      "label": "el gancho toca el _lock de cualquier carpeta tools, no solo el de una copia de Polaris",
+      "old": "        and os.path.basename(os.path.dirname(folder)) == \"polaris\"",
+      "new": "        and True"
+    },
+    {
+      "label": "el gancho no instala nada: las pruebas de Polaris corren sin el pegamento",
+      "old": "        self._inner.exec_module(module)\n        install(module)",
+      "new": "        self._inner.exec_module(module)"
+    }
+  ]
+}

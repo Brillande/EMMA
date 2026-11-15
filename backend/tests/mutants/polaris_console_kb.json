@@ -1,0 +1,13 @@
+{
+  "target": "app/kb.py",
+  "test": [
+    "tests/test_polaris_console.py::test_while_one_adapter_holds_the_console_the_other_two_wait"
+  ],
+  "mutations": [
+    {
+      "label": "indexar la documentación vuelve a redirigir la consola solo bajo el cerrojo de kb",
+      "old": "    with console.captured():\n        result = tool.build()",
+      "new": "    with __import__(\"contextlib\").redirect_stdout(__import__(\"io\").StringIO()), __import__(\"contextlib\").redirect_stderr(__import__(\"io\").StringIO()):\n        result = tool.build()"
+    }
+  ]
+}

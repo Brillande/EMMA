@@ -1,0 +1,479 @@
+/*
+ * Lote «muestra» (2026-11-08): el menú lateral como el de la muestra (carril de
+ * `components/ConsoleTabs.tsx`). Hoja con dueño propio (unidad «Menú lateral»). Sobrescribe las reglas
+ * del carril de `consoleShell.css` (congelada), que carga antes: mismos selectores, gana el orden.
+ *
+ * Primera ronda. Qué se vio: a 1672 × 941 el carril de la tripulación medía 771 px de contenido en
+ * 616 px de alto y había que desplazarlo para llegar a «Biblioteca». Se apretó: filas del alto táctil y
+ * el recuento de alertas como píldora bajo la palabra de su fila.
+ *
+ * Tercera ronda (R3-4). Qué se vio, al lado de la muestra: allí el menú tiene letra grande (~1,15 rem),
+ * iconos grandes (~1,6 rem) en el verde azulado, filas de una línea con filete fino y la abierta
+ * RELLENA de verde azulado, con texto claro y bordes redondeados («Inicio / Dashboard»). En EMMA la
+ * letra era de 1 rem, la abierta un degradado que se apagaba hacia la derecha (el texto claro sobre su
+ * extremo izquierdo medía 4,6:1), el conmutador de consola y «Entorno de la misión» eran dos cajas
+ * sueltas con el pliegue de los entornos debajo, y los entornos, abiertos, iban en filas de dos y tres
+ * líneas. Qué cambia, solo forma:
+ *   - filas de 2,8 rem, letra de 1,1 rem, iconos de 1,6 rem;
+ *   - la abierta, rellena: `--ref-teal` al 36-28 % sobre `--c-surface`. Texto `--c-text` encima:
+ *     6,6:1 en el extremo más claro, medido con la fórmula de WCAG sobre los valores de
+ *     `lib/palette.ts` (umbral del proyecto, 6:1). En alto contraste el relleno baja al 20-14 % para
+ *     que el texto siga a 12:1 o más (`HIGH_CONTRAST_TEXT_MIN`). Lo vigila `ConsoleTabs.test.ts`.
+ *     Señales además del color: el marco redondeado entero y la negrita (F.5.10 e);
+ *   - conmutador, entorno y su pliegue en una sola franja con un marco (cuarta ronda: más fina, ver
+ *     «La franja de arriba»), y el carril hasta abajo con la Tierra de noche al pie;
+ *   - los entornos, en filas de una línea con su icono (la aclaración entre paréntesis queda en el
+ *     texto de la pestaña y en su `title`, ver `tabLabel`), y el declarado con su marca debajo.
+ * El recuento de alertas conserva palabra, marca y color (F.5-1). Todo bajo `.app[data-look="reference"]`:
+ * la clásica (`#clasica`) no cambia.
+ */
+
+/* ---- El carril: bloques pegados, separados por su filete y no por huecos ---- */
+
+.app[data-look="reference"] .rail {
+  --rail-gap: 0.2rem;
+  gap: var(--rail-gap);
+  padding: 0.3rem;
+}
+
+/* ---- La franja de arriba: conmutador de consola y entorno de la misión, un solo marco fino ---- */
+
+/* Cuarta ronda (R4-2): la muestra no tiene cajas sobre el menú; aquí había dos pegadas (conmutador,
+   52 px, y entorno con «Ver o elegir otro entorno» debajo, 93 px). Ahora son una franja (`.rail-strip`,
+   `ConsoleTabs`): arriba el conmutador; debajo, el entorno y, a su derecha, el mando del pliegue de los
+   entornos con su dibujo, del alto táctil. La palabra del mando sigue en su texto (lector de pantalla,
+   asistente) y en su `title`. */
+.app[data-look="reference"] .rail-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+  padding: 0.15rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* Sin conmutador encima (no lo hay fuera de `App`), la cabecera conserva su propio marco. */
+.app[data-look="reference"] .rail > .rail-header {
+  padding: 0.1rem 0.25rem 0;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+.app[data-look="reference"] .rail-strip > .rail-top,
+.app[data-look="reference"] .rail-strip > .rail-header {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.app[data-look="reference"] .rail-strip > .rail-header {
+  position: relative;
+  padding-top: 0.15rem;
+  border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+/* El mando del pliegue, a la derecha del entorno: un cuadrado del alto táctil con su dibujo. Solo si
+   hay entorno declarado al lado; si no, se queda con su palabra, como antes. */
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices {
+  border-top: 0;
+}
+
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices > summary {
+  position: absolute;
+  top: 0.15rem;
+  right: 0;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--ref-card) 70%, transparent);
+}
+
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices > summary > .pictogram {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0;
+  color: var(--ref-teal);
+}
+
+/* Abierto, el mando lleva el marco de la pestaña abierta: se ve que la lista de debajo es suya. */
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices[open] > summary {
+  border-color: color-mix(in srgb, var(--c-cyan) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-teal) 30%, var(--c-surface));
+}
+
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices[open] > summary > .pictogram {
+  color: var(--c-text);
+}
+
+/* La palabra, fuera de la vista y en el texto (como `.sr-only`). */
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) .rail-choices-word {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* El entorno deja sitio al mando y mide al menos lo que él. */
+.app[data-look="reference"] .rail-strip > .rail-header:has(> .active-environment) > .active-environment {
+  min-height: var(--touch);
+  padding-right: calc(var(--touch) + 0.35rem);
+}
+
+/* El conmutador: dos mitades en una fila, como un control segmentado. */
+.app[data-look="reference"] .rail-top .console-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] {
+  min-width: 0;
+  padding: 0.15rem 0.3rem;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  line-height: 1.15;
+}
+
+/* Lado a lado no lleva la raya de arriba de las filas: la separación es el hueco. */
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] + button[role="tab"] {
+  box-shadow: none;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] > .mark {
+  gap: 0.3rem;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"] > .mark > .pictogram {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* El entorno de la misión: sin caja propia dentro de la franja (la caja es la franja), en dos líneas
+   prietas. */
+.app[data-look="reference"] .rail-header > .active-environment {
+  margin: 0;
+  padding: 0.15rem 0.4rem 0.2rem;
+  border-color: transparent;
+  background: none;
+  line-height: 1.2;
+}
+
+.app[data-look="reference"] .rail-header > .active-environment > .secondary {
+  font-size: 0.875rem;
+}
+
+.app[data-look="reference"] .rail-header > .active-environment > strong {
+  font-size: 1rem;
+}
+
+/* El pliegue, debajo de un filete: su rótulo al alto táctil, sin aire de más. */
+.app[data-look="reference"] .rail-header-choices {
+  margin: 0;
+  border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+.app[data-look="reference"] .rail-header-choices > summary {
+  gap: 0.45rem;
+  padding: 0 0.4rem;
+  font-size: 0.9rem;
+}
+
+.app[data-look="reference"] .rail-header-choices[open] > summary {
+  margin-bottom: 0;
+}
+
+.app[data-look="reference"] .rail-header-choices[open] {
+  padding-bottom: 0.25rem;
+}
+
+/* ---- Las filas de las secciones ---- */
+
+/* Una fila por pestaña: el icono de 1,6 rem, la palabra de 1,1 rem y, si la hay, la píldora del
+   recuento debajo. La nota (si la hay) va en la segunda línea, bajo la palabra. */
+.app[data-look="reference"] .rail-tabs > button[role="tab"] {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.4rem;
+  row-gap: 0.1rem;
+  min-height: max(var(--touch), 2.8rem);
+  padding: 0.2rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .mark {
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .mark > .pictogram {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .tab-note {
+  padding-left: 2.25rem;
+}
+
+/* La abierta, como «Inicio / Dashboard» en la muestra: rellena del verde azulado de la concha, con el
+   marco redondeado entero y la negrita. El relleno va del 36 al 28 % (contraste del texto en la
+   cabecera de la hoja). */
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"][aria-selected="true"],
+.app[data-look="reference"] .rail-tabs > button[role="tab"][aria-selected="true"],
+.app[data-look="reference"] .rail-top .console-switch > button[role="tab"][aria-selected="true"]:hover,
+.app[data-look="reference"] .rail-tabs > button[role="tab"][aria-selected="true"]:hover {
+  border-color: color-mix(in srgb, var(--c-cyan) 70%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ref-teal) 36%, var(--c-surface)),
+    color-mix(in srgb, var(--ref-teal) 28%, var(--c-surface))
+  );
+  color: var(--c-text);
+  box-shadow: 0 0 12px var(--ref-glow);
+}
+
+/* Quinta ronda (R5-3): en la muestra cada entrada cuelga de un filete fino que se lee de un vistazo;
+   aquí era el gris de línea al 70 %, casi perdido sobre la tarjeta azul del carril. Pasa al filete de
+   la concha (`--ref-edge`) al 55 %: mismo grosor (1 px por dentro, la fila no cambia de alto). La
+   abierta queda fuera: conserva su resplandor (regla de abajo), que este selector, más pesado, pisaría. */
+.app[data-look="reference"] .rail-tabs > button[role="tab"] + button[role="tab"]:not([aria-selected="true"]) {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ref-edge) 55%, transparent);
+}
+
+/* La fila de debajo de la abierta tampoco lleva su raya de arriba: la abierta ya tiene marco. */
+.app[data-look="reference"] .rail-tabs > button[role="tab"][aria-selected="true"] + button[role="tab"] {
+  box-shadow: none;
+}
+
+/* ---- Los entornos, abiertos: filas de una línea con su icono ---- */
+
+.app[data-look="reference"] .rail-header-choices .rail-tabs > button[role="tab"] {
+  min-height: var(--touch);
+  padding: 0.15rem 0.45rem;
+  font-size: 1rem;
+}
+
+.app[data-look="reference"] .rail-header-choices .rail-tabs > button[role="tab"] > .mark {
+  gap: 0.55rem;
+}
+
+.app[data-look="reference"] .rail-header-choices .rail-tabs > button[role="tab"] > .mark > .pictogram {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.app[data-look="reference"] .rail-header-choices .rail-tabs > button[role="tab"] > .tab-note {
+  padding-left: 1.9rem;
+}
+
+/* ---- El recuento de alertas: una píldora bajo la palabra de su fila ---- */
+
+/* Las dos marcas (activas con la forma y el color del nivel más alto; sin reconocer, con la caja
+   vacía) lado a lado en una píldora bajo la fila, desde el borde del icono; si no caben juntas, la
+   segunda baja. Fondo casi opaco: sobre el relleno de la abierta, el color del nivel sigue a 6:1 o
+   más (7:1 en alto contraste; lo vigila `ConsoleTabs.test.ts`). */
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .tab-alerts {
+  grid-column: 1 / -1;
+  grid-row: auto;
+  justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.45rem;
+  margin: 0 0 0.1rem;
+  padding: 0 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ref-navy) 90%, transparent);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .tab-alerts > .mark {
+  gap: 0.25rem;
+}
+
+.app[data-look="reference"] .rail-tabs > button[role="tab"] > .tab-alerts .pictogram {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+/* ---- El carril, hasta abajo, con la Tierra de noche al pie (R4-2) ---- */
+
+/* Al lado y fijo, el carril mide todo el alto que le deja la ventana, como la barra de la muestra, en
+   vez de acabar en «Pantalla» con el fondo de la página debajo. `max-height` (`styles.css`: baja visión,
+   barra del asistente) sigue mandando cuando es menor. En columna flexible: las filas van arriba con su
+   alto y la Tierra (`EarthNightArt`, la última) se queda con lo que sobra. */
+.app[data-look="reference"]:not([data-rotation="90"]):not([data-rotation="270"]) .console-layout[data-rail="side"] .rail {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--strip-h, 0px) - 16px);
+}
+
+/* La Tierra de noche, abajo a la izquierda, en el hueco del pie del carril: crece hasta llenarlo y se
+   queda en nada si las pestañas lo necesitan (baja visión, entornos abiertos), así que nunca va detrás
+   de un texto. Llega a los bordes del carril (su relleno, descontado) y él la recorta con sus esquinas.
+   El limbo va arriba (`xMinYMin slice`): si el hueco es corto, se ve el borde encendido. Solo con el
+   carril al lado y fijo; arriba o con la vista de lado no hay pie de carril. */
+.app[data-look="reference"] .rail-earth {
+  display: none;
+}
+
+.app[data-look="reference"]:not([data-rotation="90"]):not([data-rotation="270"]) .console-layout[data-rail="side"] .rail-earth {
+  display: block;
+  flex: 1 1 0;
+  width: calc(100% + 0.6rem);
+  min-height: 0;
+  max-height: 15rem;
+  margin: auto -0.3rem -0.3rem;
+  pointer-events: none;
+}
+
+.app[data-look="reference"] .rail-earth-s-lit {
+  stop-color: color-mix(in srgb, var(--c-blue) 58%, var(--c-bg));
+}
+
+.app[data-look="reference"] .rail-earth-s-mid {
+  stop-color: color-mix(in srgb, var(--c-blue) 32%, var(--c-bg));
+}
+
+.app[data-look="reference"] .rail-earth-s-deep {
+  stop-color: color-mix(in srgb, var(--c-blue) 14%, var(--c-bg));
+}
+
+/* La atmósfera: un halo ancho y difuso y, encima, el filo claro del limbo. */
+.app[data-look="reference"] .rail-earth-glow {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-cyan) 55%, var(--c-blue));
+  stroke-width: 18;
+  filter: blur(8px);
+}
+
+.app[data-look="reference"] .rail-earth-limb {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-cyan) 45%, var(--c-text));
+  stroke-width: 1.8;
+  filter: blur(0.6px);
+}
+
+.app[data-look="reference"] .rail-earth-cloud {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-text) 34%, transparent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  filter: blur(3px);
+}
+
+.app[data-look="reference"] .rail-earth-cloud.thin {
+  stroke-width: 4;
+  stroke: color-mix(in srgb, var(--c-text) 28%, transparent);
+}
+
+/* Las ciudades: puntos cálidos y, en los racimos grandes, su resplandor. */
+.app[data-look="reference"] .rail-earth-halo {
+  fill: color-mix(in srgb, var(--c-yellow) 45%, transparent);
+  filter: blur(6px);
+}
+
+.app[data-look="reference"] .rail-earth-light {
+  fill: color-mix(in srgb, var(--c-yellow) 45%, var(--c-text));
+}
+
+.app[data-look="reference"] .rail-earth-light.warm {
+  fill: color-mix(in srgb, var(--c-yellow) 80%, var(--c-red));
+  filter: drop-shadow(0 0 1.5px var(--c-yellow));
+}
+
+/* ---- «Pantalla», al pie, con menos aire ---- */
+
+.app[data-look="reference"] .rail > .display-controls {
+  padding-top: 0.2rem;
+}
+
+/* Quinta ronda (R5-3). Qué se vio: entre «Pantalla» y el limbo de la Tierra quedaban ~75 px de
+   carril vacío. El dibujo empieza en lo alto de su hueco, pero su tercio de arriba es cielo
+   transparente (el limbo cruza a 80-129 de 240 unidades). «Pantalla» presta a la Tierra 3 rem por
+   debajo con un margen negativo: el dibujo crece hacia arriba por detrás de ella (que va delante, con
+   su `z-index`) y el limbo queda a un palmo de su borde, sin hueco muerto. Si las pestañas necesitan
+   el sitio (baja visión, entornos abiertos), la Tierra sigue quedándose en nada, como antes. */
+.app[data-look="reference"]:not([data-rotation="90"]):not([data-rotation="270"]) .console-layout[data-rail="side"] .rail > .display-controls {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -3rem;
+}
+
+/* ---- Carril arriba (tableta en vertical, pantalla estrecha) ---- */
+
+/* `consoleShell.css` fija las dos columnas de la concha (15,5 rem y el resto) con más especificidad
+   que la regla de `styles.css` que pone el carril arriba: en una tableta en vertical (820 × 1180) el
+   carril seguía al lado, con `data-rail="top"` puesto. Aquí se devuelve la columna única. */
+.app[data-look="reference"] .console-layout[data-rail="top"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Arriba, la franja va en una fila: el conmutador a la izquierda y el entorno a su lado. */
+.app[data-look="reference"] .console-layout[data-rail="top"] .rail-strip {
+  grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.6rem;
+}
+
+.app[data-look="reference"] .console-layout[data-rail="top"] .rail-strip > .rail-header {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Con los entornos abiertos, la cabecera baja a una fila entera: la lista no se aprieta en la columna. */
+.app[data-look="reference"] .console-layout[data-rail="top"] .rail-strip > .rail-header:has(> .rail-header-choices[open]) {
+  grid-column: 1 / -1;
+}
+
+.app[data-look="reference"] .console-layout[data-rail="top"] .rail-top .console-switch {
+  max-width: 32rem;
+}
+
+/* ---- Baja visión (§5.40) ---- */
+
+/* El alto de la fila sigue siendo el táctil (la ampliación de 1,25 lo lleva a 56 px de pantalla). La
+   píldora y la caja de la franja, con el borde del texto secundario. */
+.app[data-look="reference"][data-low-vision="on"] .rail-tabs > button[role="tab"] > .tab-alerts,
+.app[data-look="reference"][data-low-vision="on"] .rail-strip,
+.app[data-look="reference"][data-low-vision="on"] .rail > .rail-header,
+.app[data-look="reference"][data-low-vision="on"] .rail-strip > .rail-header:has(> .active-environment) > .rail-header-choices > summary {
+  border-color: var(--c-text-secondary);
+}
+
+/* ---- Alto contraste ---- */
+
+/* La abierta: el relleno, más oscuro (el texto a 12:1 o más), y el marco del color del texto y de
+   2 px, el segundo píxel por dentro con una sombra para que la fila no cambie de tamaño al elegirla. */
+.app[data-look="reference"][data-high-contrast="on"] .rail-top .console-switch > button[role="tab"][aria-selected="true"],
+.app[data-look="reference"][data-high-contrast="on"] .rail-tabs > button[role="tab"][aria-selected="true"],
+.app[data-look="reference"][data-high-contrast="on"] .rail-top .console-switch > button[role="tab"][aria-selected="true"]:hover,
+.app[data-look="reference"][data-high-contrast="on"] .rail-tabs > button[role="tab"][aria-selected="true"]:hover {
+  border-color: var(--c-text);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ref-teal) 20%, var(--c-surface)),
+    color-mix(in srgb, var(--ref-teal) 14%, var(--c-surface))
+  );
+  box-shadow: inset 0 0 0 1px var(--c-text);
+}

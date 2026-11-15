@@ -1,0 +1,22 @@
+# GPU con overclock de MSI Center (+200 MHz núcleo y memoria), torch 2.11+cu128, controlador 617.42, 2026-11-11
+# Solo la tarea total con el ejecutable; las 4 sin cuDNN
+GPU libre tras 31 s
+ejecutable original (cuDNN encendido), total:
+  total           FALLA illegal 25.7 s
+GPU libre tras 33 s
+ejecutable original (cuDNN encendido), total:
+  total           ok 39.1 s
+GPU libre tras 31 s
+ronda 1, sin cuDNN, sin paso a CPU:
+  total           ok 44.8 s
+  liver_vessels   ok 40.0 s
+  liver_segments  ok 41.3 s
+  liver_lesions   ok 63.1 s
+GPU libre tras 31 s
+ronda 2, sin cuDNN, sin paso a CPU:
+  total           ok 44.3 s
+  liver_vessels   ok 40.2 s
+  liver_segments  ok 41.1 s
+  liver_lesions   FALLA illegal 26.0 s
+
+[exited with code 0]

@@ -1,0 +1,65 @@
+{
+ "target": "app/analysis/alert_history.py",
+ "test": [
+  "tests/test_alert_history.py::test_steps_go_back_to_the_first_reading_and_no_further",
+  "tests/test_alert_history.py::test_steps_stop_at_the_cap",
+  "tests/test_alert_history.py::test_contiguous_steps_join_and_a_nominal_step_splits",
+  "tests/test_alert_history.py::test_an_episode_touching_the_current_step_is_open",
+  "tests/test_alert_history.py::test_an_episode_at_the_horizon_does_not_claim_a_start",
+  "tests/test_alert_history.py::test_the_answer_says_what_it_is_and_what_it_is_not",
+  "tests/test_alert_history.py::test_what_was_left_unexamined_is_declared",
+  "tests/test_alert_history.py::test_signed_entries_sit_beside_their_episode_only"
+ ],
+ "mutations": [
+  {
+   "label": "el tope de pasos no se aplica",
+   "old": "    while len(found) < limit:",
+   "new": "    while True:"
+  },
+  {
+   "label": "se sigue recalculando antes de la primera lectura",
+   "old": "        if end <= earliest:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un paso nominal en medio no parte el episodio",
+   "old": "            if step is not None and level is not RiskLevel.NOMINAL:",
+   "new": "            if step is not None:"
+  },
+  {
+   "label": "el nivel del episodio es el del ultimo paso y no el maximo",
+   "old": "    return max(levels, key=_ORDER.index)",
+   "new": "    return levels[-1]"
+  },
+  {
+   "label": "un episodio que toca el paso actual se da por cerrado",
+   "old": "    is_open = last.index == 0",
+   "new": "    is_open = False"
+  },
+  {
+   "label": "un episodio cortado por el tope presenta su primer paso como su comienzo",
+   "old": "    cut_short = first.index == steps[-1].index and not examined_all",
+   "new": "    cut_short = False"
+  },
+  {
+   "label": "la historia se declara completa aunque queden lecturas anteriores sin mirar",
+   "old": "    examined_all = oldest <= earliest",
+   "new": "    examined_all = True"
+  },
+  {
+   "label": "la respuesta pierde el rotulo de recalculo",
+   "old": "        \"label\": i18n.loc(LABEL),",
+   "new": "        \"label\": \"Historia de alertas\","
+  },
+  {
+   "label": "la respuesta ya no dice que no es lo que el sistema enseño entonces",
+   "old": "    \"registro. No es lo que el sistema enseñó entonces: las reglas pueden haber cambiado y \"",
+   "new": "    \"registro. Las reglas pueden haber cambiado y \""
+  },
+  {
+   "label": "lo firmado de otro dominio se pone al lado de un episodio que no es el suyo",
+   "old": "                if item[\"domain\"] == episode[\"domain\"]",
+   "new": "                if True"
+  }
+ ]
+}

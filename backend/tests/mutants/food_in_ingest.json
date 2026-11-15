@@ -1,0 +1,90 @@
+{
+ "target": "app/ingest/food_item.py",
+ "test": [
+  "tests/test_food_item.py",
+  "-k",
+  "not same_status and not simulated"
+ ],
+ "mutations": [
+  {
+   "label": "la fracción rechazada deja de admitir el plato",
+   "old": "KEYS = frozenset({\"food-acceptability\", \"food-rejected-fraction\"})\n",
+   "new": "KEYS = frozenset({\"food-acceptability\"})\n"
+  },
+  {
+   "label": "el plato pasa a ser obligatorio también en la fracción rechazada",
+   "old": "REQUIRED = frozenset({\"food-acceptability\"})\n",
+   "new": "REQUIRED = KEYS\n"
+  },
+  {
+   "label": "la ingesta genérica exige el alimento aunque no deba (`require` se ignora)",
+   "old": "        if require and key in REQUIRED:\n",
+   "new": "        if key in REQUIRED:\n"
+  },
+  {
+   "label": "la descripción dice «obligatorio» donde es opcional",
+   "old": "    required = key in REQUIRED\n",
+   "new": "    required = True\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la ingesta genérica firma el plato tal como llega, sin la regla",
+   "old": "    food = _food_item_or_422(payload.key, payload.food_item)\n",
+   "new": "    food = payload.food_item\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la ingesta genérica pierde el plato al firmar",
+   "old": "            model_version=payload.model_version,\n            food=food,\n",
+   "new": "            model_version=payload.model_version,\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la enmienda firma el plato de la corrección sin la regla",
+   "old": "    food = _food_item_or_422(correction.key, correction.food_item)\n",
+   "new": "    food = correction.food_item\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la enmienda pierde el plato que trae la corrección",
+   "old": "            model_version=correction.model_version,\n            food=food,\n",
+   "new": "            model_version=correction.model_version,\n"
+  },
+  {
+   "target": "app/api/nutrition.py",
+   "label": "la ruta de nutrición no lee las fracciones rechazadas",
+   "old": "            *store.query(subject, key=food_acceptability.REJECTED_KEY),\n",
+   "new": ""
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "una fracción rechazada inferida o predicha cuenta como declarada",
+   "old": "            if reading.observation_type is ObservationType.MEASURED and reading.food is not None:\n",
+   "new": "            if reading.food is not None:\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "la fracción rechazada no se agrupa con su plato",
+   "old": "    left = _by_dish(rejected)\n",
+   "new": "    left = {}\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "la comparación toma la última valoración como primera",
+   "old": "    first, last = ordered[0], ordered[-1]\n    first_text, last_text = value_text(first.value, threshold), value_text(last.value, threshold)\n",
+   "new": "    first, last = ordered[-1], ordered[-1]\n    first_text, last_text = value_text(first.value, threshold), value_text(last.value, threshold)\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "el día de una valoración se toma en el desfase con que llegó, no en UTC",
+   "old": "    return when.astimezone(dt.UTC).date().isoformat()\n",
+   "new": "    return when.date().isoformat()\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "un plato sin fracción rechazada enseña una frase vacía en vez de decirlo",
+   "old": "        \"rejected_display\": left[\"statement\"] if left is not None else NO_REJECTED,\n",
+   "new": "        \"rejected_display\": left[\"statement\"] if left is not None else \"\",\n"
+  }
+ ]
+}

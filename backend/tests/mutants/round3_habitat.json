@@ -1,0 +1,9 @@
+{"target": "app/environment/habitat.py", "test": ["tests/test_habitat.py"],
+ "mutations": [
+  {"label": "el SMAC de 24 h del CO se juzga lectura a lectura",
+   "old": "                Limit(None, 100.0, \"SMAC 24 h\", \"health\", dt.timedelta(hours=24)),",
+   "new": "                Limit(None, 100.0, \"SMAC 24 h\", \"health\"),"},
+  {"label": "el ruido peligroso en 95 dBA y no en 85",
+   "old": "            limits=(Limit(None, 85.0, \"[V2 6077]\", HEALTH, label=NOISE_LABEL),),",
+   "new": "            limits=(Limit(None, 95.0, \"[V2 6077]\", HEALTH, label=NOISE_LABEL),),"}
+ ]}

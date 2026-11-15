@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, candidata C a 16 px: el mismo dibujo, dibujado píxel a píxel. A este tamaño un trazo
+       en diagonal se emborrona en gris; aquí la E son barras de 2 px sobre píxel entero y el
+       latido, píxeles sueltos con una fila libre por encima y por debajo. Sin borde. -->
+  <title>EMMA</title>
+  <rect width="16" height="16" rx="3" fill="#0A0D12" shape-rendering="geometricPrecision"/>
+  <path fill="#EEF2F6" d="M3 2H12V4H5V12H12V14H3Z"/>
+  <path fill="#EEF2F6" d="M5 8H7V9H5Z M7 6H8V8H7Z M8 5H9V7H8Z M9 7H10V11H9Z M10 9H11V10H10Z M11 8H13V9H11Z"/>
+</svg>

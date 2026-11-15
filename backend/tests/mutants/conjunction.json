@@ -1,0 +1,53 @@
+{
+ "target": "app/environment/conjunction.py",
+ "test": [
+  "tests/test_conjunction.py"
+ ],
+ "mutations": [
+  {
+   "label": "el umbral deja de ser el que escribe su frase",
+   "old": "THRESHOLD_DEG = 2.0",
+   "new": "THRESHOLD_DEG = 3.0"
+  },
+  {
+   "label": "los dos grados justos dejan de contar como dentro",
+   "old": "    return WITHIN if elongation <= THRESHOLD_DEG else CLEAR",
+   "new": "    return WITHIN if elongation < THRESHOLD_DEG else CLEAR"
+  },
+  {
+   "label": "el umbral de Marte se aplica a cualquier objetivo",
+   "old": "    if window.target not in THRESHOLD_TARGETS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una efeméride sin elongación se dice fuera de la conjunción",
+   "old": "        return NOT_RECORDED",
+   "new": "        return CLEAR"
+  },
+  {
+   "label": "sin efemérides se dice como una efeméride sin elongación",
+   "old": "        return NO_EPHEMERIS",
+   "new": "        return NOT_RECORDED"
+  },
+  {
+   "label": "la nota deja de decir que no decide nada",
+   "old": "    \"Solo se dice: el retardo, el factor de aislamiento, los niveles, las alertas y las \"",
+   "new": "    \"Se dice: el retardo, los niveles, las alertas y las \""
+  },
+  {
+   "label": "el ángulo sale con punto decimal",
+   "old": "    return f\"{display.number(value, 1)}°\"",
+   "new": "    return f\"{value:.1f}°\""
+  },
+  {
+   "label": "el umbral se sirve también cuando no se aplica",
+   "old": "        \"threshold_deg\": THRESHOLD_DEG if state in (WITHIN, CLEAR) else None,",
+   "new": "        \"threshold_deg\": THRESHOLD_DEG,"
+  },
+  {
+   "label": "el umbral deja de leerse de su frase",
+   "old": "    if written is None or _WORD_NUMBERS.get(written.group(1)) != THRESHOLD_DEG:",
+   "new": "    if written is None:"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+# GPU con overclock de MSI Center (+200 MHz núcleo y memoria), torch 2.7.1+cu126 en entorno de prueba aparte, 2026-11-11
+GPU libre tras 31 s
+ronda 1, ejecutable original (cuDNN encendido):
+  total           FALLA misaligned 27.8 s
+  liver_vessels   FALLA misaligned 19.0 s
+  liver_segments  FALLA illegal 17.6 s
+  liver_lesions   FALLA illegal 10.3 s
+GPU libre tras 33 s
+ronda 2, ejecutable original (cuDNN encendido):
+  total           FALLA illegal 17.1 s
+  liver_vessels   FALLA illegal 18.6 s
+  liver_segments  FALLA misaligned 18.8 s
+  liver_lesions   ok 13.0 s
+GPU libre tras 32 s
+ronda 1, sin cuDNN, sin paso a CPU:
+  total           ok 48.4 s
+  liver_vessels   ok 42.2 s
+  liver_segments  ok 43.3 s
+  liver_lesions   ok 64.6 s
+GPU libre tras 31 s
+ronda 2, sin cuDNN, sin paso a CPU:
+  total           ok 46.1 s
+  liver_vessels   ok 41.5 s
+  liver_segments  ok 43.6 s
+  liver_lesions   ok 64.8 s
+
+[exited with code 0]

@@ -1,0 +1,45 @@
+{
+  "_nota": "Cada cuánto se espera una lectura de cada medida periódica, para `app/routines.py` (Polaris `estado_rutina`). TODOS son parámetros de diseño de EMMA: no se ha leído una fuente de NASA que fije la cadencia a bordo, y no se inventa una. Si se encuentra, la entrada lleva `basis` con la cita. Fuera: el dolor (se informa cuando duele), la ecografía del nervio óptico (bajo indicación), las analíticas (bajo petición) y lo derivado. Revisado el 2026-10-01.",
+  "default_basis": "parámetro de diseño",
+  "routines": {
+    "heart-rate": {"period_hours": 6},
+    "hrv-sdnn": {"period_hours": 6},
+    "hrv-rmssd": {"period_hours": 6},
+    "respiratory-rate": {"period_hours": 6},
+    "oxygen-saturation": {"period_hours": 6},
+    "body-temperature": {"period_hours": 6},
+    "absorbed-dose-rate": {"period_hours": 6},
+    "sleep-duration": {"period_hours": 24},
+    "sleep-efficiency": {"period_hours": 24},
+    "circadian-shift": {"period_hours": 24},
+    "exercise-minutes": {"period_hours": 24},
+    "loading-impacts": {"period_hours": 24},
+    "pvt-mean-rt": {"period_hours": 24},
+    "pvt-lapses": {"period_hours": 24},
+    "food-acceptability": {"period_hours": 24},
+    "energy-intake-daily": {"period_hours": 24},
+    "fluid-intake-24h": {"period_hours": 24},
+    "urine-volume-24h": {"period_hours": 24},
+    "urine-specific-gravity": {"period_hours": 24},
+    "systolic-bp": {"period_hours": 168},
+    "diastolic-bp": {"period_hours": 168},
+    "orthostatic-drop": {"period_hours": 168},
+    "body-weight": {"period_hours": 168},
+    "mood-valence": {"period_hours": 168},
+    "symptom-burden": {"period_hours": 168},
+    "cortisol-salivary": {"period_hours": 720},
+    "latent-virus-shedding": {"period_hours": 720}
+  },
+  "during_event": {
+    "_nota": "Mientras el estado da por activo un evento solar (`analysis.risk.active_solar_event`: DONKI, gravedad alta o severa, ya empezado en el ahora de las rutinas) o, sin él, mientras la última lectura de tasa de dosis del tripulante cruza su límite de peligro (`baseline.crossed_danger_limit`; añadido el 2026-11-04: sin red no hay DONKI y a bordo el aviso lo da la dosimetría), estas rutinas esperan lectura más a menudo. Solo acorta: lo que no está aquí sigue con su periodo de siempre. Son parámetros de diseño de EMMA: no se ha leído un procedimiento de NASA que fije la cadencia de medida a bordo durante un evento de partículas, y no se inventa uno. Criterio: la dosis primero (es lo que el evento cambia, y el refugio de Orion se monta en 1 h); después los síntomas, porque los prodrómicos de una exposición aguda (náusea, cansancio) se cuentan en horas, no en semanas; después lo que se mide con el pulsioxímetro y el termómetro a la vez (pulso, SpO₂, respiración, temperatura). No cambia el riesgo, ni las alertas, ni la caducidad del evento; «rota» sigue sin ser una alerta. Revisado el 2026-11-02.",
+    "basis": "parámetro de diseño de EMMA: no se ha leído un procedimiento de NASA que fije esta cadencia durante un evento solar",
+    "routines": {
+      "absorbed-dose-rate": {"period_hours": 1, "priority": 1},
+      "symptom-burden": {"period_hours": 12, "priority": 2},
+      "heart-rate": {"period_hours": 2, "priority": 3},
+      "oxygen-saturation": {"period_hours": 2, "priority": 4},
+      "respiratory-rate": {"period_hours": 2, "priority": 5},
+      "body-temperature": {"period_hours": 4, "priority": 6}
+    }
+  }
+}

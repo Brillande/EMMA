@@ -1,0 +1,38 @@
+{
+  "target": "app/evidence/tier.py",
+  "test": [
+    "tests/test_evidence_tier.py"
+  ],
+  "mutations": [
+    {
+      "label": "el nivel leído del texto ya no lleva rótulo en la etiqueta",
+      "old": "    graded[\"label\"] = f\"{graded['label']} · {i18n.loc(TEXT_LABEL)}\"",
+      "new": "    pass"
+    },
+    {
+      "label": "el nivel leído del texto se declara como si viniera del registro",
+      "old": "\"basis\": BASIS_TEXT, **from_text}",
+      "new": "\"basis\": BASIS_RECORD, **from_text}"
+    },
+    {
+      "label": "el texto ya no tiene techo: puede dar cualquier nivel",
+      "old": "    if graded[\"tier\"] not in TEXT_TIERS:",
+      "new": "    if graded[\"tier\"] == \"desconocido\":"
+    },
+    {
+      "label": "el texto se mezcla con las señales del registro",
+      "old": "    graded = weave(signals_from_record(record[\"publication_types\"], record[\"mesh\"]))",
+      "new": "    graded = weave({**signals_from_record(record[\"publication_types\"], record[\"mesh\"]), **signals_from_text(text)})"
+    },
+    {
+      "label": "una fuente sin PMID ya no pasa por el léxico: el preclínico vuelve a callarse",
+      "old": "        if from_text is not None:",
+      "new": "        if False:"
+    },
+    {
+      "label": "una cita con el PMID escrito de otra forma pasa a leerse por su texto",
+      "old": "    if match is None and _PUBMED_MENTION.search(source):",
+      "new": "    if False:"
+    }
+  ]
+}

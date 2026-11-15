@@ -1,0 +1,96 @@
+/*
+ * El panel del ciclo y el del sexo declarado (lote «ciclo», unidad B4). Solo reparto: los colores
+ * salen de la paleta (`--c-*`) o de los tonos de la concha (`--ref-*`, que son mezclas de la
+ * paleta), con su caída a la paleta en la clásica. Ningún color aquí significa nada: el significado
+ * lo llevan las marcas (`.mark.c-*`). `cycle.test.ts` comprueba que no hay colores a mano.
+ */
+
+.cycle-records {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cycle-record {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge, var(--c-line)) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy, var(--c-surface)) 50%, transparent);
+}
+
+.cycle-record-name {
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.cycle-record-value {
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.cycle-phase {
+  margin: 0.2rem 0 0.4rem;
+}
+
+.cycle-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.cycle-facts > div {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.cycle-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+}
+
+.cycle-facts dd {
+  margin: 0;
+}
+
+.cycle-sex-form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin: 0.3rem 0;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+}
+
+.cycle-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cycle-sex-sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+}
+
+.cycle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--c-text-secondary);
+}

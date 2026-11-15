@@ -1,0 +1,47 @@
+{
+  "target": "app/pain_on_skeleton.py",
+  "test": [
+    "tests/test_pain_on_skeleton.py"
+  ],
+  "mutations": [
+    {
+      "label": "la zona anclada se queda donde la deja el ajuste (sin modo DIRECTO)",
+      "old": "        if number in anchors:",
+      "new": "        if False:"
+    },
+    {
+      "label": "la zona puesta sobre su hueso dice que la colocó el ajuste",
+      "old": "\"bone\": bone, \"placed_on\": ON_BONE,",
+      "new": "\"bone\": bone, \"placed_on\": BY_FIT,"
+    },
+    {
+      "label": "una zona colocada con el ajuste se da por puesta sobre su hueso",
+      "old": "                    \"placed_on\": BY_FIT,",
+      "new": "                    \"placed_on\": ON_BONE,"
+    },
+    {
+      "label": "el centroide del hueso se lee con los ejes cambiados",
+      "old": "\"u\": round(float(centroid[\"u\"]), 4), \"v\": round(float(centroid[\"v\"]), 4),",
+      "new": "\"u\": round(float(centroid[\"v\"]), 4), \"v\": round(float(centroid[\"u\"]), 4),"
+    },
+    {
+      "target": "app/volumes/skeleton_view.py",
+      "label": "el borde del estudio solo se mira de arriba abajo: el húmero cortado por el lado ancla",
+      "old": "            for axis, (first, last) in enumerate(field):",
+      "new": "            for axis, (first, last) in [(2, field[2])]:"
+    },
+    {
+      "target": "app/volumes/skeleton_view.py",
+      "label": "los extremos del hueso se leen siempre en z, contra el campo de cada eje",
+      "old": "                lowest, highest = (float(end) for end in reach[axis])",
+      "new": "                lowest, highest = (float(end) for end in reach[2])"
+    },
+    {
+      "target": "app/volumes/skeleton_view.py",
+      "label": "el campo se lee del estudio solo en z: a los lados no se mide nada",
+      "old": "        field = spine.volume_field_mm(volume)",
+      "new": "        field = ((-1e9, 1e9), (-1e9, 1e9), spine.volume_field_mm(volume)[2])"
+    }
+  ],
+  "_nota": "Modo DIRECTO de Polaris (2026-10-20): la zona anclada va al centroide de su hueso. No hay mutante de «el hueso cortado también va directo»: `_align` solo recibe los huesos enteros (lo vigila «un hueso cortado por el borde del estudio sirve de ancla», en pain_on_skeleton.json), así que no hay centroide de trozo a mano que mutar. Borde lateral (2026-10-21): las tres últimas mutan `volumes/skeleton_view.py`, que es donde se decide qué hueso llega cortado; las caza `test_an_arm_cut_by_the_side_of_the_study_is_not_an_anchor_nor_where_its_zone_goes`, que pasa por la API (`view_of`) con un estudio cortado por el lado del húmero derecho. Sin mutante para un solo lado de cada eje: esa condición es la misma que la del borde de abajo, y la vigila «un hueso cortado por el borde del estudio sirve de ancla»."
+}

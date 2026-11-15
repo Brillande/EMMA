@@ -1,0 +1,113 @@
+{
+  "_nota": "Vocabulario cerrado de recursos (especificación del equipo §3, MissionContext `available_resources`; §3 y §8, Countermeasure `resources`). Sale de lo que ya nombraban las contramedidas de countermeasures.json y de nada más: cada clave agrupa los recursos que la biblioteca nombraba con el mismo texto, y su nombre es ese texto tal cual. No es el inventario de una nave ni de un botiquín, y no lleva cantidades. Una clave que ninguna contramedida use, o un recurso de una contramedida que no esté aquí, hace fallar la carga de la biblioteca.",
+  "resources": [
+    {
+      "key": "treadmill-or-cycle-ergometer",
+      "name": "cinta o cicloergómetro"
+    },
+    {
+      "key": "ared",
+      "name": "ARED (ejercicio resistivo)"
+    },
+    {
+      "key": "intake-log",
+      "name": "registro de ingesta"
+    },
+    {
+      "key": "same-sensor",
+      "name": "el mismo sensor"
+    },
+    {
+      "key": "shift-planning",
+      "name": "planificación del turno"
+    },
+    {
+      "key": "adjustable-module-lighting",
+      "name": "iluminación regulable del módulo"
+    },
+    {
+      "key": "onboard-pvt-test",
+      "name": "test PVT de a bordo"
+    },
+    {
+      "key": "comms-window",
+      "name": "ventana de comunicaciones"
+    },
+    {
+      "key": "shielded-area",
+      "name": "zona blindada"
+    },
+    {
+      "key": "stowage-water-food-as-shielding",
+      "name": "bolsas de estiba, agua y víveres como masa de blindaje"
+    },
+    {
+      "key": "module-with-more-shielding-mass",
+      "name": "módulo con más masa entre la tripulación y el exterior"
+    },
+    {
+      "key": "activity-replanning",
+      "name": "replanificación de la actividad"
+    },
+    {
+      "key": "personal-dosimeter",
+      "name": "dosímetro personal"
+    },
+    {
+      "key": "accelerometer",
+      "name": "acelerómetro"
+    },
+    {
+      "key": "clinical-diary",
+      "name": "diario clínico"
+    },
+    {
+      "key": "cleaning-supplies",
+      "name": "material de limpieza"
+    },
+    {
+      "key": "saliva-sample-kit",
+      "name": "kit de muestra de saliva"
+    },
+    {
+      "key": "ultrasound-scanner",
+      "name": "ecógrafo"
+    },
+    {
+      "key": "trained-operator",
+      "name": "operador entrenado"
+    },
+    {
+      "key": "onboard-physician",
+      "name": "médico de a bordo"
+    },
+    {
+      "key": "pain-body-map",
+      "name": "mapa corporal de dolor"
+    },
+    {
+      "key": "onboard-drinking-water",
+      "name": "agua potable de a bordo"
+    },
+    {
+      "key": "urine-24h-collection",
+      "name": "recogida de orina de 24 h"
+    },
+    {
+      "key": "onboard-food-inventory",
+      "name": "inventario de alimentos de a bordo"
+    },
+    {
+      "key": "second-co2-sensor-or-portable-analyzer",
+      "name": "segundo sensor o analizador portátil de CO2"
+    },
+    {
+      "key": "environmental-control-system",
+      "name": "sistema de control ambiental del módulo"
+    },
+    {
+      "key": "second-sensor-or-manual-instrument",
+      "name": "segundo sensor o instrumento de medida manual"
+    }
+  ]
+}

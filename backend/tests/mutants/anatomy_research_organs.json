@@ -1,0 +1,114 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_anatomy.py::test_the_liver_carries_a_research_layer_apart_from_what_is_measured",
+    "tests/test_anatomy.py::test_the_research_layer_moves_no_level_and_no_domain_evidence",
+    "tests/test_anatomy.py::test_the_research_layer_only_takes_cards_with_a_read_population",
+    "tests/test_anatomy.py::test_each_research_card_names_its_population_with_the_class_of_its_card",
+    "tests/test_anatomy.py::test_the_brain_names_where_the_research_is_done_apart_from_the_studies",
+    "tests/test_anatomy.py::test_each_new_research_relevance_says_no_more_than_its_card",
+    "tests/test_evidence_registry.py::test_every_citation_exists_and_no_reference_is_an_orphan"
+  ],
+  "mutations": [
+    {
+      "label": "un rotulo con la clase y nada detras entra en la capa",
+      "old": "        if not self.population.removeprefix(expected).strip():",
+      "new": "        if False:"
+    },
+    {
+      "label": "una ficha sin poblacion entra en la capa de investigacion",
+      "old": "        if ref.population is None:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el rotulo de poblacion puede decir otra clase que la ficha",
+      "old": "        if not self.population.startswith(expected):",
+      "new": "        if False:"
+    },
+    {
+      "label": "la ficha sale sin su rotulo de poblacion",
+      "old": "        return {**self.citation.to_dict(), \"population_label\": self.population}",
+      "new": "        return {**self.citation.to_dict(), \"population_label\": \"\"}"
+    },
+    {
+      "label": "el rotulo de la clase animal dice humanos",
+      "old": "    \"animal\": \"modelo animal\",",
+      "new": "    \"animal\": \"humanos\","
+    },
+    {
+      "label": "el cerebro pierde su capa de investigacion y su instalacion",
+      "old": "        research_refs=(CNS_RESEARCH,), research_facility=NSRL_FACILITY,",
+      "new": ""
+    },
+    {
+      "label": "el cerebro pierde la instalacion",
+      "old": "        research_refs=(CNS_RESEARCH,), research_facility=NSRL_FACILITY,",
+      "new": "        research_refs=(CNS_RESEARCH,),"
+    },
+    {
+      "label": "el musculo pierde su capa de investigacion",
+      "old": "        research_refs=(MUSCLE_RESEARCH_REPORT, MUSCLE_RESEARCH_BEDREST, MUSCLE_RESEARCH_MOUSE),",
+      "new": ""
+    },
+    {
+      "label": "el sistema inmune pierde su capa de investigacion",
+      "old": "        research_refs=(IMMUNE_RESEARCH_REPORT, IMMUNE_RESEARCH_SPLEEN),",
+      "new": ""
+    },
+    {
+      "label": "el bazo de raton pierde su ficha",
+      "old": "        research_refs=(IMMUNE_RESEARCH_REPORT, IMMUNE_RESEARCH_SPLEEN),",
+      "new": "        research_refs=(IMMUNE_RESEARCH_REPORT,),"
+    },
+    {
+      "label": "una instalacion sin estudios pasa",
+      "old": "        if self.research_facility is not None:\n            if not self.research_refs:",
+      "new": "        if self.research_facility is not None:\n            if False:"
+    },
+    {
+      "label": "la instalacion admite una ficha con poblacion (un estudio)",
+      "old": "            if \"population\" not in self.research_facility.ref.not_applicable:",
+      "new": "            if False:"
+    },
+    {
+      "label": "la instalacion sale sin su frase",
+      "old": "                {\"note\": RESEARCH_FACILITY_NOTE, \"item\": self.research_facility.to_dict()}",
+      "new": "                {\"note\": None, \"item\": self.research_facility.to_dict()}"
+    },
+    {
+      "label": "la frase de la capa vuelve a decir solo animales",
+      "old": "    \"Lo observado en estudios con otras personas o con animales, no medido en este tripulante; \"",
+      "new": "    \"Lo observado en estudios con animales, no medido en este tripulante; \""
+    },
+    {
+      "label": "la frase de la capa deja de decir que cada ficha dice su poblacion",
+      "old": "    \"cada ficha dice su población. No afirma que le esté ocurriendo y no cuenta en el nivel ni en \"",
+      "new": "    \"No afirma que le esté ocurriendo y no cuenta en el nivel ni en \""
+    },
+    {
+      "label": "la frase de la capa deja de decir que no esta medida en el tripulante",
+      "old": "    \"Lo observado en estudios con otras personas o con animales, no medido en este tripulante; \"",
+      "new": "    \"Lo observado en estudios con otras personas o con animales, también en este tripulante; \""
+    },
+    {
+      "label": "la capa entra en la evidencia del dominio",
+      "old": "                    \"items\": [item.to_dict() for item in evidence_for(domain)],",
+      "new": "                    \"items\": [item.to_dict() for item in evidence_for(domain)] + [item.to_dict() for item in region.research_refs],"
+    },
+    {
+      "label": "el rotulo del bazo dice humanos de un estudio en raton",
+      "old": "        \"modelo animal: ratón; 12 ratones volaron 35 días en la ISS y el conjunto publica 9 \"",
+      "new": "        \"humanos: ratón; 12 ratones volaron 35 días en la ISS y el conjunto publica 9 \""
+    },
+    {
+      "label": "la relevancia del SNC dice que esta demostrado en astronautas",
+      "old": "        \"muy improbable\",",
+      "new": "        \"muy improbable, aunque está demostrado en astronautas\","
+    },
+    {
+      "label": "el rotulo del reposo en cama pierde a quien se midio",
+      "old": "        \"humanos: 24 mujeres jóvenes sanas en el reposo en cama WISE 2005, 60 días en Tierra\"",
+      "new": "        \"humanos: en el reposo en cama WISE 2005\""
+    }
+  ]
+}

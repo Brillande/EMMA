@@ -1,0 +1,655 @@
+/*
+ * «Cuerpo» como tablero de la maqueta (decisión del usuario, 2026-11-07: cada sección se parece al
+ * tablero «Inicio» pero con sus apartados propios): la colocación de sus cuatro paneles en la rejilla
+ * de 12 columnas de `board.css`, lo que sus piezas del tablero necesitan (`dashboard/HomeCharts.tsx`:
+ * píldoras, barras, tramos, segmentos) y la forma de la maqueta por dentro de cada panel (la primera
+ * pasada de esta hoja). También `Predictions` en «Estado recibido» de Tierra, donde su fila lleva las
+ * mismas barras. Solo bajo `.app[data-look="reference"]`; la clásica (`#clasica`) no cambia: las piezas
+ * van en `<BoardOnly>` y todo lo de aquí va bajo la concha.
+ *
+ * Lo que se vio (capturas del 2026-11-07, `crew-05-body` y `ground-02-received` con la concha nueva,
+ * 1672 × 941): los cuatro paneles eran ya tarjetas de la maqueta, pero una columna: dominios con la
+ * silueta en 530 px y las ocho tarjetas en dos columnas de cuatro filas; las proyecciones, una fila de
+ * texto a todo el ancho; los estados inferidos, media pantalla de prosa; y el modo anatómico con la
+ * lista de regiones en una columna de 352 px y, sin región elegida, el resto del panel vacío. Las
+ * cifras estaban, pero nada que se leyera de un vistazo: ni cuántos dominios hay en cada nivel, ni
+ * cuánto es una deriva frente a otra, ni dónde cae la banda ósea frente a su trayectoria.
+ *
+ * Colocación (`#crew-panel-body`): dominios a todo el ancho y arriba (lo importante primero), con la
+ * silueta a un lado y las tarjetas al otro; proyecciones y estados inferidos a la par, media rejilla
+ * cada uno, solo en un cuerpo ancho; y el modo anatómico, largo, al final a todo el ancho. Si solo uno
+ * de los dos del medio se monta (el otro devuelve `null`), ocupa las doce columnas: a su lado no queda
+ * un hueco. Medido con la concha a 1672 × 941: el cuerpo de la sección mide 1123 px (70 rem), así que
+ * el reparto «intermedio» de `board.css` (≤ 72 rem) es el del escritorio, y los dos del medio van uno
+ * debajo del otro; a propósito, no por el ancho: con 6 columnas cada uno, las proyecciones de a bordo
+ * (una o dos derivas, 150 px) quedarían junto a la prosa de la banda ósea (más de 600 px, y el doble a
+ * media anchura), con el resto de su columna vacío. Cada uno de los dos se alinea arriba de su celda
+ * (`align-self: start`): si alguna vez van a la par, el corto no se estira para fingir el alto del largo.
+ *
+ * La columna de la silueta repite el reparto de `styles.css` (`minmax(26rem, 32rem)` más el marco): se
+ * probó darle 3 de 12 (434 px, su mínimo) y los rótulos de los lados pasaban todos a la lista de
+ * debajo de la figura (891 px de alto frente a 641) mientras las tarjetas, en tres columnas, dejaban
+ * medio panel vacío; medido por CDP, los rótulos caben a los lados a partir de unos 520 px de columna
+ * con los textos de este estado. Por debajo de 820 px de panel manda `styles.css`: la figura encima y
+ * las tarjetas debajo.
+ *
+ * Lo que no se toca: el color de cada nivel (`[data-level]`, `.level`, `--lvl` de la píldora y el
+ * segmento, el tono amarillo de `concerning` en la barra), las marcas (`.mark.c-*`), el cian del dato
+ * ausente («sin datos» en la silueta, en la lista y en el segmento de su región), el gris de lo no
+ * disponible, el magenta de lo propuesto. Las zonas de la silueta conservan el color de su nivel; las
+ * que llevan alerta ganan el halo de la maqueta, en `currentColor`. Los mandos (regiones de la silueta
+ * y de la lista, momentos) conservan `min-height: var(--touch)`.
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha va en
+ * `:where()`, que no cuenta; las reglas ganan a `styles.css` por cargar después con la misma
+ * especificidad o por acotarse a su panel. Donde la pieza ya tenía borde no se usa el atajo `border`
+ * (arrastraría el grosor que los modos de pantalla engrosan): solo el color. Los bordes que nacen aquí
+ * se engrosan al final en baja visión y alto contraste, como hace `styles.css` con el panel.
+ */
+
+/* ---- Colocación en la rejilla de la sección ---- */
+
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="domains"]) {
+  --span: 12;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="predictions"]),
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="inferred"]) {
+  --span: 6;
+  --span-mid: 12;
+  align-self: start;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="anatomy"]) {
+  --span: 12;
+}
+
+/* Sin pareja (el otro panel del medio devolvió `null`), a todo el ancho: nada de medio hueco. */
+:where(.app[data-look="reference"]) #crew-panel-body:not(:has(> .slot > .slot-body > [data-ui="inferred"])) > .slot:has(> .slot-body > [data-ui="predictions"]),
+:where(.app[data-look="reference"]) #crew-panel-body:not(:has(> .slot > .slot-body > [data-ui="predictions"])) > .slot:has(> .slot-body > [data-ui="inferred"]) {
+  --span: 12;
+}
+
+/* ---- Dominios: el recuento por nivel, la silueta en la columna estrecha y las tarjetas en la ancha ---- */
+
+/* Las píldoras del recuento, pegadas al título y con un poco de aire antes de la figura. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] > .board-tally {
+  margin: 0 0 0.6rem;
+}
+
+/* El marco (relleno y borde) estrecha la figura 18 px y los rótulos de los lados, que se colocan por
+   su alto medido, envolvían una línea más y pasaban todos a la lista de debajo (se vio en la primera
+   pasada, frente a la clásica con los mismos datos). Se devuelve ese ancho a la columna de la figura,
+   con la misma consulta de contenedor que la reparte en `styles.css`. Una columna más estrecha (3 de
+   12) se probó y se descartó: ver la cabecera. */
+@container (min-width: 820px) {
+  :where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains-overview {
+    grid-template-columns: minmax(calc(26rem + 1rem + 2px), calc(32rem + 1rem + 2px)) minmax(0, 1fr);
+  }
+}
+
+/* Todo lo de la silueta va acotado a este panel: «Inicio» monta la misma `BodySilhouette` dentro de
+   `.ref-body-figure`, con su propio cuerpo detrás y sin contorno, y una regla suelta sobre
+   `.body-silhouette` le pondría este marco encima (lo señaló la revisión). */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette {
+  padding: 0.5rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, color-mix(in srgb, var(--c-cyan) 18%, transparent), transparent 75%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* El contorno, un punto más claro y con el halo de la maqueta; las zonas con alerta, con el halo de
+   su propio color (el del nivel, que no cambia), como los órganos en alerta de «Inicio». Las demás
+   zonas no llevan filtro: cada `drop-shadow` es una capa más que repintar al pasar por encima. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .outline path {
+  stroke: color-mix(in srgb, var(--c-text-secondary) 65%, var(--c-text));
+  filter: drop-shadow(0 0 6px var(--ref-glow));
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone.c-blue,
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone.c-yellow,
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone.c-red {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, currentColor 55%, transparent));
+}
+
+/* Los rótulos de las regiones: el mando de la maqueta, con el relleno del clásico (su alto medido
+   decide dónde caben). La elección se señala en `--ref-teal` con un anillo de sombra y no con un borde
+   más grueso: los rótulos se colocan por su alto medido (`anatomy/siteLayout.ts`) y un borde que
+   crece al pulsar obligaría a recolocarlos. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .site {
+  min-height: var(--touch);
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+  background: transparent;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .site:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .site[aria-pressed="true"] {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, transparent);
+  box-shadow: 0 0 0 1px var(--ref-teal), 0 0 14px var(--ref-glow);
+}
+
+/* El dibujo del dominio (y el anillo de «elegido») en el color de la maqueta; el de la insignia de
+   nivel (`.level`) sigue con el color del nivel. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .site-state > .mark:not(.level) .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Las tarjetas de dominio, como las de «Inicio», con el filete del nivel que ya ponía `styles.css`
+   (aquí no se nombra `border-left-color` salvo para el nominal) y un velo del mismo color bajo el
+   título. Se acotan a este panel: la consola de Tierra pinta las suyas con la misma clase y las viste
+   la hoja de «Estado recibido». */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains {
+  gap: 0.6rem;
+}
+
+/* Tres tarjetas de dominio por fila al lado de la silueta (2026-11-08, «que se parezca bastante más a
+   la referencia»): a 13 rem cabían dos y los nueve dominios bajaban más que la figura. Con 10 rem caben
+   tres; la insignia del nivel, a 1,05 rem (su palabra, forma y color, intactos) y el título a 0,95. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  align-content: start;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain {
+  gap: 0.35rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain > h3 {
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain > .level {
+  font-size: 1.05rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain {
+  --lvl: transparent;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border-top-color: var(--ref-edge);
+  border-right-color: var(--ref-edge);
+  border-bottom-color: var(--ref-edge);
+  border-radius: 9px;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--lvl) 14%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain[data-level="nominal"] {
+  border-left-color: var(--ref-edge);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain[data-level="watch"] {
+  --lvl: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain[data-level="concern"] {
+  --lvl: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain[data-level="critical"] {
+  --lvl: var(--c-red);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain > h3 .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .drivers li::marker,
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"] .drivers li::marker,
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] .drivers li::marker {
+  color: var(--ref-teal);
+}
+
+/* ---- Proyecciones (también en «Estado recibido» de Tierra): una fila por deriva, con sus barras ---- */
+
+/* El panel mide su propio ancho: de él depende si las barras caben al lado del texto (abajo). */
+:where(.app[data-look="reference"]) .panel[data-ui="predictions"] {
+  container-type: inline-size;
+}
+
+/* Filas con filete en lugar de viñetas; el texto a la izquierda y las dos barras a la derecha, como
+   «Proyecciones del estado» de «Inicio». El texto va en su `span` para que la fila sea una rejilla. */
+:where(.app[data-look="reference"]) .predictions {
+  list-style: none;
+  padding-left: 0;
+  gap: 0;
+}
+
+:where(.app[data-look="reference"]) .predictions > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(6rem, 9rem);
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+:where(.app[data-look="reference"]) .predictions > li > .prediction-text > strong .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Las dos barras, una sobre otra: la proporción (más larga cuanto mayor la deriva) y el margen con
+   su marca, con el cero en el centro. */
+:where(.app[data-look="reference"]) .prediction-bars {
+  display: grid;
+  gap: 0.35rem;
+  align-content: center;
+}
+
+/* En un panel estrecho (una tableta vertical, el carril y el asistente a la vez) las barras bajan
+   debajo del texto. El contenedor es el panel (arriba), no el cuerpo de la sección. */
+@container (max-width: 30rem) {
+  :where(.app[data-look="reference"]) .predictions > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Estados inferidos: cada banda en su tarjeta, con la escalera de tramos ---- */
+
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] > div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.5rem 0.65rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] > div + div {
+  margin-top: 0.5rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] .inferred-band > p:first-child > strong .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La escalera: una fila por día (el de ahora y los de la trayectoria), el día a la izquierda y el
+   tramo de la banda sobre la misma escala a la derecha. */
+:where(.app[data-look="reference"]) .inferred-ladder {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0.3rem;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.app[data-look="reference"]) .inferred-ladder > li {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+}
+
+/* ---- Modo anatómico: la tira de segmentos, la lista de regiones como mandos y la cadena en tarjetas ---- */
+
+/* Un segmento por región junto al recuento de regiones con datos, encima de la lista que lo dice con
+   palabra e insignia. La tira crece hasta un ancho de lectura; los segmentos se reparten dentro. */
+:where(.app[data-look="reference"]) .anatomy-strip {
+  margin: 0.5rem 0 0.1rem;
+}
+
+:where(.app[data-look="reference"]) .anatomy-strip > .ref-segments {
+  flex: 1 1 10rem;
+  max-width: 22rem;
+  height: 0.6rem;
+}
+
+/* Los dos tonos de región que `board.css` no reparte: «sin datos» es el cian del dato ausente (el
+   de su insignia, F.5-1), y la región sin nivel propio (el hígado) va en el color del contorno, como
+   su zona en la silueta: no es un nivel ni un dato que falte. */
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"] .ref-segments > [data-tone="cyan"] {
+  background: var(--c-cyan);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"] .ref-segments > [data-tone="textSecondary"] {
+  background: var(--c-text-secondary);
+}
+
+/* Sin región elegida no hay cadena al lado: la lista de regiones se reparte en tarjetas a todo el
+   ancho, como las de dominio, en vez de dejar vacíos dos tercios del panel (se vio en la captura). */
+:where(.app[data-look="reference"]) .anatomy:not(:has(> .region-detail)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+:where(.app[data-look="reference"]) .anatomy:not(:has(> .region-detail)) .regions {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+
+:where(.app[data-look="reference"]) .anatomy .region {
+  min-height: var(--touch);
+  padding: 0.45rem 0.7rem;
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+  background: transparent;
+}
+
+:where(.app[data-look="reference"]) .anatomy .region:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .anatomy .region[aria-pressed="true"] {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, transparent);
+  box-shadow: 0 0 0 1px var(--ref-teal), 0 0 14px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"]) .anatomy .region > .mark:not(.level) .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .region-detail > h3 > .pictogram,
+:where(.app[data-look="reference"]) .region-detail h4 > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Cada eslabón de la cadena en su tarjeta; la raya de arriba que tenía pasa a ser el marco entero. */
+:where(.app[data-look="reference"]) .region-detail > section {
+  padding: 0.5rem 0.65rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+:where(.app[data-look="reference"]) .region-detail h4 {
+  color: var(--c-text);
+  letter-spacing: 0;
+  font-size: 0.95rem;
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* `styles.css` engrosa a 2 px los bordes de panel y de tarjeta de dominio (y en baja visión los pasa
+   a `--c-text-secondary`) sin tocar el filete del nivel; como las reglas de arriba cargan después con
+   la misma especificidad, aquí se repite el refuerzo para la tarjeta de dominio y para las tarjetas
+   que nacen en esta hoja (el marco de la figura, los eslabones de la cadena, las bandas inferidas).
+   Las barras y los tramos del tablero ganan su filete en `board.css`. La tarjeta de dominio no fija
+   aquí su grosor (solo el color de tres lados), así que el de `styles.css` le llega; su color de baja
+   visión, no: se repite. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(.panel[data-ui="domains"] .body-silhouette, .region-detail > section, .panel[data-ui="inferred"] > div) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) .panel[data-ui="domains"] .domain {
+  border-top-color: var(--c-text-secondary);
+  border-right-color: var(--c-text-secondary);
+  border-bottom-color: var(--c-text-secondary);
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(.panel[data-ui="domains"] .body-silhouette, .region-detail > section, .panel[data-ui="inferred"] > div) {
+  border-color: var(--c-text-secondary);
+}
+
+/* ---- El cuerpo de la maqueta detrás de la silueta (2026-11-08, petición del usuario) ---- */
+
+/* «Inicio» luce el cuerpo de la maqueta (`ReferenceBody`, adorno de la excepción declarada de §2.5)
+   con la silueta real encima; «Cuerpo» lo pone ahora detrás de la suya, dentro de la figura y con
+   los rótulos de cada región alrededor. El cuerpo se alinea con el contorno por el alto: en «Inicio»
+   mide 310 px para una silueta de 307 y su centro cae un 2,5 % del alto por debajo del de la figura;
+   aquí se aplica la misma proporción a `--silhouette-height`. Siempre el calco vectorial: el lienzo es
+   de 152 × 310 y ampliado a 500 px se vería borroso. Del contorno solo quedan las zonas con nivel de
+   alerta (azul, amarillo, rojo: dato) y la elegida; las demás las dice su rótulo. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure > :is(.ref-body-canvas, .ref-body-vector) {
+  top: calc(50% + var(--silhouette-height) * 0.025);
+  height: calc(var(--silhouette-height) * 1.009);
+  width: calc(var(--silhouette-height) * 1.009 * 152 / 310);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure > .ref-body-canvas {
+  display: none;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure > .ref-body-vector {
+  display: block;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure > .silhouette {
+  position: relative;
+  z-index: 1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure > .site {
+  z-index: 2;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .outline path {
+  stroke: none;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone:not(.c-blue, .c-yellow, .c-red, [data-selected="true"]) {
+  opacity: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone:is(.c-blue, .c-yellow, .c-red) {
+  stroke-width: 2.8;
+  filter: drop-shadow(0 0 2px var(--c-bg)) drop-shadow(0 0 6px currentColor);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .silhouette .zone:is(.c-blue, .c-yellow, .c-red) :is(path, ellipse, circle) {
+  fill: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+/* ---- Una pantalla para «Cuerpo» (lote «muestra», 2026-11-08) ---- */
+
+/* Lo que se vio (captura 1672 × 941 antes de este cambio, página entera de 2495 px): las nueve
+   tarjetas cabían, pero la figura se cortaba por los pies y los rótulos de las dos regiones sin
+   órgano (inmune, radiación) quedaban debajo, fuera de la vista; los estados inferidos llenaban más
+   de una pantalla de prosa. La figura baja a 470 px de alto (los rótulos se recolocan solos con el
+   alto medido, `anatomy/siteLayout.ts`; a 440 px ya no cabían a los lados y pasaban todos a la lista
+   de debajo) y los dos rótulos del pie suben a las esquinas bajas del
+   marco, a los lados de las piernas, donde la figura no llega. Con la lista de rótulos debajo de la
+   figura (texto agrandado) el pie no sube: ahí no hay esquinas libres. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure {
+  --silhouette-height: 470px;
+}
+
+@container (min-width: 520px) {
+  :where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure + .body-silhouette-foot:not(.body-silhouette-list) {
+    position: relative;
+    z-index: 2;
+    justify-content: space-between;
+    margin-top: calc(-1 * var(--touch) - 1.2rem);
+  }
+}
+
+/* El recuento por nivel, en la línea del título y no debajo: una línea menos antes de la figura. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"]:has(> .board-tally) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"]:has(> .board-tally) > * {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"]:has(> .board-tally) > :first-child {
+  grid-column: 1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"]:has(> .board-tally) > .board-tally {
+  grid-column: 2;
+  margin: 0;
+}
+
+/* El nombre y la insignia del nivel en una línea, como las tarjetas RIDGE de la maqueta; si no
+   caben (un nombre largo, la letra agrandada), la insignia baja sola. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem 0.5rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain-head > h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain-head > .level {
+  font-size: 0.95rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain .drivers {
+  font-size: 0.875rem;
+}
+
+/* «Ver detalle» dentro de una tarjeta, una banda o un panel corto: pegado a lo suyo. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="domains"] .domain, .panel[data-ui="inferred"] :is(.inferred-band, .inferred-beside)) > .board-detail {
+  margin-top: 0;
+}
+
+/* ---- Quinta ronda (R5-7, 2026-11-09): mosaicos de alto ajustado y rótulos que no tapan la figura ---- */
+
+/* Lo que se vio (1672 × 941, página de 1721 px): las nueve tarjetas de dominio, en cuatro columnas,
+   dejaban «Nutrición» sola en una tercera fila; cada fila se estiraba al alto de la más alta (la que
+   lleva motivo), con 100 px de hueco bajo «Nominal» en las demás; y los rótulos de la figura, en
+   globos de tres líneas («El nivel es del dominio cardiovascular.»), tapaban hombros y brazos del
+   cuerpo de la maqueta, que es más ancho que el contorno con que se colocan. Ahora la figura gana
+   ancho (los rótulos, sitio a los lados), las tarjetas van en tres columnas (nueve, tres filas
+   llenas) y cada una mide lo suyo: la que lleva motivo crece, las demás no reservan hueco. */
+@container (min-width: 820px) {
+  :where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* La figura solo se ensancha si a las tres columnas les sigue quedando sitio (a 1300 px de ventana
+   el panel mide unos 990 px y, con la figura ancha, cada tarjeta se quedaba en 95 px). */
+@container (min-width: 75rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains-overview {
+    grid-template-columns: minmax(calc(30rem + 1rem + 2px), calc(40rem + 1rem + 2px)) minmax(0, 1fr);
+  }
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domains {
+  align-items: start;
+}
+
+/* En tres columnas unos nombres dejaban la insignia en su línea y otros la bajaban («Óseo» sí,
+   «Musculoesquelético» no): tarjetas de alto distinto en la misma fila. Siempre el nombre encima y
+   la insignia debajo, como la letra y la cifra de los mosaicos RIDGE de la maqueta. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .domain-head {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Los rótulos se apartan del contorno lo que el cuerpo de la maqueta le saca de ancho, sobre un
+   fondo casi opaco: si alguno roza la figura, se lee igual. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure .site {
+  --site-gap: 1.4em;
+  padding: 3px 8px;
+  background: color-mix(in srgb, var(--ref-navy) 82%, transparent);
+}
+
+/* Con los rótulos en dos líneas (sin el globo de tres), caben a los lados con una figura más baja
+   que los 470 px de la cuarta ronda: el panel ya no se alarga por la figura bajo las tarjetas. */
+:where(.app[data-look="reference"]) .panel[data-ui="domains"] .body-silhouette-figure {
+  --silhouette-height: 400px;
+}
+
+/* Proyecciones y estados inferidos (4 y 8 de 12): las proyecciones de a bordo son una o dos frases
+   (y, sin deriva preocupante, una línea), y en media rejilla dejaban 300 px vacíos bajo ellas junto
+   a la banda ósea. Con la banda en 8 columnas, la escalera y lo medido van lado a lado (abajo). En
+   el cuerpo intermedio siguen a todo el ancho, uno debajo del otro (`--span-mid`, arriba). */
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="predictions"]) {
+  --span: 4;
+}
+
+:where(.app[data-look="reference"]) #crew-panel-body > .slot:has(> .slot-body > [data-ui="inferred"]) {
+  --span: 8;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] {
+  container-type: inline-size;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] :is(.inferred-band, .inferred-beside) {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+  min-width: 0;
+}
+
+/* Dentro de la rejilla de cada bloque, el hueco lo pone `gap`: sin los márgenes de párrafo y de
+   lista, que doblaban el aire antes de cada «Ver detalle». */
+:where(.app[data-look="reference"]) .panel[data-ui="inferred"] :is(.inferred-band, .inferred-beside) > :is(p, ul) {
+  margin-block: 0;
+}
+
+@container (min-width: 40rem) {
+  /* Lo medido lleva frases largas y la escalera no necesita tanto: dos quintos para la banda. */
+  :where(.app[data-look="reference"]) .panel[data-ui="inferred"] > .inferred-item {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: 1.2rem;
+  }
+
+  /* Lo medido, separado de la banda por un filete: son dos cosas (estimada y medida). */
+  :where(.app[data-look="reference"]) .panel[data-ui="inferred"] .inferred-beside {
+    padding-left: 1.2rem;
+    border-left: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  }
+}
+
+/* Modo anatómico: el momento en la línea del título (una fila menos) y las once regiones en seis
+   columnas, dos filas en lugar de tres con la última de una sola tarjeta. */
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"]:has(> .summary) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"]:has(> .summary) > * {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"]:has(> .summary) > :first-child {
+  grid-column: 1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"]:has(> .summary) > :first-child + .summary {
+  grid-column: 2;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"] .anatomy-strip {
+  margin: 0.2rem 0 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="anatomy"] .anatomy .region {
+  padding-block: 0.3rem;
+}
+
+@container board (min-width: 64rem) {
+  :where(.app[data-look="reference"]) .anatomy:not(:has(> .region-detail)) .regions {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* La frase de un nivel ajeno (el hígado, los pulmones) no es un nivel: sin el globo de píldora que
+   el mobiliario pone a `.level`, en texto secundario y pegada a su nombre. */
+.app[data-look="reference"] main .panel[data-ui="domains"] .site .level.secondary,
+.app[data-look="reference"] main .panel[data-ui="anatomy"] .region .level.secondary {
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 1.3;
+}

@@ -1,0 +1,9 @@
+{"target": "app/api/habitat.py",
+ "test": [
+  "tests/test_habitat_system_cause.py::test_the_crew_view_reads_the_signed_declarations_and_ground_only_what_it_can_know"
+ ],
+ "mutations": [
+  {"label": "la vista de tripulacion no lee lo declarado de los sistemas",
+   "old": "        system_declarations(store, until),\n",
+   "new": "        [],\n"}
+ ]}

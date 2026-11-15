@@ -1,0 +1,28 @@
+{
+  "target": "app/polaris/__init__.py",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "pedir el inventario vuelve a lanzar el proceso de la herramienta excluida",
+      "old": "        skipped = NOT_IMPORTED.get(path.stem)\n",
+      "new": "        skipped = None\n"
+    },
+    {
+      "label": "la herramienta que lanza un proceso al importarse sale de la lista de exclusión",
+      "old": "    \"rodaje_muro\": (\n        \"al importarse lanza git para preguntar por la rama de la carpeta que contiene la copia\"\n    ),\n",
+      "new": ""
+    },
+    {
+      "label": "la lista de exclusión impide también cargar la herramienta por su nombre",
+      "old": "    configure()\n    if not (tools_dir() / f\"{name}.py\").is_file():",
+      "new": "    configure()\n    if name in NOT_IMPORTED:\n        raise PolarisUnavailable(f\"{name}: {NOT_IMPORTED[name]}\")\n    if not (tools_dir() / f\"{name}.py\").is_file():"
+    },
+    {
+      "label": "el inventario excluye una herramienta sin que la ficha diga qué hace al importarse",
+      "old": "NOT_IMPORTED: dict[str, str] = {\n",
+      "new": "NOT_IMPORTED: dict[str, str] = {\n    \"kpi_ned\": \"excluida sin fila en la tabla al-importar ni motivo para no medirla\",\n"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_contrast_phase.py::test_a_declaration_is_one_signed_entry_and_the_study_entry_is_untouched",
+  "tests/test_contrast_phase.py::test_an_instant_without_time_zone_is_not_signed",
+  "tests/test_contrast_phase.py::test_the_store_refuses_what_cannot_be_signed",
+  "tests/test_contrast_phase.py::test_a_malformed_entry_is_not_delivered",
+  "tests/test_contrast_phase.py::test_a_ledger_signed_before_the_change_still_verifies_and_accepts_a_declaration"
+ ],
+ "mutations": [
+  {
+   "label": "el almacen firma una fase que el vocabulario no tiene",
+   "old": "        phase_rules.check(phase)\n",
+   "new": ""
+  },
+  {
+   "label": "una declaracion sin el nombre de quien la hace",
+   "old": "        if not any(char.isalpha() for char in declared_by):\n            raise ValueError(phase_rules.NO_NAME)\n",
+   "new": ""
+  },
+  {
+   "label": "se firma la fase de contraste de un estudio que no es un TAC",
+   "old": "            phase_rules.check_modality(study.get(\"modality\"))\n",
+   "new": ""
+  },
+  {
+   "label": "se declara la fase de un asiento que no es un estudio vigente",
+   "old": "            study = self._signed_entry(study_index, VOLUME_STUDY_ENTRY_TYPE)",
+   "new": "            study = dict(self.ledger._view()[study_index].payload or {})\n            study.setdefault(\"modality\", \"CT\")\n            study.setdefault(\"sha256\", \"\")\n            study.setdefault(\"subject\", \"crew-01\")"
+  },
+  {
+   "label": "la declaracion se encadena en memoria y no se escribe en disco",
+   "old": "            return self._record_action(VOLUME_PHASE_ENTRY_TYPE, payload, identity)",
+   "new": "            return self.ledger.append(VOLUME_PHASE_ENTRY_TYPE, payload, identity)"
+  },
+  {
+   "label": "un instante sin zona horaria se firma",
+   "old": "\"phase\": phase, \"at\": _utc_text(at),",
+   "new": "\"phase\": phase, \"at\": at.isoformat(),"
+  },
+  {
+   "label": "la nota se firma con los espacios de alrededor",
+   "old": "\"phase\": phase, \"at\": _utc_text(at),\n                \"note\": note.strip(),",
+   "new": "\"phase\": phase, \"at\": _utc_text(at),\n                \"note\": note,"
+  },
+  {
+   "label": "la declaracion no se archiva bajo el tripulante del estudio",
+   "old": "                \"subject\": study[\"subject\"], \"study_index\": study_index,",
+   "new": "                \"subject\": CREW_SUBJECT, \"study_index\": study_index,"
+  },
+  {
+   "label": "la declaracion no cita la huella del volumen firmado",
+   "old": "                \"study_sha256\": study[\"sha256\"], \"phase\": phase,",
+   "new": "                \"study_sha256\": \"\", \"phase\": phase,"
+  },
+  {
+   "label": "un asiento sin nota se entrega como bien formado",
+   "old": "_VOLUME_PHASE_FIELDS = (\"subject\", \"study_sha256\", \"phase\", \"at\", \"note\", \"declared_by\")",
+   "new": "_VOLUME_PHASE_FIELDS = (\"subject\", \"study_sha256\", \"phase\", \"at\", \"declared_by\")"
+  },
+  {
+   "label": "un asiento sin el indice entero de su estudio se entrega",
+   "old": "            if isinstance(study_index, bool) or not isinstance(study_index, int):\n                raise TamperedRecordError(f\"asiento {item['ledger_index']}: acción mal formada\")",
+   "new": "            if False:\n                raise TamperedRecordError(f\"asiento {item['ledger_index']}: acción mal formada\")"
+  },
+  {
+   "label": "la lectura de declaraciones entrega asientos de otro tipo",
+   "old": "        found = self._actions(subject, VOLUME_PHASE_ENTRY_TYPE, _VOLUME_PHASE_FIELDS)",
+   "new": "        found = self._actions(subject, FOLLOWUP_ENTRY_TYPE, _VOLUME_PHASE_FIELDS)"
+  }
+ ]
+}

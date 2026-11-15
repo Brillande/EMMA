@@ -1,0 +1,17 @@
+# Qué se copia de Marplanner a esta carpeta. Lo lee backend/scripts/marplanner_sync.py.
+# Regla del proyecto: se copia LITERAL; los cambios se deciden después, uno a uno (ORIGEN.md).
+#
+#   commit <sha>          commit de Marplanner del que se copia (https://github.com/diegomarino/marplanner)
+#   fuera <ruta>  # por   fichero o carpeta del commit que NO se copia, con su motivo obligatorio
+#
+# Decisión del usuario (2026-11-12): «queremos todo, no lo que filtre información para fuera».
+# Lo que sale a internet con datos nuestros (Open-Meteo, UniFi) se quita como cambio §5a aparte,
+# no excluyendo ficheros: está entrelazado con el resto del código.
+
+commit 6c061d43e3dc39476ad9238c1823b09257a831f3
+
+fuera .github        # CI y workflows de GitHub: el repo es solo local
+fuera .do            # botón de despliegue en DigitalOcean: sube la app a la nube
+fuera render.yaml    # despliegue en Render: nube
+fuera railway.json   # despliegue en Railway: nube
+fuera infra/fly      # despliegue en Fly.io: nube

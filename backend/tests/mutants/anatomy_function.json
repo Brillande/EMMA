@@ -1,0 +1,68 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_anatomy.py::test_every_region_says_what_it_is_for_with_a_read_card_or_says_it_has_none",
+    "tests/test_anatomy.py::test_a_function_goes_with_its_cards_or_not_at_all",
+    "tests/test_anatomy.py::test_the_function_texts_pass_the_guard",
+    "tests/test_anatomy.py::test_each_function_says_no_more_than_its_card",
+    "tests/test_anatomy.py::test_the_function_is_served_in_the_map_and_in_the_chain",
+    "tests/test_risks_view.py::test_each_region_of_a_risk_carries_the_cards_its_phrase_names"
+  ],
+  "mutations": [
+    {
+      "label": "una funcion vacia pasa como funcion",
+      "old": "        if self.function is not None and not self.function.strip():",
+      "new": "        if False:"
+    },
+    {
+      "label": "una funcion sin ficha leida arranca",
+      "old": "        if (self.function is None) != (not self.function_refs):",
+      "new": "        if self.function is None and self.function_refs:"
+    },
+    {
+      "label": "una region sin funcion no tiene que decir por que",
+      "old": "        if (self.function is None) != explained:",
+      "new": "        if self.function is not None and explained:"
+    },
+    {
+      "label": "la region deja de comprobar su funcion",
+      "old": "        self._check_function()",
+      "new": "        pass"
+    },
+    {
+      "label": "la funcion viaja con cada riesgo de /api/risks",
+      "old": "            \"level_note\": self.level_note,",
+      "new": "            \"level_note\": self.level_note,\n            **self.function_dict(),"
+    },
+    {
+      "label": "la funcion sale sin sus fichas",
+      "old": "            \"function_refs\": [item.to_dict() for item in self.function_refs],",
+      "new": "            \"function_refs\": [],"
+    },
+    {
+      "label": "el mapa deja de servir la funcion",
+      "old": "    return [{**item.to_dict(), **item.function_dict()} for item in REGIONS]",
+      "new": "    return [item.to_dict() for item in REGIONS]"
+    },
+    {
+      "label": "la cadena deja de servir la funcion",
+      "old": "            **region.function_dict(),\n",
+      "new": ""
+    },
+    {
+      "label": "el ojo cita la ficha del sistema nervioso",
+      "old": "        function=EYES_FUNCTION, function_refs=(EYES_FUNCTION_SOURCE,),",
+      "new": "        function=EYES_FUNCTION, function_refs=(BRAIN_FUNCTION_SOURCE,),"
+    },
+    {
+      "label": "la frase del higado dice mas que su ficha",
+      "old": "    \"limpian la sangre.\"",
+      "new": "    \"regeneran el organo.\""
+    },
+    {
+      "label": "la radiacion se inventa una funcion sin decir que no es un organo",
+      "old": "        function_note=NO_FUNCTION_NOTE,",
+      "new": "        function=\"Protege el cuerpo.\", function_refs=(BRAIN_FUNCTION_SOURCE,),"
+    }
+  ]
+}

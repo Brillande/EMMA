@@ -1,0 +1,86 @@
+{
+ "target": "app/environment/comms_status.py",
+ "test": [
+  "tests/test_comms_status.py"
+ ],
+ "mutations": [
+  {
+   "label": "un perfil sin objetivo de efemérides sale como «sin efemérides»",
+   "old": "    if target is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo calculado con SPICE se dice de JPL Horizons",
+   "old": "    return HORIZONS if window.source == SOURCE else SPICE",
+   "new": "    return HORIZONS"
+  },
+  {
+   "label": "un contraste que coincide se avisa como discrepancia",
+   "old": "            None if contrast is None or contrast.agrees",
+   "new": "            None if contrast is None"
+  },
+  {
+   "label": "la discrepancia deja de avisarse",
+   "old": "            None if contrast is None or contrast.agrees",
+   "new": "            None if True"
+  },
+  {
+   "label": "un contraste que coincide se firma como discrepancia",
+   "old": "    if contrast is None or contrast.agrees:\n        return None",
+   "new": "    if contrast is None:\n        return None"
+  },
+  {
+   "label": "la diferencia firmada no es la medida",
+   "old": "        \"one_way_seconds_difference\": repr(contrast.one_way_seconds_difference),",
+   "new": "        \"one_way_seconds_difference\": repr(0.0),"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "la discrepancia se firma en cada consulta, no una vez por día",
+   "old": "                return None\n            return self._record_action(EPHEMERIS_DISCREPANCY_ENTRY_TYPE",
+   "new": "                pass\n            return self._record_action(EPHEMERIS_DISCREPANCY_ENTRY_TYPE"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "Tierra ve una discrepancia firmada después de su corte",
+   "old": "        return [item for item in found if dt.datetime.fromisoformat(item[\"recorded\"]) <= until]",
+   "new": "        return found"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "se firma una discrepancia mal formada",
+   "old": "        if set(payload) != set(EPHEMERIS_DISCREPANCY_FIELDS) or any(\n            not isinstance(value, str) for value in payload.values()\n        ):\n            raise ValueError(\"discrepancia de efemérides mal formada\")",
+   "new": "        if False:\n            raise ValueError(\"discrepancia de efemérides mal formada\")"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la vista de Tierra firma la discrepancia",
+   "old": "    if until is None:\n        store.record_ephemeris_discrepancy(",
+   "new": "    if True:\n        store.record_ephemeris_discrepancy("
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la discrepancia no se firma",
+   "old": "    if until is None:\n        store.record_ephemeris_discrepancy(",
+   "new": "    if False:\n        store.record_ephemeris_discrepancy("
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "el día que SPICE calcula sale «sin efemérides» si Horizons no lo tiene en caché",
+   "old": "            \"offline_covered\": day_served is not None,",
+   "new": "            \"offline_covered\": day_cached,"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la cobertura sin red cuenta solo la caché de Horizons",
+   "old": "        COMPLETE if days and offline_count == len(days) else NONE if offline_count == 0",
+   "new": "        COMPLETE if days and count == len(days) else NONE if count == 0"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la ingesta pública puede firmar como el sistema de efemérides",
+   "old": "        \"segmentation-local\", FORECAST_SIGNER, EPHEMERIS_SIGNER, *FORMER_SYSTEM_SOURCES,",
+   "new": "        \"segmentation-local\", FORECAST_SIGNER, *FORMER_SYSTEM_SOURCES,"
+  }
+ ]
+}

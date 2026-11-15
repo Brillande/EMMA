@@ -1,0 +1,41 @@
+{
+  "target": "app/evidence/vault.py",
+  "test": ["tests/test_source_quote.py"],
+  "mutations": [
+    {
+      "label": "la frase que se enseña es la que se tecleó, no la de la bóveda",
+      "old": "                quote.update(estado=LOCATED, frase=text[span[0]:span[1]], inicio=span[0],",
+      "new": "                quote.update(estado=LOCATED, frase=fragment.strip(), inicio=span[0],"
+    },
+    {
+      "label": "la copia que se lee no se comprueba contra la huella que selló el cotejo",
+      "old": "        if hashlib.sha256(raw).hexdigest() != status.get(\"sha256\"):",
+      "new": "        if False:"
+    },
+    {
+      "label": "se enseña una frase aunque el cotejo no la confirme",
+      "old": "    if status[\"estado\"] == \"confirmada\":",
+      "new": "    if status[\"estado\"] in (\"confirmada\", \"identidad_ajena\"):"
+    },
+    {
+      "label": "la posición se da por buena aunque la normalización ya no sea la de Polaris",
+      "old": "    if not wanted or normal != tool.normaliza(text):",
+      "new": "    if not wanted:"
+    },
+    {
+      "label": "la frase pierde la tilde suelta del final",
+      "old": "        end += 1  # la tilde suelta (texto en NFD) va con su letra",
+      "new": "        break"
+    },
+    {
+      "label": "leer la frase no deja línea en el registro de accesos",
+      "old": "    _log_line(folder)(f\"emma:{who}\", f\"FRASE-{quote['estado']}\", name)",
+      "new": "    pass"
+    },
+    {
+      "label": "la copia queda con la bóveda de EMMA tras leer la frase",
+      "old": "        tool.bovedas, tool._IDENTIDAD, tool._LOG = saved",
+      "new": "        pass"
+    }
+  ]
+}

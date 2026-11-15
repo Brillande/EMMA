@@ -1,0 +1,166 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T22:08:13",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "hilos_cpu": 32,
+  "desplazamientos_reloj_gpu": [
+   "P0 núcleo (graphics): desplazamiento +0 MHz (permitido -1000…+1000), editable=1",
+   "P0 memoria: desplazamiento +0 MHz (permitido -1000…+3000), editable=1"
+  ],
+  "nota": "Portátil de desarrollo, no hardware de vuelo. GPU en W según nvidia-smi; CPU en % sin W."
+ },
+ "fases": [
+  {
+   "fase": "arrancar_backend",
+   "inicio": 1794431156.564,
+   "fin": 1794431158.953,
+   "duracion_s": 2.39,
+   "resultado": {
+    "listo_s": 2.4
+   },
+   "cpu_proceso_s": 0.66,
+   "muestras": 4,
+   "gpu_w_media": 3.3,
+   "gpu_w_max": 3.35,
+   "gpu_uso_pct_media": 0.75,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 5.12,
+   "gpu_julios": 7.9
+  },
+  {
+   "fase": "backend_reposo_sin_datos",
+   "inicio": 1794431159.63,
+   "fin": 1794431179.631,
+   "duracion_s": 20.0,
+   "resultado": null,
+   "cpu_proceso_s": 0.0,
+   "muestras": 36,
+   "gpu_w_media": 3.15,
+   "gpu_w_max": 3.26,
+   "gpu_uso_pct_media": 0.92,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 1.27,
+   "gpu_julios": 63.0
+  },
+  {
+   "fase": "simular_mision",
+   "inicio": 1794431180.323,
+   "fin": 1794431183.884,
+   "duracion_s": 3.56,
+   "resultado": {
+    "ok": true,
+    "s": 3.56
+   },
+   "cpu_proceso_s": 3.45,
+   "muestras": 6,
+   "gpu_w_media": 3.24,
+   "gpu_w_max": 3.32,
+   "gpu_uso_pct_media": 1.17,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 4.89,
+   "gpu_julios": 11.5
+  },
+  {
+   "fase": "status_x5",
+   "inicio": 1794431184.572,
+   "fin": 1794431190.833,
+   "duracion_s": 6.26,
+   "resultado": [
+    {
+     "ok": true,
+     "s": 3.82
+    },
+    {
+     "ok": true,
+     "s": 0.62
+    },
+    {
+     "ok": true,
+     "s": 0.61
+    },
+    {
+     "ok": true,
+     "s": 0.6
+    },
+    {
+     "ok": true,
+     "s": 0.6
+    }
+   ],
+   "cpu_proceso_s": 6.14,
+   "muestras": 11,
+   "gpu_w_media": 3.3,
+   "gpu_w_max": 3.35,
+   "gpu_uso_pct_media": 1.36,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 5.16,
+   "gpu_julios": 20.7
+  },
+  {
+   "fase": "backend_reposo_con_datos",
+   "inicio": 1794431191.497,
+   "fin": 1794431211.498,
+   "duracion_s": 20.0,
+   "resultado": null,
+   "cpu_proceso_s": 0.03,
+   "muestras": 36,
+   "gpu_w_media": 3.11,
+   "gpu_w_max": 3.21,
+   "gpu_uso_pct_media": 0.94,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 1.2,
+   "gpu_julios": 62.2
+  },
+  {
+   "fase": "busqueda_semantica_1",
+   "inicio": 1794431212.211,
+   "fin": 1794431276.37,
+   "duracion_s": 64.16,
+   "resultado": {
+    "ok": true,
+    "s": 64.16
+   },
+   "cpu_proceso_s": 1497.81,
+   "muestras": 112,
+   "gpu_w_media": 4.56,
+   "gpu_w_max": 5.12,
+   "gpu_uso_pct_media": 1.18,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 77.9,
+   "gpu_julios": 292.6
+  },
+  {
+   "fase": "busqueda_semantica_2",
+   "inicio": 1794431277.218,
+   "fin": 1794431277.337,
+   "duracion_s": 0.12,
+   "resultado": {
+    "ok": true,
+    "s": 0.12
+   },
+   "cpu_proceso_s": 10.91,
+   "muestras": 1,
+   "gpu_w_media": 4.64,
+   "gpu_w_max": 4.64,
+   "gpu_uso_pct_media": 1.0,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 16.15,
+   "gpu_julios": 0.6
+  },
+  {
+   "fase": "backend_reposo_final",
+   "inicio": 1794431278.221,
+   "fin": 1794431293.222,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "cpu_proceso_s": 0.02,
+   "muestras": 28,
+   "gpu_w_media": 5.0,
+   "gpu_w_max": 5.25,
+   "gpu_uso_pct_media": 0.86,
+   "vram_mb_media": 1236.0,
+   "cpu_sistema_pct_media": 1.54,
+   "gpu_julios": 75.0
+  }
+ ]
+}

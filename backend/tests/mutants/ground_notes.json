@@ -1,0 +1,140 @@
+{
+  "target": "app/api/ground_notes.py",
+  "test": [
+    "tests/test_ground_notes.py"
+  ],
+  "mutations": [
+    {
+      "label": "el almacén firma una nota que manda",
+      "target": "app/core/storage.py",
+      "old": "        problem = ground_note_rules.problem(kind, text, signed_by)",
+      "new": "        problem = None"
+    },
+    {
+      "label": "una clase de nota fuera del vocabulario vale",
+      "target": "app/core/ground_notes.py",
+      "old": "    if kind not in GROUND_NOTE_KINDS:",
+      "new": "    if False:"
+    },
+    {
+      "label": "una «pregunta» sin «?» vale",
+      "target": "app/core/ground_notes.py",
+      "old": "    if kind == \"question\" and \"?\" not in body:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el filtro de lenguaje no se aplica",
+      "target": "app/core/ground_notes.py",
+      "old": "    blocked = text_guard.check(body)",
+      "new": "    blocked = []"
+    },
+    {
+      "label": "las formas de mandato no se miran",
+      "target": "app/core/ground_notes.py",
+      "old": "    mandates = mandate_findings(body)",
+      "new": "    mandates = []"
+    },
+    {
+      "label": "un mandato dentro de una pregunta cuenta como orden",
+      "target": "app/text_guard.py",
+      "old": "    return _blanked(_OPENED_QUESTION, plain)",
+      "new": "    return plain"
+    },
+    {
+      "label": "una coletilla de pregunta tapa la orden que la precede",
+      "target": "app/text_guard.py",
+      "old": "_BARE_QUESTION = re.compile(r\"[^.!?\\n,;:¿(—–-]*\\?\")",
+      "new": "_BARE_QUESTION = re.compile(r\"[^.!?\\n(—–-]*\\?\")"
+    },
+    {
+      "label": "un «¿» suelto tapa lo que sigue a su frase",
+      "target": "app/text_guard.py",
+      "old": "_OPENED_QUESTION = re.compile(r\"¿[^?¿.!\\n]*\\?\")",
+      "new": "_OPENED_QUESTION = re.compile(r\"¿[^?¿]*\\?\")"
+    },
+    {
+      "label": "un imperativo con el pronombre pegado no cuenta",
+      "target": "app/text_guard.py",
+      "old": "ATTACHED_PRONOUNS = r\"(?:(?:se|me|te|nos|le|les)(?:la|lo|las|los)?|la|lo|las|los)?\"",
+      "new": "ATTACHED_PRONOUNS = r\"\""
+    },
+    {
+      "label": "un imperativo con dos pronombres pegados no cuenta",
+      "target": "app/text_guard.py",
+      "old": "(?:la|lo|las|los)?|la|lo",
+      "new": "|la|lo"
+    },
+    {
+      "label": "un «?» sin «¿» vuelve pregunta una pauta en imperativo",
+      "target": "app/core/ground_notes.py",
+      "old": "_IMPERATIVE_COMPILED.finditer(unopened)",
+      "new": "_IMPERATIVE_COMPILED.finditer(said)"
+    },
+    {
+      "label": "«tiene que ver» se lee como mandato",
+      "target": "app/core/ground_notes.py",
+      "old": "    r\"\\btiene(?:s|n)? que\\b(?! ver\\b)\",",
+      "new": "    r\"\\btiene(?:s|n)? que\\b\","
+    },
+    {
+      "label": "una nota sin persona con nombre vale",
+      "target": "app/core/ground_notes.py",
+      "old": "    if not any(char.isalpha() for char in signed_by):",
+      "new": "    if False:"
+    },
+    {
+      "label": "una nota más larga que el tope vale",
+      "target": "app/core/ground_notes.py",
+      "old": "    if len(body) > MAX_TEXT:",
+      "new": "    if False:"
+    },
+    {
+      "label": "una nota firmada con otra clave se enseña como de Tierra",
+      "target": "app/api/ground_notes.py",
+      "old": "        note.get(\"signer\") == GROUND_IDENTITY\n        and ",
+      "new": "        "
+    },
+    {
+      "label": "una nota que la regla vigente rechaza se enseña",
+      "target": "app/api/ground_notes.py",
+      "old": "\n        and problem(note[\"kind\"], note[\"text\"], note[\"signed_by\"]) is None",
+      "new": ""
+    },
+    {
+      "label": "a bordo se ve antes del tiempo de luz",
+      "target": "app/api/ground_notes.py",
+      "old": "        if until is None or dt.datetime.fromisoformat(note[\"recorded\"]) <= until",
+      "new": "        if True"
+    },
+    {
+      "label": "a bordo se cuenta lo que va en camino",
+      "target": "app/api/ground_notes.py",
+      "old": "    withheld = len(arrived) - len(shown)",
+      "new": "    withheld = len(signed) - len(shown)"
+    },
+    {
+      "label": "las notas a toda la tripulación no llegan a cada tripulante",
+      "target": "app/api/ground_notes.py",
+      "old": "store.ground_notes(subject, CREW_SUBJECT)",
+      "new": "store.ground_notes(subject)"
+    },
+    {
+      "label": "se firma una nota a un destinatario que no existe",
+      "target": "app/api/ground_notes.py",
+      "old": "    if payload.subject != CREW_SUBJECT and payload.subject not in store.subjects():",
+      "new": "    if False:"
+    },
+    {
+      "label": "Tierra firma con la clave de a bordo",
+      "target": "app/api/ground_notes.py",
+      "old": "            identity_for(GROUND_IDENTITY),",
+      "new": "            identity_for(\"crew-console\"),"
+    },
+    {
+      "label": "una lectura puede firmarse como la consola de Tierra",
+      "target": "app/api/routes.py",
+      "old": "        GROUND_IDENTITY,\n    }",
+      "new": "    }"
+    }
+  ]
+}

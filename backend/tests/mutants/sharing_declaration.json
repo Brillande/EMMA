@@ -1,0 +1,53 @@
+{
+  "target": "app/data/data_sharing.json",
+  "test": [
+    "tests/test_sharing.py"
+  ],
+  "mutations": [
+    {
+      "label": "la tabla calla un propósito de internet",
+      "old": "      {\n        \"purpose\": \"datasets\",\n        \"what\": \"Solo los guiones de validación descargan un dataset; la aplicación no sale por aquí.\",\n        \"carries\": \"La dirección del fichero.\",\n        \"hosts\": [\"zenodo.org\"]\n      }\n",
+      "new": "      {\n        \"purpose\": \"datasets-hidden\",\n        \"what\": \"Solo los guiones de validación descargan un dataset; la aplicación no sale por aquí.\",\n        \"carries\": \"La dirección del fichero.\",\n        \"hosts\": [\"zenodo.org\"]\n      }\n"
+    },
+    {
+      "label": "la tabla calla un host de las citas",
+      "old": "\"hosts\": [\"api.crossref.org\", \"api.datacite.org\", \"clinicaltrials.gov\", \"doi.org\", \"eutils.ncbi.nlm.nih.gov\"]",
+      "new": "\"hosts\": [\"api.crossref.org\", \"api.datacite.org\", \"doi.org\", \"eutils.ncbi.nlm.nih.gov\"]"
+    },
+    {
+      "label": "una ruta con corte del retardo deja de estar declarada",
+      "old": "      {\"path\": \"/api/twins\", \"direction\": \"down\"}\n",
+      "new": "      {\"path\": \"/api/twins-gone\", \"direction\": \"down\"}\n"
+    },
+    {
+      "label": "las notas de Tierra pasan a bajar en vez de subir",
+      "old": "      {\"path\": \"/api/ground-notes\", \"direction\": \"up\"},",
+      "new": "      {\"path\": \"/api/ground-notes\", \"direction\": \"down\"},"
+    },
+    {
+      "label": "una fila cita un símbolo que no existe",
+      "old": "        {\"module\": \"app.interpret.llm\", \"symbol\": \"LOOPBACK_HOSTS\"}",
+      "new": "        {\"module\": \"app.interpret.llm\", \"symbol\": \"REMOTE_HOSTS\"}"
+    },
+    {
+      "label": "una fila cita una prueba que no existe",
+      "old": "        \"tests/test_assistant.py::test_a_turn_writes_nothing_in_the_ledger\"",
+      "new": "        \"tests/test_assistant.py::test_a_turn_is_forgotten\""
+    },
+    {
+      "label": "las notas personales pasan a decir que el código las protege",
+      "old": "      \"limit\": \"No hay forma de reservar una nota solo para la tripulación. Si hace falta, es una decisión pendiente, no algo que EMMA haga hoy.\",\n      \"code\": [],",
+      "new": "      \"limit\": \"No hay forma de reservar una nota solo para la tripulación. Si hace falta, es una decisión pendiente, no algo que EMMA haga hoy.\",\n      \"code\": [{\"module\": \"app.core.egress\", \"symbol\": \"ALLOWLIST\"}],"
+    },
+    {
+      "label": "un módulo que abre un cliente HTTP deja de declararse",
+      "old": "      {\"file\": \"app/interpret/llm.py\", \"why\": \"El modelo local, solo en loopback.\"}\n",
+      "new": "      {\"file\": \"app/interpret/other.py\", \"why\": \"El modelo local, solo en loopback.\"}\n"
+    },
+    {
+      "label": "el corte del retardo deja de decir qué queda fuera",
+      "old": "      \"limit\": \"El corte lo pide la consola de Tierra: el backend sirve sin corte a quien no lo pide y no autentica a nadie. En este prototipo las dos consolas corren en la misma máquina y no hay enlace de bajada real.\",",
+      "new": "      \"limit\": null,"
+    }
+  ]
+}

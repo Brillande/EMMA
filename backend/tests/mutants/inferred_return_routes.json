@@ -1,0 +1,10 @@
+{"target": "app/api/routes.py",
+ "test": ["tests/test_inferred_return.py", "-k", "status"],
+ "mutations": [
+  {"label": "el estado no pasa la fase: la banda sigue contando en posvuelo",
+   "old": "                phase=phase_at(latest, settings.mission_start, settings.mission_days),",
+   "new": "                phase=None,"},
+  {"label": "el estado pasa otro día de regreso que el de la misión",
+   "old": "                phase=phase_at(latest, settings.mission_start, settings.mission_days),\n                return_day=float(settings.mission_days),",
+   "new": "                phase=phase_at(latest, settings.mission_start, settings.mission_days),\n                return_day=float(settings.mission_days) + 30,"}
+ ]}

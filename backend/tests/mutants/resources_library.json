@@ -1,0 +1,49 @@
+{
+ "target": "app/advisor/countermeasures.py",
+ "test": [
+  "tests/test_resources.py", "-k",
+  "outside_the_vocabulary or no_countermeasure_names or every_key_is_used or loaded_closed or says_what_is_missing"
+ ],
+ "mutations": [
+  {
+   "label": "una contramedida con un recurso fuera del vocabulario carga",
+   "old": "    if outside:\n        raise fail(f\"recursos fuera del vocabulario: {outside}\")\n",
+   "new": ""
+  },
+  {
+   "label": "un vocabulario con una clave que nadie nombra carga",
+   "old": "    if unused:\n        raise LibraryError(",
+   "new": "    if False:\n        raise LibraryError("
+  },
+  {
+   "label": "la biblioteca que sirve la aplicacion no se carga cerrada",
+   "old": "    return load_closed()",
+   "new": "    return load()"
+  },
+  {
+   "label": "un recurso en texto libre o con campos de mas (una cantidad) carga",
+   "old": "        not isinstance(item, dict) or set(item) != {\"key\", \"description\"} for item in listed",
+   "new": "        not isinstance(item, dict) or not {\"key\", \"description\"} <= set(item) for item in listed"
+  },
+  {
+   "label": "el mismo recurso dos veces en una contramedida",
+   "old": "    if len(set(resource_keys)) != len(resource_keys):",
+   "new": "    if False:"
+  },
+  {
+   "label": "las claves se descolocan de sus textos",
+   "old": "    resource_keys = [item[\"key\"] for item in listed]",
+   "new": "    resource_keys = sorted(item[\"key\"] for item in listed)"
+  },
+  {
+   "label": "la contramedida publicada no dice las claves de sus recursos",
+   "old": "            \"resource_keys\": list(self.resource_keys),",
+   "new": "            \"resource_keys\": [],"
+  },
+  {
+   "label": "se cuenta como usuario de un recurso solo la primera contramedida",
+   "old": "            users.setdefault(key, []).append(item.id)",
+   "new": "            users.setdefault(key, [item.id])"
+  }
+ ]
+}

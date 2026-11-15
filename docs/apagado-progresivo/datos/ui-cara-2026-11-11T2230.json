@@ -1,0 +1,42 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T22:30:56.513Z",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "nota": "Portátil de desarrollo. GPU dedicada en W (nvidia-smi); CPU en % de un núcleo y en W (RAPL); pantalla sin medir."
+ },
+ "fases": [
+  {
+   "fase": "inicio_quieta",
+   "s": 30,
+   "t0": 1794436189.111,
+   "t1": 1794436220.171,
+   "chrome_cpu_pct_nucleo": 2.4,
+   "pagina_tareas_pct": 0.3,
+   "backend_cpu_pct_nucleo": 4.3,
+   "gpu_w_media": 5.6,
+   "gpu_uso_pct": 4,
+   "muestras_gpu": 56,
+   "estado": "",
+   "cpu_pkg_w_media": 8.83,
+   "cpu_nucleos_w_media": 5.64,
+   "muestras_cpu_w": 62
+  },
+  {
+   "fase": "seguir_cara_encendido",
+   "s": 30,
+   "t0": 1794436225.196,
+   "t1": 1794436256.213,
+   "chrome_cpu_pct_nucleo": 17.7,
+   "pagina_tareas_pct": 9.4,
+   "backend_cpu_pct_nucleo": 4.9,
+   "gpu_w_media": 7.6,
+   "gpu_uso_pct": 5,
+   "muestras_gpu": 56,
+   "camara": "real, con una persona delante",
+   "estado": "",
+   "cpu_pkg_w_media": 11.78,
+   "cpu_nucleos_w_media": 8.01,
+   "muestras_cpu_w": 62
+  }
+ ]
+}

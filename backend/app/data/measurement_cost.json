@@ -1,0 +1,1621 @@
+{
+  "_nota": "Coste de medir cada indicador (base de conocimiento §9). La clase (continuo y pasivo, periódico no invasivo, periódico invasivo, laboratorio, derivado) es una clasificación descriptiva de EMMA. El tiempo de tripulación solo lleva cifra con fuente; el resto, 'sin fuente'. Revisado el 2026-09-26.",
+  "_nota_dimensiones": "Dónde se procesa, cuándo llega el resultado y si gasta consumibles (conversación de ideación; vocabulario en `ingest/cost.py`). Cada regla dice a qué indicadores alcanza y en qué texto del repositorio se apoya. Lo que ninguna regla alcanza queda «sin clasificar»: no se rellena por intuición. Sin cifras. Escrito el 2026-10-10. El 2026-10-14 (undécima ronda, F2) las reglas de sangre, orina de laboratorio y saliva pasaron a apoyarse en fuentes leídas: `sources` copia la frase exacta (`quote`) con su sitio (`where`), su ficha del registro (`ref`, en data/evidence_refs.json) y el día de lectura; `discrepancies` copia, igual, lo leído que matiza o contradice la regla, con una nota (`note`) que dice en qué. La regla del hemograma, que se apoyaba en un texto del repositorio, se sustituyó por la leída. No se encontró fuente que diga si alguna medida gasta consumibles en el procedimiento de la ISS, ni dónde se miden la recogida de orina de 24 h y su densidad: siguen «sin clasificar». El 2026-10-20 (decimotercera ronda) se leyeron: dónde se mide el volumen de la orina de 24 h tomada en vuelo (en Tierra, por el litio que lleva cada bolsa; regla `orina-24h-en-tierra`, con el equipo que lo mediría a bordo y el protocolo vigente sin orina en vuelo como discrepancias) y qué material gastan las muestras de suero (tubos), orina (bolsas con trazador) y saliva (papel de filtro para el cortisol, rollos de algodón para los virus). La densidad de la orina, el material del hemograma (sangre entera: lo leído no dice en qué tubo se toma en vuelo) y los consumibles de las medidas sin muestra (wearables, tensiómetro, masa, PVT, ecografía, VO2, dinamómetro) siguen «sin clasificar»: no se encontró frase que lo diga. El 2026-10-21 (decimocuarta ronda) se leyó en qué tubo va el recuento de leucocitos tomado en vuelo (tubo EDTA del estudio inmunitario de 2015; regla `hemograma-leucocitos-en-tubo-edta`, con el protocolo de 2025, que solo toma el hemograma antes y después del vuelo, como discrepancia), y los tres calculados dicen de qué se calculan (`inputs`, `inputs_basis`, `inherits`): el cociente neutrófilos/linfocitos y el BUN/creatinina heredan de sus analitos dónde se procesan y cuándo llegan; la dosis acumulada no hereda (motivo en su `inputs_basis`). Lo buscado y no encontrado —la densidad de la orina, el tubo de la serie roja y las plaquetas en vuelo— se declara en `searched_not_found`, con dónde se buscó. `ground_dependence` en `ingest/cost.py` cruza lo que hoy depende de Tierra con lo que la fuente de cada perfil de misión (`mission_profiles.json`, que este fichero no copia) dice del reabastecimiento y del regreso. El 2026-10-22 (decimoquinta ronda, D4) se leyó el material de las medidas sin muestra: el gel de ecografía figura entre los consumibles del inventario del equipo médico de la ISS de 2016 (regla `ecografia-con-gel`); la serie roja, los índices y las plaquetas se tomaron en vuelo en un tubo EDTA (Kunz et al. 2017; regla `hemograma-serie-roja-en-tubo-edta`, que quita su «no encontrado»); y la prueba de reacción no gasta material porque es una prueba en pantalla (regla `prueba-de-reaccion-en-pantalla`, que se apoya en el repositorio). La ficha del Bio-Monitor de la CSA, que baja los datos a Tierra para analizarlos, va como matiz de `sin-muestra-continuo`. Lo que no nombra consumibles —wearables, tensiómetro, SLAMMD, prueba de esfuerzo, dinamómetro— no se da por «no gasta»: va en `searched_not_found`, con dónde se buscó, igual que la dosis acumulada (dos dosímetros en la ISS, uno leído al regreso y otro a bordo, y EMMA no dice de cuál llega la suya) y la densidad de la orina, buscada otra vez. El 2026-10-23 (decimosexta ronda, E17) entran las cinco dimensiones de la base de conocimiento §9 que faltaban: masa, volumen y potencia del equipo (cifras: solo con `figure` y `unit` copiados de una frase leída), calibración, y formación y guía del operador. Leídos: la calibración del SLAMMD en el informe diario de la estación de 2019 (regla `masa-corporal-con-brazo-de-calibracion`), el gas de calibración del analizador de la prueba de esfuerzo en el resumen de instalaciones de NASA HRP de 2023 (regla `prueba-de-esfuerzo-con-gas-de-calibracion`) y la guía desde Tierra de la ecografía de la yugular izquierda (Marshall-Goebel et al. 2019; regla `ecografia-yugular-guiada-desde-tierra`), que también matiza, con el vídeo de la sonda bajado a Tierra, la regla de lo periódico sin muestra. Los dos cocientes calculados no añaden equipo propio (regla `calculo-sin-equipo-propio`). Ninguna masa, volumen ni potencia de un equipo de EMMA aparece en lo leído: van en `searched_not_found`, con dónde se buscó. El 2026-10-26 (decimoctava ronda, U18) se buscaron la calibración y la formación de los sensores que se llevan puestos, del dosímetro y de las analíticas, que la ronda anterior no buscó. Leídos: la calibración de los dosímetros de zona de la ISS (los DOSTEL de DOSIS 3D, Berger et al. 2017, y los REM de NASA en la página del SRAG; regla `dosimetro-de-nave-calibrado`), la de los analizadores del hemograma de la serie roja en Tierra (Kunz et al. 2017; regla `hemograma-serie-roja-con-analizador-calibrado`) y la recalibración del Actiwatch Spectrum que vende su fabricante (regla `actigrafo-con-recalibracion-del-fabricante`, que quita la calibración del actígrafo de su «no encontrado»); y la formación de quien extrae la sangre del estudio de los leucocitos antes de la misión (Crucian et al. 2015; regla `leucocitos-extraccion-instruida-antes-de-la-mision`) y de la tripulación del análogo HERA en la camiseta con sensores (NTRS 20190000238; regla `wearable-con-formacion-previa-en-analogo`), con dos palabras nuevas en la formación, una por sitio (`station-trained`, la estación; `analog-trained`, un análogo en Tierra), para que lo leído de un análogo no se cuente ni se enseñe como de vuelo. Lo demás de esas tres familias va en `searched_not_found`, con dónde se buscó. El 2026-10-26 (decimoctava ronda, U5) entran los ocho analitos de la orina de 24 horas del riesgo de cálculos renales, descriptivos, con la regla leída `perfil-litiasico-en-tierra` (el perfil de laboratorio se hace cada año y después del vuelo; en la ISS, solo electrolitos básicos y tira de orina) y el anexo de operaciones para Marte como matiz; sus consumibles siguen sin clasificar. El 2026-10-31 (decimonovena ronda, U13) entran cuatro descriptivos de sensoriomotor y músculo: la masa magra por DXA con la regla leída `composicion-corporal-dxa-en-tierra` (la misma máquina que la densidad ósea, antes y después del vuelo); el levantarse tras estar tumbado y la tracción isométrica como periódicos sin muestra, con un matiz leído de Standard Measures sobre la regla `sin-muestra-periodico` (el tiempo hasta la postura estable sale de los sensores inerciales); la marcha en tándem, fuera de esa regla, con resultado diferido (los pasos correctos los cuentan tres revisores sobre el vídeo; dónde, sin clasificar). Sus consumibles, masa, potencia, calibración y formación siguen sin clasificar: no se buscaron en esta ronda. El 2026-10-31 (decimonovena ronda, U18) entran las tres dimensiones de la conversación de ideación (~673) que la base de conocimiento §9 no nombra: almacenamiento (el destino de la muestra a bordo o, como cifra con `figure` y `unit` copiados de una frase leída, el volumen de datos de un sensor), frecuencia posible (el calendario del protocolo leído) y capacidad de automatización (deducción de EMMA de la clase de medida, rotulada así en cada palabra y en el `basis` de sus cuatro reglas `automatizacion-*`). Leídos: las sesiones de vuelo y la actigrafía 24/7 en periodos de 14 días del protocolo de medidas estándar de 2025 (Hardy et al.; reglas `sangre-del-protocolo-en-sesiones-de-vuelo`, `actigrafia-24-7-en-periodos-de-14-dias`, `prueba-de-reaccion-en-las-sesiones-del-protocolo`), la medida continua de la camiseta de la CSA (`wearable-medida-continua`), las tres tomas de vuelo de los dos estudios del hemograma y su devolución a temperatura ambiente (Crucian et al. 2015, Kunz et al. 2017; `leucocitos-en-tres-sesiones-de-vuelo`, `serie-roja-en-tres-sesiones-de-vuelo`, `leucocitos-devueltos-a-temperatura-ambiente`, `serie-roja-en-bolsas-a-temperatura-ambiente`), las siete sesiones de saliva y su espera a temperatura ambiente (Mehta et al. 2017; `saliva-en-siete-sesiones`, `saliva-virus-a-temperatura-ambiente`, `saliva-cortisol-secada-a-temperatura-ambiente`), el suero congelado a bordo (`suero-congelado-a-bordo`), las cinco tomas de orina del experimento de nutrición (`orina-de-vuelo-en-cinco-tomas`) y los calendarios de Tierra del perfil litiásico y de la densitometría (`perfil-litiasico-anual-y-posvuelo`, `densitometria-antes-y-despues-del-vuelo`). Ningún volumen de datos aparece en lo leído: va en `searched_not_found`, con la frecuencia de la masa, la presión, la prueba de esfuerzo, la densidad de la orina y los sensores que EMMA nombra aparte de la camiseta, y el almacenamiento de la orina de vuelo. «Valor clínico» no entra, y `CONVERSATION_TERMS` en `ingest/cost.py` dice por qué.",
+  "dimension_rules": [
+    {
+      "id": "sin-muestra-continuo",
+      "match": {"mode": "continuous-passive"},
+      "set": {"processing": "on-device", "result": "immediate"},
+      "basis": "Clase «continuo y pasivo» de este fichero (`mode`): lo da el sensor mientras se lleva o funciona, sin muestra que llevar a un analizador ni análisis que esperar. Matiz leído el 2026-10-22, solo sobre los sensores que se llevan puestos: en la ISS, la camiseta con sensores de la CSA (Bio-Monitor) baja sus datos a Tierra para el análisis científico (ver discrepancias).",
+      "discrepancies": [
+        {"ref": "csa-bio-monitor", "quote": "Once finished, the astronaut disconnects the battery pack and plugs it into a base, which downloads the data to Earth through the Station's communications system for scientific analysis.", "where": "«How it works», paso 3", "read_on": "2026-10-22", "note": "En la ISS, la camiseta y la cinta con sensores de la CSA (pulso y ECG, presión arterial, respiración, temperatura de la piel, saturación y actividad) no dan su análisis a bordo: la batería se enchufa a una base que baja los datos a Tierra. Los wearables de EMMA dan el valor en el propio dispositivo; la frase dice que en el equipo de la estación el análisis científico se hace en Tierra. No dice si el tripulante ve algún valor a bordo. Matiza solo a los sensores que se llevan puestos (pulso, variabilidad, respiración, saturación, temperatura, sueño, impactos): la regla alcanza también al dosímetro de la nave y al registro del equipo de ejercicio, y la frase no habla de ellos."}
+      ]
+    },
+    {
+      "id": "sin-muestra-periodico",
+      "match": {"mode": "periodic-noninvasive", "except_keys": ["tandem-walk-correct-steps"]},
+      "set": {"processing": "on-device", "result": "immediate"},
+      "basis": "Clase «periódico, no invasivo» de este fichero (`mode`), que `ingest/cost.py` opone a «periódico, con muestra»: sin muestra no hay analizador ni análisis que esperar; el valor sale del instrumento o de la anotación. Matiz leído el 2026-10-23, solo sobre las ecografías: en la ISS el vídeo de la sonda baja a Tierra en tiempo real, la toma de la yugular se guió desde Tierra y su área la delinearon después dos ecografistas (ver discrepancias). Matiz leído el 2026-10-31, solo sobre las dos pruebas sensoriomotoras de Standard Measures: el porcentaje de pasos correctos de la marcha en tándem lo cuentan después tres revisores sobre el vídeo, y el tiempo hasta la postura estable lo dan los datos de los sensores inerciales (ver discrepancias).",
+      "discrepancies": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "The IMU data are used to determine when a stable posture is achieved.", "where": "«Sensorimotor standard measures»", "read_on": "2026-10-31", "note": "Solo sobre el tiempo hasta la postura estable (levantarse tras estar tumbado y sentarse-levantarse): el tiempo se calcula de los datos de los sensores inerciales con un umbral. La frase no dice si ese cálculo se hace en el propio sensor al momento o después, en un ordenador: matiza la regla sin contradecirla."},
+        {"ref": "nasa-hrp-roi-iss-facilities-2023", "quote": "When deployed, the Ultrasound 2 may be connected to the front of HRF-1 for power and to allow real-time downlink of scan head video.", "where": "diapositiva 12, «Human Research Facility 1 (HRF-1/HRF Rack 1)»", "read_on": "2026-10-23", "note": "Solo sobre las ecografías: en la ISS el ecógrafo se enchufa al rack del HRF, que le da la energía y baja a Tierra en tiempo real el vídeo de la sonda. La regla dice que el valor sale del instrumento; la frase dice que la imagen llega también a Tierra mientras se toma. No dice dónde se mide el valor."},
+        {"ref": "marshall-goebel-2019-ijv", "quote": "All data collected on the ISS were guided in real time by investigators on the ground.", "where": "Methods", "read_on": "2026-10-23", "note": "Solo sobre la ecografía de la yugular interna de ese estudio (la izquierda): la toma en la estación la guiaron en tiempo real investigadores en Tierra. Es una dependencia de Tierra al tomar la medida, no al analizarla: la regla no la recoge, y se apunta como formación y guía del operador en la regla `ecografia-yugular-guiada-desde-tierra`."},
+        {"ref": "marshall-goebel-2019-ijv", "quote": "The cross-sectional area was manually delineated on 3 images by 2 independent sonographers for all time points.", "where": "Methods", "read_on": "2026-10-23", "note": "Solo sobre el área de la yugular interna izquierda en ese estudio: no la dio el aparato al medir, la delinearon a mano después dos ecografistas independientes. La frase no dice dónde ni cuándo, pero no es «en el propio dispositivo» ni «inmediato»: matiza las dos clases de la regla para esa medida. En EMMA el área se mide en la consola de ecografía (`imaging/`), y la regla describe eso."}
+      ]
+    },
+    {
+      "id": "calculo",
+      "match": {"mode": "derived"},
+      "set": {"consumables": "none"},
+      "basis": "Clase «calculado a partir de otras medidas» de este fichero (`mode`): es un cálculo, no toma muestra ni usa material propio. Dónde se procesa y cuándo llega dependen de sus entradas, que cada calculado nombra en `inputs` (desde el 2026-10-21) y de las que hereda si `inherits` lo dice."
+    },
+    {
+      "id": "anotacion-del-tripulante",
+      "match": {"equipment": ["autoinforme", "diario de síntomas", "registro de ingesta", "mapa corporal de dolor"]},
+      "set": {"consumables": "none"},
+      "basis": "`equipment` de este fichero: el valor es lo que el tripulante anota en la consola (`api/diary.py` para autoinforme, diario y registro de ingesta; `api/pain.py` para el mapa de dolor), sin muestra ni material."
+    },
+    {
+      "id": "prueba-de-reaccion-en-pantalla",
+      "match": {"equipment": "test PVT"},
+      "set": {"consumables": "none"},
+      "basis": "`equipment` de este fichero y el código que la puntúa: la PVT es una prueba de tiempo de reacción —un estímulo en pantalla y una tecla— y lo que se registra son los tiempos de reacción en milisegundos (`ingest/pvt.py`, `score`), sin muestra ni material. En EMMA la pasa la consola de tripulación (`frontend/src/pvt/PvtPanel.tsx`, `POST /api/pvt/console`); la que llega de otro equipo por `POST /api/pvt` es la misma lista de tiempos. Lo que la prueba cuesta en tiempo de tripulación sí tiene fuente (`crew_time_basis`); de la pantalla en la que se pasa a bordo, ninguna fuente leída dice que gaste algo, y esta regla no lo afirma de ella: dice que la prueba no gasta material propio."
+    },
+    {
+      "id": "leucocitos-en-tierra",
+      "match": {"keys": ["leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent"]},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído en NASA: en la ISS medir el recuento de leucocitos es «una necesidad no cubierta» (Perusek et al., 2022), y en el estudio inmunitario de seis meses las muestras de sangre se tomaron en vuelo y se devolvieron para analizarlas, con la distribución de leucocitos entre lo medido (Crucian et al., 2010); su publicación completa dice que volvían a Tierra en menos de 48 h y que el recuento se hizo con un analizador de hematología clínico (Crucian et al., 2015). El resultado diferido se sigue de ahí. Matiz: una demostración tecnológica sí hizo un recuento con fórmula leucocitaria a bordo (ver discrepancias).",
+      "sources": [
+        {"ref": "ntrs-20210026808", "quote": "The ability to measure WBC count is currently an unmet need on the International Space Station (ISS) and for future exploration missions.", "where": "resumen de la ficha de NTRS", "read_on": "2026-10-14"},
+        {"ref": "ntrs-20100040666", "quote": "Blood and saliva samples were collected early, mid and late in-flight and returned for immediate analysis.", "where": "resumen de la ficha de NTRS, «Background»", "read_on": "2026-10-14"},
+        {"ref": "ntrs-20100040666", "quote": "Some shifts in leukocyte distribution occurred during flight, including alterations in CD8+ T cell maturation.", "where": "resumen de la ficha de NTRS, «Results»", "read_on": "2026-10-14"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "In-flight samples were returned to Earth within 48 h of collection for immediate analysis.", "where": "resumen, «Methods»", "read_on": "2026-10-21"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "A white blood cell (WBC) count was determined using a standard clinical hematology analyzer (Beckman-Coulter Unicel DxH 800, Miami, FL, USA).", "where": "Materials and methods, «Immunophenotype analysis»", "read_on": "2026-10-21"}
+      ],
+      "discrepancies": [
+        {"ref": "ntrs-20210026808", "quote": "Demonstrated the ability of the HemoCue to operate in microgravity, marking the first time NASA has performed real-time hematology in space", "where": "diapositiva 8, «Results of Flight Experiment»", "read_on": "2026-10-14", "note": "Una demostración tecnológica (diciembre de 2020 y enero de 2021) contó leucocitos con fórmula de cinco poblaciones a bordo, en sangre capilar de un tripulante, en la tercera sesión. Es una demostración, no un equipo de uso ordinario; sus microcubetas se desechan tras cada uso (diapositiva 4)."},
+        {"ref": "ntrs-20240004905", "quote": "This Tech Demo marked the first time that hematology measurements were successfully performed real-time in microgravity.", "where": "resumen, tercer párrafo", "read_on": "2026-10-14", "note": "La misma demostración, contada por otro documento de NASA dos años después."}
+      ]
+    },
+    {
+      "id": "sangre-en-tierra",
+      "match": {"equipment": "extracción de sangre y analizador"},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído: «hoy» la sangre tomada en la ISS se congela y se devuelve para analizarla después de la misión (Brawley et al., 2025), y el experimento de nutrición de la ISS tomaba sangre y orina en vuelo para analizarlas tras el regreso (Smith et al., 2012). Las frases hablan de la muestra, no de cada analito: nombran sangre, no sodio ni CA-125. El resultado diferido se sigue de ahí. Matiz: hay demostraciones y una sesión de estudio que analizaron sangre a bordo (ver discrepancias).",
+      "sources": [
+        {"ref": "brawley-2026-raman-sers", "quote": "Currently, blood samples collected on the International Space Station (ISS) are frozen and returned for post-mission analysis, highlighting a significant gap in the capacity for real-time physiological monitoring.", "where": "1. Introduction, primer párrafo", "read_on": "2026-10-14"},
+        {"ref": "ntrs-20130000839", "quote": "The primary activity of this effort was collecting blood and urine samples 5 times during flight for analysis after return to Earth.", "where": "resumen (PDF de una página), primer párrafo", "read_on": "2026-10-14"}
+      ],
+      "discrepancies": [
+        {"ref": "nasa-iss-blog-2026-09-28", "quote": "At the conclusion of the sample processing, Menon analyzed the sample for a red blood cell count to help doctors determine if the cardiovascular system, influenced by microgravity, delivers adequate oxygen throughout a crew member’s body.", "where": "entrada del blog, tercer párrafo", "read_on": "2026-10-14", "note": "Un recuento de glóbulos rojos hecho a bordo en una sesión de un estudio (Venous Flow). La entrada no nombra el equipo ni dice que sea de uso ordinario."},
+        {"ref": "nasa-iss-blog-2026-07-08", "quote": "Advanced portable health gear and standard medical imaging hardware on the orbital outpost can analyze an astronaut’s blood samples, DNA, eyes, and more, then downlink the results to doctors on Earth.", "where": "entrada del blog, segundo párrafo", "read_on": "2026-10-14", "note": "Divulgación: dice que hay equipo portátil que analiza sangre a bordo, sin nombrar el equipo ni los analitos. La misma entrada cuenta que la sangre y la orina del estudio CIPHER se congelaron «for preservation and later analysis»."},
+        {"ref": "ntrs-20240004905", "quote": "The rHEALTH ONE ISS Tech Demo in May 2022 demonstrated test results obtained in-flight matched those on the ground.", "where": "resumen, tercer párrafo", "read_on": "2026-10-14", "note": "Otra demostración tecnológica de analizador de sangre a bordo; el resumen no dice qué analitos ni que quedara en uso."}
+      ]
+    },
+    {
+      "id": "orina-de-laboratorio-en-tierra",
+      "match": {"equipment": "muestra de orina y laboratorio"},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído: el experimento de nutrición de la ISS tomaba sangre y orina en vuelo para analizarlas tras el regreso a Tierra (Smith et al., 2012). La frase habla de la muestra de orina, no del marcador. La recogida de 24 h y la densidad con tira o refractómetro no entran: su equipo es otro y la frase no dice dónde se miden. El volumen de 24 h tiene su propia regla leída desde el 2026-10-20 (`orina-24h-en-tierra`); la densidad sigue sin fuente.",
+      "sources": [
+        {"ref": "ntrs-20130000839", "quote": "The primary activity of this effort was collecting blood and urine samples 5 times during flight for analysis after return to Earth.", "where": "resumen (PDF de una página), primer párrafo", "read_on": "2026-10-14"}
+      ]
+    },
+    {
+      "id": "saliva-en-tierra",
+      "match": {"equipment": "muestra de saliva y análisis"},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído en NASA: en la ISS la saliva se recoge de forma rutinaria para hormonas de estrés y ADN de virus latentes, y la investigación en la ISS suele guardar las muestras y devolverlas a Tierra para analizarlas (Gutierrez et al., 2026); en el estudio inmunitario de seis meses, la saliva tomada en vuelo se devolvió para analizarla (Crucian et al., 2010). El resultado diferido se sigue de ahí.",
+      "sources": [
+        {"ref": "ntrs-20260002312", "quote": "Saliva is already routinely collected from ISS astronauts for the detection of stress hormones and latent virus DNA.", "where": "resumen de la ficha de NTRS, segundo párrafo", "read_on": "2026-10-14"},
+        {"ref": "ntrs-20260002312", "quote": "To support these objectives, research operations on ISS typically include the collection and storage of human physiological samples and their return to Earth for analysis.", "where": "resumen de la ficha de NTRS, primer párrafo", "read_on": "2026-10-14"},
+        {"ref": "ntrs-20100040666", "quote": "Blood and saliva samples were collected early, mid and late in-flight and returned for immediate analysis.", "where": "resumen de la ficha de NTRS, «Background»", "read_on": "2026-10-14"}
+      ]
+    },
+    {
+      "id": "orina-24h-en-tierra",
+      "match": {"keys": ["urine-volume-24h"]},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído: en los estudios de la ISS el volumen de la orina tomada en vuelo no se mide a bordo. Cada micción se recoge en una bolsa con una cantidad conocida de trazador (litio), se toma una muestra con jeringa y, tras el aterrizaje, se analiza el litio para calcular el volumen de cada micción y preparar las mezclas de 24 h (Broyan y Cibuzar, 2009; Mehta et al., 2017). El resultado diferido se sigue de ahí: la muestra espera congelada al regreso. Matiz: un equipo diseñado para medir el volumen a bordo (UMS) se lanzó a la ISS en 2011, y en el protocolo de medidas estándar de NASA descrito en 2025 no hay recogida de orina en vuelo (ver discrepancias).",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Urine voids during flight contained 1 mL of a LiCl solution as a volume marker.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-20"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "After landing, the flight urine samples were analyzed for lithium concentration to determine void volume and subsequently to prepare 24-h pools, as previously described.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-20"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "The 24-h urine pool was thoroughly mixed, and a syringe aliquot was obtained and then frozen until return to Earth for analyses about 6–12 months later.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-20"},
+        {"ref": "ntrs-20090013860", "quote": "Crew urine voids are currently collected manually in a flexible plastic bag that contains a known tracer quantity.", "where": "resumen de la ficha de NTRS", "read_on": "2026-10-20"},
+        {"ref": "ntrs-20090013860", "quote": "A crew member must completely mix the contents of this bag before withdrawing a representative syringe sample for later ground analysis.", "where": "resumen de la ficha de NTRS", "read_on": "2026-10-20"},
+        {"ref": "ntrs-20090007818", "quote": "Lithium (volume marker) limitations – disposal and mixing issues", "where": "póster, «Limitations of current system (UCDs)»", "read_on": "2026-10-20"}
+      ],
+      "discrepancies": [
+        {"ref": "ntrs-20090007818", "quote": "These problems have been resolved in a new version, the International Space Station (ISS) UMS, that has been designed to provide real-time in-flight volume data with accuracy and precision equivalent to measurements made on Earth and the ability to provide urine samples that are unadulterated by the device.", "where": "resumen de la ficha de NTRS", "read_on": "2026-10-20", "note": "Un equipo diseñado para medir a bordo y en tiempo real el volumen de cada micción. En febrero de 2009 todavía no había volado a la ISS."},
+        {"ref": "ntrs-20110008547", "quote": "The UMS was launched on Space Transportation System (STS) -133 in February 2011.", "where": "apartado V, «WHC Interfaces», último párrafo", "read_on": "2026-10-20", "note": "El UMS llegó a la ISS en 2011. Lo leído no dice si después se usó de forma ordinaria ni si sustituyó a las bolsas con litio: la ponencia lo da como plan. Buscado el 2026-10-21 y no encontrado: en NTRS («Urine Monitoring System»: nueve fichas, ninguna publicada después de 2011; «Broyan urine»: lo posterior a 2011 trata del procesador de orina, no del UMS), en el texto de dos ponencias ICES posteriores sobre el aseo de la ISS (ICES-2019-154, que solo nombra la toma de agua de lavado del UMS en el panel del aseo; ICES-2021-035, que no lo nombra) y en la web de NASA (la antigua ficha del experimento UMS en nasa.gov responde 404, y la búsqueda no devolvió ningún informe diario de la estación que lo nombre). Tampoco el estudio de 2017 que usó las bolsas con litio dice en qué años volaron sus tripulantes. Buscado otra vez el 2026-10-22 y no encontrado: en la web, por el UMS en los informes diarios de la estación de 2012 a 2015 y en el blog de la estación (ninguna entrada lo nombra), y por su puesta en servicio, retirada o uso nominal en el Nodo 3 (solo salen las ponencias de desarrollo de 2009 a 2011 y las del aseo posterior, el Universal Waste Management System, que no dicen qué fue del UMS). Tampoco lo lista el inventario del equipo médico de la ISS de 2016 (ISS Medical Project), cuyos consumibles de orina son el dispositivo de recogida, la bolsa de contención, las jeringas y un kit de pH, sin nombrar el UMS."},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "There are no inflight urine collections.", "where": "«Biochemical markers»", "read_on": "2026-10-20", "note": "En el protocolo de medidas estándar de NASA descrito en 2025, la orina de 24 h —y con ella su volumen— se recoge solo antes y después del vuelo, en Tierra. No contradice el «en Tierra»: dice que en ese protocolo el dato no existe durante la misión."}
+      ]
+    },
+    {
+      "id": "orina-en-bolsas-con-trazador",
+      "match": {"keys": ["urine-volume-24h", "ntx-telopeptide"]},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en vuelo, la orina se recoge en bolsas (Urine Collection Devices) que llevan una cantidad conocida de trazador —1 mL de solución de cloruro de litio por micción— y se muestrea con jeringa (Broyan y Cibuzar, 2009; Mehta et al., 2017; Rodriguez y Broyan, 2011); las bolsas pesan en lo que hay que subir a la estación y en la basura que hay que guardar (Feeback et al., 2009). Las frases hablan de toda muestra de orina tomada en vuelo («medical urine samples»), no del marcador: alcanzan al volumen de 24 h y al NTX, que se mide en orina de laboratorio, aunque ninguna sale del estudio que midió el NTX. La densidad con tira o refractómetro no entra: ninguna frase leída dice cómo se mide. Matiz: el equipo que mediría el volumen a bordo (UMS) y el protocolo vigente sin orina en vuelo (ver discrepancias).",
+      "sources": [
+        {"ref": "ntrs-20090013860", "quote": "Crew urine voids are currently collected manually in a flexible plastic bag that contains a known tracer quantity.", "where": "resumen de la ficha de NTRS", "read_on": "2026-10-20"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Urine voids during flight contained 1 mL of a LiCl solution as a volume marker.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-20"},
+        {"ref": "ntrs-20110008547", "quote": "Collection of medical urine samples is currently accomplished with Urine Collection Device (UCD) bags that require an adapter for either males or females, and are crew time intensive, prone to unintentional releases of urine into the cabin, and have received negative crew feedback.", "where": "I. Introduction, primer párrafo (sin la llamada a nota que sigue a «(UCD)»)", "read_on": "2026-10-20"},
+        {"ref": "ntrs-20090007818", "quote": "Significant launch up mass for collection and trash storage supplies", "where": "póster, «Limitations of current system (UCDs)»", "read_on": "2026-10-20"}
+      ],
+      "discrepancies": [
+        {"ref": "ntrs-20110008547", "quote": "The UMS was launched on Space Transportation System (STS) -133 in February 2011.", "where": "apartado V, «WHC Interfaces», último párrafo", "read_on": "2026-10-20", "note": "Con el UMS la micción no va a una bolsa con litio: el equipo mide el volumen y deja tomar la muestra con jeringa («allow for syringe sampling», resumen de la misma ponencia), que también se gasta. Lo leído no dice si después sustituyó a las bolsas (buscado el 2026-10-21 sin encontrarlo: ver la misma discrepancia en `orina-24h-en-tierra`)."},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "There are no inflight urine collections.", "where": "«Biochemical markers»", "read_on": "2026-10-20", "note": "En el protocolo de medidas estándar de NASA descrito en 2025 no se recoge orina en vuelo: lo que gasta es la recogida en Tierra antes y después del vuelo («A 24-hour, void-by-void urine collection is completed using 500-mL bottles»), no material de a bordo."}
+      ]
+    },
+    {
+      "id": "glucometro-tira-y-lanceta",
+      "match": {"keys": ["glucose-capillary"]},
+      "set": {"processing": "on-device", "result": "immediate", "consumables": "consumes"},
+      "basis": "Leído: con un glucómetro, la gota de sangre del dedo va a una tira que se mete en el propio aparato, y la lectura aparece a los pocos segundos, sin análisis aparte que esperar (CDC, «Monitoring Your Blood Sugar»); la lanceta y la tira se tiran después de cada medida, y las tiras se estropean con la humedad o el calor y se guardan cerradas: se gastan. Las frases son de Tierra y para personas con diabetes; no dicen nada del vuelo, y si hay glucómetro a bordo de la ISS no lo dice ninguna fuente leída.",
+      "sources": [
+        {"ref": "cdc-monitoring-blood-sugar", "quote": "Place the strip in the meter. After a few seconds, the blood sugar reading will appear.", "where": "«How to monitor»", "read_on": "2026-11-04"},
+        {"ref": "cdc-monitoring-blood-sugar", "quote": "Dispose of the lancet and strip in a trash container.", "where": "«How to monitor»", "read_on": "2026-11-04"},
+        {"ref": "cdc-monitoring-blood-sugar", "quote": "Test strips can be damaged if exposed to moisture, humidity, or extreme temperatures.", "where": "«More tips to keep in mind»", "read_on": "2026-11-04"}
+      ]
+    },
+    {
+      "id": "sangre-en-tubos",
+      "match": {
+        "equipment": "extracción de sangre y analizador",
+        "keys": [
+          "c-reactive-protein", "urea", "creatinine", "sodium", "potassium", "chloride", "calcium",
+          "phosphate", "magnesium", "estradiol", "fsh", "lh", "glucose", "total-protein", "albumin",
+          "ast", "alt", "ggt", "alkaline-phosphatase", "bilirubin-total", "bilirubin-direct", "ldh",
+          "tsh", "free-t4", "ca-15-3", "cea", "ca-125", "ca-19-9", "ca-27-29", "beta2-microglobulin",
+          "chromogranin-a", "neuron-specific-enolase", "vitamin-d-25oh"
+        ]
+      },
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en vuelo, la sangre para la bioquímica del protocolo de medidas estándar de NASA se recoge en dos tubos separadores de suero (SST) de 7,5 mL, y las muestras se guardan en el congelador de la ISS hasta que vuelven a Tierra (Hardy et al., 2025): el tubo se gasta con la muestra. La frase habla de la extracción, no de cada analito: nombra el suero, no el sodio ni el CA-125, y alcanza a los analitos que EMMA mide en suero. El hemograma (leucocitos y su fórmula, hematíes, hemoglobina, hematocrito, índices y plaquetas) no entra: se mide en sangre entera, no en el suero de esos tubos. Su tubo en vuelo tiene reglas propias, leídas en los estudios que lo midieron (`hemograma-leucocitos-en-tubo-edta` y, desde el 2026-10-22, `hemograma-serie-roja-en-tubo-edta`).",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During flight, 15 mL blood is collected in two 7.5 mL SSTs.", "where": "«Biochemical markers»", "read_on": "2026-10-20"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "After centrifugation, samples are placed in a -80 °C laboratory freezer (pre- and post-flight samples) or are transferred to the -96 °C ISS freezer (inflight samples) where they are stored until the samples are returned to Earth via a cargo or manned vehicle return such as the SpaceX Dragon capsule.", "where": "«Biochemical markers»", "read_on": "2026-10-20"}
+      ]
+    },
+    {
+      "id": "hemograma-leucocitos-en-tubo-edta",
+      "match": {"keys": ["leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent"]},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en el estudio inmunitario de NASA con 23 tripulantes de la ISS, cada muestra de sangre —también las tres tomadas en vuelo— era un tubo con ACD y otro con EDTA, y el recuento de leucocitos se validó en el de EDTA porque el ACD diluye la muestra (Crucian et al., 2015): el tubo se gasta con la muestra. La frase habla de la muestra de ese estudio, que midió el recuento de leucocitos y su distribución: alcanza a los leucocitos y a su fórmula, absoluta y en porcentaje. La serie roja, los índices y las plaquetas no entran: ese estudio no los midió (los alcanza otra regla leída desde el 2026-10-22, `hemograma-serie-roja-en-tubo-edta`). Matiz: en el protocolo de medidas estándar de NASA descrito en 2025, el hemograma va en tubo EDTA solo antes y después del vuelo, porque no se puede medir en muestra congelada (ver discrepancias).",
+      "sources": [
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "For this study a sample consisted of 8.5 ml acid–citrate–dextrose (ACD) anticoagulated and 10.0 ml ethylenediaminetetraacetic acid (EDTA) anticoagulated peripheral blood.", "where": "Materials and methods, «Blood samples»", "read_on": "2026-10-21"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "Blood samples were collected at the following time points: 180 and 45 days before flight (L-180 and L-45, respectively), during flight at approximately mission day 14 (early), between mission months 2 and 4 (mid-mission), and about 6 months (late in the mission), 3 h after landing (R+0), and 30 days after landing (R+30).", "where": "Materials and methods, «Blood samples»", "read_on": "2026-10-21"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "The WBC parameter was similarly validated from an EDTA blood sample, since blood collection in the ACD tube results in a degree of sample dilution, skewing absolute cell count measurements.", "where": "Materials and methods, «Blood samples»", "read_on": "2026-10-21"}
+      ],
+      "discrepancies": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Before and after flight, blood (15.7 mL) is collected in two 5-mL serum separator tubes (SST), a 3 mL EDTA tube, and a 2.7 mL lithium-heparin tube.", "where": "«Biochemical markers»", "read_on": "2026-10-21", "note": "En el protocolo de medidas estándar de NASA descrito en 2025, el tubo EDTA se toma antes y después del vuelo, en Tierra. La frase siguiente del artículo dice que en vuelo solo se recogen dos tubos de suero («During flight, 15 mL blood is collected in two 7.5 mL SSTs»): en ese protocolo no hay tubo EDTA a bordo."},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Some pre- and post-flight analyses are completed real-time (i.e., on the day of the blood draw) because they cannot be measured in samples that have been frozen.", "where": "«Biochemical markers»", "read_on": "2026-10-21", "note": "La frase que sigue nombra entre esos análisis el hemograma completo, con el recuento de leucocitos, neutrófilos y linfocitos («These tests include complete blood count»). Las muestras de vuelo de ese protocolo se congelan hasta el regreso: el hemograma no sale de ellas. El estudio de 2015, en cambio, devolvía la sangre de vuelo a Tierra en menos de 48 h para analizarla en el acto («returned to Earth within 48 h of collection for immediate analysis»)."}
+      ]
+    },
+    {
+      "id": "hemograma-serie-roja-en-tubo-edta",
+      "match": {"keys": ["erythrocytes", "hemoglobin", "hematocrit", "mcv", "mch", "mchc", "platelets"]},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en el estudio de NASA sobre el hemograma de 31 tripulantes de la ISS, la sangre —también la tomada en vuelo, al principio, a mitad y al final de la misión— se recogió en un tubo EDTA de 10 mL y volvió a Tierra a temperatura ambiente para analizarla (Kunz et al., 2017): el tubo se gasta con la muestra. Los analizadores miden el recuento de hematíes, el VCM, la hemoglobina y las plaquetas, y calculan de ellos el resto de índices: la frase alcanza a la serie roja, a sus índices (hematocrito, HCM, CHCM) y a las plaquetas, que salen del mismo tubo. Matices: en el protocolo de medidas estándar de NASA descrito en 2025, el tubo EDTA del hemograma se toma solo antes y después del vuelo; y en el mismo estudio de 2017, tras las 48 h de espera, el hematocrito, el VCM y la CHCM no se mantuvieron estables (ver discrepancias).",
+      "sources": [
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "For both the flight study and the stability study, peripheral blood was collected into a 10.0 mL ethylenediaminetetraacetic acid (EDTA) spray-coated blood collection tube (BD, Franklin Lakes, NJ, USA).", "where": "Methods, «Blood sampling»", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "In-flight, samples were collected within the first 2 weeks of flight (early), between months 2 and 4 of the mission (mid), and approximately 6 months into the mission, immediately prior to return (late).", "where": "Methods, «Blood sampling»", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "This investigation collected whole blood samples from astronauts participating in up to 6-months orbital spaceflight, and returned those samples (ambient storage) to Earth for analysis.", "where": "resumen, «Methods»", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "Of the RBC and platelet indices included in a CBC, the hematology analyzers measure RBC count, mean corpuscular volume (MCV), hemoglobin, and platelet concentration.", "where": "Results, primer párrafo", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "All other parameters are calculated from these measurements.", "where": "Results, primer párrafo", "read_on": "2026-10-22"}
+      ],
+      "discrepancies": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Before and after flight, blood (15.7 mL) is collected in two 5-mL serum separator tubes (SST), a 3 mL EDTA tube, and a 2.7 mL lithium-heparin tube.", "where": "«Biochemical markers»", "read_on": "2026-10-21", "note": "En el protocolo de medidas estándar de NASA descrito en 2025, el tubo EDTA —y con él el hemograma completo— se toma antes y después del vuelo, en Tierra; en vuelo solo se recogen dos tubos de suero. El estudio de 2017 es anterior y tomaba el tubo EDTA también en vuelo."},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "Only the RBC count, hemoglobin, mean corpuscular hemoglobin (MCH), and platelet concentration remained stable for 48 h at room temperature (Fig. 2a-c, f).", "where": "Results, primer párrafo", "read_on": "2026-10-22", "note": "No cambia lo que gasta —el tubo es el mismo—, pero matiza lo que llega: la sangre de vuelo esperaba hasta 48 h a temperatura ambiente antes del análisis, y en ese tiempo el hematocrito, el VCM y la CHCM no se mantuvieron estables en la prueba de estabilidad del mismo estudio. Que salgan del mismo tubo no los hace igual de fiables."}
+      ]
+    },
+    {
+      "id": "ecografia-con-gel",
+      "match": {"equipment": "ecógrafo y operador entrenado"},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en el inventario del equipo médico de investigación de la ISS que publica NASA (ISS Medical Project, revisado en junio de 2016), el gel de ecografía («Echo Gel») figura entre los consumibles del kit de suministros verde del HRF, y el ecógrafo de ese inventario es el Ultrasound 2, que se guarda en un cajón del HRF-1: la exploración gasta gel. Lo leído no dice cuánto gel gasta cada exploración ni ata el gel a un equipo por su nombre: «echo» es ecografía, y el Ultrasound 2 es el único ecógrafo del inventario. Alcanza a todas las medidas de EMMA hechas con ecógrafo (vaina del nervio óptico, yugular interna y vejiga): lo que gasta es el acoplamiento de la sonda, no el sitio explorado. Es un inventario de 2016: no dice qué ecógrafo ni qué gel hay hoy a bordo.",
+      "sources": [
+        {"ref": "nasa-issmp-on-orbit-hardware-2016", "quote": "Echo Gel", "where": "diapositiva 16, «Consumables: HRF Supply Kit Green» (una línea de la lista)", "read_on": "2026-10-22"},
+        {"ref": "nasa-issmp-on-orbit-hardware-2016", "quote": "A stowage drawer holds the Ultrasound 2.", "where": "diapositiva 8, «Human Research Facility 1 (HRF-1/HRF Rack 1)»", "read_on": "2026-10-22"}
+      ]
+    },
+    {
+      "id": "saliva-cortisol-en-papel-de-filtro",
+      "match": {"keys": ["cortisol-salivary"]},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en el estudio de NASA sobre virus latentes en misiones largas de la ISS, la saliva para el cortisol diurno se recogió en papel de filtro, que se dejó secar al aire y se guardó hasta el regreso (Mehta et al., 2017): el papel se gasta con la muestra.",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Diurnal dry saliva samples (5 per sampling day) were collected at awakening and 30 min, 6 h, and 10 h after awakening, as well as on retiring, using a unique filter-paper collection method.", "where": "Materials and methods, «Diurnal salivary cortisol and DHEA»", "read_on": "2026-10-20"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "In short, the subject wet the filter paper with saliva, which was then air-dried at room temperature storage until return to Earth.", "where": "Materials and methods, «Diurnal salivary cortisol and DHEA»", "read_on": "2026-10-20"}
+      ]
+    },
+    {
+      "id": "saliva-virus-en-salivette",
+      "match": {"keys": ["latent-virus-shedding"]},
+      "set": {"consumables": "consumes"},
+      "basis": "Leído: en el mismo estudio, la saliva para buscar virus se recogió con rollos de algodón (Salivette), que se guardaron en una bolsa con tampón estabilizador (Mehta et al., 2017): el rollo y la bolsa se gastan con la muestra.",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Saliva samples for viral assessments were collected using Salivette cotton rolls (Sarstedt, Inc., Newton, NC immediately after their sleep cycle, before eating and brushing their teeth.", "where": "Materials and methods, «Sample collection» (el paréntesis no se cierra en el original)", "read_on": "2026-10-20"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "The saturated salivette was then placed in a Ziploc® bag containing 1 mL of stability buffer (0.5% SDS, 10 mM Tris-Cl, and 1 mM EDTA.", "where": "Materials and methods, «Sample collection» (el paréntesis no se cierra en el original)", "read_on": "2026-10-20"}
+      ]
+    },
+    {
+      "id": "calculo-sin-equipo-propio",
+      "match": {"keys": ["neutrophil-lymphocyte-ratio", "bun-creatinine-ratio"]},
+      "set": {"mass": "no-own-equipment", "volume": "no-own-equipment", "power": "no-own-equipment", "calibration": "no-own-equipment", "training": "no-own-equipment"},
+      "basis": "Los dos cocientes se calculan de los analitos del mismo informe (`reports/labs.py`, `nlr` y `bun_cr`; sus `inputs` en este fichero): no añaden equipo, instrumento ni operador propios. La masa, la potencia, la calibración y la formación del analizador de sus entradas no se heredan, y en ellas siguen sin clasificar. La dosis acumulada, también de clase «calculado», queda fuera: en EMMA llega registrada, no se calcula (su `inputs_basis`)."
+    },
+    {
+      "id": "masa-corporal-con-brazo-de-calibracion",
+      "match": {"keys": ["body-weight"]},
+      "set": {"calibration": "required"},
+      "basis": "Leído en el informe diario de la estación del 29 de octubre de 2019 (NASA): tras mudar de rack el medidor de masa SLAMMD, la tripulación montó el brazo de calibración, le puso la masa de calibración e hizo una medida de control. La frase dice que el aparato se calibra; no dice cada cuánto ni si se hace antes de cada pesada (aquella fue la comprobación tras el traslado). El otro medidor de masa de a bordo, el ruso (BMMD), no se leyó.",
+      "sources": [
+        {"ref": "nasa-iss-daily-summary-2019-10-29", "quote": "The crew performed a post-rack transfer checkout of the SLAMMD unit.", "where": "«SLAMMD (Space Linear Acceleration Mass Measurement Device)», en el resumen del día", "read_on": "2026-10-23"},
+        {"ref": "nasa-iss-daily-summary-2019-10-29", "quote": "They also set up the Calibration Arm, attached the Calibration Mass, and then performed a control run and mass measurement.", "where": "«SLAMMD (Space Linear Acceleration Mass Measurement Device)», en el resumen del día", "read_on": "2026-10-23"}
+      ]
+    },
+    {
+      "id": "prueba-de-esfuerzo-con-gas-de-calibracion",
+      "match": {"keys": ["vo2-peak"]},
+      "set": {"calibration": "required"},
+      "basis": "Leído en el resumen de las instalaciones de investigación humana de la ISS (NASA HRP, revisado en junio de 2023): el sistema de gases del HRF da en cilindros mezclas de respiración y de calibración para el analizador de función pulmonar portátil de ESA (PPFS) y para las pruebas periódicas de forma física de operaciones médicas en el cicloergómetro (Max CEVIS), y nombra la mezcla de calibración del PPFS. Es el analizador de gases de la prueba de esfuerzo de la estación, el mismo cuyo material se buscó en la decimoquinta ronda. No dice cada cuánto se calibra. Si el gas de calibración cuenta como consumible de la medida no se decide aquí: los consumibles de la prueba siguen sin clasificar.",
+      "sources": [
+        {"ref": "nasa-hrp-roi-iss-facilities-2023", "quote": "The GDS Tanks can be filled with a variety of gas mixtures tailored to experiment requirements.", "where": "diapositiva 10, «Gas Delivery System (GDS)»", "read_on": "2026-10-23"},
+        {"ref": "nasa-hrp-roi-iss-facilities-2023", "quote": "Examples include Breathing and Calibration mixtures used to support ESA’s Portable Pulmonary Function System (PPFS) and Medical Operations Max CEVIS periodic fitness evaluations.", "where": "diapositiva 10, «Gas Delivery System (GDS)»", "read_on": "2026-10-23"},
+        {"ref": "nasa-hrp-roi-iss-facilities-2023", "quote": "PPFS Calibration Gas: O2 (15%); CO2 (5%); N2 (80%)", "where": "diapositiva 10, «Gas Delivery System (GDS)» (una línea de la lista)", "read_on": "2026-10-23"}
+      ]
+    },
+    {
+      "id": "ecografia-yugular-guiada-desde-tierra",
+      "match": {"keys": ["ijv-csa-left"]},
+      "set": {"training": "ground-guided"},
+      "basis": "Leído en el estudio de la yugular interna en once tripulantes de la ISS (Marshall-Goebel et al., 2019): todo lo tomado en la estación se guió en tiempo real desde Tierra. Solo la izquierda: el estudio no tomó la derecha («only the left IJV was imaged»), y de la vaina del nervio óptico y de la vejiga no se leyó quién guía la toma. No dice qué formación previa tenía quien sostenía la sonda. Guiar desde Tierra es una dependencia de Tierra: se anota aquí, sin deducir qué pasaría con el tiempo de luz de otra misión.",
+      "sources": [
+        {"ref": "marshall-goebel-2019-ijv", "quote": "All data collected on the ISS were guided in real time by investigators on the ground.", "where": "Methods", "read_on": "2026-10-23"}
+      ]
+    },
+    {
+      "id": "dosimetro-de-nave-calibrado",
+      "match": {"keys": ["absorbed-dose-rate"]},
+      "set": {"calibration": "required"},
+      "basis": "Leído de los dos dosímetros de zona de la ISS que se buscaron: los detectores de silicio de los DOSTEL del experimento DOSIS 3D, en el laboratorio Columbus, se calibraron a fondo antes del lanzamiento con varias fuentes de radiación (Berger et al., 2017), y a los REM de NASA, repartidos por seis módulos de la estación, se les aplican calibraciones para convertir lo medido en energía depositada (página del SRAG, actualizada el 24 de septiembre de 2025). EMMA no dice cuál es su «dosímetro de nave», el de la tasa de cada tripulante: la serie del entorno que lee por defecto es la de DosTel en OSDR RadLab (`environment/radlab.py`), con la que se contrastó la tasa del simulador (`ingest/simulator.py`), y la tasa registrada llega de un dosímetro sin nombre. Por eso la regla cita los dos dosímetros de zona leídos y no elige uno: los dos dicen que se calibran; no dicen cada cuánto, ni si se recalibra a bordo, ni quién lo hace. La dosis acumulada no entra: llega registrada de un dosímetro que EMMA no nombra (`searched_not_found`).",
+      "sources": [
+        {"ref": "berger-2017-dosis-3d-dostel", "quote": "The silicon detectors applied within the DOSTEL instrument have been thoroughly calibrated before launch with various radiation sources.", "where": "apartado 3.2, «DOSTEL: calibration»", "read_on": "2026-10-26"},
+        {"ref": "nasa-srag-protect-astronauts", "quote": "The REM units are deployed across station to provide active radiation area monitoring in 6 different modules.", "where": "«Radiation Detectors: REMs and HERA»", "read_on": "2026-10-26"},
+        {"ref": "nasa-srag-protect-astronauts", "quote": "Calibrations are applied to convert the measured values into energy deposited by the ionizing radiation.", "where": "«Radiation Detectors: REMs and HERA»", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "hemograma-serie-roja-con-analizador-calibrado",
+      "match": {"keys": ["erythrocytes", "hemoglobin", "hematocrit", "mcv", "mch", "mchc", "platelets"]},
+      "set": {"calibration": "required"},
+      "basis": "Leído en el estudio de NASA sobre el hemograma de 31 tripulantes de la ISS (Kunz et al., 2017), el mismo que da el tubo EDTA de la serie roja: todos los hemogramas se hicieron con analizadores de hematología automáticos y calibrados, en los laboratorios de Tierra adonde volvían las muestras (Johnson Space Center, Kennedy Space Center, Star City y la Universidad de Houston). Es la calibración de esos analizadores, no la de un equipo de a bordo, y la frase no dice cada cuánto. Solo la serie roja, sus índices y las plaquetas, que es lo que ese estudio mide y calcula; los leucocitos se contaron en otro estudio, cuya frase no nombra la calibración (`searched_not_found`).",
+      "sources": [
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "All CBCs were performed using calibrated, automated hematology analyzers (JSC processing: Coulter LH750, Miami, FL, USA; Kennedy Space Center (KSC) processing: Coulter Gen-S, Miami, FL, USA; Star City, Russia processing: ABX Pentra, Horiba Medical, Irvine, CA, USA; University of Houston Processing: Mindray BC3200, Mindray, Shenzhen, China).", "where": "Methods, «Processing»", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "actigrafo-con-recalibracion-del-fabricante",
+      "match": {"equipment": "actígrafo"},
+      "set": {"calibration": "required"},
+      "basis": "Leído: el actígrafo del inventario del equipo médico de la ISS de 2016 (ISS Medical Project) es el Actiwatch Spectrum, un comercial modificado, y su fabricante (Philips Respironics) vende para el Actiwatch Spectrum un mantenimiento preventivo de «servicio y recalibración» que incluye la calibración del acelerómetro y del sensor de luz (hoja de ofertas de servicio de Philips, de diciembre de 2016). Lo leído nombra su calibración, en el servicio del fabricante y bajo pedido: no dice que la unidad de la estación, que está modificada, se recalibrara, ni cada cuánto. EMMA no dice qué actígrafo es el suyo; en el resumen de 2023 la estación lleva un Actiwatch Plus, y si es el «Actiwatch Spectrum Plus/PRO» de la hoja de Philips no lo dice ninguna de las dos fuentes.",
+      "sources": [
+        {"ref": "nasa-issmp-on-orbit-hardware-2016", "quote": "Modified commercial-off-the-shelf (COTS) system consisting of the Actiwatch Spectrum Kit, Actiwatch Spectrum, Actiwatch Spectrum Dock, Actiwatch Spectrum USB Cable, and Actiware Software (v. 5.52 or later)", "where": "diapositiva 3, «Actiwatch Spectrum System»", "read_on": "2026-10-26"},
+        {"ref": "philips-actiwatch-service-offerings-2016", "quote": "Actiwatch Spectrum and Actiwatch Spectrum Plus/PRO preventative maintenance (service and recalibration)", "where": "tabla de lo que se compra con el equipo, fila 1054508, columna «Service offering»", "read_on": "2026-10-26"},
+        {"ref": "philips-actiwatch-service-offerings-2016", "quote": "New battery**, band, front cover (if necessary), gasket, off-wrist sensor, accelerometer, light sensor calibration, and firmware update (if necessary)", "where": "la misma fila, columna «Service performed»", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "leucocitos-extraccion-instruida-antes-de-la-mision",
+      "match": {"keys": ["leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent"]},
+      "set": {"training": "station-trained"},
+      "basis": "Leído en el estudio inmunitario de NASA con 23 tripulantes de la ISS (Crucian et al., 2015), el mismo que da el tubo EDTA del recuento: la tripulación se instruyó en la extracción de sangre antes de empezar la misión, y la mayoría de las muestras de vuelo se tomaron como se había indicado. Es la formación de quien extrae en la estación; no dice cuánto duró ni quién la dio, y nada de los analizadores de Tierra. Solo los leucocitos y su fórmula: de la serie roja (Kunz et al., 2017) y de la bioquímica (Hardy et al., 2025) no se leyó formación (`searched_not_found`).",
+      "sources": [
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "Crews were instructed in phlebotomy prior to mission start, and most flight samples were collected as instructed.", "where": "Discussion", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "wearable-con-formacion-previa-en-analogo",
+      "match": {"equipment": "wearable"},
+      "set": {"training": "analog-trained"},
+      "basis": "Leído en un póster sobre un estudio del laboratorio de psicofisiología de NASA Ames, presentado en un simposio de estudiantes de la University of Houston-Clear Lake, sobre la camiseta con sensores Astroskin —la de la CSA, que en la ISS es el Bio-Monitor— probada en tripulaciones del análogo HERA, en Tierra (DeLeon, Cowings y Toscano, 2016): antes de la misión, en el día de línea base, la tripulación se formó en el equipo y el programa del estudio («training on hardware/software»), que en ese apartado del póster es el de la Astroskin, el ergómetro y la encuesta. Es un análogo en Tierra, no la estación, y es la Astroskin; EMMA no dice que su wearable sea ese. No dice cuánto duró la formación ni quién la dio; la ficha del Bio-Monitor de la CSA y el resumen de NTRS 20190001996 no hablan de formación. Alcanza a lo que EMMA mide con `wearable` (la frecuencia cardiaca, sus dos variabilidades y la frecuencia respiratoria); el pulsioxímetro, el sensor de temperatura y el acelerómetro son en EMMA equipos con otro nombre y no entran (`searched_not_found`).",
+      "sources": [
+        {"ref": "ntrs-20190000238", "quote": "The Psychophysiological Research Lab is currently conducting a technology demonstration of a prototype wearable biosensor system (Astroskin) on astronaut surrogates during 30 day missions within NASA’s Human Exploration Research Analog (HERA).", "where": "Abstract", "read_on": "2026-10-26"},
+        {"ref": "ntrs-20190000238", "quote": "training on hardware/software, exercise equipment, and survey", "where": "Procedure, «Pre-Mission Baseline»", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "perfil-litiasico-en-tierra",
+      "match": {"keys": ["urine-calcium-24h", "urine-oxalate-24h", "urine-urate-24h", "urine-citrate-24h", "urine-ph-24h", "urine-sodium-24h", "urine-osmolality-24h", "urine-caox-supersaturation-24h"]},
+      "set": {"processing": "ground-or-return", "result": "deferred"},
+      "basis": "Leído en el informe de evidencia del riesgo de cálculos renales (HRP, 2024): la química de la orina de 24 horas con que se valora el riesgo es la del perfil de riesgo de cálculos de un laboratorio de Tierra, que se hace cada año y después del vuelo, en la exploración médica a los 3 y a los 30 días del regreso; en la ISS, los análisis de sangre y de orina se limitan a los electrolitos básicos y a la tira de orina. El resultado diferido se sigue de ahí: hoy no hay recogida de 24 horas analizada a bordo. Alcanza a los ocho analitos del perfil (la sobresaturación la calcula el laboratorio a partir de ellos). Matiz: el anexo de operaciones del mismo informe supone para Marte una tira de orina para el oxalato cálcico a bordo (ver discrepancias).",
+      "sources": [
+        {"ref": "hrp-renal-stone-evidence-report", "quote": "U.S. crewmembers are assessed with the renal stone risk profile (Mission Pharmacal, University of Texas Southwest Laboratories (Morgan and Pearle 2016), graphically plotted for each individual.", "where": "«Renal Stone Risk Assessment», página 23", "read_on": "2026-10-26"},
+        {"ref": "hrp-renal-stone-evidence-report", "quote": "Currently, this assessment is performed annually as well as post-flight, during the comprehensive medical examination, performed twice at 3 and 30 days after return in all crews.", "where": "«Renal Stone Risk Assessment», página 23", "read_on": "2026-10-26"},
+        {"ref": "hrp-renal-stone-evidence-report", "quote": "Currently, blood and urine testing are available on the International Space Station in a very simplistic fashion (basic electrolyte profile and urine dipstick testing).", "where": "«In-flight Diagnosis and Monitoring», «Lab and Urine Studies», página 24", "read_on": "2026-10-26"}
+      ],
+      "discrepancies": [
+        {"ref": "hrp-renal-stone-conops-appendix-b", "quote": "Urine dipstick for the detection of urinary calcium oxalate levels will be available as a resource (at a minimum) and will remain stable throughout the duration of the mission.", "where": "3.1.6 «Assumptions», suposición 7, página 10", "read_on": "2026-10-26", "note": "Un concepto de operaciones para Marte, no lo que hay hoy: supone a bordo una tira de orina para el oxalato cálcico. No es la recogida de 24 horas ni el perfil de laboratorio, y no da unidad: no cambia dónde se procesan los ocho analitos de EMMA, pero dice que para una misión lejana se piensa en una medida a bordo."}
+      ]
+    },
+    {
+      "id": "densitometria-solo-en-tierra",
+      "match": {"keys": ["bmd-dxa-lumbar-spine", "bmd-dxa-hip"]},
+      "set": {"processing": "ground-or-return"},
+      "basis": "Leído el 2026-10-26 en el resumen técnico de NASA sobre la pérdida ósea (OCHMO-MTB-013 Rev D): la densidad mineral ósea se vigila en Tierra antes y después del vuelo, y ningún equipo la mide hoy en vuelo. La densitometría (DXA) pide que la persona esté en Tierra: es un análisis en Tierra, no de una muestra devuelta. Cuándo llega el resultado y qué gasta siguen sin clasificar: lo leído no lo dice.",
+      "sources": [
+        {"ref": "ochmo-mtb-013", "quote": "NASA monitors crew terrestrially pre- and post-flight but no system to date measures bone density in-flight.", "where": "«Application», página 19", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "composicion-corporal-dxa-en-tierra",
+      "match": {"keys": ["dxa-lean-mass"]},
+      "set": {"processing": "ground-or-return"},
+      "basis": "Leído el 2026-10-31 en el protocolo Spaceflight Standard Measures (Hardy et al., 2025): la composición corporal por DXA (hueso, grasa, masa magra) es una medida de operaciones médicas de antes y después del vuelo. La densitometría pide que la persona esté en Tierra, como la de la densidad ósea (regla `densitometria-solo-en-tierra`): es un análisis en Tierra, no de una muestra devuelta. Cuándo llega el resultado y qué gasta siguen sin clasificar: lo leído no lo dice.",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Bone Densitometry (DXA) | • Body composition (bone, fat, lean, body mass, percent fat) • Left/right hip (femur neck, trochanter, total hip bone mass density) • Spine bone mass density | Pre/Post", "where": "«Experimental Design», Tabla 1, fila «Bone Densitometry (DXA)» (las celdas, separadas por « | »)", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "marcha-en-tandem-puntuada-sobre-video",
+      "match": {"keys": ["tandem-walk-correct-steps"]},
+      "set": {"result": "deferred"},
+      "basis": "Leído el 2026-10-31 en el protocolo Spaceflight Standard Measures (Hardy et al., 2025): el porcentaje de pasos correctos no lo da un instrumento al medir, lo cuentan después tres revisores sobre el vídeo y se toma la mediana. Por eso queda fuera de la regla `sin-muestra-periodico`. Dónde se revisa el vídeo la frase no lo dice: dónde se procesa sigue sin clasificar, y sus consumibles también.",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Three reviewers independently examine the videos to determine the number of correct steps during each trial.", "where": "«Sensorimotor standard measures»", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "bateria-cognitiva-en-portatil",
+      "match": {
+        "equipment": "batería Cognition en ordenador portátil"
+      },
+      "set": {
+        "consumables": "none"
+      },
+      "basis": "`equipment` de este fichero: las nueve pruebas de la batería Cognition con indicador propio se pasan en un ordenador portátil (Dev et al. 2024: el de la tripulación; Basner et al. 2015: en la ISS, el de la HRF del módulo Columbus) y lo que se registra son tiempos de respuesta y proporciones de aciertos: sin muestra ni material. Al acabar, el resultado queda cifrado en el propio portátil y, si hay conexión, se transmite a un servidor. Dónde se procesa y cuándo llega lo dice la regla de la clase (sin muestra, periódico); de la pantalla en la que se pasa, ninguna fuente leída dice que gaste algo, y esta regla no lo afirma de ella: dice que la prueba no gasta material propio.",
+      "sources": [
+        {
+          "ref": "dev-2024-cognition-iss",
+          "quote": "The Cognition Battery was installed and administered to crew on Hewlett Packard Z-Book 15 G2 laptops for all sessions.",
+          "where": "2.2 The Cognition Battery",
+          "read_on": "2026-10-31"
+        },
+        {
+          "ref": "basner-2015-cognition-battery",
+          "quote": "It is currently running on an HRF laptop in the Columbus module of the ISS, and both a Microsoft Windows 7 and an Apple iPad version of the battery exist.",
+          "where": "Discussion",
+          "read_on": "2026-10-31"
+        },
+        {
+          "ref": "basner-2015-cognition-battery",
+          "quote": "When a test is completed, the results are encrypted, stored on the local hard drive, and also transmitted to a central server if Internet connection is available.",
+          "where": "Discussion",
+          "read_on": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "id": "automatizacion-pasiva",
+      "match": {"mode": "continuous-passive"},
+      "set": {"automation": "passive"},
+      "basis": "Deducción de EMMA (lo deduce EMMA de la clase de medida, no de una frase leída): la clase «continuo y pasivo» de este fichero (`mode`) es lo que un sensor registra mientras se lleva o funciona, sin que nadie haga la medida. Dice qué intervención pide la clase, no cuánto está automatizado hoy en la estación: allí la camiseta con sensores de la CSA baja sus datos a Tierra para analizarlos (matiz de `sin-muestra-continuo`), y de la pantalla, la base o el enlace que eso necesita esta regla no dice nada."
+    },
+    {
+      "id": "automatizacion-con-operador",
+      "match": {"mode": "periodic-noninvasive"},
+      "set": {"automation": "operator"},
+      "basis": "Deducción de EMMA (lo deduce EMMA de la clase de medida, no de una frase leída): la clase «periódico, no invasivo» de este fichero (`mode`) es una medida que alguien hace o anota —el tripulante con el tensiómetro, el dinamómetro, la prueba en pantalla o la consola; un operador con el ecógrafo— y que no toma muestra. No dice quién la hace ni cuánto tarda: lo primero lo dice la formación donde se leyó; lo segundo, el tiempo de tripulación donde tiene fuente."
+    },
+    {
+      "id": "automatizacion-con-muestra-y-analisis",
+      "match": {"mode": ["periodic-invasive", "laboratory"], "equipment": ["extracción de sangre y analizador", "muestra de orina y laboratorio", "recogida de orina de 24 h y perfil de riesgo de cálculos", "muestra de orina y tira o refractómetro", "muestra de saliva y análisis", "recogida de orina de 24 h"]},
+      "set": {"automation": "sample-and-analysis"},
+      "basis": "Deducción de EMMA (lo deduce EMMA de la clase de medida, no de una frase leída): las clases «periódico, con muestra» y «laboratorio» de este fichero (`mode`) piden que alguien tome la muestra y que esta se analice aparte. La regla nombra los equipos con muestra porque la clase «laboratorio» también lleva la densitometría DXA, que no toma ninguna: de esas dos, la clase no decide, y quedan sin clasificar. Dónde se procesa y cuándo llega lo dicen sus reglas leídas; esta no dice si el análisis podría automatizarse a bordo: las demostraciones de analizadores en la ISS van como matices de la regla de la sangre."
+    },
+    {
+      "id": "automatizacion-calculada",
+      "match": {"mode": "derived", "equipment": "calculado a partir de otros analitos del informe"},
+      "set": {"automation": "computed"},
+      "basis": "Deducción de EMMA (lo deduce EMMA de la clase de medida, no de una frase leída): la clase «calculado a partir de otras medidas» de este fichero (`mode`) es un cálculo, que se automatiza cuando se automaticen sus entradas (`inputs`). Alcanza a los dos cocientes: la dosis acumulada, también de esta clase, no se calcula en EMMA, llega registrada de un dosímetro (su `inputs_basis`), y la clase no decide qué intervención pide: queda sin clasificar."
+    },
+    {
+      "id": "wearable-medida-continua",
+      "match": {"equipment": "wearable"},
+      "set": {"frequency": "continuous"},
+      "basis": "Leído en la ficha del Bio-Monitor de la CSA (modificada el 26 de febrero de 2026): el sistema de camiseta y cinta con sensores mide de forma continua los datos fisiológicos, y las prendas se llevan también durmiendo y haciendo ejercicio. Es el equipo de la estación; EMMA no dice que su wearable sea ese, y la página no dice cuántos días por misión se lleva ni con qué cadencia registra. Alcanza a lo que EMMA mide con `wearable` (la frecuencia cardiaca, sus dos variabilidades y la frecuencia respiratoria); el pulsioxímetro, el sensor de temperatura y el acelerómetro son en EMMA equipos con otro nombre y no entran (`searched_not_found`), como en la formación.",
+      "sources": [
+        {"ref": "csa-bio-monitor", "quote": "This system, which includes a smart shirt, headband and dedicated tablet application, helps keep an eye on astronauts' health and enables new science by continuously measuring physiological data.", "where": "introducción, primer párrafo", "read_on": "2026-10-31"},
+        {"ref": "csa-bio-monitor", "quote": "The garments can also be worn during sleep and exercise.", "where": "«Background»", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "actigrafia-24-7-en-periodos-de-14-dias",
+      "match": {"equipment": "actígrafo"},
+      "set": {"frequency": "continuous-in-periods"},
+      "basis": "Leído en el protocolo de medidas estándar de NASA descrito en 2025 (Hardy et al.): en vuelo, la actigrafía se registra en periodos de 14 días separados 60 días, y durante esos periodos se lleva 24/7 salvo en las actividades extravehiculares u otras restricciones operativas. No es «continua» a secas: lo es dentro de cada periodo, y entre periodos no hay registro; el calendario de los periodos lo dan las frases. Es el calendario de ese protocolo, con su actígrafo (un Actiwatch, según `actigrafo-con-recalibracion-del-fabricante`): EMMA no dice qué actígrafo es el suyo.",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During flight, actigraphy data are collected for 14-day periods that are spaced 60 days apart.", "where": "«Sleep logs and actigraphy»", "read_on": "2026-10-31"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During these collection periods, actigraphy is performed 24/7, except during extravehicular activities or other operational constraints.", "where": "«Sleep logs and actigraphy»", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "sangre-del-protocolo-en-sesiones-de-vuelo",
+      "match": {
+        "equipment": "extracción de sangre y analizador",
+        "keys": [
+          "c-reactive-protein", "urea", "creatinine", "sodium", "potassium", "chloride", "calcium",
+          "phosphate", "magnesium", "estradiol", "fsh", "lh", "glucose", "total-protein", "albumin",
+          "ast", "alt", "ggt", "alkaline-phosphatase", "bilirubin-total", "bilirubin-direct", "ldh",
+          "tsh", "free-t4", "ca-15-3", "cea", "ca-125", "ca-19-9", "ca-27-29", "beta2-microglobulin",
+          "chromogranin-a", "neuron-specific-enolase", "vitamin-d-25oh"
+        ]
+      },
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído: el protocolo de medidas estándar de NASA descrito en 2025 toma la sangre antes, durante y después del vuelo, y fija las sesiones de vuelo por la duración de la misión: una a mitad en las cortas (hasta 105 días); en el primer mes, a mitad y en el último mes en las de 105 a 240 días; y una más en las que pasan de 240 (Hardy et al., 2025). El experimento de nutrición de la ISS tomó sangre y orina cinco veces en vuelo (Smith et al., 2012). Las frases dan el calendario de la extracción, no el de cada analito: nombran la sangre, no el sodio ni el CA-125, y ninguna dice que esos protocolos midan los marcadores tumorales de EMMA. EMMA la aplica a lo que mide en suero porque la frecuencia posible de un analito de suero es la de la extracción que lo da, y lo dice aquí: la cadencia es la de esos dos protocolos, no una de EMMA. El hemograma no entra: sus estudios dan su propio calendario (`leucocitos-en-tres-sesiones-de-vuelo`, `serie-roja-en-tres-sesiones-de-vuelo`).",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "To monitor various aspects of biochemistry, blood is drawn before, during, and after flight, and a 24-h urine collection is completed before and after flight.", "where": "«Biochemical markers»", "read_on": "2026-10-22"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During short-duration missions (up to 105 days), a single data collection is scheduled midway through the mission.", "where": "«Experimental Design»", "read_on": "2026-10-31"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During standard-duration ISS missions (105–240 days), data is collected during the first month, at mid-flight, and during the last month of the mission.", "where": "«Experimental Design»", "read_on": "2026-10-31"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "An additional in-flight data collection is scheduled for extended-duration missions ( > 240 days).", "where": "«Experimental Design»", "read_on": "2026-10-31"},
+        {"ref": "ntrs-20130000839", "quote": "The primary activity of this effort was collecting blood and urine samples 5 times during flight for analysis after return to Earth.", "where": "resumen (PDF de una página), primer párrafo", "read_on": "2026-10-14"}
+      ]
+    },
+    {
+      "id": "leucocitos-en-tres-sesiones-de-vuelo",
+      "match": {"keys": ["leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent"]},
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído en el estudio inmunitario de NASA con 23 tripulantes de la ISS (Crucian et al., 2015), el mismo que da el tubo EDTA del recuento: la sangre se tomó en vuelo en tres momentos —hacia el día 14, entre los meses 2 y 4 y hacia los 6 meses—, siempre poco antes de que desatracara un vehículo visitante, para devolverla a Tierra. Es el calendario de ese estudio, atado a los regresos: la frecuencia posible era la de los vehículos que volvían.",
+      "sources": [
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "Blood samples were collected at the following time points: 180 and 45 days before flight (L-180 and L-45, respectively), during flight at approximately mission day 14 (early), between mission months 2 and 4 (mid-mission), and about 6 months (late in the mission), 3 h after landing (R+0), and 30 days after landing (R+30).", "where": "Materials and methods, «Blood samples»", "read_on": "2026-10-21"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "Blood samples were collected at three intervals during flight, always shortly before undock of a visiting vehicle, and were immediately returned (ambient) for analysis.", "where": "Introduction", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "serie-roja-en-tres-sesiones-de-vuelo",
+      "match": {"keys": ["erythrocytes", "hemoglobin", "hematocrit", "mcv", "mch", "mchc", "platelets"]},
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído en el estudio de NASA sobre el hemograma de 31 tripulantes de la ISS (Kunz et al., 2017), el mismo que da el tubo EDTA de la serie roja: en vuelo, la sangre se tomó en las dos primeras semanas, entre los meses 2 y 4 y hacia los 6 meses, justo antes del regreso, coincidiendo con los regresos de tripulación para que llegara al laboratorio en menos de 48 h. Es el calendario de ese estudio, atado a los regresos.",
+      "sources": [
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "In-flight, samples were collected within the first 2 weeks of flight (early), between months 2 and 4 of the mission (mid), and approximately 6 months into the mission, immediately prior to return (late).", "where": "Methods, «Blood sampling»", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "In-flight samples were collected in conjunction with crew returns and returned to the laboratory within 48 h, enabling an examination of ambient blood samples collected on board the International Space Station (ISS).", "where": "Background", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "saliva-en-siete-sesiones",
+      "match": {"equipment": "muestra de saliva y análisis"},
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído en el estudio de NASA sobre virus latentes en misiones largas de la ISS (Mehta et al., 2017), el mismo que da el papel de filtro y las Salivettes: la saliva se tomó en siete sesiones, tres de ellas en vuelo (hacia el día 14, entre los días 60 y 120 y hacia el 180), con cuatro muestras por sesión para los virus y, para el cortisol diurno, cinco al día en cada día de muestreo. Es el calendario de ese estudio; en el protocolo de medidas estándar de 2025 la saliva para virología también se toma antes, durante y después del vuelo (Hardy et al., tabla 2), con las sesiones de vuelo de `sangre-del-protocolo-en-sesiones-de-vuelo`.",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Four saliva samples were collected at each of 7 sampling sessions, approximately corresponding to the following time points: Sessions 1–2: 180 and 45 days before flight; Sessions 3–5: during flight at mission day 14 days (early), between mission days 60–120 days (mid-mission) and about 180 days (late); Sessions 6–7: 3 h after landing and 30 days after landing", "where": "Materials and methods, «Sample collection» (sin la llamada a figura que cierra la frase)", "read_on": "2026-10-31"},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Diurnal dry saliva samples (5 per sampling day) were collected at awakening and 30 min, 6 h, and 10 h after awakening, as well as on retiring, using a unique filter-paper collection method.", "where": "Materials and methods, «Diurnal salivary cortisol and DHEA»", "read_on": "2026-10-20"}
+      ]
+    },
+    {
+      "id": "orina-de-vuelo-en-cinco-tomas",
+      "match": {"keys": ["urine-volume-24h", "ntx-telopeptide"]},
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído: el experimento de nutrición de la ISS tomó sangre y orina cinco veces en vuelo para analizarlas tras el regreso (Smith et al., 2012). La frase habla de la muestra de orina, no del marcador: alcanza al volumen de 24 h y al NTX, que se mide en orina de laboratorio, como la regla de las bolsas. Matices: en el protocolo de medidas estándar de 2025 no hay recogida de orina en vuelo, y en el estudio de los virus latentes el pool de 24 h se recogió solo antes y después del vuelo (ver discrepancias).",
+      "sources": [
+        {"ref": "ntrs-20130000839", "quote": "The primary activity of this effort was collecting blood and urine samples 5 times during flight for analysis after return to Earth.", "where": "resumen (PDF de una página), primer párrafo", "read_on": "2026-10-14"}
+      ],
+      "discrepancies": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "There are no inflight urine collections.", "where": "«Biochemical markers»", "read_on": "2026-10-20", "note": "En el protocolo de medidas estándar de NASA descrito en 2025 la orina de 24 h se recoge solo antes y después del vuelo: en ese protocolo, la frecuencia posible en vuelo es ninguna. La regla sigue al protocolo que sí la tomó en vuelo, y lo dice."},
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "Twenty four-hour urine pool samples were collected before and after flight.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-31", "note": "En el estudio de los virus latentes el pool de orina de 24 h también se recogió solo antes y después del vuelo; en vuelo hubo una sola muestra de orina por tripulante («There was only one urine sample inflight», nota de la tabla 3). Dos protocolos, dos cadencias: la regla no inventa la de EMMA."}
+      ]
+    },
+    {
+      "id": "prueba-de-reaccion-en-las-sesiones-del-protocolo",
+      "match": {"equipment": "test PVT"},
+      "set": {"frequency": "mission-timepoints"},
+      "basis": "Leído en el protocolo de medidas estándar de NASA descrito en 2025 (Hardy et al.): la batería cognitiva (CTB) se pasa antes, durante y después del vuelo (tabla 2, fila «Cognitive test battery»: «Pre/In/Post»; y la frase de los 25 astronautas, cuyos cambios se vieron «during flight»), una de sus diez pruebas es la de vigilancia psicomotora, y las sesiones de vuelo son las del protocolo (a mitad en las misiones cortas; primer mes, mitad y último mes en las de 105 a 240 días; una más en las largas). Es el calendario de la CTB, que lleva la PVT dentro de una batería de diez pruebas; EMMA pasa la PVT-B de 3 minutos sola (`crew_time_basis`), y la frase no dice que sea la misma versión.",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Speed is usually measured by how quickly someone responds, except in one of the tests (called the psychomotor vigilance test) where a special formula is used to better detect the effects of being tired.", "where": "«Cognition test battery (CTB)»", "read_on": "2026-10-31"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "Recent CTB analyses of 25 professional astronauts during standard duration missions on the ISS found no evidence of a systematic decline in overall cognitive function; however, significant reductions in processing speed, working memory, and sustained attention occurred during flight.", "where": "«Cognition test battery (CTB)» (llamada a la referencia 16 omitida, antes del punto)", "read_on": "2026-10-31"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "During standard-duration ISS missions (105–240 days), data is collected during the first month, at mid-flight, and during the last month of the mission.", "where": "«Experimental Design»", "read_on": "2026-10-31"}
+      ]
+    },
+    {
+      "id": "perfil-litiasico-anual-y-posvuelo",
+      "match": {"keys": ["urine-calcium-24h", "urine-oxalate-24h", "urine-urate-24h", "urine-citrate-24h", "urine-ph-24h", "urine-sodium-24h", "urine-osmolality-24h", "urine-caox-supersaturation-24h"]},
+      "set": {"frequency": "ground-only", "storage": "nothing-aboard"},
+      "basis": "Leído en el informe de evidencia del riesgo de cálculos renales (HRP, 2024), el mismo que da dónde se procesa el perfil: la valoración se hace cada año y después del vuelo, en la exploración médica a los 3 y a los 30 días del regreso. El protocolo de medidas estándar de NASA descrito en 2025 lo confirma para él: no hay recogida de orina en vuelo, y su tabla 2 da el «Renal stone profile» como «Pre/Post». Por eso aquí es un calendario de Tierra: sin toma de 24 horas en vuelo, nada que guardar a bordo. Matices: otro experimento sí recogió orina en vuelo y no dice qué analitos midió (ver discrepancias), y es lo que sostiene las cinco tomas de `orina-de-vuelo-en-cinco-tomas`; y el anexo de operaciones para Marte supone a bordo una tira de orina para el oxalato cálcico, que no es este perfil (ver `perfil-litiasico-en-tierra`).",
+      "sources": [
+        {"ref": "hrp-renal-stone-evidence-report", "quote": "Currently, this assessment is performed annually as well as post-flight, during the comprehensive medical examination, performed twice at 3 and 30 days after return in all crews.", "where": "«Renal Stone Risk Assessment», página 23", "read_on": "2026-10-26"},
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "There are no inflight urine collections.", "where": "«Biochemical markers»", "read_on": "2026-10-20"}
+      ],
+      "discrepancies": [
+        {"ref": "ntrs-20130000839", "quote": "The primary activity of this effort was collecting blood and urine samples 5 times during flight for analysis after return to Earth.", "where": "resumen (PDF de una página), primer párrafo", "read_on": "2026-10-14", "note": "Ese experimento de nutrición tomó orina en vuelo; la frase no dice qué analitos se midieron en ella, y por eso no se lee como este perfil. Dos protocolos, dos cadencias."}
+      ]
+    },
+    {
+      "id": "densitometria-antes-y-despues-del-vuelo",
+      "match": {"keys": ["bmd-dxa-lumbar-spine", "bmd-dxa-hip"]},
+      "set": {"frequency": "ground-only", "storage": "nothing-aboard"},
+      "basis": "Leído en el resumen técnico de NASA sobre la pérdida ósea (OCHMO-MTB-013 Rev D), el mismo que da dónde se procesa: la densidad mineral ósea se vigila en Tierra antes y después del vuelo, y ningún equipo la mide hoy en vuelo. Sin medida en vuelo, nada que guardar a bordo. La frase no dice cada cuánto se repite en Tierra.",
+      "sources": [
+        {"ref": "ochmo-mtb-013", "quote": "NASA monitors crew terrestrially pre- and post-flight but no system to date measures bone density in-flight.", "where": "«Application», página 19", "read_on": "2026-10-26"}
+      ]
+    },
+    {
+      "id": "suero-congelado-a-bordo",
+      "match": {
+        "equipment": "extracción de sangre y analizador",
+        "keys": [
+          "c-reactive-protein", "urea", "creatinine", "sodium", "potassium", "chloride", "calcium",
+          "phosphate", "magnesium", "estradiol", "fsh", "lh", "glucose", "total-protein", "albumin",
+          "ast", "alt", "ggt", "alkaline-phosphatase", "bilirubin-total", "bilirubin-direct", "ldh",
+          "tsh", "free-t4", "ca-15-3", "cea", "ca-125", "ca-19-9", "ca-27-29", "beta2-microglobulin",
+          "chromogranin-a", "neuron-specific-enolase", "vitamin-d-25oh"
+        ]
+      },
+      "set": {"storage": "sample-frozen-aboard"},
+      "basis": "Leído: en el protocolo de medidas estándar de NASA descrito en 2025, las muestras de vuelo, tras centrifugarlas, pasan al congelador de la ISS a -96 °C hasta que vuelven a Tierra (Hardy et al., 2025); y «hoy» la sangre tomada en la ISS se congela y se devuelve para analizarla tras la misión (Brawley et al., 2025). Las frases hablan de la muestra, no de cada analito: alcanzan a lo que EMMA mide en suero, como la regla de los tubos. El hemograma no entra: sus estudios devolvieron la sangre a temperatura ambiente (`leucocitos-devueltos-a-temperatura-ambiente`, `serie-roja-en-bolsas-a-temperatura-ambiente`). Cuánto sitio ocupa en el congelador no lo dice ninguna frase.",
+      "sources": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "After centrifugation, samples are placed in a -80 °C laboratory freezer (pre- and post-flight samples) or are transferred to the -96 °C ISS freezer (inflight samples) where they are stored until the samples are returned to Earth via a cargo or manned vehicle return such as the SpaceX Dragon capsule.", "where": "«Biochemical markers»", "read_on": "2026-10-20"},
+        {"ref": "brawley-2026-raman-sers", "quote": "Currently, blood samples collected on the International Space Station (ISS) are frozen and returned for post-mission analysis, highlighting a significant gap in the capacity for real-time physiological monitoring.", "where": "1. Introduction, primer párrafo", "read_on": "2026-10-14"}
+      ]
+    },
+    {
+      "id": "leucocitos-devueltos-a-temperatura-ambiente",
+      "match": {"keys": ["leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent"]},
+      "set": {"storage": "sample-ambient-aboard"},
+      "basis": "Leído en el estudio inmunitario de NASA con 23 tripulantes de la ISS (Crucian et al., 2015): la sangre de vuelo se devolvió a Tierra en el acto, a temperatura ambiente, en menos de 48 h, porque a bordo no había equipo analítico de inmunología ni hematología. La muestra espera a temperatura ambiente lo que tarda el vehículo; la frase no dice dónde ni en qué se guardó mientras.",
+      "sources": [
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "Blood samples were collected at three intervals during flight, always shortly before undock of a visiting vehicle, and were immediately returned (ambient) for analysis.", "where": "Introduction", "read_on": "2026-10-31"},
+        {"ref": "crucian-2015-adaptive-immunity-iss", "quote": "In-flight samples were returned to Earth within 48 h of collection for immediate analysis.", "where": "resumen, «Methods»", "read_on": "2026-10-21"}
+      ]
+    },
+    {
+      "id": "serie-roja-en-bolsas-a-temperatura-ambiente",
+      "match": {"keys": ["erythrocytes", "hemoglobin", "hematocrit", "mcv", "mch", "mchc", "platelets"]},
+      "set": {"storage": "sample-ambient-aboard"},
+      "basis": "Leído en el estudio de NASA sobre el hemograma de 31 tripulantes de la ISS (Kunz et al., 2017): la sangre de vuelo se guardó en bolsas de sangre a medida y pasó al vehículo de regreso, a temperatura ambiente, para analizarla en Tierra en menos de 48 h. Matiz: el mismo estudio dice que una sangre a temperatura ambiente devuelta del espacio es rara (ver discrepancias): es lo que hizo ese estudio, no el uso ordinario.",
+      "sources": [
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "This investigation collected whole blood samples from astronauts participating in up to 6-months orbital spaceflight, and returned those samples (ambient storage) to Earth for analysis.", "where": "resumen, «Methods»", "read_on": "2026-10-22"},
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "Collected blood samples were stored in customized blood pouches and transferred to the returning vehicle for return to Earth.", "where": "Methods, «Processing»", "read_on": "2026-10-31"}
+      ],
+      "discrepancies": [
+        {"ref": "kunz-2017-hematologic-indices-iss", "quote": "As hematology indices generally do not tolerate freezing and ambient blood samples are rarely returned from space, there is a dearth of in-flight hematologic indices during long-duration spaceflight.", "where": "Background", "read_on": "2026-10-31", "note": "El hemograma no aguanta la congelación y la sangre a temperatura ambiente rara vez vuelve del espacio: lo que la regla describe es lo que hizo ese estudio, no lo que se hace de ordinario con la sangre de vuelo, que se congela (`suero-congelado-a-bordo`)."}
+      ]
+    },
+    {
+      "id": "saliva-virus-a-temperatura-ambiente",
+      "match": {"keys": ["latent-virus-shedding"]},
+      "set": {"storage": "sample-ambient-aboard"},
+      "basis": "Leído en el estudio de NASA sobre virus latentes en misiones largas de la ISS (Mehta et al., 2017), el mismo que da las Salivettes: las muestras de saliva se guardaron a temperatura ambiente unas dos semanas hasta volver a Tierra. Matiz: en el protocolo de medidas estándar de 2025 la saliva para virología se guarda congelada hasta procesarla, sin decir dónde (ver discrepancias).",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "The samples were stored at ambient temperature for approximately 2 weeks before return to Earth for analysis.", "where": "Materials and methods, «Sample collection»", "read_on": "2026-10-31"}
+      ],
+      "discrepancies": [
+        {"ref": "hardy-2025-spaceflight-standard-measures", "quote": "For virology, saliva samples are collected first thing in the morning before eating or drinking and then stored frozen until processing.", "where": "«Cellular profile»", "read_on": "2026-10-31", "note": "En el protocolo de medidas estándar de NASA descrito en 2025 la saliva para virología se guarda congelada; la frase no dice si a bordo o ya en Tierra. Dos protocolos, dos destinos: la regla sigue al estudio que dice dónde esperó la muestra y enseña el otro al lado."}
+      ]
+    },
+    {
+      "id": "saliva-cortisol-secada-a-temperatura-ambiente",
+      "match": {"keys": ["cortisol-salivary"]},
+      "set": {"storage": "sample-ambient-aboard"},
+      "basis": "Leído en el mismo estudio (Mehta et al., 2017), el que da el papel de filtro: la saliva para el cortisol diurno se dejó secar al aire en el papel y se guardó a temperatura ambiente hasta el regreso a Tierra.",
+      "sources": [
+        {"ref": "mehta-2017-latent-virus-iss", "quote": "In short, the subject wet the filter paper with saliva, which was then air-dried at room temperature storage until return to Earth.", "where": "Materials and methods, «Diurnal salivary cortisol and DHEA»", "read_on": "2026-10-20"}
+      ]
+    },
+    {
+      "id": "calculo-sin-almacen-ni-calendario-propios",
+      "match": {"keys": ["neutrophil-lymphocyte-ratio", "bun-creatinine-ratio"]},
+      "set": {"storage": "no-own-storage", "frequency": "no-own-schedule"},
+      "basis": "Los dos cocientes se calculan de los analitos del mismo informe (`reports/labs.py`; sus `inputs` en este fichero): no añaden muestra que guardar ni calendario propio; se tienen cuando se tienen sus entradas. El almacenamiento y la frecuencia de sus entradas no se heredan (solo dónde se procesan y cuándo llegan, `INHERITED_DIMENSIONS`). La dosis acumulada queda fuera, como en `calculo-sin-equipo-propio`: llega registrada, no se calcula en EMMA."
+    }
+  ],
+  "searched_not_found": [
+    {
+      "keys": ["glucose-capillary"],
+      "dimensions": ["calibration", "training"],
+      "searched_on": "2026-11-04",
+      "searched": "Si el glucómetro se calibra y qué formación lleva quien lo usa. Leídas enteras la página de los CDC «Monitoring Your Blood Sugar» y la de MedlinePlus «Blood sugar test»: ninguna nombra la calibración ni una solución de control. Los CDC dicen que la mayoría de los glucómetros funcionan igual y que el equipo sanitario enseñe a usarlo («There are different kinds of meters, but most of them work the same way. Ask your health care team to show you how they work.»), sin decir qué formación ni cuánto dura, y hablan de personas con diabetes en Tierra. Si hay glucómetro a bordo de la ISS y quién se forma para usarlo: no se ha leído ninguna fuente que lo diga."
+    },
+    {
+      "keys": ["ovulation-test"],
+      "dimensions": ["calibration", "training"],
+      "searched_on": "2026-11-15",
+      "searched": "Si el test casero de ovulación se calibra y qué formación lleva quien lo usa. Releída la página de MedlinePlus «Ovulation home test» (revisada el 22 de mayo de 2025) que ya cita lo leído de la medida: el primer párrafo, «How the Test is Performed», «How to Prepare for the Test», «How the Test will Feel» y «Normal Results». No nombra calibración ni solución de control; de cómo se usa solo dice que el folleto del kit explica cómo leer el resultado («The booklet that is included in the kit will tell you how to read the results.»), sin decir qué formación ni cuánto dura, y habla de personas en Tierra. La misma página dice que el resultado se ve en la propia tira («The test stick will turn a certain color or display a positive sign if a surge is detected.»): no hay análisis aparte, y por eso la capacidad de automatización tampoco se deduce de la clase «periódico, con muestra» (como el glucómetro). No se leyó la documentación de ningún fabricante. Si hay tests de ovulación a bordo de la ISS: no se ha leído ninguna fuente que lo diga."
+    },
+    {
+      "keys": ["urine-specific-gravity"],
+      "dimensions": ["processing", "result", "consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Dónde y con qué se mide en vuelo la densidad de la orina. Buscado el 2026-10-21 en NTRS («urine specific gravity flight»: solo estudios en Tierra —reposo en cama, aceleración y presión negativa en la parte inferior del cuerpo— y uno comparado con datos del Skylab; «urine specific gravity spaceflight»: un estudio de entrenamiento de EVA en piscina), en el resumen de NTRS 20140013382 (análisis de laboratorio para misiones de exploración: habla de lo que hará falta, no de lo que hay hoy en la ISS), en el texto completo de Hardy et al. 2025 (no aparecen «specific gravity» ni «refractometer») y en la web por el botiquín médico de la ISS (CHeCS) y sus tiras de orina, y por el experimento Biochemical Profile. Buscado otra vez el 2026-10-22: el inventario del equipo médico de la ISS de 2016 (ISS Medical Project, diapositiva 21) lista como consumibles de orina el dispositivo de recogida, la bolsa de contención, las jeringas y un kit de pH, nada para la densidad; y la búsqueda en la web por tiras reactivas o refractómetro en el botiquín de la ISS solo devolvió estudios en Tierra. Ninguna frase dice dónde ni con qué se mide."
+    },
+    {
+      "keys": [
+        "heart-rate", "hrv-sdnn", "hrv-rmssd", "respiratory-rate", "oxygen-saturation",
+        "body-temperature", "sleep-duration", "sleep-efficiency", "circadian-shift", "loading-impacts"
+      ],
+      "dimensions": ["consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Si gastan material los sensores que se llevan puestos. Leídos: la ficha del Bio-Monitor de la CSA (camiseta y cinta con sensores metálicos contra la piel y una batería que se enchufa a una base; no nombra consumibles, electrodos de un solo uso, gel ni recambio de prendas), el inventario del equipo médico de la ISS de 2016 (ISS Medical Project: la ficha del Actiwatch Spectrum —reloj, base, cable y programa— no nombra consumibles; los electrodos del kit de suministros solo los nombra la ficha del Holter, que no es el equipo de ningún indicador de EMMA) y el resumen de NTRS 20190001996 (Astroskin en HERA: que el sistema gaste pocos consumibles es lo que NASA pide a un sistema futuro, no lo que se dice que gaste Astroskin). Las fichas de equipo del ISS Research Explorer (Bio-Monitor, Actiwatch Spectrum) se cargan en el navegador y la herramienta de lectura no las ve; su listado descargable (All_Facilities_Report.xlsx) da nombre, responsables, expediciones y categoría, no la descripción. Que una ficha no nombre consumibles no dice que no se gasten."
+    },
+    {
+      "keys": ["systolic-bp", "diastolic-bp", "orthostatic-drop"],
+      "dimensions": ["consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Qué gasta la toma de la presión arterial en vuelo. El listado del ISS Research Explorer nombra un tensiómetro continuo del HRF (Continuous Blood Pressure Device, expediciones 13 a 43/44), cuya ficha no se pudo leer (se carga en el navegador); la ficha del Bio-Monitor de la CSA dice que mide la presión arterial, no cómo ni con qué material; el inventario del equipo médico de la ISS de 2016 (ISS Medical Project) no lista tensiómetro. Ninguna frase dice qué gasta."
+    },
+    {
+      "keys": ["body-weight"],
+      "dimensions": ["consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Qué gasta la medida de masa en microgravedad. El inventario del equipo médico de la ISS de 2016 (ISS Medical Project, diapositiva 13) describe el SLAMMD —dos muelles empujan al tripulante montado en un brazo y la aceleración da la masa— sin nombrar consumibles; la ficha del ISS Research Explorer no se pudo leer (se carga en el navegador). Que no los nombre no dice que no los gaste."
+    },
+    {
+      "keys": ["vo2-peak"],
+      "dimensions": ["consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Qué gasta la prueba de esfuerzo con analizador de gases (cicloergómetro CEVIS y Portable PFS). Leídos: el inventario del equipo médico de la ISS de 2016 (ISS Medical Project, diapositiva 11: el Pulmonary Function System, con accesorios para reinhalación y bolsa de mezcla, sin nombrar consumibles), la página del Portable PFS de su fabricante, Danish Aerospace Company (toma el gas del Gas Delivery System de NASA; no dice cuánto gasta una prueba ni nombra boquillas, pinzas nasales o filtros), la de ESA sobre el PFS (27 de octubre de 2005: nada sobre consumibles) y el resumen del estudio de VO2 pico en la ISS (Moore et al., NTRS 20140003748: no describe el equipo). El artículo completo de ese estudio (J Appl Physiol) respondió 403, y las fichas del ISS Research Explorer (CEVIS, PFS, Portable PFS) se cargan en el navegador. Ninguna frase dice que la prueba gaste boquillas, filtros o gas."
+    },
+    {
+      "keys": ["grip-strength-right", "grip-strength-left"],
+      "dimensions": ["consumables"],
+      "searched_on": "2026-10-22",
+      "searched": "Qué gasta el dinamómetro de mano. El listado del ISS Research Explorer nombra un dinamómetro de mano y de pinza (Hand Grip Dynamometer-Pinch Force Dynamometer, de Kayser Italia, expediciones 7, 8, 11 y 16), cuya ficha no se pudo leer (se carga en el navegador); la búsqueda en la web por ese nombre no devolvió ninguna ficha del equipo, y el inventario de 2016 (ISS Medical Project) no lo lista. Ninguna frase dice qué gasta."
+    },
+    {
+      "keys": ["cumulative-dose"],
+      "dimensions": ["processing", "result"],
+      "searched_on": "2026-10-22",
+      "searched": "Dónde se calcula la dosis acumulada que llega registrada. Leída la página del Space Radiation Analysis Group de NASA (srag.jsc.nasa.gov, «How do we protect the astronauts from space radiation?», actualizada el 24 de septiembre de 2025): en la ISS hay dos caminos. La dosimetría pasiva da la dosis de la misión solo al regreso; desde 2020, los Crew Active Dosimeters miden y registran la dosis de cada tripulante durante la misión, la mandan por Bluetooth a los portátiles de a bordo para bajarla al SRAG y enseñan en su pantalla la dosis total de la misión. EMMA no dice de cuál de los dos llega su dosis (`POST /api/observations`, de un dosímetro): elegir uno sería clasificar a ojo, y sigue sin clasificar."
+    },
+    {
+      "keys": ["onsd-left", "onsd-right", "ijv-csa-left", "ijv-csa-right", "bladder-volume"],
+      "dimensions": ["mass", "volume", "power", "calibration"],
+      "searched_on": "2026-10-23",
+      "searched": "Masa, tamaño, potencia y calibración del ecógrafo. Leídos enteros el inventario del equipo médico de investigación de la ISS de 2016 (ISS Medical Project) y el resumen de las instalaciones de investigación humana de 2023 (NASA HRP, NTRS 20230009091): del Ultrasound 2 dan el modelo (un Vivid q de GE modificado), las sondas y los accesorios, y que se enchufa al rack del HRF para tomar energía; del rack, que cada carga puede usar hasta 500 W y todas juntas hasta 2000 W. Eso es un tope del rack, no lo que gasta el ecógrafo, y no se escribe como su potencia. La única masa y el único tamaño del documento de 2023 son los del kit de accesorios del electrorretinógrafo, que no es equipo de ningún indicador de EMMA. Buscada en la web la ficha del fabricante del Vivid q: solo aparecieron las de su sucesor (Vivid iq), que es otro aparato. Del estudio de la yugular de 2019 (Marshall-Goebel et al.) la única calibración es la de un manómetro que se ponía a cero antes de cada medida de presión venosa, que no es una medida de EMMA."
+    },
+    {
+      "keys": ["onsd-left", "onsd-right", "ijv-csa-right", "bladder-volume"],
+      "dimensions": ["training"],
+      "searched_on": "2026-10-23",
+      "searched": "Quién guía la toma de las demás ecografías y qué formación lleva quien la hace. El estudio de la yugular de 2019 solo tomó la izquierda. El resumen de una ponencia de NASA de 2004 sobre ecografía a distancia en la ISS (NTRS 20110011352, Sargsyan et al.) dice que la formación de los astronautas suele asegurar que trabajen solos y que ha habido sesiones guiadas en tiempo real, sin nombrar la vaina del nervio óptico ni la vejiga. Los dos inventarios (2016 y 2023) no hablan de formación."
+    },
+    {
+      "keys": ["body-weight"],
+      "dimensions": ["mass", "volume", "power", "training"],
+      "searched_on": "2026-10-23",
+      "searched": "Masa, tamaño y potencia del SLAMMD y formación de quien lo maneja. Sus fichas en el inventario de 2016 y en el resumen de 2023 dan su principio (dos muelles, una fuerza conocida y la aceleración que produce) y su exactitud, no su masa, tamaño, consumo ni formación; el informe diario del 29 de octubre de 2019 cuenta su calibración y tampoco dice nada de eso."
+    },
+    {
+      "keys": ["vo2-peak"],
+      "dimensions": ["mass", "volume", "power", "training"],
+      "searched_on": "2026-10-23",
+      "searched": "Masa, tamaño y potencia del analizador de gases de la prueba de esfuerzo y formación de quien lo maneja. El inventario de 2016 describe el PFS (módulos, medidas y una unidad electrónica que ocupa un cajón del rack) y el resumen de 2023 los cilindros del sistema de gases (su capacidad, no el tamaño del analizador); ninguno da masa, tamaño ni consumo del analizador, ni formación."
+    },
+    {
+      "keys": ["sleep-duration", "sleep-efficiency", "circadian-shift"],
+      "dimensions": ["mass", "volume", "power"],
+      "searched_on": "2026-10-23",
+      "searched": "Masa, tamaño, batería y calibración del actígrafo. El inventario de 2016 nombra el Actiwatch Spectrum (reloj, base, cable y programa) y el resumen de 2023 el Actiwatch Plus (resistente al agua, en la muñeca, con acelerómetro de tres ejes y sensor de luz): ninguno da masa, tamaño, batería ni calibración. EMMA no dice qué actígrafo es el suyo. Lo de arriba es lo que dieron esos dos documentos el 2026-10-23. La calibración, que no daban, apareció después en otra fuente, la hoja de servicio del fabricante del Actiwatch Spectrum (leída el 2026-10-26; regla `actigrafo-con-recalibracion-del-fabricante`), y esta nota ya no la cuenta como no encontrada: queda sin fuente lo demás, masa, tamaño y batería."
+    },
+    {
+      "keys": ["systolic-bp", "diastolic-bp", "orthostatic-drop", "grip-strength-right", "grip-strength-left"],
+      "dimensions": ["mass", "volume", "power", "calibration", "training"],
+      "searched_on": "2026-10-23",
+      "searched": "Masa, tamaño, potencia, calibración y formación del tensiómetro y del dinamómetro de mano. El resumen de las instalaciones de 2023 no lista ni tensiómetro ni dinamómetro entre su equipo; el estudio de la yugular de 2019 nombra el tensiómetro ambulatorio que se usó en la ISS (Tonoport V, de GE) sin dar nada de eso. Las fichas del ISS Research Explorer siguen sin poder leerse con la herramienta (decimoquinta ronda)."
+    },
+    {
+      "keys": ["heart-rate", "hrv-sdnn", "hrv-rmssd", "respiratory-rate", "oxygen-saturation", "body-temperature", "loading-impacts"],
+      "dimensions": ["calibration"],
+      "searched_on": "2026-10-26",
+      "searched": "Si se calibran los sensores que se llevan puestos. Leídos: la ficha del Bio-Monitor de la CSA (modificada el 26 de febrero de 2026: camiseta, cinta, sensores metálicos contra la piel, batería y base; no habla de calibración), el resumen de NTRS 20190001996 y el póster de NTRS 20190000238 (la Astroskin en el análogo HERA: calidad de los datos, comodidad y Bluetooth, nada de calibración). La búsqueda en la web («Bio-Monitor Astroskin ISS astronaut training calibration CSA») solo devolvió páginas del fabricante (Hexoskin) y de prensa sobre su uso en la ISS, ninguna con su calibración. Del pulsioxímetro, el sensor de temperatura y el acelerómetro de EMMA no se leyó ningún equipo de la estación con ese nombre. Que una ficha no hable de calibración no dice que no la necesite."
+    },
+    {
+      "keys": ["oxygen-saturation", "body-temperature", "loading-impacts", "sleep-duration", "sleep-efficiency", "circadian-shift"],
+      "dimensions": ["training"],
+      "searched_on": "2026-10-26",
+      "searched": "Qué formación lleva quien usa el pulsioxímetro, el sensor de temperatura, el acelerómetro y el actígrafo. El póster del análogo HERA (NTRS 20190000238) cuenta la formación en la Astroskin, que lleva una cinta con sensor de saturación y mide la temperatura de la piel y la actividad, pero EMMA nombra esos equipos aparte y no dice que sean los de la camiseta; la ficha del Bio-Monitor de la CSA no habla de formación; del actígrafo, tampoco la ficha del Actiwatch Spectrum en el inventario de la ISS de 2016 (reloj, base, cable y programa) ni la hoja de servicio de su fabricante (Philips)."
+    },
+    {
+      "keys": ["absorbed-dose-rate"],
+      "dimensions": ["training"],
+      "searched_on": "2026-10-26",
+      "searched": "Qué formación lleva quien maneja el dosímetro de la nave. Berger et al. 2017 (los DOSTEL de DOSIS 3D) cuenta su montaje bajo el rack EPM de Columbus, la bajada de datos por ese rack cada cuatro semanas y da las gracias a los astronautas que trabajaron en el experimento, sin hablar de su formación; la página del SRAG (actualizada el 24 de septiembre de 2025) describe el RAD, los REM, el HERA y los Crew Active Dosimeters sin hablar de formación."
+    },
+    {
+      "keys": ["cumulative-dose"],
+      "dimensions": ["calibration", "training"],
+      "searched_on": "2026-10-26",
+      "searched": "Calibración y formación del dosímetro del que llega la dosis acumulada. La página del SRAG (actualizada el 24 de septiembre de 2025) dice de los Crew Active Dosimeters que pasan de los cambios eléctricos a una dosis absorbida con una relación obtenida en calibraciones en Tierra, y de la dosimetría pasiva no dice cómo se calibra. EMMA no dice de cuál de los dos llega su dosis (por lo mismo quedó sin clasificar dónde se procesa, el 2026-10-22), y elegir uno sería clasificar a ojo. De formación, la página no dice nada."
+    },
+    {
+      "keys": [
+        "leukocytes", "lymphocytes", "neutrophils", "lymphocytes-percent", "neutrophils-percent",
+        "c-reactive-protein", "urea", "creatinine", "sodium", "potassium", "chloride", "calcium", "phosphate", "magnesium",
+        "estradiol", "fsh", "lh", "glucose", "total-protein", "albumin", "ast", "alt", "ggt", "alkaline-phosphatase",
+        "bilirubin-total", "bilirubin-direct", "ldh", "tsh", "free-t4", "ca-15-3", "cea", "ca-125", "ca-19-9", "ca-27-29",
+        "beta2-microglobulin", "chromogranin-a", "neuron-specific-enolase", "vitamin-d-25oh",
+        "ntx-telopeptide", "urine-volume-24h", "urine-specific-gravity", "cortisol-salivary", "latent-virus-shedding"
+      ],
+      "dimensions": ["calibration"],
+      "searched_on": "2026-10-26",
+      "searched": "Si se calibran los analizadores de la sangre, la orina y la saliva, salvo el del hemograma de la serie roja. Releídos: Crucian et al. 2015 (el recuento de leucocitos se hizo con «a standard clinical hematology analyzer», sin nombrar su calibración), Hardy et al. 2025 (texto completo en Europe PMC: no aparece «calibrat»), Mehta et al. 2017 (la saliva y la orina de los virus latentes y el cortisol: tampoco) y el PDF de NTRS 20130000839 (Smith et al., estado nutricional: tampoco). Del volumen de la orina de 24 h, el resumen de NTRS 20090007818 nombra la calibración en órbita del UMS que voló en los transbordadores (lenta), no la del método del litio con el que hoy se calcula en Tierra. Que el texto no nombre la calibración no dice que el analizador no se calibre."
+    },
+    {
+      "keys": [
+        "erythrocytes", "hemoglobin", "hematocrit", "mcv", "mch", "mchc", "platelets",
+        "c-reactive-protein", "urea", "creatinine", "sodium", "potassium", "chloride", "calcium", "phosphate", "magnesium",
+        "estradiol", "fsh", "lh", "glucose", "total-protein", "albumin", "ast", "alt", "ggt", "alkaline-phosphatase",
+        "bilirubin-total", "bilirubin-direct", "ldh", "tsh", "free-t4", "ca-15-3", "cea", "ca-125", "ca-19-9", "ca-27-29",
+        "beta2-microglobulin", "chromogranin-a", "neuron-specific-enolase", "vitamin-d-25oh",
+        "ntx-telopeptide", "urine-volume-24h", "urine-specific-gravity", "cortisol-salivary", "latent-virus-shedding"
+      ],
+      "dimensions": ["training"],
+      "searched_on": "2026-10-26",
+      "searched": "Qué formación lleva quien toma la sangre, la orina y la saliva, salvo la extracción del estudio de los leucocitos. Releídos: Kunz et al. 2017 (una foto de una astronauta haciendo una extracción en la ISS, sin decir su formación), Hardy et al. 2025 (nombra la formación de la tripulación solo como algo que hay que tener en cuenta al llevar el protocolo a misiones privadas), Mehta et al. 2017 y el PDF de NTRS 20130000839: ninguno dice qué formación lleva quien toma la muestra. Los resúmenes de NTRS de la recogida de orina (20090013860, 20090007818 y 20110008547) cuentan lo que hace el tripulante, no su formación."
+    },
+    {
+      "keys": ["oxygen-saturation", "body-temperature", "loading-impacts"],
+      "dimensions": ["frequency"],
+      "searched_on": "2026-10-31",
+      "searched": "Con qué frecuencia se puede medir con el pulsioxímetro, el sensor de temperatura y el acelerómetro. La ficha del Bio-Monitor de la CSA dice que la camiseta con sensores mide de forma continua, pero EMMA nombra esos tres equipos aparte y no dice que sean los de la camiseta (como en la formación, el 2026-10-26); el protocolo de medidas estándar de 2025 (Hardy et al., tabla 1, medidas de operaciones médicas compartidas) lista la temperatura, la saturación y la frecuencia respiratoria en el estado de salud periódico de vuelo («Periodic Health Status», «In»), sin cadencia. Ninguna frase da la frecuencia de esos equipos."
+    },
+    {
+      "keys": [
+        "heart-rate", "hrv-sdnn", "hrv-rmssd", "respiratory-rate", "oxygen-saturation",
+        "body-temperature", "loading-impacts", "sleep-duration", "sleep-efficiency", "circadian-shift"
+      ],
+      "dimensions": ["storage"],
+      "searched_on": "2026-10-31",
+      "searched": "Cuánto ocupan los datos de los sensores que se llevan puestos y del actígrafo. La ficha del Bio-Monitor de la CSA dice que el sistema registra los datos («records vital sign data») y que la batería se enchufa a una base que los baja a Tierra, sin cifra de volumen; el protocolo de medidas estándar de 2025 (Hardy et al.) describe los periodos de registro de la actigrafía y que los datos del protocolo se guardan en el archivo de ciencias de la vida de NASA («Data from these crewmembers are stored in the Standard Measures repository within the NASA Life Sciences Data Archives»), sin el volumen de ninguno. Ninguna frase leída da un volumen de datos, y sin cifra el almacenamiento de un dato queda sin clasificar."
+    },
+    {
+      "keys": ["body-weight"],
+      "dimensions": ["frequency"],
+      "searched_on": "2026-10-31",
+      "searched": "Cada cuánto se mide la masa corporal en vuelo. El protocolo de medidas estándar de 2025 (Hardy et al., tabla 1, medidas de operaciones médicas compartidas) dice «Body mass is measured periodically in flight using the Russian Mass Measurement Device»: periódica, sin cadencia, y con el medidor ruso, no el SLAMMD cuya calibración se leyó. Sin cadencia no hay calendario que copiar."
+    },
+    {
+      "keys": ["systolic-bp", "diastolic-bp", "orthostatic-drop", "vo2-peak"],
+      "dimensions": ["frequency"],
+      "searched_on": "2026-10-31",
+      "searched": "Cada cuánto se toman en vuelo la presión arterial y la prueba de esfuerzo. El protocolo de medidas estándar de 2025 (Hardy et al., tabla 1, medidas de operaciones médicas compartidas) lista la presión arterial y el pulso en el estado de salud periódico de vuelo («Periodic Health Status», «In») y la prueba de esfuerzo en cicloergómetro «Pre/In/Post», sin cadencia ninguna de las dos; las sesiones de vuelo del protocolo (primer mes, mitad, último mes) son las de sus propias medidas, no las de operaciones médicas. Ninguna frase da la cadencia."
+    },
+    {
+      "keys": ["urine-volume-24h", "ntx-telopeptide"],
+      "dimensions": ["storage"],
+      "searched_on": "2026-10-31",
+      "searched": "Cómo se guarda a bordo la orina de vuelo. Mehta et al. 2017 dice que la alícuota del pool de 24 h se congeló hasta el regreso («frozen until return to Earth»), pero en ese estudio el pool se recogió antes y después del vuelo, y el volumen de cada micción de vuelo se calcula del litio de su muestra con jeringa, de cuya conservación a bordo no dice nada; el resumen de NTRS 20090013860 solo dice «for later ground analysis»; en el protocolo de medidas estándar de 2025 no hay orina en vuelo. Del NTX (Smith et al., 2012, resumen de una página) no se lee cómo se guardó la orina. Ninguna frase dice cómo espera a bordo."
+    },
+    {
+      "keys": ["urine-specific-gravity"],
+      "dimensions": ["frequency", "storage"],
+      "searched_on": "2026-10-31",
+      "searched": "Cada cuánto se mide y cómo se guarda la densidad de la orina en vuelo. El protocolo de medidas estándar de 2025 (Hardy et al.) no nombra la densidad (ya se buscó el 2026-10-21) y su tabla 1 lista «Urine analysis» entre las pruebas de laboratorio de operaciones médicas solo antes y después del vuelo («Pre/Post»), sin decir qué incluye; el informe del riesgo de cálculos renales (HRP, 2024, página 24) dice que en la ISS hay tira de orina («urine dipstick testing») sin dar cadencia. Ninguna frase da el calendario ni dice qué se guarda."
+    }
+  ],
+  "indicators": {
+    "heart-rate": {
+      "mode": "continuous-passive",
+      "equipment": "wearable",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "hrv-sdnn": {
+      "mode": "continuous-passive",
+      "equipment": "wearable",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "hrv-rmssd": {
+      "mode": "continuous-passive",
+      "equipment": "wearable",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "respiratory-rate": {
+      "mode": "continuous-passive",
+      "equipment": "wearable",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "oxygen-saturation": {
+      "mode": "continuous-passive",
+      "equipment": "pulsioxímetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "body-temperature": {
+      "mode": "continuous-passive",
+      "equipment": "sensor de temperatura",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "sleep-duration": {
+      "mode": "continuous-passive",
+      "equipment": "actígrafo",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "sleep-efficiency": {
+      "mode": "continuous-passive",
+      "equipment": "actígrafo",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "circadian-shift": {
+      "mode": "continuous-passive",
+      "equipment": "actígrafo",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "loading-impacts": {
+      "mode": "continuous-passive",
+      "equipment": "acelerómetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "exercise-minutes": {
+      "mode": "continuous-passive",
+      "equipment": "registro del equipo de ejercicio",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "absorbed-dose-rate": {
+      "mode": "continuous-passive",
+      "equipment": "dosímetro de nave",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "cumulative-dose": {
+      "mode": "derived",
+      "equipment": "cálculo sobre la dosimetría",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "inputs": ["absorbed-dose-rate"],
+      "inherits": false,
+      "inputs_basis": "No hereda de su entrada. En EMMA esta dosis no se calcula: llega registrada desde fuera (`POST /api/observations`, de un dosímetro) y el motor de riesgo lee la última. La tasa de dosis absorbida es una de sus entradas, no la única: la dosis efectiva que pide NASA-STD-3001 [V1 4030] se calcula con el modelo NASA Q, que necesita el espectro de partículas, y ninguna fuente de EMMA lo publica (`environment/dosimetry.py`). Lo que EMMA sí calcula a bordo con la tasa registrada es la dosis de esta misión (`analysis/radiation.py`, `mission_dose`), inferida con un factor de calidad medio, y no es este indicador. Dónde se calcula la dosis acumulada que llega se buscó el 2026-10-22 (`searched_not_found`): en la ISS hay un dosímetro que se lee al regreso y otro que la da a bordo, y EMMA no dice de cuál llega; sigue sin clasificar."
+    },
+    "systolic-bp": {
+      "mode": "periodic-noninvasive",
+      "equipment": "tensiómetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "diastolic-bp": {
+      "mode": "periodic-noninvasive",
+      "equipment": "tensiómetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "orthostatic-drop": {
+      "mode": "periodic-noninvasive",
+      "equipment": "tensiómetro y protocolo ortostático",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "body-weight": {
+      "mode": "periodic-noninvasive",
+      "equipment": "medidor de masa corporal en microgravedad",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "pvt-mean-rt": {
+      "mode": "periodic-noninvasive",
+      "equipment": "test PVT",
+      "crew_time_minutes": 3,
+      "crew_time_basis": "PVT-B de 3 minutos (Basner et al. 2011; NASA HRR, tarea 1651)"
+    },
+    "pvt-lapses": {
+      "mode": "periodic-noninvasive",
+      "equipment": "test PVT",
+      "crew_time_minutes": 3,
+      "crew_time_basis": "PVT-B de 3 minutos (Basner et al. 2011; NASA HRR, tarea 1651)"
+    },
+    "mood-valence": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "symptom-burden": {
+      "mode": "periodic-noninvasive",
+      "equipment": "diario de síntomas",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "pain-intensity": {
+      "mode": "periodic-noninvasive",
+      "equipment": "mapa corporal de dolor",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "food-acceptability": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "energy-intake-daily": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "fluid-intake-24h": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "onsd-left": {
+      "mode": "periodic-noninvasive",
+      "equipment": "ecógrafo y operador entrenado",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "onsd-right": {
+      "mode": "periodic-noninvasive",
+      "equipment": "ecógrafo y operador entrenado",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ijv-csa-left": {
+      "mode": "periodic-noninvasive",
+      "equipment": "ecógrafo y operador entrenado",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ijv-csa-right": {
+      "mode": "periodic-noninvasive",
+      "equipment": "ecógrafo y operador entrenado",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "bladder-volume": {
+      "mode": "periodic-noninvasive",
+      "equipment": "ecógrafo y operador entrenado",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "urine-volume-24h": {
+      "mode": "periodic-invasive",
+      "equipment": "recogida de orina de 24 h",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 3167-4); el tiempo activo, sin fuente"
+    },
+    "urine-specific-gravity": {
+      "mode": "periodic-invasive",
+      "equipment": "muestra de orina y tira o refractómetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "cortisol-salivary": {
+      "mode": "periodic-invasive",
+      "equipment": "muestra de saliva y análisis",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "latent-virus-shedding": {
+      "mode": "periodic-invasive",
+      "equipment": "muestra de saliva y análisis",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ntx-telopeptide": {
+      "mode": "laboratory",
+      "equipment": "muestra de orina y laboratorio",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "leukocytes": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "lymphocytes": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "neutrophils": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "appetite-rating": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "food-rejected-fraction": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "neutrophils-percent": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "lymphocytes-percent": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "neutrophil-lymphocyte-ratio": {
+      "mode": "derived",
+      "equipment": "calculado a partir de otros analitos del informe",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "inputs": ["neutrophils", "lymphocytes"],
+      "inherits": true,
+      "inputs_basis": "Sale del mismo informe de laboratorio que sus analitos: el extractor de Polaris lo lee de la analítica junto a los neutrófilos y los linfocitos (`reports/labs.py`, `LAB_KEYS`: `nlr`). Donde no hay informe no hay cociente: se procesa donde se procesan ellos y llega cuando llegan ellos."
+    },
+    "c-reactive-protein": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "erythrocytes": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "hemoglobin": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "hematocrit": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "mcv": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "mch": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "mchc": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "platelets": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "urea": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "creatinine": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "bun-creatinine-ratio": {
+      "mode": "derived",
+      "equipment": "calculado a partir de otros analitos del informe",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "inputs": ["urea", "creatinine"],
+      "inherits": true,
+      "inputs_basis": "Polaris lo deriva de la urea y la creatinina del mismo informe (`reports/labs.py`, `LAB_KEYS`: `bun_cr`, urea / 2,14 ÷ creatinina): no hay cociente sin esos dos analitos, y se procesa y llega como ellos."
+    },
+    "sodium": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "potassium": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "chloride": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "calcium": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "phosphate": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "magnesium": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "estradiol": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "fsh": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "lh": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "glucose": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "total-protein": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "albumin": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ast": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "alt": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ggt": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "alkaline-phosphatase": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "bilirubin-total": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "bilirubin-direct": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ldh": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "tsh": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "free-t4": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ca-15-3": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "cea": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ca-125": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ca-19-9": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ca-27-29": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "beta2-microglobulin": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "chromogranin-a": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "neuron-specific-enolase": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "vision-change": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "nasa-tlx-workload": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "vo2-peak": {
+      "mode": "periodic-noninvasive",
+      "equipment": "prueba de esfuerzo con analizador de gases",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "grip-strength-right": {
+      "mode": "periodic-noninvasive",
+      "equipment": "dinamómetro de mano",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "grip-strength-left": {
+      "mode": "periodic-noninvasive",
+      "equipment": "dinamómetro de mano",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "vitamin-d-25oh": {
+      "mode": "laboratory",
+      "equipment": "extracción de sangre y analizador",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "glucose-capillary": {
+      "mode": "periodic-invasive",
+      "equipment": "glucómetro, lanceta y tira reactiva",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente: la fuente dice que la lectura sale «after a few seconds», no cuánto dura la medida entera"
+    },
+    "urine-calcium-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 6874-2); el tiempo activo, sin fuente"
+    },
+    "urine-oxalate-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 2701-1); el tiempo activo, sin fuente"
+    },
+    "urine-urate-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 3087-4); el tiempo activo, sin fuente"
+    },
+    "urine-citrate-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 6687-8); el tiempo activo, sin fuente"
+    },
+    "urine-ph-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 27378-9); el tiempo activo, sin fuente"
+    },
+    "urine-sodium-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 2956-1); el tiempo activo, sin fuente"
+    },
+    "urine-osmolality-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "la recogida dura 24 h por definición del código (LOINC 2694-8); el tiempo activo, sin fuente"
+    },
+    "urine-caox-supersaturation-24h": {
+      "mode": "laboratory",
+      "equipment": "recogida de orina de 24 h y perfil de riesgo de cálculos",
+      "crew_time_minutes": null,
+      "crew_time_basis": "se calcula de la recogida de 24 h; el tiempo activo, sin fuente"
+    },
+    "bmd-dxa-lumbar-spine": {
+      "mode": "laboratory",
+      "equipment": "densitómetro DXA, en Tierra",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "bmd-dxa-hip": {
+      "mode": "laboratory",
+      "equipment": "densitómetro DXA, en Tierra",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "tandem-walk-correct-steps": {
+      "mode": "periodic-noninvasive",
+      "equipment": "marcha en tándem grabada en vídeo, con sensores inerciales",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "recovery-from-fall-time": {
+      "mode": "periodic-noninvasive",
+      "equipment": "levantarse tras estar tumbado, con sensores inerciales",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "dxa-lean-mass": {
+      "mode": "laboratory",
+      "equipment": "densitómetro DXA, en Tierra",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "imtp-peak-force": {
+      "mode": "periodic-noninvasive",
+      "equipment": "plataforma de fuerza (en vuelo, el ARED)",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "cognition-mpt-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 0.4,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 0.4 min (rango 0.3 – 2.3): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-volt-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.7,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.7 min (rango 1.4 – 8.2): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-volt-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.7,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.7 min (rango 1.4 – 8.2): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-f2b-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.0,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.0 min (rango 1.7 – 16.5): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-f2b-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.0,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.0 min (rango 1.7 – 16.5): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-am-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.8,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.8 min (rango 1.3 – 7.9): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-am-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.8,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.8 min (rango 1.3 – 7.9): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-lot-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.2,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.2 min (rango 0.8 – 2.4): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-lot-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.2,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.2 min (rango 0.8 – 2.4): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-ert-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.7,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.7 min (rango 1.2 – 3.1): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-ert-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.7,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.7 min (rango 1.2 – 3.1): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-mrt-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.1,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.1 min (rango 0.6 – 3.9): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-mrt-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.1,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.1 min (rango 0.6 – 3.9): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-dsst-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.6,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.6 min (rango 1.6 – 2.6): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-dsst-accuracy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 1.6,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 1.6 min (rango 1.6 – 2.6): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-bart-speed": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.1,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.1 min (rango 1.7 – 4.1): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "cognition-bart-risk": {
+      "mode": "periodic-noninvasive",
+      "equipment": "batería Cognition en ordenador portátil",
+      "crew_time_minutes": 2.1,
+      "crew_time_basis": "mediana del tiempo de administración de la prueba, 2.1 min (rango 1.7 – 4.1): Basner et al. 2015, Tabla I, N = 285 administraciones en 19 astronautas, candidatos y controladores de misión en JSC, en Tierra; incluye el tiempo de escribir comentarios y las pausas antes de la prueba siguiente. Es el tiempo de la prueba, no el de la velocidad o la precisión por separado: las dos salen de la misma pasada."
+    },
+    "stress-rating-vas": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "team-cohesion-cared": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "team-cohesion-task-focus": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "team-cohesion-shared-purpose": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "sodium-intake-daily": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "calcium-intake-daily": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "protein-intake-daily": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "vitamin-d-intake-daily": {
+      "mode": "periodic-noninvasive",
+      "equipment": "registro de ingesta",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "menstrual-flow": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "menstruation-start": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "intermenstrual-bleeding": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "ovulation-test": {
+      "mode": "periodic-invasive",
+      "equipment": "test casero de ovulación (tira de orina)",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente: MedlinePlus («Ovulation home test») dice que la muestra es orina en la tira, no cuánto dura la prueba"
+    },
+    "contraceptive-in-use": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "basal-body-temperature": {
+      "mode": "periodic-noninvasive",
+      "equipment": "termómetro",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "reproductive-status": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "menopausal-hormone-therapy": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "hot-flashes": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    },
+    "night-sweats": {
+      "mode": "periodic-noninvasive",
+      "equipment": "autoinforme",
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente"
+    }
+  }
+}

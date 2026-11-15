@@ -1,0 +1,97 @@
+{
+ "target": "app/evidence/nasa_framework.py",
+ "test": [
+  "tests/test_nasa_framework.py::test_the_replacement_is_not_dated_and_the_answer_rests_on_the_newest_source",
+  "tests/test_nasa_framework.py::test_an_answer_that_ignores_the_newest_source_of_its_block_is_rejected",
+  "tests/test_nasa_framework.py::test_a_source_dated_by_month_counts_as_possibly_newer",
+  "tests/test_nasa_framework.py::test_an_answer_dated_by_month_does_not_take_the_last_day_of_it",
+  "tests/test_nasa_framework.py::test_another_statement_of_a_document_already_used_is_not_newer",
+  "tests/test_nasa_framework.py::test_a_statement_whose_card_has_no_date_is_rejected_beside_a_question",
+  "tests/test_nasa_framework.py::test_a_question_without_text_answer_or_its_own_statements_is_rejected",
+  "tests/test_nasa_framework.py::test_an_answer_that_quotes_what_its_statements_do_not_say_is_rejected",
+  "tests/test_nasa_framework.py::test_an_answer_may_only_quote_its_own_statements",
+  "tests/test_nasa_framework.py::test_a_card_date_that_is_not_iso_fails_instead_of_comparing_as_text"
+ ],
+ "mutations": [
+  {
+   "label": "la pregunta de un bloque no se comprueba",
+   "old": "        _validate_question(block)\n",
+   "new": ""
+  },
+  {
+   "label": "una respuesta puede no mirar la fuente mas reciente del bloque",
+   "old": "        raise FrameworkError(\n            f\"{key}: la respuesta no mira",
+   "new": "        return\n        raise FrameworkError(\n            f\"{key}: la respuesta no mira"
+  },
+  {
+   "label": "un documento fechado por el mes se toma por su primer dia y no puede ser mas nuevo",
+   "old": "ref not in used and _bounds(dates[ref])[1] > newest",
+   "new": "ref not in used and _bounds(dates[ref])[0] > newest"
+  },
+  {
+   "label": "lo mas nuevo usado, fechado por el mes, se toma por su ultimo dia",
+   "old": "    newest = max(_bounds(dates[ref])[0] for ref in used)",
+   "new": "    newest = max(_bounds(dates[ref])[1] for ref in used)"
+  },
+  {
+   "label": "un mes se cierra el dia 1 y no el 31",
+   "old": "            return first, first.replace(day=last)",
+   "new": "            return first, first"
+  },
+  {
+   "label": "se compara por frase y no por documento: otra frase del mismo documento cuenta como mas nueva",
+   "old": "        ref for ref in dates if ref not in used and",
+   "new": "        ref for ref in dates if"
+  },
+  {
+   "label": "una ficha sin fecha junto a una pregunta pasa",
+   "old": "        if date is None:\n            raise FrameworkError(\n                f\"{key}/{item['id']}: su ficha no tiene fecha",
+   "new": "        if False:\n            raise FrameworkError(\n                f\"{key}/{item['id']}: su ficha no tiene fecha"
+  },
+  {
+   "label": "la respuesta puede apoyarse en frases de otro bloque",
+   "old": "    if missing := [item for item in rests_on if item not in statements]:",
+   "new": "    if missing := [item for item in rests_on if item not in statements and False]:"
+  },
+  {
+   "label": "una frase repetida en rests_on pasa",
+   "old": "    if len(set(rests_on)) != len(rests_on):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una respuesta vacia pasa",
+   "old": "        _text(question, field) for field in (\"text\", \"answer\")",
+   "new": "        _text(question, field) for field in (\"text\",)"
+  },
+  {
+   "label": "rests_on vacio pasa",
+   "old": "        not isinstance(rests_on, list) or not rests_on\n",
+   "new": "        not isinstance(rests_on, list)\n"
+  },
+  {
+   "label": "la pregunta no se sirve",
+   "old": "                \"question\": question(block),",
+   "new": "                \"question\": None,"
+  },
+  {
+   "label": "las frases en que se apoya se sirven sin fecha",
+   "old": "                    \"date\": registry.get(item[\"ref\"]).date,",
+   "new": "                    \"date\": None,"
+  },
+  {
+   "label": "la respuesta puede citar lo que no dicen sus frases",
+   "old": "        if not any(cited in quote for quote in quotes)",
+   "new": "        if not any(cited in quote for quote in quotes) and False"
+  },
+  {
+   "label": "la respuesta puede citar cualquier frase del bloque, no solo las suyas",
+   "old": "    quotes = [statements[item][\"quote\"] for item in rests_on]",
+   "new": "    quotes = [item[\"quote\"] for item in statements.values()]"
+  },
+  {
+   "label": "una fecha de ficha con otra forma se compara como texto",
+   "old": "    if _CARD_DATE.fullmatch(date) is None:\n        raise FrameworkError(wrong)",
+   "new": "    if False:\n        raise FrameworkError(wrong)"
+  }
+ ]
+}

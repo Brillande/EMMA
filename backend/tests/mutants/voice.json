@@ -1,0 +1,21 @@
+{
+  "target": "app/voice.py",
+  "test": ["tests/test_voice.py"],
+  "mutations": [
+    {
+      "label": "se acepta audio que no es Ogg",
+      "old": "    if not audio.startswith(_OGG):",
+      "new": "    if False:"
+    },
+    {
+      "label": "un error de Whisper pasa por transcripción",
+      "old": "            if text.startswith(\"[ERROR:\"):",
+      "new": "            if False:"
+    },
+    {
+      "label": "se transcribe sin la instalación comprobada",
+      "old": "    if not ready():",
+      "new": "    if False:"
+    }
+  ]
+}

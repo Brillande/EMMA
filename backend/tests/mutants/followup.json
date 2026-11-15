@@ -1,0 +1,18 @@
+{"target": "app/advisor/followup.py", "test": ["tests/test_countermeasures.py"],
+ "mutations": [
+  {"label": "se evalua dentro de la ventana",
+   "old": "None if state == \"in_window\" else _evaluation(",
+   "new": "None if False else _evaluation("},
+  {"label": "la evaluacion olvida que no prueba causalidad",
+   "old": "    return {\"outcome\": outcome, \"text\": f\"{text} {CAUSALITY_NOTE}\"}",
+   "new": "    return {\"outcome\": outcome, \"text\": text}"},
+  {"label": "sin medida repetida se evalua igual",
+   "old": "    if item.followup_checks and len(missing) == len(item.followup_checks):",
+   "new": "    if False:"},
+  {"label": "empeorar se lee como mejorar",
+   "old": "    if delta < 0:\n        return \"improved\"",
+   "new": "    if delta != 0:\n        return \"improved\""},
+  {"label": "una lectura anterior a la adopcion cuenta como repeticion",
+   "old": "if obs.key in item.followup_checks and obs.effective > adopted_at",
+   "new": "if obs.key in item.followup_checks"}
+ ]}

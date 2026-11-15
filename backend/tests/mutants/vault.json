@@ -1,0 +1,46 @@
+{
+  "target": "app/evidence/vault.py",
+  "test": ["tests/test_vault.py"],
+  "mutations": [
+    {
+      "label": "un informe de otro tripulante vale",
+      "old": "    return _VERDICTS.get(found, \"ambiguo\") if report.get(\"subject\") == subject else (",
+      "new": "    return _VERDICTS.get(found, \"ambiguo\") if True else ("
+    },
+    {
+      "label": "el cotejo no busca el fragmento",
+      "old": "            f\"_PRIVADO_CLINICO/{name}\", fragment.strip() or None, quien=who",
+      "new": "            f\"_PRIVADO_CLINICO/{name}\", None, quien=who"
+    },
+    {
+      "label": "la copia queda con la bóveda de EMMA",
+      "old": "        tool.bovedas, tool._IDENTIDAD, tool._LOG = saved",
+      "new": "        pass"
+    },
+    {
+      "label": "el texto de un informe redactado se queda en la bóveda",
+      "old": "        target.unlink(missing_ok=True)  # redactado o inexistente: que no quede una copia vieja",
+      "new": "        pass"
+    },
+    {
+      "label": "la huella de la fuente depende de los saltos de línea de la máquina",
+      "old": "                     encoding=\"utf-8\", newline=\"\\n\")",
+      "new": "                     encoding=\"utf-8\")"
+    },
+    {
+      "label": "dos cotejos del mismo informe a la vez: la copia se pone sin cerrojo",
+      "old": "    with _LOCK:\n        return _check(store, index, fragment, subject, who)",
+      "new": "    if True:\n        return _check(store, index, fragment, subject, who)"
+    },
+    {
+      "label": "la frase literal se lee sin el cerrojo del cotejo",
+      "old": "    with _LOCK:\n        return _locate(store, index, fragment, subject, who)",
+      "new": "    if True:\n        return _locate(store, index, fragment, subject, who)"
+    },
+    {
+      "label": "la copia se escribe encima de la que hay, no a un lado",
+      "old": "    fresh = target.with_name(target.name + \".tmp\")",
+      "new": "    fresh = target"
+    }
+  ]
+}

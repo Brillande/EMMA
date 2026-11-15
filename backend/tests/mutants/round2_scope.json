@@ -1,0 +1,9 @@
+{"target": "app/advisor/countermeasures.py", "test": ["tests/test_context_round2.py"],
+ "mutations": [
+  {"label": "una contramedida de habitat puede reclamar un dominio clinico",
+   "old": "    elif raw.get(\"domain\") is not None:\n        raise fail(",
+   "new": "    elif False:\n        raise fail("},
+  {"label": "una contramedida de habitat puede seguir un indicador clinico",
+   "old": "    known = CATALOG if scope == \"crew\" else PARAMETERS",
+   "new": "    known = {**CATALOG, **PARAMETERS}"}
+ ]}

@@ -1,0 +1,23 @@
+{
+  "target": "../polaris/tools/tier_evidencia.py",
+  "test": [
+    "tests/test_evidence_tier.py"
+  ],
+  "mutations": [
+    {
+      "label": "lo preclínico ya no manda (tier_evidencia, en la copia de Polaris)",
+      "old": "es_preclinico = banco and not _si(s, \"humanos\")",
+      "new": "es_preclinico = False"
+    },
+    {
+      "label": "Clinical Trial compite con RCT (tier_evidencia, en la copia de Polaris)",
+      "old": "        senales.pop(\"ensayo\", None)",
+      "new": "        pass"
+    },
+    {
+      "label": "el léxico del texto emite una señal que asciende: un caso sale como ensayo aleatorizado (tier_evidencia, en la copia de Polaris)",
+      "old": "        s[\"caso\"] = True",
+      "new": "        s[\"rct\"] = True"
+    }
+  ]
+}

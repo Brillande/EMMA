@@ -1,0 +1,43 @@
+{
+  "target": "app/volumes/assets.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "la densidad ya firmada se vuelve a calcular al servir",
+      "old": "    if preset is None or key in segmentation or not segmentation.get(\"lesiones\"):",
+      "new": "    if preset is None or not segmentation.get(\"lesiones\"):"
+    },
+    {
+      "label": "un fallo al leer el zip se recuerda y la densidad no vuelve a salir",
+      "old": "        if known[key][\"disponible\"] and digest is not None:",
+      "new": "        if digest is not None:"
+    },
+    {
+      "label": "sin huella firmada, la densidad de una segmentación se sirve a otra",
+      "old": "    digest = signed if isinstance(signed, str) and signed else None",
+      "new": "    digest = str(signed)"
+    },
+    {
+      "label": "lo recordado se sirve aunque las lesiones de quien pregunta sean otras",
+      "old": "        if sorted(ids) != sorted(by_id):",
+      "new": "        if not ids:"
+    },
+    {
+      "label": "un binario que ya no se puede leer tumba la lista en vez de decirlo",
+      "old": "        except Exception as exc:  # noqa: BLE001 — un binario ilegible no impide listar",
+      "new": "        except ValueError as exc:  # noqa: BLE001 — un binario ilegible no impide listar"
+    },
+    {
+      "label": "la referencia deja fuera lo que queda dentro del órgano (no es el parénquima de la ventana)",
+      "old": "        s.label for s in preset.structures if s.mask in preset.organ or s.within_organ",
+      "new": "        s.label for s in preset.structures if s.mask in preset.organ"
+    },
+    {
+      "label": "el resumen de una segmentación nueva se firma sin densidad",
+      "old": "    summary = geometry.with_density(\n        summary, published, labels[box], parenchyma_labels(preset), _density_reference(preset)\n    )\n",
+      "new": ""
+    }
+  ]
+}

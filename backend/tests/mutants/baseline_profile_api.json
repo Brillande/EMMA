@@ -1,0 +1,19 @@
+{
+ "target": "app/api/baseline_profile.py",
+ "test": [
+  "tests/test_baseline_profile.py::test_the_route_shows_the_bases_the_status_used",
+  "tests/test_baseline_profile.py::test_until_gives_only_what_ground_has"
+ ],
+ "mutations": [
+  {
+   "label": "el perfil de Tierra usa lecturas posteriores al corte del retardo",
+   "old": "    assessed = routes._assess(settings, store, subject, None, None, until)",
+   "new": "    assessed = routes._assess(settings, store, subject, None, None, None)"
+  },
+  {
+   "label": "cualquier indicador con lecturas se da por descriptivo",
+   "old": "if item.key in DESCRIPTIVE_ONLY",
+   "new": "if True"
+  }
+ ]
+}

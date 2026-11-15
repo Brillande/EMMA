@@ -1,0 +1,13 @@
+{
+  "target": "app/decision_risk.py",
+  "test": [
+    "tests/test_decision_risk.py"
+  ],
+  "mutations": [
+    {
+      "label": "firmar ya no es momento de decidir",
+      "old": "if actions and (deliberating or deciding):",
+      "new": "if actions and deliberating:"
+    }
+  ]
+}

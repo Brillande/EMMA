@@ -1,0 +1,43 @@
+{
+  "target": "app/api/volumes.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "las segmentaciones del esqueleto ya guardadas se sirven sin el control de la cadena",
+      "old": "    if segmentation.get(\"preset\") != spine.PRESET or spine.KEY in segmentation:",
+      "new": "    if True:"
+    },
+    {
+      "label": "comparar segmentaciones de distinto preset (Polaris exige la misma receta)",
+      "old": "    if a.get(\"preset\") != b.get(\"preset\") or a.get(\"segmentador\") != b.get(\"segmentador\"):",
+      "new": "    if False:"
+    },
+    {
+      "label": "comparar las lesiones de dos tripulantes distintos",
+      "old": "    if study_a.get(\"subject\") != study_b.get(\"subject\"):",
+      "new": "    if study_a.get(\"subject\") is None:"
+    },
+    {
+      "label": "dos pacientes de ejemplo distintos se comparan sin avisar",
+      "old": "        \"aviso\": DIFFERENT_PEOPLE_NOTE if len(samples) == 2 and None not in samples else None,",
+      "new": "        \"aviso\": None,"
+    },
+    {
+      "label": "la comparación pierde el rótulo de segmentación sin validar",
+      "old": "        \"estado\": assets.UNVALIDATED,\n        \"segmentador\": b.get(\"segmentador\"),",
+      "new": "        \"estado\": \"validada\",\n        \"segmentador\": b.get(\"segmentador\"),"
+    },
+    {
+      "label": "un binario ilegible tumba el listado entero: el control deja de ser descriptivo",
+      "old": "            return {**segmentation, spine.KEY: spine.unreviewed(preset, str(exc.args[0]))}",
+      "new": "            raise"
+    },
+    {
+      "label": "un control que no se pudo hacer se queda guardado y no se reintenta",
+      "old": "        if review[\"revisada\"]:",
+      "new": "        if True:"
+    }
+  ]
+}

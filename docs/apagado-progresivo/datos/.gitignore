@@ -1,0 +1,4 @@
+# Lo que se regenera en cada medida y no hace falta para comprobarla.
+dist/
+perfil-chrome-medida/
+dictado.wav

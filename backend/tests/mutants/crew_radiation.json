@@ -1,0 +1,93 @@
+{
+ "target": "app/api/crew_radiation.py",
+ "test": [
+  "tests/test_crew_radiation.py"
+ ],
+ "mutations": [
+  {
+   "label": "Tierra ve lecturas que todavia no le han llegado en la dosis de mision",
+   "old": "        mission=mission_dose(assessed.observations, settings.mission_start),",
+   "new": "        mission=mission_dose(store.query(subject), settings.mission_start),"
+  },
+  {
+   "label": "Tierra ve un perfil declarado despues de su corte",
+   "old": "        prior_career_msv=latest_profile(store, subject, until)[\"prior_career_dose_msv\"],",
+   "new": "        prior_career_msv=latest_profile(store, subject)[\"prior_career_dose_msv\"],"
+  },
+  {
+   "label": "Tierra ve una ubicacion declarada despues de su corte",
+   "old": "    location = _location_at(crew_stays(store, subject, until), reference)",
+   "new": "    location = _location_at(crew_stays(store, subject), reference)"
+  },
+  {
+   "label": "el bloque del evento consulta DONKI otra vez y puede nombrar otro evento que el del estado",
+   "old": "    solar = solar_event_block((active, first.solar_age))",
+   "new": "    solar = solar_event_block(__import__(\"app.api.habitat\").api.habitat.solar_now(settings))"
+  },
+  {
+   "label": "el refugio se cuenta hasta la lectura de un tripulante y no hasta la referencia de la tripulacion",
+   "old": "        \"shelter\": time_to_action(active.time, reference) if active is not None else None,",
+   "new": "        \"shelter\": time_to_action(active.time, first.latest) if active is not None else None,"
+  },
+  {
+   "label": "el evento sale de otro estado que el primero: la respuesta podria nombrar dos eventos",
+   "old": "    first = states[0]",
+   "new": "    first = states[-1]"
+  },
+  {
+   "label": "la ubicacion declarada corrige la dosis con un factor de blindaje inventado",
+   "old": "        \"mission\": mission,",
+   "new": "        \"mission\": mission if location is None or mission is None else {**mission, \"value_msv\": mission[\"value_msv\"] * 0.5},"
+  },
+  {
+   "label": "la ubicacion sin declarar no se dice",
+   "old": "        \"location_missing_text\": None if location is not None else LOCATION_MISSING,",
+   "new": "        \"location_missing_text\": None,"
+  },
+  {
+   "label": "la dosis de mision que falta no se dice",
+   "old": "        \"mission_missing_text\": None if mission is not None else MISSION_MISSING,",
+   "new": "        \"mission_missing_text\": None,"
+  },
+  {
+   "label": "un until sin zona horaria se toma por tripulacion sin datos",
+   "old": "    if until is not None and until.tzinfo is None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un tripulante sin estado analizable desaparece de la vista",
+   "old": "            assessed[subject] = None",
+   "new": "            continue"
+  },
+  {
+   "label": "un tripulante sin estado analizable sale sin decir que le falta",
+   "old": "            \"state_missing_text\": STATE_MISSING,",
+   "new": "            \"state_missing_text\": None,"
+  },
+  {
+   "label": "el instante de referencia es el mas antiguo de la tripulacion y no el mas reciente",
+   "old": "    reference = max(item.latest for item in states)",
+   "new": "    reference = min(item.latest for item in states)"
+  },
+  {
+   "label": "la carrera supone cero sin dosis previa declarada",
+   "old": "        prior_career_msv=latest_profile(store, subject, until)[\"prior_career_dose_msv\"],",
+   "new": "        prior_career_msv=latest_profile(store, subject, until)[\"prior_career_dose_msv\"] or 0.0,"
+  },
+  {
+   "label": "sin evento no se dice que no hay refugio que contar",
+   "old": "        \"shelter_missing_text\": None if active is not None else NO_EVENT_SHELTER,",
+   "new": "        \"shelter_missing_text\": None,"
+  },
+  {
+   "label": "otro fallo del estado de un tripulante se disfraza de «sin lecturas»",
+   "old": "            if exc.status_code not in _STATELESS:",
+   "new": "            if False:"
+  },
+  {
+   "label": "Tierra lista a un tripulante cuyas lecturas aun no le han llegado",
+   "old": "            if not store.query(subject, until=until):",
+   "new": "            if False:"
+  }
+ ]
+}

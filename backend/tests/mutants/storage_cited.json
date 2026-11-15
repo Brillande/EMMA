@@ -1,0 +1,13 @@
+{
+  "target": "app/core/storage.py",
+  "test": [
+    "tests/test_source_check.py"
+  ],
+  "mutations": [
+    {
+      "label": "la firma pierde la fuente que citaba",
+      "old": "    return {\"source\": source.strip(), \"source_check\": dict(source_check or {})}",
+      "new": "    return {}"
+    }
+  ]
+}

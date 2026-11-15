@@ -1,0 +1,9 @@
+{"target": "app/api/routes.py", "test": ["tests/test_reference_basis.py"],
+ "mutations": [
+  {"label": "/api/indicators dice el texto \"None\" donde no hay rango",
+   "old": "                \"reference_basis\": code.reference_basis,",
+   "new": "                \"reference_basis\": str(code.reference_basis),"},
+  {"label": "/api/indicators da «observada» a lo que no tiene rango",
+   "old": "                \"reference_basis\": code.reference_basis,",
+   "new": "                \"reference_basis\": code.reference_basis or \"observed\","}
+ ]}

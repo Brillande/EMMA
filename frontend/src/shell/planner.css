@@ -1,0 +1,99 @@
+/*
+ * El planificador (Marplanner) en la consola de tripulación (`planner/PlannerPanels.tsx`).
+ * Solo disposición: ningún color propio. Los miembros de la casa no llevan el color que les da
+ * Marplanner, porque en EMMA el color significa (tabla F.5-1).
+ */
+
+/* Un miembro de la casa por columna, como el tablero de Marplanner. */
+.planner-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem 1.5rem;
+  align-items: start;
+}
+
+.planner-column h3 {
+  margin: 0 0 0.25rem;
+}
+
+.planner-day + .planner-day {
+  margin-top: 1rem;
+}
+
+.planner-period h4 {
+  margin: 0.5rem 0 0.25rem;
+}
+
+.planner-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.planner-list .command {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 2.25rem;
+  padding-block: 0.3rem;
+}
+
+.planner-list .command[aria-pressed="true"] {
+  text-decoration: line-through;
+}
+
+.planner-menu {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+}
+
+.planner-menu > div {
+  display: contents;
+}
+
+.planner-menu dd {
+  margin: 0;
+}
+
+/* Una tarea de una rutina con su mando para quitarla, en la misma línea. */
+.planner-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.planner-row .command {
+  width: auto;
+  flex: none;
+}
+
+/* La hoja diaria es el papel de la impresora térmica (384 px de ancho): se enseña a su tamaño. */
+.planner-slip {
+  display: block;
+  max-width: min(100%, 384px);
+  height: auto;
+  margin-top: 0.5rem;
+  image-rendering: pixelated;
+}
+
+/* El menú de la semana: una tabla que se desplaza en horizontal si no cabe, sin romper la página. */
+.planner-table-wrap {
+  overflow-x: auto;
+}
+
+.planner-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.planner-table th,
+.planner-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.3rem 0.6rem;
+}

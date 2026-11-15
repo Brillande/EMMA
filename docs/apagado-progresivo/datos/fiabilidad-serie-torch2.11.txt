@@ -1,0 +1,29 @@
+# GPU DE SERIE (desplazamientos a 0 con nvapi_desplazamientos.py --poner-a-cero), torch 2.11+cu128, controlador 617.42, 2026-11-11
+== desplazamientos
+P0 núcleo (graphics): desplazamiento +0 MHz (permitido -1000…+1000), editable=1
+P0 memoria: desplazamiento +0 MHz (permitido -1000…+3000), editable=1
+== fiabilidad segmentaciÃ³n (de serie)
+GPU libre tras 31 s
+ronda 1, ejecutable original (cuDNN encendido):
+  total           ok 53.8 s
+  liver_vessels   ok 51.6 s
+  liver_segments  ok 35.8 s
+  liver_lesions   ok 36.3 s
+GPU libre tras 53 s
+ronda 2, ejecutable original (cuDNN encendido):
+  total           ok 40.6 s
+  liver_vessels   ok 35.2 s
+  liver_segments  ok 35.2 s
+  liver_lesions   ok 36.4 s
+GPU libre tras 31 s
+ronda 1, sin cuDNN, sin paso a CPU:
+  total           ok 47.2 s
+  liver_vessels   ok 42.1 s
+  liver_segments  ok 41.4 s
+  liver_lesions   ok 61.0 s
+GPU libre tras 31 s
+ronda 2, sin cuDNN, sin paso a CPU:
+  total           ok 43.3 s
+  liver_vessels   ok 39.5 s
+  liver_segments  ok 39.9 s
+  liver_lesions   ok 60.4 s

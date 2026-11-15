@@ -1,0 +1,43 @@
+{
+  "target": "app/routines.py",
+  "test": [
+    "tests/test_routines.py"
+  ],
+  "mutations": [
+    {
+      "label": "una lectura de confianza baja cuenta como éxito",
+      "old": "        if item.confidence >= LOW_CONFIDENCE_THRESHOLD and (",
+      "new": "        if ("
+    },
+    {
+      "label": "el ahora es el reloj y no la última lectura",
+      "old": "        now = max((item.effective for item in observations), default=dt.datetime.now(dt.UTC))",
+      "new": "        now = dt.datetime.now(dt.UTC)"
+    },
+    {
+      "label": "se queda la primera lectura en vez de la última",
+      "old": "        if item.key not in last_run or item.effective > last_run[item.key]:",
+      "new": "        if item.key not in last_run:"
+    },
+    {
+      "label": "un evento posterior al ahora ya acorta los periodos (el corte de Tierra no cuenta)",
+      "old": "    return event if event is not None and event.time <= now else None",
+      "new": "    return event"
+    },
+    {
+      "label": "durante el evento la lista no se ordena por prioridad",
+      "old": "        routines.sort(key=lambda routine: (routine[\"priority\"] is None, routine[\"priority\"] or 0))",
+      "new": "        pass"
+    },
+    {
+      "label": "durante el evento se juzga con el periodo de siempre",
+      "old": "        period = dt.timedelta(hours=float(hours))",
+      "new": "        period = dt.timedelta(hours=float(item[\"period_hours\"]))"
+    },
+    {
+      "label": "un periodo de evento puede alargar el de siempre",
+      "old": "        if not isinstance(period, int | float) or not 0 < period < design:",
+      "new": "        if not isinstance(period, int | float) or not 0 < period:"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{"target": "app/analysis/inferred.py", "test": ["tests/test_mission_context.py"],
+ "mutations": [
+  {"label": "la banda deja de ser una banda",
+   "old": "_HIGH_PCT_PER_MONTH = 1.5",
+   "new": "_HIGH_PCT_PER_MONTH = 1.0"},
+  {"label": "el estado oseo se rotula como medido",
+   "old": "        \"observation_type\": \"inferred\",",
+   "new": "        \"observation_type\": \"measured\","}
+ ]}

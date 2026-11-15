@@ -1,0 +1,15 @@
+{"target": "app/ingest/codes.py", "test": ["tests/test_reference_basis.py"],
+ "mutations": [
+  {"label": "un rango sin base carga",
+   "old": "        if has_range and self.reference_basis is None:",
+   "new": "        if False:"},
+  {"label": "una base sin rango carga",
+   "old": "        if not has_range and self.reference_basis is not None:",
+   "new": "        if False:"},
+  {"label": "medio rango deja de contar como rango",
+   "old": "        has_range = self.reference_low is not None or self.reference_high is not None",
+   "new": "        has_range = self.reference_low is not None and self.reference_high is not None"},
+  {"label": "sin rango vuelve a heredar «observada» por defecto",
+   "old": "    reference_basis: ReferenceBasis | None = None",
+   "new": "    reference_basis: ReferenceBasis | None = ReferenceBasis.OBSERVED"}
+ ]}

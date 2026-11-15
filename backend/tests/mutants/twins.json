@@ -1,0 +1,118 @@
+{
+ "target": "app/twins.py",
+ "test": [
+  "tests/test_twins.py::test_the_five_layers_are_the_table_of_the_knowledge_base_word_for_word",
+  "tests/test_twins.py::test_a_nominal_person_has_nothing_changing_and_says_it_with_the_summary",
+  "tests/test_twins.py::test_what_changes_goes_from_the_most_to_the_least_severe_with_its_causes",
+  "tests/test_twins.py::test_without_the_crew_view_the_habitat_answer_is_unavailable_not_empty",
+  "tests/test_twins.py::test_a_person_outside_the_affected_gets_no_hypothesis_and_is_told_why",
+  "tests/test_twins.py::test_a_less_likely_hypothesis_says_why",
+  "tests/test_twins.py::test_without_the_waiting_view_the_decision_says_it_and_keeps_the_confidence",
+  "tests/test_twins.py::test_an_unacknowledged_alert_waits_for_a_person_even_before_three_days",
+  "tests/test_twins.py::test_nothing_waits_when_everything_is_acknowledged_and_nothing_is_old",
+  "tests/test_twins.py::test_what_waits_for_a_person_is_listed_with_its_days_and_not_twice",
+  "tests/test_twins.py::test_no_recommendation_is_nothing_and_the_effect_is_never_predicted",
+  "tests/test_twins.py::test_a_closed_followup_is_not_an_open_one",
+  "tests/test_twins.py::test_without_ephemeris_the_mission_says_what_is_lost",
+  "tests/test_twins.py::test_the_lost_light_time_is_told_once_in_the_mission_not_again_in_the_decision",
+  "tests/test_twins.py::test_on_board_the_answers_carry_no_cut_and_the_plain_note",
+  "tests/test_twins.py::test_for_the_ground_the_answers_carry_their_cut_and_say_what_is_in_transit"
+ ],
+ "mutations": [
+  {
+   "label": "una pregunta deja de ser la literal del documento",
+   "old": "        \"¿qué está cambiando en esta persona?\",",
+   "new": "        \"¿qué le pasa a esta persona?\","
+  },
+  {
+   "label": "el contenido de una capa deja de ser el literal del documento",
+   "old": "        \"atmósfera, térmico, radiación, microbiología, life support\",",
+   "new": "        \"atmósfera, térmico, radiación, microbiología\","
+  },
+  {
+   "label": "lo nominal cuenta como algo que cambia",
+   "old": "            if value.get(\"level\") in _SEVERITY",
+   "new": "            if True"
+  },
+  {
+   "label": "lo que cambia deja de ir del nivel más grave al más leve",
+   "old": "        key=lambda pair: (_SEVERITY.index(pair[1][\"level\"]), domain_name(pair[0])),",
+   "new": "        key=lambda pair: domain_name(pair[0]),"
+  },
+  {
+   "label": "las hipótesis de otros tripulantes se le atribuyen a este",
+   "old": "        if subject in (item.get(\"affected\") or [])",
+   "new": "        if True"
+  },
+  {
+   "label": "sin la vista de tripulación, el hábitat dice «nada» en vez de «no disponible»",
+   "old": "            LAYERS[1], UNAVAILABLE,",
+   "new": "            LAYERS[1], NOTHING,"
+  },
+  {
+   "label": "una hipótesis menos probable no dice por qué",
+   "old": "                if item.get(\"likelihood\") == \"less_likely\" and item.get(\"likelihood_reason\")",
+   "new": "                if False"
+  },
+  {
+   "label": "un seguimiento cerrado cuenta como abierto",
+   "old": "        item for item in status.get(\"followups\") or [] if item.get(\"state\") != \"closed\"",
+   "new": "        item for item in status.get(\"followups\") or []"
+  },
+  {
+   "label": "la respuesta de contramedidas deja de decir que EMMA no predice el efecto",
+   "old": "    notes = [NO_EFFECT_MODEL] + ([str(resources_summary)] if resources_summary else [])",
+   "new": "    notes = [str(resources_summary)] if resources_summary else []"
+  },
+  {
+   "label": "una alerta reconocida sigue esperando a una persona",
+   "old": "        alert for alert in status.get(\"alerts\") or [] if not alert.get(\"acknowledged\")",
+   "new": "        alert for alert in status.get(\"alerts\") or []"
+  },
+  {
+   "label": "la alerta que lleva días sin reconocer sale dos veces",
+   "old": "        if title not in counted",
+   "new": "        if True"
+  },
+  {
+   "label": "la alerta que lleva días sin reconocer sale con la clave inglesa del dominio",
+   "old": "        alert = by_title.get(str(item[\"title\"]))",
+   "new": "        alert = None"
+  },
+  {
+   "label": "sin lo que espera, la decisión dice «nada» en vez de «no disponible»",
+   "old": "        return _answer(LAYERS[4], UNAVAILABLE, answer, items, notes, sources)",
+   "new": "        return _answer(LAYERS[4], NOTHING, answer, items, notes, sources)"
+  },
+  {
+   "label": "la decisión deja de decir sobre qué se apoya el veredicto",
+   "old": "        notes.append(f\"El veredicto se apoya en: {data['basis']}.\")",
+   "new": "        pass"
+  },
+  {
+   "label": "lo que lleva días esperando pierde el nivel de su alerta",
+   "old": "            f\"{item['title']}: {days} esperando.\", None if alert is None else alert.get(\"level\")",
+   "new": "            f\"{item['title']}: {days} esperando.\", None"
+  },
+  {
+   "label": "la alerta sin reconocer se busca por la clave inglesa y sale dos veces",
+   "old": "    by_title = {unacknowledged_title(alert[\"domain\"]): alert for alert in unacknowledged}",
+   "new": "    by_title = {f\"Alerta {alert['domain']} sin reconocer\": alert for alert in unacknowledged}"
+  },
+  {
+   "label": "las respuestas de Tierra no dicen su corte",
+   "old": "        \"until\": until.isoformat() if until is not None else None,",
+   "new": "        \"until\": None,"
+  },
+  {
+   "label": "las respuestas de Tierra no dicen que lo posterior sigue en tránsito",
+   "old": "        \"note\": NOTE if until is None else f\"{NOTE} {GROUND_NOTE}\",",
+   "new": "        \"note\": NOTE,"
+  },
+  {
+   "label": "la capa de decisión repite el retardo con Tierra que ya dice la de misión",
+   "old": "        if capability.get(\"key\") == \"light-time\":",
+   "new": "        if False:"
+  }
+ ]
+}

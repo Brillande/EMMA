@@ -1,0 +1,13 @@
+{
+  "target": "../polaris/tools/verifica_citas.py",
+  "test": [
+    "tests/test_citations.py"
+  ],
+  "mutations": [
+    {
+      "label": "se come el paréntesis de un DOI (verifica_citas, en la copia de Polaris)",
+      "old": "elif d[-1] == \")\" and d.count(\")\") > d.count(\"(\"):",
+      "new": "elif d[-1] == \")\":"
+    }
+  ]
+}

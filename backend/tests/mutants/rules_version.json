@@ -1,0 +1,28 @@
+{
+  "target": "app/core/versioning.py",
+  "test": [
+    "tests/test_versioning.py"
+  ],
+  "mutations": [
+    {
+      "label": "la persistencia vuelve a quedar fuera de la versión de reglas",
+      "old": "        \"_PERSISTENCE_FRACTION\",\n",
+      "new": ""
+    },
+    {
+      "label": "la guardia deja de vigilar la línea base",
+      "old": "GUARDED: tuple[str, ...] = (\"app.analysis.risk\", \"app.analysis.baseline\", \"app.analysis.trend\")",
+      "new": "GUARDED: tuple[str, ...] = (\"app.analysis.risk\", \"app.analysis.trend\")"
+    },
+    {
+      "label": "una regla de tipo desconocido entra por su texto en vez de ser un error",
+      "old": "    raise TypeError(f\"regla de tipo {type(value).__name__}: no se sabe canonizar\")",
+      "new": "    return str(value)"
+    },
+    {
+      "label": "los periodos de las rutinas quedan fuera de la versión de reglas",
+      "old": "        \"routines\": _routine_periods(),\n",
+      "new": ""
+    }
+  ]
+}

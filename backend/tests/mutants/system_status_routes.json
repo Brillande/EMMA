@@ -1,0 +1,13 @@
+{"target": "app/api/routes.py",
+ "test": [
+  "tests/test_system_status.py::test_a_declaration_moves_no_level_alert_or_excursion_and_shows_in_the_context",
+  "tests/test_system_status.py::test_ground_does_not_get_in_an_alert_what_it_could_not_know"
+ ],
+ "mutations": [
+  {"label": "el estado no da al contexto de la alerta lo declarado de los sistemas",
+   "old": "                settings, store, subject, until, assessed, actions.adoptions, declarations,\n",
+   "new": "                settings, store, subject, until, assessed, actions.adoptions, [],\n"},
+  {"label": "el contexto de una alerta de Tierra lleva lo declarado despues de su corte",
+   "old": "    declarations = _system_declarations(store, until)",
+   "new": "    declarations = _system_declarations(store, None)"}
+ ]}

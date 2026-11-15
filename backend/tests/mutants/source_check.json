@@ -1,0 +1,13 @@
+{
+  "target": "app/evidence/source_check.py",
+  "test": [
+    "tests/test_source_check.py"
+  ],
+  "mutations": [
+    {
+      "label": "la fuente de una firma ya no se comprueba",
+      "old": "    state, detail = polaris.load(\"decision_alto_riesgo\")._existencia_citas(source, checker)",
+      "new": "    state, detail = \"n/a\", \"\""
+    }
+  ]
+}

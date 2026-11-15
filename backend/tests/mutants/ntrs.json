@@ -1,0 +1,62 @@
+{
+  "target": "app/evidence/ntrs.py",
+  "test": ["tests/test_ntrs.py"],
+  "mutations": [
+    {
+      "label": "sin red, con caché caducada, se sale igual a NTRS",
+      "old": "            not network or self.settings.offline or not cached.is_stale(FRESH_FOR)",
+      "new": "            not network or not cached.is_stale(FRESH_FOR)"
+    },
+    {
+      "label": "sin red y sin caché se intenta salir en vez de decir «no disponible»",
+      "old": "        if not network or self.settings.offline:\n            return Lookup(",
+      "new": "        if not network:\n            return Lookup("
+    },
+    {
+      "label": "un fallo de NTRS tira la consulta guardada en vez de servirla con su edad",
+      "old": "            if cached is not None:\n                # Lo último",
+      "new": "            if False:\n                # Lo último"
+    },
+    {
+      "label": "un cuerpo roto se guarda como «no está en NTRS»",
+      "old": "            raise ValueError(\"NTRS respondió sin JSON\") from exc",
+      "new": "            return {\"found\": False}"
+    },
+    {
+      "label": "la consulta servida no dice de cuándo es",
+      "old": "            \"fetched_at\": self.payload.fetched_at.isoformat() if self.payload else None,",
+      "new": "            \"fetched_at\": None,"
+    },
+    {
+      "label": "los números de informe se quedan con el prefijo de NTRS",
+      "old": "        clean = re.sub(r\"^Report Number:\\s*\", \"\", str(number)).strip()",
+      "new": "        clean = str(number).strip()"
+    },
+    {
+      "label": "la petición lleva algo más que el número público",
+      "old": "        response = egress.get(self.settings, PURPOSE, f\"{NTRS_API}/{ntrs_id}\")",
+      "new": "        response = egress.get(self.settings, PURPOSE, f\"{NTRS_API}/{ntrs_id}\", params={\"from\": \"emma\"})"
+    },
+    {
+      "label": "el año de EMMA se da por bueno aunque NTRS diga otro",
+      "old": "            MATCH if emma_year in record.years else DIFFERS, emma_year, list(record.years)",
+      "new": "            MATCH, emma_year, list(record.years)"
+    },
+    {
+      "label": "una explicación vieja tapa lo que NTRS escribe ahora",
+      "old": "            and field[\"emma\"] == explanation[\"emma\"] and field[\"ntrs\"] == explanation[\"ntrs\"]",
+      "new": "            and field[\"emma\"] == explanation[\"emma\"]"
+    },
+    {
+      "label": "una explicación vieja tapa lo que EMMA escribe ahora",
+      "old": "            and field[\"emma\"] == explanation[\"emma\"] and field[\"ntrs\"] == explanation[\"ntrs\"]",
+      "new": "            and field[\"ntrs\"] == explanation[\"ntrs\"]"
+    },
+    {
+      "target": "app/evidence/citations.py",
+      "label": "un 404 de NTRS se declara cita inexistente",
+      "old": "        return Verdict(\"ntrs\", ntrs_id, NOT_IN_NTRS, \"NTRS no tiene ese número\", \"NTRS\")",
+      "new": "        return Verdict(\"ntrs\", ntrs_id, NOT_FOUND, \"NTRS no tiene ese número\", \"NTRS\")"
+    }
+  ]
+}

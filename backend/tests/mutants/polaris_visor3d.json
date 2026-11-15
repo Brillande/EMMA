@@ -1,0 +1,18 @@
+{
+  "target": "../polaris/tools/visor3d.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "Taubin sin el paso que deshace el encogimiento (visor3d, en la copia de Polaris)",
+      "old": "        for k in (lam, mu):",
+      "new": "        for k in (lam,):"
+    },
+    {
+      "label": "el umbral de «crece» ya no es el que EMMA declara junto al estado (evolucion, en la copia de Polaris)",
+      "old": "        estado = (\"crece\" if dd is not None and dd >= 20 else",
+      "new": "        estado = (\"crece\" if dd is not None and dd >= 25 else"
+    }
+  ]
+}

@@ -1,0 +1,898 @@
+{
+  "_nota": "Biblioteca de contramedidas (especificacion del equipo §8). Cada cifra lleva su base: una fuente verificada o 'diseño EMMA'. Sin fuente, null y se dice. basis: evidence-backed si hay un protocolo o fuente que respalda la accion concreta; demo si solo la respalda el riesgo del dominio. Revisado el 2026-09-26. Cada `protocol_ref` cita por identificador una ficha del registro único (evidence_refs.json) y dice su relevancia para esta acción. family (2026-10-21, vocabulario cerrado): physical-mass si la acción coloca masa entre la persona y el peligro o carga el cuerpo con un equipo; operational si cambia qué hace la tripulación, cuándo o dónde; check-surveillance si mide, repite una medida, registra o revisa. Se asigna por lo que la acción es. pharmacological queda fuera del alcance de EMMA y no carga. El criterio completo, en `FAMILIES` (advisor/countermeasures.py).",
+  "countermeasures": [
+    {
+      "id": "cv-exercise-session",
+      "domain": "cardiovascular",
+      "action": "Completar la sesión de ejercicio aeróbico y resistivo del protocolo.",
+      "indication": "Desacondicionamiento cardiovascular: deriva del pulso en reposo o de la variabilidad.",
+      "resources": [
+        {"key": "treadmill-or-cycle-ergometer", "description": "cinta o cicloergómetro"},
+        {"key": "ared", "description": "ARED (ejercicio resistivo)"}
+      ],
+      "crew_time_minutes": 120,
+      "crew_time_basis": "La Agencia Espacial Canadiense dice: «Over the course of a long-duration mission, astronauts must exercise approximately two hours per day» (asc-csa.gc.ca, «Physical activity in space», leída el 2026-10-13). Son las dos horas del ejercicio diario entero, aeróbico y resistivo. Concuerda con OCHMO-MTB-013 Rev D (p. 14): «Previous requirements have been 2 hours per workday with a strict exercise program». Discrepa de OCHMO-TB-031 (p. 10), que da para el vuelo «Approximately 30 minutes of interval or steady-state exercise» más «30-60 minutes load-bearing training», de 60 a 90 minutos (leídos el 2026-10-14): ninguna de las tres dice qué entra en la diferencia, y aquí no se resuelve.",
+      "protocol_ref": {
+        "ref": "csa-physical-activity",
+        "relevance": "Rutina de ejercicio diario en la ISS con cinta, cicloergómetro y ARED."
+      },
+      "followup_checks": [
+        "heart-rate"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA: tres días para que el efecto de las sesiones se vea en el pulso en reposo",
+      "contraindications_note": null,
+      "adverse_effects_note": "El esfuerzo eleva el pulso y la presión durante y justo después: la medida de seguimiento se toma en reposo.",
+      "basis": "evidence-backed",
+      "family": "physical-mass"
+    },
+    {
+      "id": "cv-hydration-salt",
+      "domain": "cardiovascular",
+      "action": "Revisar hidratación y carga de sal antes del próximo periodo de sueño.",
+      "indication": "Cambios de presión o pulso compatibles con redistribución de líquidos.",
+      "resources": [
+        {"key": "intake-log", "description": "registro de ingesta"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "systolic-bp"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA: un ciclo de sueño",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "cv-repeat-rest",
+      "domain": "cardiovascular",
+      "action": "Repetir la medida en reposo tras 10 minutos sentado para descartar artefacto.",
+      "indication": "Lectura aislada fuera de lo habitual.",
+      "resources": [
+        {"key": "same-sensor", "description": "el mismo sensor"}
+      ],
+      "crew_time_minutes": 10,
+      "crew_time_basis": "lo fija el propio procedimiento (diseño EMMA)",
+      "protocol_ref": null,
+      "followup_checks": [
+        "heart-rate"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA: la repetición es inmediata",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "bh-protect-sleep",
+      "domain": "behavioral",
+      "action": "Proteger el periodo de sueño: cortar tareas y pantallas 60 min antes.",
+      "indication": "Pérdida de sueño o caída de la vigilancia.",
+      "resources": [
+        {"key": "shift-planning", "description": "planificación del turno"}
+      ],
+      "crew_time_minutes": 60,
+      "crew_time_basis": "Es tiempo de agenda sin tareas antes de dormir, no una tarea. OCHMO-MTB-009 (p. 4) dice: «1-2 hrs before bedtime: avoid use of electronic devices or wear blue blocker glasses or night setting to eliminate/reduce blue light emissions» (leído el 2026-10-14). La fuente da de una a dos horas; la acción de EMMA toma el extremo inferior, 60 minutos.",
+      "protocol_ref": {
+        "ref": "ochmo-mtb-009",
+        "relevance": "Buenas prácticas de NASA para el sueño: sin dispositivos electrónicos ni luz brillante de una a dos horas antes de dormir."
+      },
+      "followup_checks": [
+        "sleep-duration"
+      ],
+      "followup_window_hours": 48,
+      "followup_basis": "diseño EMMA: dos periodos de sueño",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "operational"
+    },
+    {
+      "id": "bh-circadian-lighting",
+      "domain": "behavioral",
+      "action": "Ajustar la iluminación al ciclo de misión para reanclar el ritmo circadiano.",
+      "indication": "Sueño desplazado o fragmentado.",
+      "resources": [
+        {"key": "adjustable-module-lighting", "description": "iluminación regulable del módulo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "OCHMO-MTB-009 (p. 4) da cuándo, no cuánto: «1-2 hrs Before Bedtime: Avoidance of bright light/blue enriched light/high Correlated Temperature Light (CCT)» y «1-2 hrs After Waking: Seek bright light/blue enriched light/high (CCT)» (leído el 2026-10-14). El tiempo de tripulación de ajustar la luz, sin fuente.",
+      "protocol_ref": {
+        "ref": "ochmo-mtb-009",
+        "relevance": "Buenas prácticas de NASA para el momento de la luz: evitar luz brillante antes de dormir y buscarla al despertar."
+      },
+      "followup_checks": [
+        "sleep-duration"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA: tres ciclos de sueño",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "operational"
+    },
+    {
+      "id": "bh-repeat-pvt",
+      "domain": "behavioral",
+      "action": "Repetir el test PVT tras el próximo periodo de sueño para confirmar.",
+      "indication": "Tiempo de reacción o fallos del PVT por encima de lo habitual.",
+      "resources": [
+        {"key": "onboard-pvt-test", "description": "test PVT de a bordo"}
+      ],
+      "crew_time_minutes": 3,
+      "crew_time_basis": "La duración sale del artículo que validó la prueba breve, no de la tarea del Roadmap citada como protocolo, cuya página no publica la duración: «we developed a modified brief 3-min version of the PVT (PVT-B)» (Basner et al., Acta Astronaut 2011;69(11-12):949-959, doi:10.1016/j.actaastro.2011.07.015, PMID 22025811; resumen leído en PubMed el 2026-10-13). Validado en laboratorio frente al de 10 minutos; ese resumen no habla de su uso en la ISS.",
+      "protocol_ref": {
+        "ref": "hrr-task-1651-pvt",
+        "relevance": "El PVT como autoevaluación de fatiga de la tripulación en la ISS."
+      },
+      "followup_checks": [
+        "pvt-mean-rt"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA: tras el siguiente periodo de sueño",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "bh-social-contact",
+      "domain": "behavioral",
+      "action": "Programar contacto con familia o tripulación fuera del turno de trabajo.",
+      "indication": "Ánimo bajo sostenido.",
+      "resources": [
+        {"key": "comms-window", "description": "ventana de comunicaciones"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "mood-valence"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "operational"
+    },
+    {
+      "id": "rad-storm-shelter",
+      "domain": "radiation",
+      "action": "Refugiarse de inmediato en la zona blindada designada.",
+      "indication": "Evento de partículas solares activo.",
+      "resources": [
+        {"key": "shielded-area", "description": "zona blindada"},
+        {"key": "stowage-water-food-as-shielding", "description": "bolsas de estiba, agua y víveres como masa de blindaje"}
+      ],
+      "crew_time_minutes": 60,
+      "crew_time_basis": "NASA dice de Orion: «If the warning were to sound, the crew would create the shelter within an hour and in some cases would need to stay inside for as long as 24 hours» (nasa.gov, artículo del 22 de septiembre de 2016, leído el 2026-10-13). La cifra es el tope de montaje que da el artículo, no una medida.",
+      "protocol_ref": {
+        "ref": "nasa-orion-radiation-protection",
+        "relevance": "Procedimiento de refugio de Orion: aviso de HERA, montaje con masa a bordo, permanencia."
+      },
+      "followup_checks": [
+        "absorbed-dose-rate"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "Permanencia de hasta 24 h en el refugio de Orion (misma fuente).",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "physical-mass"
+    },
+    {
+      "id": "rad-shielded-module",
+      "domain": "radiation",
+      "action": "Trasladarse al módulo con mayor blindaje disponible.",
+      "indication": "Tasa de radiación absorbida elevada o exposición acumulada cerca del límite de carrera.",
+      "resources": [
+        {"key": "module-with-more-shielding-mass", "description": "módulo con más masa entre la tripulación y el exterior"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": {
+        "ref": "nasa-orion-radiation-protection",
+        "relevance": "El principio: interponer masa de baja densidad entre la tripulación y la fuente."
+      },
+      "followup_checks": [
+        "absorbed-dose-rate"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "operational"
+    },
+    {
+      "id": "rad-hold-eva",
+      "domain": "radiation",
+      "action": "Suspender actividad extravehicular hasta que decaiga el evento.",
+      "indication": "Evento solar o tasa de radiación absorbida elevada.",
+      "resources": [
+        {"key": "activity-replanning", "description": "replanificación de la actividad"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "absorbed-dose-rate"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "operational"
+    },
+    {
+      "id": "rad-log-dosimeter",
+      "domain": "radiation",
+      "action": "Registrar la lectura del dosímetro personal en el historial de misión.",
+      "indication": "Cualquier cambio en el entorno radiológico.",
+      "resources": [
+        {"key": "personal-dosimeter", "description": "dosímetro personal"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cumulative-dose"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "bone-resistive-load",
+      "domain": "bone",
+      "action": "Completar la sesión de ejercicio resistivo con carga alta.",
+      "indication": "Marcadores de resorción ósea al alza o poca carga de impacto.",
+      "resources": [
+        {"key": "ared", "description": "ARED (ejercicio resistivo)"}
+      ],
+      "crew_time_minutes": 60,
+      "crew_time_basis": "OCHMO-TB-031 (p. 10, «Inflight Training Time Prescriptions», adaptado de Loehr et al., 2015) dice: «Resistive/Strength: 30-60 minutes load-bearing training» (leído el 2026-10-14). La cifra es el tope del rango, no una medida. El capítulo de Comfort y Twine en NTRS (20250005889, 2025) da para el resistivo «60 minutes per session» de media.",
+      "protocol_ref": {
+        "ref": "ochmo-tb-031",
+        "relevance": "Prescripción de NASA para el entrenamiento resistivo en vuelo y su duración por sesión."
+      },
+      "followup_checks": [
+        "ntx-telopeptide"
+      ],
+      "followup_window_hours": 168,
+      "followup_basis": "diseño EMMA: una semana, el marcador cambia despacio",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "physical-mass"
+    },
+    {
+      "id": "bone-calcium-vitd",
+      "domain": "bone",
+      "action": "Verificar la ingesta de calcio y vitamina D del día.",
+      "indication": "Marcadores de resorción ósea al alza.",
+      "resources": [
+        {"key": "intake-log", "description": "registro de ingesta"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "OCHMO-MTB-013 Rev D no da el tiempo de revisar la ingesta: sin fuente.",
+      "protocol_ref": {
+        "ref": "ochmo-mtb-013",
+        "relevance": "NASA vigila el calcio y la vitamina D de la tripulación, y la valoración de la dieta en órbita ayuda a asegurar la ingesta de nutrientes."
+      },
+      "followup_checks": [
+        "ntx-telopeptide"
+      ],
+      "followup_window_hours": 168,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": "OCHMO-MTB-013 Rev D (p. 15, columna «Cons») lo dice del nutriente, no de revisar la ingesta: del calcio, «Excess may cause kidney stones»; de la vitamina D, «Requires supplementation, risk of hypercalcemia» (leído el 2026-10-14). Revisar la ingesta mira también si sobra, no solo si falta.",
+      "basis": "evidence-backed",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "bone-log-impacts",
+      "domain": "bone",
+      "action": "Registrar la carga de impacto acumulada de la jornada.",
+      "indication": "Poca carga mecánica.",
+      "resources": [
+        {"key": "accelerometer", "description": "acelerómetro"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "loading-impacts"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "imm-symptom-diary",
+      "domain": "immune",
+      "action": "Registrar síntomas en el diario clínico con hora de inicio.",
+      "indication": "Cambios en el recuento o reactivación viral.",
+      "resources": [
+        {"key": "clinical-diary", "description": "diario clínico"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "symptom-burden"
+      ],
+      "followup_window_hours": 48,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "imm-hygiene",
+      "domain": "immune",
+      "action": "Extremar higiene y aislamiento de superficies compartidas.",
+      "indication": "Síntomas o reactivación viral.",
+      "resources": [
+        {"key": "cleaning-supplies", "description": "material de limpieza"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "symptom-burden"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "operational"
+    },
+    {
+      "id": "imm-viral-sample",
+      "domain": "immune",
+      "action": "Tomar muestra para el ensayo de reactivación viral si está disponible.",
+      "indication": "Sospecha de reactivación de herpesvirus latentes.",
+      "resources": [
+        {"key": "saliva-sample-kit", "description": "kit de muestra de saliva"}
+      ],
+      "crew_time_minutes": 3,
+      "crew_time_basis": "Mehta et al. (NPJ Microgravity 2017;3:11, doi:10.1038/s41526-017-0015-y, PMID 28649633), apartado «Sample collection» de los métodos, sobre la saliva que recogieron en vuelo 23 tripulantes de la ISS para el ensayo de virus latentes: «To collect a sample, the subject placed the cotton roll in their mouth until it became saturated with saliva (2–3 min)» (texto completo leído en Europe PMC, PMC5445581, el 2026-10-20). La fuente da de dos a tres minutos; la acción de EMMA toma el tope del rango, 3 minutos, no una medida. Es el tiempo con el rollo de algodón en la boca: el artículo no da el de meter la muestra en su bolsa con el tampón de estabilidad ni el de estibarla.",
+      "protocol_ref": {"ref": "mehta-2017-latent-virus-iss", "relevance": "Fuente del tiempo de recogida: cómo recogió la tripulación de la ISS la saliva para el ensayo de virus latentes. Es un estudio, no un protocolo operativo de NASA."},
+      "followup_checks": [
+        "latent-virus-shedding"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "sans-repeat-both-eyes",
+      "domain": "neuro-ocular",
+      "action": "Repetir la medida en ambos ojos con la misma técnica para descartar artefacto.",
+      "indication": "Diámetro de la vaina del nervio óptico por encima de lo habitual.",
+      "resources": [
+        {"key": "ultrasound-scanner", "description": "ecógrafo"},
+        {"key": "trained-operator", "description": "operador entrenado"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "onsd-left",
+        "onsd-right"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "sans-vision-log",
+      "domain": "neuro-ocular",
+      "action": "Registrar en el diario clínico cualquier cambio de visión o de enfoque.",
+      "indication": "Cambios compatibles con SANS.",
+      "resources": [
+        {"key": "clinical-diary", "description": "diario clínico"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "sans-review-baseline",
+      "domain": "neuro-ocular",
+      "action": "Revisar la tendencia con el médico de a bordo frente a la línea base preflight.",
+      "indication": "Tendencia sostenida del diámetro de la vaina.",
+      "resources": [
+        {"key": "onboard-physician", "description": "médico de a bordo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "onsd-left",
+        "onsd-right"
+      ],
+      "followup_window_hours": 168,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "gu-void-repeat",
+      "domain": "genitourinary",
+      "action": "Intentar la micción y repetir la medida para distinguir llenado de retención.",
+      "indication": "Volumen vesical alto por ecografía.",
+      "resources": [
+        {"key": "ultrasound-scanner", "description": "ecógrafo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "bladder-volume"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA: la repetición es inmediata",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "gu-intake-log",
+      "domain": "genitourinary",
+      "action": "Registrar la ingesta de líquidos y las micciones de las últimas horas.",
+      "indication": "Volumen vesical alto.",
+      "resources": [
+        {"key": "intake-log", "description": "registro de ingesta"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [],
+      "followup_window_hours": 12,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "gu-review-postvoid",
+      "domain": "genitourinary",
+      "action": "Revisar el volumen tras la micción con el médico de a bordo.",
+      "indication": "Volumen residual alto tras la micción.",
+      "resources": [
+        {"key": "onboard-physician", "description": "médico de a bordo"},
+        {"key": "ultrasound-scanner", "description": "ecógrafo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "bladder-volume"
+      ],
+      "followup_window_hours": 6,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "msk-repeat-pain-map",
+      "domain": "musculoskeletal",
+      "action": "Repetir el registro de dolor en el mapa corporal tras el próximo periodo de descanso.",
+      "indication": "Dolor autoinformado.",
+      "resources": [
+        {"key": "pain-body-map", "description": "mapa corporal de dolor"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "pain-intensity"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "msk-log-activity",
+      "domain": "musculoskeletal",
+      "action": "Anotar la actividad previa al dolor: ejercicio, tarea o postura de trabajo.",
+      "indication": "Dolor autoinformado.",
+      "resources": [
+        {"key": "clinical-diary", "description": "diario clínico"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "msk-review-zones",
+      "domain": "musculoskeletal",
+      "action": "Revisar la evolución por zonas con el médico de a bordo.",
+      "indication": "Dolor que persiste o se extiende.",
+      "resources": [
+        {"key": "onboard-physician", "description": "médico de a bordo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "pain-intensity"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "id": "gu-hydration-target",
+      "domain": "genitourinary",
+      "action": "Repartir la ingesta de agua a lo largo del día hasta el objetivo del protocolo de hidratación.",
+      "indication": "Ingesta de líquidos u orina de 24 h a la baja, o densidad de la orina al alza.",
+      "resources": [
+        {"key": "onboard-drinking-water", "description": "agua potable de a bordo"},
+        {"key": "intake-log", "description": "registro de ingesta"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": {
+        "ref": "nasa-human-body-in-space",
+        "relevance": "NASA mide la producción de orina para vigilar el riesgo de cálculos renales y ajustar dieta, ejercicio e hidratación."
+      },
+      "followup_checks": [
+        "urine-volume-24h",
+        "urine-specific-gravity"
+      ],
+      "followup_window_hours": 48,
+      "followup_basis": "diseño EMMA: dos recogidas de orina de 24 h",
+      "basis": "evidence-backed",
+      "family": "operational"
+    },
+    {
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "id": "gu-log-intake-output",
+      "domain": "genitourinary",
+      "action": "Registrar la ingesta de líquidos y la orina de 24 h con la misma técnica que la línea base.",
+      "indication": "Datos de hidratación incompletos o discordantes.",
+      "resources": [
+        {"key": "intake-log", "description": "registro de ingesta"},
+        {"key": "urine-24h-collection", "description": "recogida de orina de 24 h"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "fluid-intake-24h",
+        "urine-volume-24h"
+      ],
+      "followup_window_hours": 24,
+      "followup_basis": "diseño EMMA: una recogida de 24 h",
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "id": "nut-menu-variety",
+      "domain": "nutrition",
+      "action": "Revisar el menú con el equipo de alimentación de Tierra: variedad, elección y alimentos preferidos disponibles.",
+      "indication": "Aceptabilidad de la comida o ingesta energética a la baja.",
+      "resources": [
+        {"key": "onboard-food-inventory", "description": "inventario de alimentos de a bordo"},
+        {"key": "comms-window", "description": "ventana de comunicaciones"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": {
+        "ref": "hrp-food-system-evidence-report",
+        "relevance": "La variedad, la elección y la aceptabilidad condicionan lo que de verdad se come."
+      },
+      "followup_checks": [
+        "food-acceptability",
+        "energy-intake-daily"
+      ],
+      "followup_window_hours": 168,
+      "followup_basis": "diseño EMMA: una semana de menús",
+      "basis": "evidence-backed",
+      "family": "operational"
+    },
+    {
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "id": "nut-log-intake",
+      "domain": "nutrition",
+      "action": "Registrar lo que realmente se come en cada comida, incluido lo que se deja.",
+      "indication": "Ingesta energética a la baja o sin registrar.",
+      "resources": [
+        {"key": "intake-log", "description": "registro de ingesta"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "energy-intake-daily",
+        "food-rejected-fraction"
+      ],
+      "followup_window_hours": 72,
+      "followup_basis": "diseño EMMA",
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-co2-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de CO2 del módulo con un segundo sensor o una medida portátil.",
+      "indication": "CO2 de cabina fuera del límite de una hora de NASA-STD-3001 [V2 6004].",
+      "resources": [
+        {"key": "second-co2-sensor-or-portable-analyzer", "description": "segundo sensor o analizador portátil de CO2"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": {
+        "ref": "ochmo-tb-002",
+        "relevance": "[V2 6022]: el sistema alerta cuando los parámetros atmosféricos salen de sus límites; [V2 6004]: límite de CO2 de una hora."
+      },
+      "followup_checks": [
+        "cabin-ppco2"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA: el límite se juzga en media de una hora",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-co2-removal-check",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Revisar el estado del sistema de eliminación de CO2 y la ventilación del módulo.",
+      "indication": "CO2 de cabina fuera de límite de forma sostenida.",
+      "resources": [
+        {"key": "environmental-control-system", "description": "sistema de control ambiental del módulo"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": {
+        "ref": "ochmo-tb-002",
+        "relevance": "[V2 6004]: el sistema limita la media de una hora del CO2 a 3 mmHg; la ventilación evita bolsas de CO2."
+      },
+      "followup_checks": [
+        "cabin-ppco2"
+      ],
+      "followup_window_hours": 6,
+      "followup_basis": "diseño EMMA",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "evidence-backed",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-o2-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de O2 del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de O2 de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-ppo2"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-pressure-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de presión total del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de presión total de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-pressure"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-temperature-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de temperatura del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de temperatura de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-temperature"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-noise-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de ruido del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de ruido de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-noise"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-co-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de monóxido de carbono del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de monóxido de carbono de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-co"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-ammonia-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de amoníaco del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de amoníaco de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-ammonia"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-formaldehyde-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de formaldehído del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de formaldehído de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-formaldehyde"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    },
+    {
+      "id": "hab-humidity-sensor-crosscheck",
+      "scope": "habitat",
+      "domain": null,
+      "action": "Contrastar la lectura de humedad relativa del módulo con un segundo sensor o una medida manual.",
+      "indication": "Lectura de humedad relativa de cabina fuera de su límite normativo.",
+      "resources": [
+        {"key": "second-sensor-or-manual-instrument", "description": "segundo sensor o instrumento de medida manual"}
+      ],
+      "crew_time_minutes": null,
+      "crew_time_basis": "sin fuente",
+      "protocol_ref": null,
+      "followup_checks": [
+        "cabin-humidity"
+      ],
+      "followup_window_hours": 1,
+      "followup_basis": "diseño EMMA, sin protocolo leído: repetir la lectura en la hora siguiente",
+      "contraindications_note": null,
+      "adverse_effects_note": null,
+      "basis": "demo",
+      "family": "check-surveillance"
+    }
+  ]
+}

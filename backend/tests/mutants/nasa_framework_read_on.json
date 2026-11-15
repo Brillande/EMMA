@@ -1,0 +1,28 @@
+{"target": "app/evidence/nasa_framework.py",
+ "test": [
+  "tests/test_nasa_framework.py::test_every_statement_carries_quote_place_official_url_and_a_registry_card",
+  "tests/test_nasa_framework.py::test_every_source_says_how_much_of_it_was_read",
+  "tests/test_nasa_framework.py::test_a_source_read_on_another_day_needs_a_real_date",
+  "tests/test_nasa_framework.py::test_a_source_without_its_own_date_takes_the_date_of_the_reading",
+  "tests/test_nasa_framework.py::test_a_source_cannot_be_read_before_the_first_reading",
+  "tests/test_nasa_framework.py::test_a_gap_status_carries_the_date_its_roadmap_page_was_read"],
+ "mutations": [
+  {"label": "una fuente puede fecharse antes de la primera lectura (una errata pasa)",
+   "old": "        if own < first:",
+   "new": "        if False:"},
+  {"label": "el estado de un hueco lleva la fecha general y no la de la pagina leida",
+   "old": "                    \"read_on\": read_on(raw, item[\"ref\"]),\n                }",
+   "new": "                    \"read_on\": raw[\"read_on\"],\n                }"},
+  {"label": "una fuente leida otro dia puede declarar una fecha que no es fecha", "target": "app/evidence/read_contract.py",
+   "old": "        if own_read_on is not None and \"read_on\" in source:",
+   "new": "        if False:"},
+  {"label": "toda frase lleva la fecha de la primera lectura, aunque su fuente se leyera despues",
+   "old": "    return str(raw[\"sources\"][ref_id].get(\"read_on\", raw[\"read_on\"]))",
+   "new": "    return str(raw[\"read_on\"])"},
+  {"label": "la frase servida lleva la fecha general y no la de su fuente",
+   "old": "            \"read_on\": read_on(raw, item[\"ref\"]),\n            \"extent\": source[\"extent\"],",
+   "new": "            \"read_on\": raw[\"read_on\"],\n            \"extent\": source[\"extent\"],"},
+  {"label": "la lista de fuentes servida lleva la fecha general y no la de cada fuente",
+   "old": "                \"read_on\": read_on(raw, ref_id),",
+   "new": "                \"read_on\": raw[\"read_on\"],"}
+ ]}

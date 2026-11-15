@@ -1,0 +1,9 @@
+{"target": "app/core/mission.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "la tira de fases lleva la clave en vez del nombre",
+   "old": "            {\"key\": str(item), \"display\": i18n.loc(item.display)} for item in MissionPhase\n",
+   "new": "            {\"key\": str(item), \"display\": str(item)} for item in MissionPhase\n"},
+  {"label": "la fase de regreso vuelve a llamarse solo regreso",
+   "old": "    MissionPhase.RETURN: \"preparación del regreso\",",
+   "new": "    MissionPhase.RETURN: \"regreso\","}
+ ]}

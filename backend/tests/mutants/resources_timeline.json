@@ -1,0 +1,33 @@
+{
+ "target": "app/timeline.py",
+ "test": [
+  "tests/test_resources.py::test_the_chronicle_tells_the_declaration_with_its_label"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica no cuenta la declaracion de un recurso",
+   "old": "    for item in declared_resources.history(counted(store.resource_declarations())):",
+   "new": "    for item in declared_resources.history([]):"
+  },
+  {
+   "label": "la declaracion se fecha en la hora de firma y no en el instante desde el que vale",
+   "old": "            mission, until, item, \"since\", \"recurso\", \"resource-availability-declared\",",
+   "new": "            mission, until, item, None, \"recurso\", \"resource-availability-declared\","
+  },
+  {
+   "label": "Tierra ve en la cronica una declaracion firmada despues de su corte",
+   "old": "    for item in declared_resources.history(counted(store.resource_declarations())):",
+   "new": "    for item in declared_resources.history(store.resource_declarations()):"
+  },
+  {
+   "label": "la cronica no dice quien declaro",
+   "old": "            declared_resources.sentence(item), item[\"declared_by\"])",
+   "new": "            declared_resources.sentence(item), \"\")"
+  },
+  {
+   "label": "la cronica cuenta la declaracion sin su rotulo",
+   "old": "            declared_resources.sentence(item), item[\"declared_by\"])",
+   "new": "            declared_resources.sentence(item).replace(declared_resources.DECLARED_LABEL, \"\"), item[\"declared_by\"])"
+  }
+ ]
+}

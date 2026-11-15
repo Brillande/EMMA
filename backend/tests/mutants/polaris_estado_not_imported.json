@@ -1,0 +1,29 @@
+{
+  "target": "scripts/polaris_estado.py",
+  "test": [
+    "tests/test_polaris_texts.py::test_estado_lists_the_compat_folder_as_its_script_writes_it_today",
+    "tests/test_polaris_texts.py::test_estado_tells_apart_what_fails_to_load_from_what_is_not_imported"
+  ],
+  "mutations": [
+    {
+      "label": "ESTADO.md cuenta lo que no se importa entre las que no cargan",
+      "old": "    fails = [status for status in statuses if status.imported and not status.loads]",
+      "new": "    fails = [status for status in statuses if not status.loads]"
+    },
+    {
+      "label": "ESTADO.md calla lo que el inventario no importa",
+      "old": "        *skipped_lines(skipped),\n",
+      "new": ""
+    },
+    {
+      "label": "ESTADO.md calla por qué no se importa",
+      "old": "        *[f\"| `{status.name}` | {status.reason} |\" for status in skipped],",
+      "new": "        *[f\"| `{status.name}` | |\" for status in skipped],"
+    },
+    {
+      "label": "ESTADO.md anuncia una tabla de excluidas aunque no haya ninguna",
+      "old": "    if not skipped:\n        return []\n",
+      "new": ""
+    }
+  ]
+}

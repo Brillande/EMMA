@@ -1,0 +1,597 @@
+/*
+ * El asistente (`.assistant*`), «Acerca de EMMA» (`.about`), el plegable «Pantalla» del carril
+ * (`.display-controls`) y los estados sin consola montada (la barra `nav.tabs`, «Cargando…», el error y
+ * el almacén vacío en `main`) bajo la concha de la maqueta. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que vi (capturas del 2026-11-07 con la concha nueva, 1672 × 941, las dos consolas, el arranque y
+ * los tres modos; la conversación, la propuesta sin firmar y los estados se miraron con marcado de
+ * muestra inyectado en la página, con las clases de los `.tsx`, sin mandar nada al backend): fuera de
+ * las secciones seguía la consola clásica entera. El asistente era una barra gris opaca (`--c-raised`)
+ * con el filete gris de siempre, su título un mando con borde gris y radio de 10 px y «Hablar con EMMA»
+ * verde sobre el fondo de mando; abierto, la columna acoplada a la derecha conservaba ese fondo plano
+ * al lado de las tarjetas de la maqueta, el hilo era texto corrido sin nada que separase un turno del
+ * siguiente, la propuesta sin firmar una caja gris con sus pares en línea, y el campo de texto una caja
+ * negra con filete gris. En el carril, el pliegue «Pantalla» llevaba el triángulo del navegador y, por
+ * dentro, los conmutadores en dos columnas con el verde clásico; con el carril de la maqueta (15,5 rem,
+ * dos rem menos que el clásico) la columna no daba para una palabra con el hueco del anillo de
+ * «elegido» delante y «Privacidad» salía partida en dos renglones («Privacida / d»). «Acerca de EMMA»
+ * no se veía: el pie es estático y la Tierra de noche de la concha (entonces `.ref-earth-bg`, posicionada; quitada el 2026-11-09) se
+ * pintaba encima; abierto, la mitad izquierda de los dos párrafos quedaba detrás del planeta. En el
+ * arranque, el conmutador de consola de la barra era el control segmentado clásico (caja negra, filete
+ * gris, barra blanca debajo de la elegida), «Cargando estado…» una línea suelta y los mandos de pantalla
+ * sin plegar colgaban de un filete sin marco.
+ *
+ * Por qué así: el asistente toma la receta de la franja cuando es la barra del pie (azul marino
+ * translúcido con desenfoque, filete `--ref-edge`: lo que se desplaza por debajo se adivina, como bajo
+ * la franja) y la de la tarjeta de la maqueta cuando se abre (degradado `--ref-card` → `--ref-navy`,
+ * resplandor interior), con su cabecera separada por un filete como las tarjetas de «Inicio». Cada
+ * turno del hilo es un «marco» (filete atenuado, 8 px): los de EMMA con el fondo azul marino y los de
+ * quien escribe transparentes, para que la conversación se lea sin color. La propuesta sin firmar es
+ * una tarjeta interior con su título sobre un filete y sus pares como la lista clave-valor del
+ * tripulante (`.ref-kv`: rejilla, clave en texto secundario). El campo de texto, el selector de la
+ * maqueta (`.ref-select-like`); los mandos, el mando de la maqueta que ya viste el mobiliario común
+ * en `main` (`furniture.css`), que no llega aquí porque el asistente y el pie están fuera de `main` y
+ * el carril se excluyó a propósito: se repite la receta, no se toca aquella. En «Pantalla», el rótulo
+ * del pliegue es la fila de acceso de la maqueta (`.ref-quick-links a`: dibujo delante, punta de
+ * flecha a la derecha) y los conmutadores van en una sola columna, cada uno una fila de mando a todo
+ * el ancho como los accesos rápidos de «Inicio»: así caben las palabras enteras con el anillo delante
+ * y la lista se parece a la de pestañas que tiene encima. «Acerca de EMMA» se pone por delante del
+ * fondo, se alinea con la consola (el mismo ancho máximo que `main`) y su rótulo es la misma fila de
+ * acceso; lo que guarda cuelga de un filete (`.ref-aspects`). En el arranque, el conmutador de la
+ * barra es la tarjeta de la maqueta con la pestaña elegida en el degradado verde azulado del carril,
+ * y «Cargando estado…» y los mandos de pantalla sin plegar toman el marco y la tarjeta.
+ *
+ * Lo que no se toca, porque significa (NASA-STD-3001 F.5-1): el rojo de una petición que falló y del
+ * panel de error (su filete lo devuelve la concha), el gris de «no disponible» y de un mando apagado,
+ * el azul de «Micrófono abierto» y «Cámara encendida», el cian de lo que falta (el título del almacén
+ * vacío) y el color de toda marca `.mark.c-*`; el anillo de «elegido» (`Chosen`) conserva el color
+ * del texto. El rótulo de origen de una respuesta («redactado por el modelo…», «conocimiento general
+ * del modelo») sigue siendo texto, sin color añadido. Un dibujo pasa a `--ref-teal` solo cuando es un
+ * signo de qué es la pieza (el del título del asistente, el de quien habla, el de un rótulo de pliegue
+ * o de mando) y nunca si él o su dueño llevan una clase `c-*`. El acento va en el marco y nunca detrás
+ * de una insignia; ningún mando ni entrada baja de su alto táctil (`--assistant-touch`, `--touch`, los
+ * 48 px del rótulo de «Pantalla» y los 56 de baja visión siguen en `styles.css`); dónde se coloca el
+ * asistente (barra, hoja de abajo, columna acoplada; `data-open`, `data-rotation`) tampoco cambia.
+ *
+ * Especificidad a propósito baja: el prefijo de la concha va en `:where()`, que no cuenta, y las reglas
+ * ganan a las de `styles.css` por cargar después con la misma o más especificidad; donde la pieza ya
+ * tenía borde se cambia solo `border-color`. Dos piezas llevan el prefijo fuera de `:where()`, y lo
+ * dicen en su sitio: el filete izquierdo de la columna acoplada, que `styles.css` pone con el atajo y
+ * un selector de cuatro clases, y la tarjeta de los mandos sin plegar, cuyo color de borde fija la
+ * concha con más peso; ninguna de las dos pisa un modo de `styles.css`. Los marcos que nacen en esta
+ * hoja se engrosan a 2 px en baja visión y alto contraste y pasan al color del texto secundario en
+ * baja visión, como el panel.
+ */
+
+/* ------------------------------------------------------------------ */
+/* El mando de la maqueta, fuera de `main` (asistente, carril, pie)      */
+/* ------------------------------------------------------------------ */
+
+/* La misma receta que `furniture.css` da a los mandos de `main`: filete `--ref-edge`, 8 px, sin fondo;
+   solo el color del filete, nunca el atajo (`styles.css` pone el grosor, y alto contraste lo sube a
+   2 px). `.display-controls` entra aquí también cuando va sin plegar en `main`: la receta es la misma. */
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command {
+  background: transparent;
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ref-teal) 12%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* F.5.4 c: al pulsar, el filete pasa al color del texto, como en la hoja clásica. */
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command:active {
+  border-color: var(--c-text);
+}
+
+/* Lo puesto (un modo encendido, el micrófono mantenido): anillo verde azulado y fondo teñido, con el
+   segundo anillo por dentro para que la fila no se mueva. La negrita y el anillo de «elegido» siguen
+   siendo de `styles.css` y de `Chosen`. */
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command[aria-pressed="true"] {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, var(--c-raised));
+  box-shadow:
+    0 0 14px var(--ref-glow),
+    inset 0 0 0 1px var(--ref-teal);
+}
+
+/* No disponible: gris (F.5-1), también el dibujo. */
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command:disabled {
+  color: var(--c-gray);
+  background: none;
+  border-color: var(--c-gray);
+  box-shadow: none;
+}
+
+/* El dibujo-signo del mando, en verde azulado, en las tres formas en que llega: hijo directo
+   (`Command`), dentro de una marca («Esto es arriba»: `button > .mark`) o dentro del rótulo de un
+   conmutador (`Toggle`: `Chosen` envuelve otra marca, `.mark > .mark`). El anillo de «elegido»
+   (`ring-dot`, hijo directo de la marca de `Chosen`) no: conserva el color del texto, como en el
+   mobiliario. Un dueño o un dibujo con clase `c-*` queda fuera: sería color con sentido. */
+:where(.app[data-look="reference"])
+  :is(.assistant, .display-controls)
+  :is(
+    button.command:where(:not([class*="c-"])) > .pictogram:where(:not([class*="c-"])),
+    button.command:where(:not([class*="c-"])) > .mark:where(:not([class*="c-"])) > .pictogram:where(:not([class*="c-"], [data-pictogram="ring-dot"])),
+    button.command:where(:not([class*="c-"])) > .mark > .mark:where(:not([class*="c-"])) > .pictogram:where(:not([class*="c-"]))
+  ) {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) :is(.assistant, .display-controls) button.command:disabled .pictogram {
+  color: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Asistente (assistant/Assistant.tsx)                                   */
+/* ------------------------------------------------------------------ */
+
+/* Cerrado, la barra del pie: la receta de la franja (`consoleShell.css`, `.strip`), que es la otra
+   barra fija de la concha. Ya tenía filete arriba: solo el color. */
+:where(.app[data-look="reference"]) .assistant {
+  background: color-mix(in srgb, var(--ref-navy) 88%, transparent);
+  border-top-color: color-mix(in srgb, var(--ref-edge) 50%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* Cerrado, sin franja: los dos mandos flotan en las esquinas de abajo. La muestra no tiene barra al
+   pie y la de EMMA, con su fondo, su filete y 8 px de relleno arriba y abajo, se comía ~61 px de cada
+   vista (2026-11-08, lote «muestra», ronda 3). La franja queda transparente y no recoge el puntero, para
+   que entre los dos mandos se vea y se pulse lo que pasa por debajo; cada mando (y «Micrófono
+   abierto») lleva su propio fondo azul marino translúcido, para leerse encima de una tarjeta. El alto
+   lo da el mando (`--assistant-touch`, el táctil) más 4 px arriba y abajo: lo que la franja tapa
+   (`--assistant-bar-h`, que el carril descuenta de su alto) baja a 52 px, 56 con puntero grueso.
+   Abierto no cambia nada. Los estados del mando (encima, apagado, mantenido) quedan fuera de estas
+   reglas (`:where(:not(…))`) y siguen siendo los de abajo. */
+.app[data-look="reference"] {
+  --assistant-bar-h: 52px;
+}
+
+@media (pointer: coarse) {
+  .app[data-look="reference"] {
+    --assistant-bar-h: 56px;
+  }
+}
+
+:where(.app[data-look="reference"]) .assistant:not([data-open="true"]) {
+  background: transparent;
+  border-top-width: 0;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+:where(.app[data-look="reference"]) .assistant:not([data-open="true"]) > .assistant-head {
+  padding: 4px 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .assistant:not([data-open="true"]) > .assistant-head > * {
+  pointer-events: auto;
+}
+
+:where(.app[data-look="reference"])
+  .assistant:not([data-open="true"])
+  > .assistant-head
+  > :is(.assistant-toggle:where(:not(:hover)), button.command:where(:not(:hover, :disabled, [aria-pressed="true"])), .mic-on) {
+  background: var(--ref-card);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* Quinta ronda (R5-3). Qué se vio (capturas post-R4, 1672 × 941): el fondo de los dos mandos era
+   translúcido (azul marino al 88 % con desenfoque) y «Hablar con EMMA», en la esquina de abajo a la
+   derecha, tapaba lo que pasaba por debajo al desplazar: «Reconocer» y «Suprimir…» en Peligros,
+   «Activar» de «Modo esencial» en Inicio, filas de tablas. Qué cambia: el fondo de los mandos es
+   opaco (`--ref-card`, la tarjeta de la maqueta) también al pasar por encima y apagado, con su filete;
+   y con el carril al lado (abajo) los dos mandos se apilan al pie de la columna del carril, que les
+   reserva su alto, en vez de flotar sobre las tarjetas. */
+:where(.app[data-look="reference"])
+  .assistant:not([data-open="true"])
+  > .assistant-head
+  > :is(.assistant-toggle:hover, button.command:hover:not(:disabled, [aria-pressed="true"])) {
+  background: color-mix(in srgb, var(--ref-teal) 14%, var(--ref-card));
+}
+
+:where(.app[data-look="reference"]) .assistant:not([data-open="true"]) > .assistant-head > button.command:disabled {
+  background: var(--ref-card);
+}
+
+:where(.app[data-look="reference"]) .assistant:not([data-open="true"]) > .assistant-head > .mic-on {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+}
+
+/* Con el carril al lado y fijo (más de 760 px, sin la vista de lado), cerrado: los dos mandos, uno
+   encima del otro, al pie de la columna del carril (15,5 rem, el mismo margen izquierdo que `main`).
+   La franja sigue transparente y sin puntero, así que a la derecha de esa columna no queda nada
+   encima de las tarjetas. El carril ya descuenta `--assistant-bottom` de su alto (`styles.css`): con
+   los dos mandos, ese alto pasa a dos mandos táctiles, el hueco entre ellos y 4 px arriba y abajo,
+   y la Tierra de noche del pie del carril cede lo que falte. Sin «Hablar con EMMA» (asistente sin
+   cargar o no disponible) queda el alto de un mando. «Micrófono abierto», mientras se mantiene el
+   mando, sale a la derecha de la columna, a la altura del mando: no empuja ni tapa el carril. */
+@media (min-width: 761px) {
+  .app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]):has(
+      > .assistant:not([data-open="true"]) > .assistant-head > button.command
+    ) {
+    --assistant-bar-h: calc(2 * var(--assistant-touch) + 12px);
+  }
+
+  :where(.app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]))
+    > .assistant:not([data-open="true"])
+    > .assistant-head {
+    position: relative;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 4px;
+    width: calc(15.5rem + 0.6rem);
+    padding: 4px 0 4px 0.6rem;
+  }
+
+  :where(.app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]))
+    > .assistant:not([data-open="true"])
+    > .assistant-head
+    > :is(.assistant-toggle, button.command) {
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+  }
+
+  :where(.app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]))
+    > .assistant:not([data-open="true"])
+    > .assistant-head
+    > .mic-on {
+    position: absolute;
+    bottom: 4px;
+    left: calc(100% + 0.6rem);
+    white-space: nowrap;
+  }
+}
+
+/* Abierto (hoja de abajo o columna acoplada): la tarjeta de la maqueta, con el filete entero. */
+:where(.app[data-look="reference"]) .assistant[data-open="true"] {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  border-top-color: var(--ref-edge);
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* La columna acoplada pone su filete izquierdo con el atajo `border-left` en `styles.css`
+   (`.app:not([data-rotation]) > .assistant[data-open="true"]`, dentro de su consulta de medios), que
+   pisaría un `border-color` del prefijo en `:where()`. Aquí el prefijo va fuera, para igualar esa
+   especificidad y ganar por orden; solo se cambia el color, y fuera de esa consulta no hay filete
+   izquierdo al que afectar. */
+.app[data-look="reference"]:not([data-rotation]) > .assistant[data-open="true"] {
+  border-left-color: var(--ref-edge);
+}
+
+/* El título es un mando (abre y cierra): el mando de la maqueta, con el dibujo del asistente en verde
+   azulado; desplegado, el anillo de lo elegido, como el pliegue abierto del mobiliario. Ya tenía borde. */
+:where(.app[data-look="reference"]) .assistant-toggle {
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+}
+
+:where(.app[data-look="reference"]) .assistant-toggle:hover {
+  background: color-mix(in srgb, var(--ref-teal) 12%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"]) .assistant-toggle[aria-expanded="true"] {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, var(--c-raised));
+  box-shadow:
+    0 0 14px var(--ref-glow),
+    inset 0 0 0 1px var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .assistant-toggle > .mark:where(:not([class*="c-"])) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La cabecera y el cuerpo se separan con el filete de la tarjeta, y el formulario igual: los tres
+   bordes ya existían en gris. */
+:where(.app[data-look="reference"]) :is(.assistant-body, .assistant-form) {
+  border-top-color: color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+/* Cada turno, un «marco»: filete atenuado y 8 px. Los de EMMA llevan el fondo azul marino y los de
+   quien escribe quedan transparentes: dos formas, ningún color con sentido. El marco nace aquí. */
+:where(.app[data-look="reference"]) .assistant-turn {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 8px;
+}
+
+:where(.app[data-look="reference"]) .assistant-turn.assistant-assistant {
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+/* Quien habla: su dibujo en verde azulado; la palabra sigue en negrita y en el color del texto. */
+:where(.app[data-look="reference"]) .assistant-who > .mark:where(:not([class*="c-"])) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La propuesta sin firmar: una tarjeta interior (ya tenía borde), su título sobre un filete y los
+   pares como la lista clave-valor del tripulante de «Inicio» (`.ref-kv`). El `div` que agrupa cada
+   par se disuelve en la rejilla (`display: contents`): `dt` y `dd` pasan a ser las celdas. */
+:where(.app[data-look="reference"]) .assistant-proposal {
+  padding: 0.6rem 0.8rem 0.7rem;
+  border-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+:where(.app[data-look="reference"]) .assistant-proposal > p:first-child {
+  margin: 0 0 0.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"]) .assistant-proposal > p:first-child > .mark:where(:not([class*="c-"])) > .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .assistant-proposal dl {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.2rem 0.7rem;
+  margin: 0 0 0.7rem;
+}
+
+:where(.app[data-look="reference"]) .assistant-proposal dl > div {
+  display: contents;
+}
+
+:where(.app[data-look="reference"]) .assistant-proposal dt {
+  color: var(--c-text-secondary);
+  font-weight: 400;
+}
+
+/* El campo de texto, el selector de la maqueta (`.ref-select-like`): filete `--ref-edge`, 8 px, fondo
+   azul marino. Ya tenía borde: solo el color. El alto táctil es el de `styles.css`. */
+:where(.app[data-look="reference"]) .assistant-input {
+  background: color-mix(in srgb, var(--ref-navy) 78%, transparent);
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* «Pantalla» (components/DisplayControls.tsx)                           */
+/* ------------------------------------------------------------------ */
+
+/* El rótulo del pliegue del carril: la fila de acceso de la maqueta, con la punta de flecha a la
+   derecha en vez del triángulo del navegador. Ya tenía borde (48 px de alto en `styles.css`, 56 en
+   baja visión): solo el color, el radio y el fondo. El resumen de modos puestos (`.display-summary`)
+   sigue debajo de la palabra, en su bloque. */
+:where(.app[data-look="reference"]) .display-controls > summary.display-toggle {
+  position: relative;
+  list-style: none;
+  padding-right: 2.4rem;
+  border-color: color-mix(in srgb, var(--ref-edge) 80%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+}
+
+:where(.app[data-look="reference"]) .display-controls > summary.display-toggle::-webkit-details-marker {
+  display: none;
+}
+
+:where(.app[data-look="reference"]) .display-controls > summary.display-toggle:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .display-controls > summary.display-toggle::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 2px solid var(--ref-teal);
+  border-bottom: 2px solid var(--ref-teal);
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+/* Abierto: el anillo de lo desplegado, como el mando de la maqueta y el pliegue del mobiliario. */
+:where(.app[data-look="reference"]) .display-controls[open] > summary.display-toggle {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 14%, transparent);
+}
+
+:where(.app[data-look="reference"]) .display-controls[open] > summary.display-toggle::after {
+  transform: translateY(-70%) rotate(45deg);
+}
+
+:where(.app[data-look="reference"]) .display-controls > summary > .pictogram:where(:not([class*="c-"])) {
+  color: var(--ref-teal);
+}
+
+/* En el carril al lado, una sola columna: cada conmutador es una fila de mando a todo el ancho, como
+   los accesos rápidos de «Inicio» y como las pestañas de encima. Con la columna de la maqueta
+   (15,5 rem), la mitad no daba para una palabra con el hueco del anillo delante y «Privacidad» se
+   partía. Con el carril arriba (`data-rail="top"`, tableta en vertical) el pliegue se abre a todo el
+   ancho y las dos columnas de `styles.css` siguen. Los cuatro giros conservan su rejilla de dos por dos. */
+:where(.app[data-look="reference"]) .console-layout:not([data-rail="top"]) .display-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Con la fila a todo el ancho, el dibujo vuelve junto a la palabra: `styles.css` lo ponía encima
+   (`flex-direction: column`) porque en la media columna no cabían los dos. El selector se iguala al
+   suyo para ganar por orden; el anillo de «elegido» sigue a la izquierda, alineado con el primer
+   renglón si el rótulo se parte. */
+:where(.app[data-look="reference"]) .console-layout:not([data-rail="top"]) .display-body > button.command > .mark > .mark {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+
+/* El rótulo «Girar» del grupo de giros, como un rótulo de campo: su dibujo en verde azulado. */
+:where(.app[data-look="reference"]) .display-body > .rotation > .mark:where(:not([class*="c-"])) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Sin consola montada, los mandos de pantalla van sin plegar en `main`: una tarjeta de la maqueta en
+   vez de un filete arriba. El borde nace aquí con el atajo. La concha pone el color del borde de todo
+   `.display-controls` (`consoleShell.css`, filete al 60 %, para el pliegue del carril) con el prefijo
+   fuera de `:where()`: para que esta tarjeta lleve el filete entero, como las demás, y en los modos
+   siga al panel, estas tres reglas lo llevan fuera también; `styles.css` no les discute nada. */
+.app[data-look="reference"] main > .display-controls[role="group"] {
+  padding: 0.7rem 0.9rem 0.9rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]) main > .display-controls[role="group"] {
+  border-width: 2px;
+}
+
+.app[data-look="reference"][data-low-vision="on"] main > .display-controls[role="group"] {
+  border-color: var(--c-text-secondary);
+}
+
+:where(.app[data-look="reference"]) main > .display-controls[role="group"] > .display-body {
+  margin-top: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* «Acerca de EMMA» (About.tsx)                                          */
+/* ------------------------------------------------------------------ */
+
+/* Por delante del fondo de la concha (la Tierra de noche es un elemento posicionado y tapaba al pie
+   estático) y alineado con la consola: el mismo ancho (todo, sin tope: `consoleShell.css`) y el mismo
+   relleno lateral que `main` bajo esta concha. */
+:where(.app[data-look="reference"]) .about {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: none;
+  margin: 0.2rem 0 0.8rem;
+  padding: 0 0.6rem;
+}
+
+/* El rótulo, la fila de acceso de la maqueta, del ancho de su palabra; el pie sigue discreto (texto
+   secundario), con el signo de «acerca de» en verde azulado. La fila nace aquí. */
+:where(.app[data-look="reference"]) .about > details > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: var(--touch);
+  padding: 0.5rem 2.6rem 0.5rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 80%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+  list-style: none;
+}
+
+:where(.app[data-look="reference"]) .about > details > summary::-webkit-details-marker {
+  display: none;
+}
+
+:where(.app[data-look="reference"]) .about > details > summary:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+:where(.app[data-look="reference"]) .about > details > summary::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 2px solid var(--ref-teal);
+  border-bottom: 2px solid var(--ref-teal);
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+:where(.app[data-look="reference"]) .about > details[open] > summary {
+  margin-bottom: 0.5rem;
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 14%, transparent);
+}
+
+:where(.app[data-look="reference"]) .about > details[open] > summary::after {
+  transform: translateY(-70%) rotate(45deg);
+}
+
+:where(.app[data-look="reference"]) .about > details > summary > .pictogram:where(:not([class*="c-"])) {
+  color: var(--ref-teal);
+}
+
+/* Lo que guarda, colgado de un filete, como los aspectos de la ruta en «Inicio» (`.ref-aspects`). */
+:where(.app[data-look="reference"]) .about > details > p {
+  margin: 0.3rem 0 0.3rem 0.4rem;
+  padding-left: 0.9rem;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Sin consola montada: la barra, «Cargando…» (App.tsx)                  */
+/* ------------------------------------------------------------------ */
+
+/* El conmutador de consola de la barra, que la concha solo enseña mientras carga: la tarjeta de la
+   maqueta (ya tenía borde), y la pestaña elegida con el degradado verde azulado del carril
+   (`consoleShell.css`); su barra de abajo, su negrita y su fondo siguen siendo las tres señales
+   (F.5.10 e), la barra en verde azulado. El dibujo de la no elegida, en verde azulado; el de la
+   elegida, en el color del texto, como en el carril. */
+:where(.app[data-look="reference"]) nav.tabs .console-switch {
+  border-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+:where(.app[data-look="reference"]) nav.tabs .console-switch > button[role="tab"] {
+  border-radius: 8px;
+}
+
+:where(.app[data-look="reference"]) nav.tabs .console-switch > button[role="tab"] > .mark:where(:not([class*="c-"])) > .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) nav.tabs .console-switch > button[role="tab"][aria-selected="true"] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ref-teal) 45%, var(--c-surface)), color-mix(in srgb, var(--ref-teal) 20%, var(--c-surface)));
+  border-color: transparent;
+  border-bottom-color: var(--ref-teal);
+  box-shadow: 0 0 14px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"]) nav.tabs .console-switch > button[role="tab"][aria-selected="true"] > .mark > .pictogram {
+  color: var(--c-text);
+}
+
+/* «Cargando estado…», único hijo de `main` mientras no hay consola: el «marco» de la maqueta, para que
+   no sea una línea suelta sobre el fondo. Nace aquí. El panel de error y el almacén vacío ya son
+   tarjetas (concha y mobiliario) y conservan su filete rojo y su título cian. */
+:where(.app[data-look="reference"]) main > p.secondary:where(:not(.panel)) {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Baja visión y alto contraste (§5.40)                                  */
+/* ------------------------------------------------------------------ */
+
+/* Los marcos que nacen en esta hoja (cada turno, la fila de «Acerca de», «Cargando…»; la tarjeta de los
+   mandos sin plegar va arriba, con los suyos) se engrosan a 2 px como el panel en `styles.css`; en baja
+   visión pasan al color del texto secundario. Lo que ya tenía borde conserva el grosor que le dé la
+   hoja clásica. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(.assistant-turn, .about > details > summary, main > p.secondary:where(:not(.panel))) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(.assistant-turn, .about > details > summary, main > p.secondary:where(:not(.panel))) {
+  border-color: var(--c-text-secondary);
+}

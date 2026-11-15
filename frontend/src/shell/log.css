@@ -1,0 +1,1250 @@
+/*
+ * «Diario y pruebas» como tablero de la maqueta (decisión del usuario, 2026-11-07: cada sección se
+ * parece al tablero «Inicio» pero con sus apartados propios): la colocación de sus seis paneles en la
+ * rejilla de 12 columnas de `board.css`, lo que sus piezas del tablero necesitan (`dashboard/HomeCharts.tsx`
+ * y `components/StatTile.tsx`: fichas con cifra, curvas, el medidor, la tira de cifras y el anillo) y la
+ * forma de la maqueta por dentro de cada panel (la primera pasada de esta hoja). Solo bajo
+ * `.app[data-look="reference"]`; la clásica (`#clasica`) no cambia: las piezas van en `<BoardOnly>` y todo
+ * lo de aquí va bajo la concha.
+ *
+ * Lo que se vio en la segunda pasada (capturas del 2026-11-08 en la concha nueva, 1672 × 941, `crew-log`,
+ * con el escenario sin anotaciones, sin valoraciones, sin informes de dolor y sin pruebas): la sección
+ * seguía siendo una columna de seis paneles a todo el ancho (1123 px), y la pestaña entera pasaba de
+ * 25 000 px. El diario mide 4188 px solo con su formulario (catorce campos en dos columnas, cada uno con
+ * su rango, su escala y sus anclas); la comida, 186 px; el dolor, 884; la PVT, 1320; los descriptivos,
+ * 14 182 (nueve tarjetas, una debajo de otra, cada una con su código, su ficha, su pliegue y su tabla);
+ * la batería, 4720. Y ninguna cifra a la vista: lo último anotado, lo último medido en una prueba y
+ * cuánto dolía la última vez había que buscarlo dentro de una tabla, al final de cada panel.
+ *
+ * Colocación (`#crew-panel-log`): el diario a todo el ancho y arriba (es lo que se rellena a mano, y su
+ * formulario a dos columnas necesita las doce); debajo, la comida (4) junto al dolor (8): a 8 columnas
+ * (unos 745 px) el dolor conserva el lienzo y el formulario lado a lado (`.pain-layout` parte en una
+ * columna por debajo de 640 px), y la comida, corta, se alinea arriba de su celda (`align-self: start`)
+ * en vez de estirarse hasta el alto del dolor con un marco vacío. Se descartó la pareja propuesta de
+ * diario 7 + comida 5 (al lado de la comida quedaban 4000 px de nada) y la de dolor 6 + PVT 6 (a media
+ * anchura el dolor pasa a una columna y crece hasta 1500 px, y el recuadro de respuesta de la PVT, que
+ * es el estímulo y no se toca, se estrecharía a la mitad). La PVT, los descriptivos y la batería van a
+ * todo el ancho, en ese orden, que es el de `CrewConsole`. En el cuerpo intermedio (≤ 64 rem) todo
+ * baja a una columna.
+ *
+ * Las piezas (cada panel las monta en `BoardOnly`; aquí solo su sitio, su tamaño y sus tonos): en el
+ * diario, una ficha por indicador con su última cifra y la curva de sus anotaciones (`.diary-board`);
+ * en la comida, las valoradas y las que quedan por debajo con su medidor (`.food-board`); en el dolor,
+ * la intensidad del último informe con su curva, las zonas y los informes (`.pain-board`); en la PVT,
+ * las lecturas de la última prueba (`.pvt-board`); en la batería, la tira de cifras de la maqueta con
+ * la última sesión (`.cognition-board`, sobre `.ref-stats`); en los descriptivos, el anillo de cuántos
+ * indicadores tienen alguna lectura (`.descriptive-board`) y las nueve tarjetas a dos columnas cuando
+ * el cuerpo da para ello (una tabla de cuatro columnas no cabe en menos de 28 rem).
+ *
+ * Lo que no se toca: el blanco de la PVT (`[data-pvt-target]`, `.pvt-target`), que es el estímulo y
+ * conserva su color, su tamaño y su forma; los colores de las zonas y los tipos de dolor, que vienen
+ * del backend; el cian del dato ausente, el gris de lo no disponible y de «quien no consta», el
+ * amarillo con triángulo de un rechazo o de un borrador dictado, el verde de selección de la
+ * casilla (`accent-color`, F.5-2) y el color de toda marca (`.mark.c-*`, tabla F.5-1). Las curvas van
+ * en el verde azulado del marco, que no significa nada (como el punto de las listas); el medidor es
+ * neutro (`Meter`). Un campo elegido se señala en `--ref-teal` por el marco, nunca detrás de una
+ * insignia. Los mandos, las entradas, los pliegues, las insignias, las baldosas y las tablas son del
+ * mobiliario común (`furniture.css`): aquí solo la caja que los rodea; todo mando y entrada conserva
+ * su alto táctil (`styles.css` lo fija por `data-ui` para estos paneles).
+ *
+ * Especificidad a propósito baja: el prefijo de la concha (y el `id` de la sección, que solo la elige)
+ * va dentro de `:where()`, que no cuenta, y las reglas ganan a las de `styles.css` por cargar después
+ * con la misma o más especificidad. Donde la pieza ya tenía borde (`.view-signs`, `.body-map-canvas`,
+ * la casilla del tipo, `.meter`, `.ref-stats`) no se usa el atajo `border`, que arrastraría el grosor:
+ * solo `border-color`; lo que no lo tenía (la baldosa de un campo, la tarjeta de un descriptivo o de
+ * una prueba, la caja de lo publicado) lo estrena. Los modos de baja visión y alto contraste engordan
+ * el borde del panel (`styles.css`); las cajas que aquí nacen los siguen al final de esta hoja.
+ *
+ * El marco de la tarjeta y el punto de las filas repiten los de `hazards.css` y `routines.css` en vez
+ * de compartir una regla: cada unidad escribe solo su hoja. Juntarlos en `furniture.css` es decisión
+ * de la fusión.
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): la pestaña `crew-log` ---- */
+
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="diary"]) {
+  --span: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="food-acceptability"]) {
+  --span: 4;
+  --span-mid: 12;
+  align-self: start;
+}
+
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pain"]) {
+  --span: 8;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pvt"]),
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="descriptive"]),
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="cognition"]) {
+  --span: 12;
+}
+
+/* ---- Las piezas del tablero: fichas, curvas, medidor, tira y anillo ---- */
+
+/* La curva pequeña (`Sparkline`) bajo una cifra: el trazo en el verde azulado del marco. `--vital` es
+   la variable con que `referenceDashboard.css` tiñe la curva de «Signos vitales»; fuera de esa lista
+   no está definida y el trazo no se vería. Un color de adorno, el mismo del punto de las listas. */
+:where(.app[data-look="reference"] #crew-panel-log) .ref-spark {
+  --vital: var(--ref-teal);
+  margin-top: 0.2rem;
+}
+
+/* Las fichas con la densidad de «Inicio». `auto-fill` y no `auto-fit`: una o dos fichas no se estiran
+   a medio panel, quedan del tamaño de una baldosa. El mínimo de cada tira es el de su cifra: la del
+   diario y la de la PVT llevan la cifra con su unidad tal como la escribe el backend («6,5 puntos»,
+   «291 ms») y un rótulo largo; la de la comida y la del dolor, un entero corto. */
+:where(.app[data-look="reference"] #crew-panel-log) .stat-tile {
+  padding: 0.5rem 0.7rem 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-board {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  margin: 0.3rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pvt"]) .pvt-board {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  margin: 0.3rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="food-acceptability"]) .food-board,
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .pain-board {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  margin: 0.4rem 0 0.6rem;
+}
+
+/* Una cifra con su unidad («1 500 mL/día») a 2 rem no cabe en una ficha de 12 rem: baja a 1,45 rem en
+   las dos tiras que la llevan escrita por el backend. Las de entero corto conservan la grande. */
+:where(.app[data-look="reference"] #crew-panel-log) :is(.diary-board, .pvt-board) .stat-value {
+  font-size: 1.45rem;
+}
+
+/* El medidor bajo la cifra de la comida (por debajo del criterio sobre las valoradas): la pista en los
+   tonos de la maqueta, con el borde que ya tenía (solo el color). Misma especificidad que `.meter` y
+   menos que `.meter.meter-oor`: fuera de escala seguiría el borde discontinuo en texto secundario. */
+:where(.app[data-look="reference"] .panel[data-ui="food-acceptability"] .stat-tile) .meter-block {
+  margin-top: 0.2rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="food-acceptability"] .stat-tile) .meter {
+  height: 8px;
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* La tira de cifras de la última sesión de la batería (`.ref-stats`, la de «Rutas espaciales» en
+   «Inicio», que allí tiene cinco columnas fijas): aquí tantas casillas como puntuaciones, en filas de
+   9 rem. El rótulo (sigla y medida) se parte si hace falta; la cifra del backend, entera y más grande.
+   La tira ya tenía borde: solo el color. */
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  gap: 0.45rem 0.8rem;
+  margin: 0.3rem 0 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border-color: color-mix(in srgb, var(--ref-edge) 75%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-board > div {
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-board dt {
+  display: block;
+  font-size: 0.875rem; /* antes 0,78: sube al suelo del proyecto (segunda ronda) */
+  white-space: normal;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-board dd {
+  overflow: visible;
+  font-size: 1.15rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-sigla {
+  color: var(--c-text);
+  font-weight: 700;
+}
+
+/* El anillo de los descriptivos (cuántos indicadores tienen alguna lectura), junto al recuento del
+   backend, con la densidad de «Inicio». */
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-board {
+  margin: 0.4rem 0 0.2rem;
+}
+
+/* El panel mide su propio ancho para lo de dentro; las tarjetas se reparten por el ancho del cuerpo
+   (contenedor `board`, abajo). */
+:where(.app[data-look="reference"]) .panel[data-ui="descriptive"] {
+  container-type: inline-size;
+}
+
+/* Con el cuerpo ancho (≥ 56 rem: el escritorio de referencia, 70 rem), las tarjetas de los descriptivos
+   a dos columnas: el panel pasa a rejilla, todo lo que no es tarjeta ocupa la fila entera y dos
+   tarjetas de la misma fila se estiran a la más alta, como las de dominio. Por debajo (una tableta, el
+   asistente acoplado) siguen una debajo de otra: su tabla de cuatro columnas no cabe en menos. */
+@container board (min-width: 56rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.3rem 0.6rem;
+    align-content: start;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] > :not([data-descriptive]) {
+    grid-column: 1 / -1;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] > .command {
+    justify-self: start;
+  }
+
+  /* A media anchura (unos 517 px de caja) la tabla de lecturas de una tarjeta pedía de 539 a 562 px
+     con el relleno de 10 px por lado del mobiliario, y «Quién anota» quedaba cortada en el borde
+     (se desplazaba, pero no se veía que hubiera más). Con 5 px por lado y la tarjeta 3 px más
+     estrecha de relleno cabe. Más específica que la regla de `furniture.css` a propósito. */
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] [data-descriptive] {
+    padding-inline: 0.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] [data-descriptive] table.ledger :is(th, td) {
+    padding-inline: 5px;
+  }
+}
+
+/* ---- Lo común a los seis paneles: subtítulos de sección como `.ref-h3` sobre su filete ---- */
+
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="food-acceptability"], [data-ui="descriptive"], [data-ui="pvt"], [data-ui="cognition"], [data-ui="pain"])) > h3 {
+  margin: 0.9rem 0 0.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1rem;
+}
+
+/* Los pasos (`ol`) y los límites (`ul`) sueltos en el panel: filas como las de «Próximas acciones».
+   Los pasos conservan su número, que es orden; los límites cambian la viñeta por el punto del color
+   del marco (adorno, ni casilla ni señal). */
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > :is(ol, ul) {
+  margin: 0.4rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > ol {
+  padding-left: 1.5rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > :is(ol, ul) > li {
+  position: relative;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > :is(ol, ul) > li:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > ol > li::marker {
+  color: var(--ref-teal);
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > ul > li {
+  padding-left: 1.05rem;
+}
+
+/* El punto va a la altura de la primera línea aunque la fila se parta (`lh`). Su contenido es un
+   espacio de ancho cero, no vacío: WebKit deja de anunciar como lista un `ul` sin viñetas salvo
+   que sus filas tengan algún marcador. */
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) > ul > li::before {
+  content: "\200B";
+  position: absolute;
+  left: 0;
+  top: calc(0.3rem + 0.5lh - 0.225rem);
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ref-teal);
+  box-shadow: 0 0 4px var(--ref-glow);
+}
+
+/* Toda otra lista de la sección (las categorías leídas de un instrumento dentro de su pliegue, las
+   valoraciones de un plato): la viñeta o el número en el color del marco, como las referencias del
+   mobiliario. Un marcador no significa nada. */
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="food-acceptability"], [data-ui="descriptive"], [data-ui="pvt"], [data-ui="cognition"], [data-ui="pain"])) li::marker {
+  color: var(--ref-teal);
+}
+
+/* ---- Diario y batería Cognition: cada campo es una baldosa; quien anota, rótulo encima ---- */
+
+/* La baldosa no tenía borde: aquí nace. Como hija de la rejilla de dos columnas se estira a la fila,
+   y dos campos de la misma fila quedan a la misma altura. */
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="cognition"])) .field-block {
+  gap: 0.3rem;
+  padding: 0.55rem 0.7rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="cognition"])) .field-block > label {
+  font-weight: 600;
+}
+
+/* «Quién anota»: el dibujo y el rótulo en la primera fila y la entrada en la segunda, como un campo
+   más. El rótulo clásico la llevaba en la misma línea. Rejilla y no caja flexible: el dibujo, el texto
+   suelto y la entrada son tres hijos, y con `flex-basis: 100%` la entrada no bajaba, porque su
+   `max-width` de 480 px la recorta antes de decidir el salto de línea y cabe al lado del texto. Sin
+   negrita en el rótulo: la entrada es hija suya y hereda la letra (`font: inherit`, del mobiliario). */
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="pvt"], [data-ui="cognition"])) .operator {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.3rem 0;
+  margin-top: 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="diary"], [data-ui="pvt"], [data-ui="cognition"])) .operator > input {
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: min(100%, 480px);
+}
+
+/* El pie del formulario (el mando de registrar o empezar y sus avisos), separado de los campos por
+   un filete, como la columna de mandos de una alerta. En el dolor, solo el de registrar: las filas
+   de intensidad y de tipo llevan la misma clase dentro de cada zona. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="diary"] .diary-form > .measure-actions,
+    .panel[data-ui="cognition"] .cognition-form > .measure-actions,
+    .panel[data-ui="pvt"] .measure-actions,
+    .panel[data-ui="pain"] .silence-form > .measure-actions
+  ) {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--ref-edge) 50%, transparent);
+}
+
+/* ---- Indicadores descriptivos: cada indicador es una tarjeta con su título sobre un filete ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) [data-descriptive] {
+  margin-top: 0.4rem;
+  padding: 0.6rem 0.8rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) [data-descriptive] > h3 {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  font-size: 1.05rem;
+}
+
+/* ---- Aceptabilidad de la comida: las valoraciones de un plato, una por línea con aire ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="food-acceptability"]) .food-series > li {
+  padding: 0.08rem 0;
+}
+
+/* ---- PVT y batería: los títulos de cuarto nivel (lo publicado, cada divergencia, cada prueba) ---- */
+
+/* Sin regla propia en la hoja clásica: el navegador les ponía su margen de 1,33 em. */
+:where(.app[data-look="reference"] .panel:is([data-ui="pvt"], [data-ui="cognition"])) h4 {
+  margin: 0.7rem 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* ---- PVT: lo publicado de cada parámetro y cada divergencia, en su caja interior ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="pvt"]) :is([data-pvt-published], [data-pvt-divergence]) {
+  padding: 0.5rem 0.7rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pvt"]) :is([data-pvt-published], [data-pvt-divergence]) > h4 {
+  margin-top: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+/* La marca de cómo queda el valor de EMMA (forma y palabra del backend, sin color de alerta),
+   con aire bajo el título. */
+:where(.app[data-look="reference"] .panel[data-ui="pvt"]) [data-status-mark] {
+  margin-bottom: 0.35rem;
+}
+
+/* ---- Batería Cognition: cada prueba es una tarjeta; sus campos, baldosas dentro ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] {
+  padding: 0.6rem 0.8rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] > h4 {
+  margin-top: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  font-size: 1.05rem;
+}
+
+/* ---- Dolor: el lienzo en el marco de la figura; cada zona marcada, en su caja; el tipo elegido, con el anillo ---- */
+
+/* El lienzo pinta su propio fondo (la escena 3D): solo el marco y el halo de `.ref-body-figure`. */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .body-map-canvas {
+  border-color: var(--ref-edge);
+  border-radius: 9px;
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* Segunda ronda (2026-11-08): el lienzo tomaba el alto que queda de pantalla (`--panel-fit`, 640 px a
+   1672 × 941) y el dolor marcaba el alto de toda la fila (860 px) con la comida y la PVT a su lado.
+   En el tablero, el alto por defecto de la hoja clásica sin ese ajuste, 440 px: la figura entera
+   sigue a la vista y se gira y se toca igual (la escena se ajusta al tamaño del lienzo). Cuarta
+   ronda: 380 px. Con la comida y la PVT a su lado la fila la marcaba el dolor (669 px) y la columna
+   izquierda se estiraba con huecos; la figura sigue entera. */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .body-map-canvas {
+  height: 380px;
+}
+
+/* «Añadir zona desde la lista» y «Informa»: el dibujo y el rótulo en la primera fila, el selector o la
+   entrada en la segunda a todo el ancho. En la rejilla clásica el dibujo caía solo en su fila. */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .pain-layout .silence-form > label {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .pain-layout .silence-form > label > :is(select, input) {
+  grid-column: 1 / -1;
+}
+
+/* Cada zona marcada: la caja interior de la maqueta, con el nombre de la zona (del backend) como
+   título. Ya tenía borde: solo el color. */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .view-signs {
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.7rem;
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .view-signs > legend {
+  padding: 0 0.4rem;
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+/* La casilla del tipo de dolor con su palabra: el mando de la maqueta; elegida, el anillo verde
+   azulado por el marco (la casilla conserva su verde de selección). Ya tenía borde: solo el color. */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .measure-actions > label {
+  border-color: color-mix(in srgb, var(--ref-edge) 80%, transparent);
+  border-radius: 8px;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .measure-actions > label:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .measure-actions > label:has(> input:checked) {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* ---- Baja visión y alto contraste: las cajas que aquí nacen siguen al panel (`styles.css`) ---- */
+
+/* Mismo grosor que el panel en los dos modos; en baja visión, también su color (el del texto
+   secundario), como hace `styles.css` con el panel. La casilla elegida conserva el anillo verde
+   azulado: su regla es más específica. Las barras y las pistas del tablero (`.meter`) ganan su filete
+   en `board.css` y `styles.css`. Ninguno de los dos modos pone color de señal. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel:is([data-ui="diary"], [data-ui="cognition"]) .field-block,
+    .panel[data-ui="descriptive"] [data-descriptive],
+    .panel[data-ui="pvt"] :is([data-pvt-published], [data-pvt-divergence]),
+    .panel[data-ui="cognition"] :is([data-cognition-test], .cognition-board),
+    .panel[data-ui="pain"] :is(.view-signs, .body-map-canvas, .measure-actions > label)
+  ) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel:is([data-ui="diary"], [data-ui="cognition"]) .field-block,
+    .panel[data-ui="descriptive"] [data-descriptive],
+    .panel[data-ui="pvt"] :is([data-pvt-published], [data-pvt-divergence]),
+    .panel[data-ui="cognition"] :is([data-cognition-test], .cognition-board),
+    .panel[data-ui="pain"] :is(.view-signs, .body-map-canvas, .measure-actions > label)
+  ) {
+  border-color: var(--c-text-secondary);
+}
+
+/* ---- Diario a tres columnas (2026-11-08, «que se parezca bastante más a la referencia») ---- */
+
+/* A todo el ancho del tablero (unos 70 rem) el diario repartía sus campos en dos columnas y cada
+   baldosa se alargaba con la regla de su escala: media pantalla para dos campos. Con sitio, tres
+   baldosas por fila; la regla y las anclas, en texto secundario a 0,875 rem (el suelo de letra) y
+   la entrada a lo ancho de su baldosa. No se quita ni se recorta ninguna frase del backend. */
+@container (min-width: 60rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 0.6rem;
+    row-gap: 0.6rem;
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .field-block .secondary {
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .field-block input {
+  width: 100%;
+}
+
+/* ---- Una pantalla (2026-11-08, «está muy lejos todavía de la muestra») ---- */
+
+/* Lo que se vio (1672 × 941, `crew-log`): la pestaña pasaba de 16 000 px. Cada baldosa del diario
+   llevaba la regla de su escala y sus anclas (hasta 330 px por campo, dieciocho campos), la PVT y la
+   batería su protocolo entero antes del mando, y cada descriptivo su ficha y su tabla. Ahora, como
+   «Notas / Bitácora» y «Signos vitales» de la muestra: cada campo en una baldosa baja —nombre y
+   unidad, la entrada a su lado, el rango debajo (nunca se pliega: dice qué se puede escribir) y la
+   última cifra con su curva—; la regla, las anclas y las fuentes, en un «Ver detalle» común. */
+
+/* Cada baldosa a su alto: una con su alimento no estira a las dos de su fila. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form:has(> .diary-field) {
+  align-items: start;
+}
+
+/* Segunda ronda (2026-11-08): la pestaña seguía en 5,4 vistas y el diario medía 1282 px; a un tercio
+   de ancho, el nombre del backend al lado de la entrada partía en tres o cuatro líneas. Ahora el
+   nombre arriba a lo ancho de la baldosa, en dos líneas como mucho (`[data-clamp]`: recortado con
+   «…», entero en `title` y para el lector de pantalla, que lee el texto del DOM; desde la quinta
+   ronda, uno que recortado se confundiría con otro enseña solo lo que lo distingue, `distinctTail`
+   en `DiaryPanel.tsx`, y va sin la marca solo si no hay por dónde cortarlo), y
+   debajo la entrada con la unidad y el rango a su lado; el rango nunca se pliega. El rótulo
+   (`label`) se disuelve en la rejilla (`display: contents`) para colocar el nombre y la unidad por
+   separado; sigue siendo el rótulo de la entrada por `for`. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field {
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  grid-template-areas:
+    "name name"
+    "input unit"
+    "input hint"
+    "last last";
+  align-items: center;
+  gap: 0.1rem 0.5rem;
+  padding: 0.45rem 0.6rem 0.5rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field > * {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field > label {
+  display: contents;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-name {
+  grid-area: name;
+  margin-bottom: 0.2rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-name[data-clamp] {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-unit {
+  grid-area: unit;
+  align-self: end;
+  font-weight: 400;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field > input {
+  grid-area: input;
+  width: 100%;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field > [id$="-hint"] {
+  grid-area: hint;
+  align-self: start;
+  margin: 0;
+}
+
+/* Cuatro baldosas por fila con el panel a todo el ancho del escritorio de referencia (unos 70 rem):
+   el nombre arriba y la entrada estrecha caben en un cuarto. Quién anota y el mando de registrar,
+   lado a lado en la misma fila (el mando abajo, a la altura de la entrada); sin el filete de
+   encima, que separaba el mando de los campos cuando iba solo. Desde 58 rem de panel: a 1300 px de
+   ventana mide unos 62 rem y también caben cuatro. */
+@container (min-width: 58rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Los dos campos que llevan su alimento (la valoración de la comida y la fracción que se deja)
+     ocupan dos baldosas: el alimento, su rótulo y si es obligatorio u opcional, en la mitad derecha,
+     en vez de debajo (cada uno doblaba el alto de su fila). `dense` rellena el hueco que deja una
+     baldosa doble al final de una fila con el campo siguiente que quepa. */
+  :where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form {
+    grid-auto-flow: row dense;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field:has(> [data-diary-food]) {
+    grid-column: span 2;
+    grid-template-columns: 4.5rem minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-areas:
+      "name name food"
+      "input unit food"
+      "input hint food"
+      "last last food";
+    column-gap: 0.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] {
+    grid-area: food;
+    align-self: start;
+    padding-left: 0.6rem;
+    border-left: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] > input {
+    width: 100%;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] > p {
+    margin: 0.2rem 0 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-form > .operator {
+    grid-column: 1 / span 2;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-form > .measure-actions {
+    grid-column: 3 / -1;
+    align-self: end;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field > .diary-last {
+  grid-area: last;
+}
+
+/* La última cifra en una línea: la palabra, la cifra del backend y la curva hasta el borde. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-last {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-last > .num {
+  font-size: 1.05rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-last > .ref-spark {
+  flex: 1 1 4rem;
+  min-width: 3rem;
+  margin-top: 0;
+}
+
+/* El detalle común del pie: un campo tras otro, separados por un filete. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-notes {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 40%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-notes > p {
+  margin: 0 0 0.2rem;
+}
+
+/* La batería: cada prueba en una tarjeta baja (su título y sus campos, con la medida como rótulo) a
+   tres por fila cuando el panel da para ello; lo que no es tarjeta (quién, el mando, el detalle)
+   ocupa la fila entera. Dentro, los dos campos de una prueba lado a lado. */
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] .field-block > label {
+  font-size: 0.9rem;
+}
+
+@container (min-width: 60rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+
+  :where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-form > :not([data-cognition-test]) {
+    grid-column: 1 / -1;
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem 0.6rem;
+  align-content: start;
+  padding: 0.5rem 0.65rem 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] > :not(.field-block) {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] .field-block {
+  margin-top: 0;
+  padding: 0.35rem 0.45rem 0.4rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) [data-cognition-test] .field-block .secondary {
+  font-size: 0.875rem;
+}
+
+/* Segunda ronda (2026-11-08): a tres pruebas por fila la batería ocupaba cuatro filas de tarjetas
+   (1054 px, la décima sola en la última). Con el panel a todo el ancho del escritorio, cinco por fila:
+   dos filas (891 px). Desde 58 rem de panel (a 1300 px de ventana mide unos 62), como el diario. A un
+   quinto (unos 185 px por tarjeta) los dos campos lado a lado se solapaban (la entrada tomaba su ancho
+   por defecto, veinte caracteres) y, encogidos, partían el rótulo en tres líneas y sacaban el rango
+   del campo: van uno debajo de otro, cada uno con el rótulo y la entrada estrecha en una fila y el
+   rango entero debajo. Quién está en la consola y el mando de registrar, lado a lado en una fila,
+   como en el diario. */
+@container (min-width: 58rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-form {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block {
+    grid-template-columns: minmax(0, 1fr) 4.5rem;
+    align-items: center;
+    gap: 0.2rem 0.4rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > :not(label, input) {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > label {
+    min-width: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .operator {
+    grid-column: 1 / span 2;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .measure-actions {
+    grid-column: 3 / -1;
+    align-self: end;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="cognition"]) .cognition-test-notes {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 40%, transparent);
+}
+
+/* Los descriptivos: mosaicos (nombre y recuento, la ficha en su «Ver detalle») en tantas columnas
+   como quepan de 10 rem. Segunda ronda (2026-11-08): con más de cuarenta, los mosaicos medían 1374 px;
+   arriba va el recuento por dominio junto al anillo y los mosaicos, en su propio «Ver detalle». */
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  gap: 0.45rem 0.5rem;
+  margin-top: 0.4rem;
+}
+
+/* El recuento por dominio al lado del anillo: una fila por dominio (nombre, con lecturas, sin
+   lecturas con su marca), en columnas de 14 rem cuando caben (cuatro a 1672 px: dos filas). */
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-board {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-groups {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 0.3rem 0.8rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-groups > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1rem 0.6rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-group-name {
+  flex: 1 0 100%;
+  font-weight: 600;
+}
+
+/* El mosaico: el nombre y el recuento, nada más; la ficha de todos, en el detalle común. */
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) [data-descriptive] {
+  margin-top: 0;
+  padding: 0.4rem 0.55rem 0.45rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) [data-descriptive] > h3 {
+  margin: 0 0 0.2rem;
+  padding-bottom: 0.2rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) [data-descriptive] > p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-detail {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 40%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-detail > p:first-child {
+  margin: 0 0 0.2rem;
+}
+
+/* La PVT bajo la comida, en la columna izquierda junto al dolor (que ocupa dos filas): las dos son
+   cortas y el dolor alto; antes la PVT iba sola a todo el ancho. Solo con el reparto completo y sin
+   baja visión (que lo pone todo a una columna). */
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pvt"]) {
+  --span-mid: 12;
+}
+
+/* Segunda ronda (2026-11-08): a 1300 px de ventana el cuerpo mide unos 1004 px (62,75 rem), por
+   debajo del umbral intermedio de `board.css`, y la comida, el dolor y la PVT bajaban a una columna
+   (1300 px de alto entre los tres). Desde 60 rem conservan el reparto completo: a ocho columnas de
+   ese cuerpo el dolor mide unos 665 px y su lienzo y su formulario siguen lado a lado (parten por
+   debajo de 640 px). */
+@container board (min-width: 60rem) {
+  :where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="food-acceptability"]) {
+    --span-mid: 4;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pain"]) {
+    --span-mid: 8;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pain"]) {
+    grid-row: span 2;
+  }
+
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pvt"]) {
+    grid-column: 1 / span 4;
+  }
+
+  /* Las dos filas que abarca el dolor reparten su alto sobrante entre la comida y la PVT: estiradas
+     las dos, la columna izquierda acaba donde el dolor, sin huecos entre paneles. */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-log) > .slot:has(> .slot-body > [data-ui="food-acceptability"]) {
+    align-self: stretch;
+  }
+
+  /* Durante la prueba, a todo el ancho: el recuadro de respuesta es el estímulo y no se estrecha. Y
+     con un detalle abierto también: la tabla de parámetros no cabe en cuatro columnas (ensanchaba la
+     columna y estiraba el dolor a su alto). */
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-log) > .slot:has(> .slot-body > [data-ui="pvt"] :is([data-pvt-target], .board-detail-body:not([hidden]))) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Cuarta ronda (2026-11-08, «todavía se puede asemejar más»): la sección más corta ---- */
+
+/* Lo que se vio (1672 × 941): la pestaña medía 3162 px (3,4 vistas). El diario 907, a cuatro baldosas
+   por fila y con «Quién anota», el mando y su detalle en tres filas más debajo; los descriptivos 421,
+   con «Volver a leer» y sus dos detalles uno debajo de otro; la batería 832, con los dos campos de
+   cada prueba uno encima de otro en tarjetas de 265 px de ancho. */
+
+/* El diario a cinco baldosas por fila con el panel a todo el ancho del escritorio (unos 84 rem de
+   caja a 1672 px; a 1300 px mide unos 60 y sigue a cuatro). */
+@container (min-width: 75rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 58rem) {
+  /* «Quién anota» es una baldosa más, en el hueco que dejan los campos al final (`dense`), con el
+     mismo marco; su entrada a lo ancho de la baldosa. */
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-form > .operator {
+    grid-column: auto;
+    align-self: stretch;
+    align-content: start;
+    margin-top: 0;
+    padding: 0.45rem 0.6rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+    font-weight: 600;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-form > .operator > input {
+    width: 100%;
+    font-weight: 400;
+  }
+
+}
+
+/* En baja visión y alto contraste, la baldosa de «Quién anota» engorda el marco como las de los
+   campos (la regla común del final no la alcanza: la de arriba pesa más). Sin `border-style` (por
+   debajo de 58 rem) no pinta nada. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"])) .panel[data-ui="diary"] .diary-form > .operator {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) .panel[data-ui="diary"] .diary-form > .operator {
+  border-color: var(--c-text-secondary);
+}
+
+/* El pie (`.diary-foot`, una sola pieza a la fila entera: `styles.css` pone a todo el ancho lo que no
+   es campo, y una pieza así no la sube el empaquetado `dense` a un hueco entre los campos): el mando
+   de registrar con sus avisos y, a su lado, el detalle de escalas y fuentes, en una fila. Abierto, el
+   detalle baja a su propia línea a todo el ancho (su texto es largo). */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-form > .diary-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-foot > .measure-actions {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-foot > .diary-notes {
+  flex: 0 1 28rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-foot > .diary-notes:has(> .board-detail-body:not([hidden])) {
+  flex-basis: 100%;
+}
+
+/* Si el alimento es obligatorio u opcional, junto a su entrada: dos líneas como mucho. La nota de
+   «Opcional» ocupaba cuatro y doblaba el alto de su fila; recortada con «…», entera en `title` y en
+   la descripción de la entrada (el lector de pantalla lee el texto del DOM). */
+:where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] > .diary-food-rule {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* Los descriptivos: «Volver a leer» y sus dos detalles en una sola fila (con el cuerpo ancho, donde el
+   panel ya es rejilla); el detalle abierto baja a la fila entera. Los mosaicos van dentro de su
+   detalle: la regla de dos columnas para tarjetas sueltas no aplica en el tablero. */
+@container board (min-width: 56rem) {
+  /* Sin «Volver a leer» (el panel puede pintarse sin él), solo los dos detalles a medias. */
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"]:has(> .command) {
+    grid-template-columns: auto repeat(2, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] > :is(.command, .descriptive-tiles-detail, .descriptive-details) {
+    grid-column: auto;
+    align-self: center;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"] > :is(.descriptive-tiles-detail, .descriptive-details):has(> .board-detail-body:not([hidden])) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* La batería con cinco tarjetas por fila (≥ 58 rem de caja). Se probó poner los dos campos de una
+   prueba lado a lado: a unos 120 px por campo, «velocidad (ms)» partía en dos líneas y el «ms» del
+   rango salía de su caja, y la tarjeta crecía en vez de encoger. En su lugar, cada campo dentro de la
+   tarjeta pierde la caja propia (la tarjeta ya lo enmarca): un filete los separa y sobran el relleno
+   y el margen de 12 px entre los dos. Y el pie (quién está en la consola, el mando con sus avisos y el
+   detalle de qué mide cada prueba) en una sola fila: una baldosa, dos y dos; abierto, el detalle baja
+   a la fila entera. */
+@container (min-width: 58rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block {
+    padding: 0.2rem 0 0.3rem;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: none;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block:last-child {
+    border-bottom-width: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block + .field-block {
+    margin-top: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .operator {
+    grid-column: auto;
+  }
+
+  /* Sin el filete de encima: la regla común del pie (arriba, `:is(…)`) pesa más que la de la segunda
+     ronda que lo quitaba, porque `:is` toma la especificidad de su selector más fuerte (el del
+     dolor); aquí la clase repetida la iguala y, por cargar después, gana. */
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .measure-actions.measure-actions {
+    grid-column: 2 / span 2;
+    align-self: center;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .cognition-notes {
+    grid-column: 4 / -1;
+    align-self: center;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > .cognition-notes:has(> .board-detail-body:not([hidden])) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- Quinta ronda (2026-11-08, «se va acercando pero todavía hay margen de mejora») ---- */
+
+/* Lo que se vio (1672 × 941, captura posterior a la cuarta ronda): la pestaña medía 2777 px (tres
+   vistas). Las baldosas del diario, de 100 a 150 px: los tres nombres de cohesión del equipo en
+   cuatro líneas (no se podían recortar sin confundirse), «Rango: de 0,0 a 100,0» en dos y el alimento
+   con su nota en otras dos. Ahora, como «Notas / Bitácora» de la muestra, filas bajas: el nombre en dos
+   líneas como mucho (los de cohesión, solo su frase: `distinctTail` en `DiaryPanel.tsx`) y la entrada
+   con la unidad y el rango a su lado, en la misma fila; menos relleno. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field {
+  gap: 0.1rem 0.5rem;
+  padding: 0.3rem 0.5rem 0.35rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field-name {
+  margin-bottom: 0.1rem;
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) .diary-field .secondary {
+  line-height: 1.25;
+}
+
+/* Si el alimento es obligatorio u opcional, en una línea junto a su entrada (entera en `title`, en la
+   descripción de la entrada y en el detalle de escalas): en dos, la baldosa doble crecía 20 px más que
+   las de su fila. */
+:where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] > .diary-food-rule {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="diary"] .diary-field > [data-diary-food] > label {
+  line-height: 1.25;
+}
+
+/* «Últimas anotaciones» sin el aire de un título de sección: es el pie del registro. */
+:where(.app[data-look="reference"] .panel[data-ui="diary"]) > h3 {
+  margin-top: 0.5rem;
+}
+
+/* La batería: cinco tarjetas por fila, cada una con su título y sus dos campos uno debajo de otro,
+   medía dos filas de 245 px. Con el panel a todo el ancho del escritorio (≥ 75 rem de caja: 1672 px;
+   a 1300 px sigue el reparto de la cuarta ronda), dos tarjetas por fila y cada prueba en una sola
+   franja, como las filas de «Signos vitales» de la muestra: el título a la izquierda (dos líneas como
+   mucho, entero en el detalle de qué mide cada prueba) y cada campo a su lado con su rótulo y su rango
+   junto a la entrada. La PVT, sin campos, lleva su nota en el sitio de los campos. */
+@container (min-width: 75rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.45rem 0.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] .cognition-form > [data-cognition-test] {
+    grid-column: span 2;
+    grid-template-columns: minmax(0, 0.8fr) repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 0 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] > h4 {
+    grid-column: 1;
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  /* La nota de la PVT (se pasa en su propia consola) ocupa el sitio de los dos campos. */
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] > p {
+    grid-column: 2 / -1;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.3;
+  }
+
+  /* Cada campo: el rótulo y el rango a la izquierda, la entrada a su lado; sin filete entre los dos
+     (van lado a lado, no uno encima de otro). El error, si lo hay, debajo a lo ancho. */
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block {
+    grid-template-columns: minmax(0, 1fr) 4.25rem;
+    grid-template-areas:
+      "label input"
+      "hint input";
+    gap: 0 0.4rem;
+    padding: 0;
+    border-width: 0;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > label {
+    grid-area: label;
+    line-height: 1.25;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > input {
+    grid-area: input;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > [id$="-hint"] {
+    grid-area: hint;
+    line-height: 1.25;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="cognition"] [data-cognition-test] .field-block > [role="alert"] {
+    grid-area: auto;
+    grid-column: 1 / -1;
+  }
+}
+
+/* Con el formulario de la batería en su «Ver detalle» (`CognitionPanel.tsx`), la batería y los
+   descriptivos son dos paneles cortos (el anillo con el recuento por dominio, y lo último registrado
+   con sus mandos): lado a lado, media fila cada uno, en vez de dos filas a todo el ancho. Con un
+   detalle abierto en cualquiera de los dos (las tarjetas de la batería, los mosaicos, las fichas), los
+   dos vuelven a la fila entera: lo de dentro necesita el ancho. Solo con el reparto completo. */
+/* Ocho columnas a los descriptivos (sus siete dominios a tres por fila, y sus mandos en una línea) y
+   cuatro a la batería, que plegada son su título, su registro y dos «Ver detalle». */
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="descriptive"]) {
+  --span: 8;
+}
+
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="cognition"]) {
+  --span: 4;
+}
+
+/* Por hermanos y no desde la sección: un `:has` en `#crew-panel-log` se volvería a mirar con cada
+   cambio de la pestaña, también durante la PVT, que mide tiempos de reacción. */
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > :is([data-ui="descriptive"], [data-ui="cognition"]) .board-detail-body:not([hidden])),
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="descriptive"] .board-detail-body:not([hidden])) ~ .slot:has(> .slot-body > [data-ui="cognition"]),
+:where(.app[data-look="reference"] #crew-panel-log) > .slot:has(> .slot-body > [data-ui="descriptive"]):has(~ .slot > .slot-body > [data-ui="cognition"] .board-detail-body:not([hidden])) {
+  --span: 12;
+}
+
+/* La fila del dolor (609 px) la marcaban a la vez el dolor y la columna de la comida y la PVT. En el
+   dolor, el lienzo a 320 px (la figura sigue entera, y se gira y se toca igual) y la nota a dos
+   líneas; en la PVT, «Quién está en la consola» con su entrada al lado, en una fila, y el mando sin
+   el filete de encima. La nota se estira si se escribe más (`resize` del mobiliario). */
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .body-map-canvas.body-map-canvas {
+  height: 320px;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="pain"]) .pain-note textarea {
+  min-height: 3.6rem;
+  height: 3.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="pvt"] > .operator {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  column-gap: 0.4rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="pvt"] > .operator > input {
+  grid-column: auto;
+  width: 100%;
+}
+
+/* Clase repetida: la regla común del pie (`:is(…)`) pesa lo que el selector del dolor. */
+:where(.app[data-look="reference"]) .panel[data-ui="pvt"] > .measure-actions.measure-actions {
+  margin-top: 0.5rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* A ocho columnas, el anillo y el recuento por dominio: los dominios en columnas de 12 rem (tres por
+   fila), cada uno con menos relleno. */
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-groups {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="descriptive"]) .descriptive-groups > li {
+  column-gap: 0.4rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/* «Volver a leer» y los dos «Ver detalle» a su ancho, en una línea cada uno: a 1fr partían su rótulo
+   en dos. Abierto, el detalle sigue bajando a la fila entera (regla de la cuarta ronda). */
+@container board (min-width: 64rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="descriptive"]:has(> .command) {
+    grid-template-columns: auto auto auto;
+    justify-content: space-between;
+  }
+}
+
+/* En el dolor, «Informa» con su entrada al lado, como «Quién está en la consola» en la PVT. */
+:where(.app[data-look="reference"]) .panel[data-ui="pain"] .pain-layout .silence-form > label:has(> input) {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  column-gap: 0.4rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="pain"] .pain-layout .silence-form > label:has(> input) > input {
+  grid-column: auto;
+}

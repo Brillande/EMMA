@@ -1,0 +1,19 @@
+{"target": "app/analysis/inferred.py",
+ "test": ["tests/test_exercise_context.py", "-k", "not identical"],
+ "mutations": [
+  {"label": "la banda se mueve cuando hay ejercicio medido",
+   "old": "        state[\"exercise\"] = exercise",
+   "new": "        state[\"exercise\"] = exercise; state[\"now\"] = band(day * 0.5)"},
+  {"label": "la trayectoria se estrecha cuando hay ejercicio medido",
+   "old": "        state[\"exercise\"] = exercise",
+   "new": "        state[\"exercise\"] = exercise; state[\"trajectory\"] = state[\"trajectory\"][:1]"},
+  {"label": "la banda con ejercicio se rotula como medida",
+   "old": "        state[\"exercise\"] = exercise",
+   "new": "        state[\"exercise\"] = exercise; state[\"observation_type\"] = \"measured\""},
+  {"label": "una lectura de 0 minutos sigue dando la nota de hay registro",
+   "old": "        state[\"exercise_note\"] = exercise[\"record\"][\"note\"]",
+   "new": "        pass"},
+  {"label": "lo medido no llega junto a la banda",
+   "old": "        state[\"exercise\"] = exercise",
+   "new": "        pass"}
+ ]}

@@ -1,0 +1,93 @@
+{
+  "target": "app/volumes/spine.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "los huecos que encuentra Polaris se tiran",
+      "old": "        gaps, in_order = _levels(verdict[\"gaps\"]), verdict[\"order\"] == \"True\"",
+      "new": "        gaps, in_order = [], verdict[\"order\"] == \"True\""
+    },
+    {
+      "label": "el orden se da siempre por bueno (los 40 de 60 tambien se veian perfectos)",
+      "old": "    monotonic = in_order and disorder is None",
+      "new": "    monotonic = True"
+    },
+    {
+      "label": "una cadena del reves pasa, como en Polaris sin rejilla fija",
+      "old": "    coherent = monotonic and not inverted",
+      "new": "    coherent = monotonic"
+    },
+    {
+      "label": "si Polaris cambia su texto, la cadena se da por buena en vez de por no revisada",
+      "old": "            raise _unrecognised(\"_revisa_cadena\", stopped)",
+      "new": "            return found"
+    },
+    {
+      "label": "un extremo ausente nunca pide atencion: el caso real de los 40 de 60 se calla",
+      "old": "            continues = room >= FIELD_STEPS * step",
+      "new": "            continues = False"
+    },
+    {
+      "label": "todo extremo ausente pide atencion, aunque el TAC acabe ahi",
+      "old": "            continues = room >= FIELD_STEPS * step",
+      "new": "            continues = True"
+    },
+    {
+      "label": "el paso entre niveles se mide con la vertebra cortada del borde",
+      "old": "        (\"craneal\", present[0], solid[:2], chain[:position[present[0]]]),",
+      "new": "        (\"craneal\", present[0], present[:2], chain[:position[present[0]]]),"
+    },
+    {
+      "label": "con el orden roto se mide igual hacia donde queda cada extremo",
+      "old": "        \"extremos\": _ends(chain, present, solid, z_of, field_z if coherent else None),",
+      "new": "        \"extremos\": _ends(chain, present, solid, z_of, field_z),"
+    },
+    {
+      "label": "un extremo con volumen mas alla ya no pide atencion",
+      "old": "    True: (\"el volumen continúa más allá\", ATTENTION),",
+      "new": "    True: (\"el volumen continúa más allá\", MISSING),"
+    },
+    {
+      "label": "el sacro deja de cerrar la cadena",
+      "old": "CAUDAL_END = \"sacrum\"  # hace",
+      "new": "CAUDAL_END = \"ninguno\"  # hace"
+    },
+    {
+      "label": "los niveles reconocidos a medias no se dicen",
+      "old": "    small = {_from_polaris(name): int(mm3) for name, mm3 in _SMALL.findall(said)}",
+      "new": "    small: dict[str, int] = {}"
+    },
+    {
+      "label": "la vertebra que corta el borde del volumen pide atencion: avisaria casi siempre",
+      "old": "            {\"nivel\": name, \"volumen_mm3\": mm3, \"en_extremo\": name in edge}",
+      "new": "            {\"nivel\": name, \"volumen_mm3\": mm3, \"en_extremo\": False}"
+    },
+    {
+      "label": "un nivel a medias en mitad de la cadena pasa por borde del volumen",
+      "old": "            {\"nivel\": name, \"volumen_mm3\": mm3, \"en_extremo\": name in edge}",
+      "new": "            {\"nivel\": name, \"volumen_mm3\": mm3, \"en_extremo\": True}"
+    },
+    {
+      "label": "los huesos sin voxeles no se listan",
+      "old": "    block[\"huesos_sin_voxeles\"] = [s.mask for s in preset.structures if s.label not in seen]",
+      "new": "    block[\"huesos_sin_voxeles\"] = []"
+    },
+    {
+      "label": "si el control revienta, se lleva por delante la segmentacion",
+      "old": "    except Exception as exc:  # noqa: BLE001 — el control no tumba la segmentación que describe",
+      "new": "    except ZeroDivisionError as exc:"
+    },
+    {
+      "label": "un control que no se pudo hacer no se dice",
+      "old": "        overall, notice = MISSING, NOT_DONE.format(reason=block[\"motivo\"])",
+      "new": "        overall, notice = None, None"
+    },
+    {
+      "label": "el aviso deja de decir que no es un hallazgo sobre la persona",
+      "old": "_SCOPE = \" Es un control del modelo de segmentación, no un hallazgo sobre la persona.\"",
+      "new": "_SCOPE = \"\""
+    }
+  ]
+}

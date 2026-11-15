@@ -1,0 +1,1117 @@
+{
+  "_nota": "El sentido en que cambió cada indicador EN VUELO en otras tripulaciones, frase a frase. Cada `quote` es la frase exacta del resumen o del texto, copiada con la fuente delante el día `read_on` (el de la frase si lo lleva; si no, el de su fuente; si no, el del fichero), en su idioma; `literal` es el trozo de la frase que dice el sentido, y está escrito en ella; `compared_with`, frente a qué se compara; `population`, sobre quién se midió. `ref` es la ficha del registro (data/evidence_refs.json). Un indicador sin frase leída es «sin fuente»; si se buscó y no se encontró, `searched` dice dónde y `searched_refs`, las fichas de lo leído; en un indicador CON sentido, `searched` es lo leído también que no da sentido en vuelo, con su ficha. `reads_speed` marca una frase que habla de rapidez de respuesta («slower»): dice que el tiempo de reacción sube, y solo la cita un tiempo de reacción. Se enseña solo junto al perfil de línea base, como «lo que se observó en otros vuelos, no lo esperado en esta persona». Nada de esto entra en la base, el riesgo, los niveles ni las alertas (invariante 5). El cargador (app/evidence/flight_direction.py) rechaza una frase sin fuente, un sentido que su literal no escribe, una frase que no habla del vuelo o es de un análogo en tierra, un literal con una negación, una fecha que no es AAAA-MM-DD, una fuente que no es de personas y un sentido sin frase. ingest/simulator.py solo se leyó: lo que aquí no coincide con él lo dicen compliance/hmi-state-of-the-art.md §5.35.14 y §5.36.16. Lo leído el 2026-10-31 (decimonovena ronda, U6: hematología y bioquímica) lleva su fecha en su fuente; «not significantly altered» es desde entonces una frase de «sin cambio»; un analito que el estudio suplementa (la vitamina D, el calcio) no se lee como sentido del vuelo y queda en `searched`; y el `read_on` de una fuente es el de su última lectura, también para lo leído de ella antes.",
+  "read_on": "2026-10-22",
+  "sources": {
+    "hughson-2012-cardiovascular-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "xu-2013-hrv-sleep-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo en la revista devolvió 403 y no se leyó."
+    },
+    "fraser-2012-heart-rate-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "norsk-2015-ambulatory-bp-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en PMC, la afiliación del primer autor."
+    },
+    "otsuka-2016-hrv-time-structure": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en Europe PMC, la cabecera con las afiliaciones."
+    },
+    "stahn-2017-core-temperature": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "zwart-2014-body-mass": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "smith-2005-bone-markers-mir": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "mehta-2017-latent-virus-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); antes, el 2026-10-20, partes del texto completo en PMC para el coste de medir."
+    },
+    "crucian-2015-adaptive-immunity-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) el 2026-10-22; el 2026-10-23 (la fecha de esas dos frases), en el texto completo de Europe PMC (PMC5515498), los apartados de resultados y discusión sobre la distribución de los leucocitos en vuelo; antes, el 2026-10-21, los métodos en PMC para el coste de medir."
+    },
+    "sirek-2014-onsd-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "marshall-goebel-2019-ijv": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de Europe PMC, las frases que nombran el lado de la yugular medida."
+    },
+    "barger-2014-sleep-spaceflight": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "trudel-2022-hemolysis": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) el 2026-10-22; el 2026-10-31, el texto completo de PMC (PMC8799460, por E-utilities) buscando el volumen corpuscular medio y la concentración de hemoglobina corpuscular media, que no nombra."
+    },
+    "kunz-2017-hematologic-indices-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "En el texto completo de Europe PMC (PMC5590186): el resumen, los resultados del estudio de vuelo y los dos primeros párrafos de la discusión; antes, el 2026-10-22, los métodos en PMC para el coste de medir."
+    },
+    "baevsky-2007-autonomic-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "prisk-1995-gas-exchange-sls": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "conkin-2017-spo2-microgravity": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y la página de la revista no se pudo leer."
+    },
+    "piltch-2025-sleep-mir": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "En el texto completo de Europe PMC (PMC12069747): el resumen, los métodos de medida del sueño, los resultados y la discusión."
+    },
+    "jones-2022-sleep-pvt-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "En el texto completo de PMC (PMC8919197): el resumen, los métodos de la PVT-B y del sueño, y los resultados por fase de la misión."
+    },
+    "dev-2024-cognition-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "En el texto completo de Europe PMC (PMC11614644): el resumen, los métodos de la batería Cognition y de la PVT, y las frases de resultados y discusión sobre la PVT."
+    },
+    "flynn-evans-2016-circadian-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen y, en el texto completo de Europe PMC (PMC5515517), los resultados de antes del vuelo y del vuelo."
+    },
+    "smith-2012-bone-resistance-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "smith-2015-renal-stone-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "smith-2005-nutrition-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "agha-2020-salivary-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-23",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo (PMC7864226), no."
+    },
+    "paul-2020-nlr": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) el 2026-10-23; el 2026-10-31, en el texto completo de PMC (PMC7667275, por E-utilities), los resultados del reanálisis de los datos de astronautas y la frase de que el NLR no se registró en esa misión."
+    },
+    "strollo-1998-testicular-androgen": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "strollo-1999-hormonal-review": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI), que PubMed da cortado al final; el capítulo entero, no."
+    },
+    "smith-2011-thyroid-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "ntrs-19750006310": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "La ficha de NTRS y, del PDF escaneado que ofrece, el resumen, el calendario de tomas de sangre, la lista de análisis del plasma y el párrafo de resultados del plasma."
+    },
+    "meck-2004-orthostatic-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo, no."
+    },
+    "gimunova-2024-reproductive-review": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de PMC (PMC10796912): el resumen, las tablas 4 a 7 y los párrafos de resultados de los estudios con mujeres y con hombres."
+  },
+    "markin-1998-blood-biochemistry-mir": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC ni en Europe PMC y no se leyó."
+    },
+    "grigoriev-1994-biochemical-status": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen en inglés del registro de PubMed (E-utilities de NCBI); el artículo, en ruso, no se leyó."
+    },
+    "zwart-2022-albumin-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de PMC (PMC9126217): el resumen, los métodos, la tabla 1 y los resultados."
+    },
+    "smith-2015-magnesium-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de Europe PMC (PMC4690080), los resultados del magnesio en suero en vuelo."
+    },
+    "zheng-2023-time-resolved-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de Europe PMC (PMC10376710): el resumen, los sujetos, la tabla 2 con sus notas y el texto de los grupos de tendencias."
+    },
+    "stroud-2022-metabolomics-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de PMC (PMC11802984): el resumen, la toma y el procesado de las muestras, los resultados de la glucosa y la discusión del metabolismo al entrar en el espacio."
+    },
+    "lee-2020-arterial-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y la página de la revista devolvió 403."
+    },
+    "zwart-2013-iron-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC ni en Europe PMC y no se leyó."
+    },
+    "garrett-bakelman-2019": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de PMC (PMC7580864): la lista de la bioquímica medida antes, durante y después del vuelo, y en todo el texto, los nombres de estas hormonas y marcadores; también, los párrafos de la respuesta inflamatoria tras el aterrizaje, con la PCR, y la lista de lo medido; antes, el 2026-10-22 y el 2026-10-23, para el mapa de conjuntos de datos humanos."
+    },
+    "jones-2024-inspiration4": {
+      "extent": "partial",
+      "read_on": "2026-10-26",
+      "what": "En el texto completo de PMC (PMC11357997): la frase de la sangre de gota seca tomada en vuelo y, en todo el texto, los nombres de la beta-2 microglobulina y de los marcadores tumorales; en el de Europe PMC, el apartado de la prueba de PCR e IgM en el punto de atención durante el vuelo (0g-VFI) y la lista de analíticas clínicas; antes, el 2026-10-22 y el 2026-10-23, para el mapa de conjuntos de datos humanos."
+    },
+    "buchheim-2019-inflammaging-cosmonauts": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de PMC (PMC6401618, por E-utilities), los métodos del cortisol en saliva y de los frotis de sangre, los resultados del estrés y de los leucocitos en vuelo, el pie de la figura 1 y la frase de la discusión sobre el cortisol."
+    },
+    "vorobiev-1995-altair-mir": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "zittermann-2000-calcium-absorption-spaceflight": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "crucian-2013-shuttle-immunity": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "smith-1997-portable-analyzer-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "morey-holton-1988-vitamin-d-spacelab2": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "heer-2002-nutrition-european-missions": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "mehta-2014-shuttle-viruses": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "zwart-2018-dietary-acid-load": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); en PMC (PMC6862931) por E-utilities solo llega el resumen, y el texto completo no se leyó."
+    },
+    "tu-2022-pvt-prediction-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de Europe PMC (PMC9246897), las frases que nombran los lapsos."
+    },
+    "dijk-2001-sleep-circadian-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "gundel-1997-sleep-circadian-mir": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "monk-1998-sleep-circadian-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "fu-2019-orthostatic-tolerance-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "wood-2019-inflight-leg-cuff-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de Europe PMC (PMC6789148), los resultados y la discusión de la prueba de manguitos en vuelo."
+    },
+    "lee-2015-orthostatic-intolerance-iss-shuttle": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "arbeille-2015-vessel-imaging-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y la página de la revista solo enseña el resumen."
+    },
+    "pavela-2022-jugular-surveillance-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y no se leyó."
+    },
+    "david-2021-right-ijv-tilt-microgravity": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC y la página de la revista no se pudo leer."
+    },
+    "zamboni-2026-jugular-venous-pulse-iss": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI) y, en el texto completo de Europe PMC (PMC13558610), la tabla 1 (el lado y las sesiones), los resultados, la discusión y los métodos."
+    },
+    "strollo-1997-spacelab-adrenal-gonadal": {
+      "extent": "partial",
+      "read_on": "2026-10-31",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI), que no da resultados; el texto no está en PMC ni en NTRS y no se leyó."
+    }
+  },
+  "statements": [
+    {
+      "id": "hughson-2012-hr-bp",
+      "ref": "hughson-2012-cardiovascular-iss",
+      "where": "Resumen",
+      "quote": "There were no changes in preflight measurements of heart rate (HR), blood pressure (BP), or spontaneous baroreflex compared with in-flight measurements.",
+      "literal": "There were no changes",
+      "direction": "unchanged",
+      "compared_with": "antes del vuelo",
+      "population": "6 astronautas varones, de 2 a 6 meses en la ISS; medidas sentados al principio y al final de la misión"
+    },
+    {
+      "id": "hughson-2012-high-frequency",
+      "ref": "hughson-2012-cardiovascular-iss",
+      "where": "Resumen",
+      "quote": "The high-frequency component of RR interval spectral power, arterial pulse pressure, and stroke volume were reduced in-flight.",
+      "literal": "were reduced in-flight",
+      "direction": "falls",
+      "compared_with": "antes del vuelo",
+      "population": "6 astronautas varones, de 2 a 6 meses en la ISS"
+    },
+    {
+      "id": "xu-2013-hr-sleep",
+      "ref": "xu-2013-hrv-sleep-iss",
+      "where": "Resumen",
+      "quote": "HR was unchanged inflight and elevated postflight [59.6 ± 8.9 beats per minute (bpm) compared with preflight 53.3 ± 7.3 bpm; P < 0.01].",
+      "literal": "HR was unchanged inflight",
+      "direction": "unchanged",
+      "compared_with": "antes del vuelo; la subida es después del vuelo",
+      "population": "7 astronautas de la ISS, hasta 6 meses; durante el sueño"
+    },
+    {
+      "id": "xu-2013-hrv-sleep",
+      "ref": "xu-2013-hrv-sleep-iss",
+      "where": "Resumen",
+      "quote": "Compared with preflight data, HRV indicators from both time domain and power spectral analysis methods were diminished inflight from ultralow to high frequencies and partially recovered to preflight levels after landing.",
+      "literal": "were diminished inflight",
+      "direction": "falls",
+      "compared_with": "antes del vuelo",
+      "population": "7 astronautas de la ISS, hasta 6 meses; durante el sueño"
+    },
+    {
+      "id": "fraser-2012-hr-daily",
+      "ref": "fraser-2012-heart-rate-iss",
+      "where": "Resumen, «Results»",
+      "quote": "Consistent with the hypotheses, HR during daily activities on the ISS was unchanged compared to preflight; activity patterns shifted to predominantly arm in space.",
+      "literal": "HR during daily activities on the ISS was unchanged compared to preflight",
+      "direction": "unchanged",
+      "compared_with": "antes del vuelo",
+      "population": "7 astronautas de larga duración en la ISS; actividad diaria, sin el ejercicio"
+    },
+    {
+      "id": "norsk-2015-ambulatory-bp",
+      "ref": "norsk-2015-ambulatory-bp-iss",
+      "where": "Resumen, «Abstract»",
+      "quote": "The 24 h average systolic, diastolic and mean arterial pressures (mean ± se) in space were reduced by 8 ± 2 mmHg (P = 0.01; ANOVA), 9 ± 2 mmHg (P < 0.001) and 10 ± 3 mmHg (P = 0.006), respectively.",
+      "literal": "in space were reduced",
+      "direction": "falls",
+      "compared_with": "antes del vuelo (presión ambulatoria de 24 h)",
+      "population": "8 astronautas varones, entre los días 85 y 192 en la ISS"
+    },
+    {
+      "id": "otsuka-2016-total-power",
+      "ref": "otsuka-2016-hrv-time-structure",
+      "where": "Resumen, «Findings»",
+      "quote": "The total spectral power (TF; p < 0.05) and that in the ultra-low frequency range (ULF, 0.0001-0.003 Hz; p < 0.01) increased from 154.9 ± 105.0 and 117.9 ± 57.5 msec2 (before flight) to 532.7 ± 301.3 and 442.4 ± 202.9 msec2 (ISS03), respectively.",
+      "literal": "increased from",
+      "direction": "rises",
+      "compared_with": "antes del vuelo (registros de 24 h)",
+      "population": "10 astronautas, hacia el día 153 en la ISS"
+    },
+    {
+      "id": "stahn-2017-resting",
+      "ref": "stahn-2017-core-temperature",
+      "where": "Resumen",
+      "quote": "We here show that during exercise CBT rises higher and faster in space than on Earth. Moreover, we observed for the first time a sustained increased astronauts' CBT also under resting conditions.",
+      "literal": "a sustained increased astronauts' CBT also under resting conditions",
+      "direction": "rises",
+      "compared_with": "en Tierra",
+      "population": "Astronautas de misiones de larga duración (el resumen no dice cuántos); temperatura central en reposo"
+    },
+    {
+      "id": "zwart-2014-body-mass",
+      "ref": "zwart-2014-body-mass",
+      "where": "Resumen, «Results»",
+      "quote": "For 25 crewmembers whose body mass was measured on both devices, significant body mass loss occurred compared to preflight (gravimetric scale) and averaged -4.4% as assessed by BMMD and -2.8% as assessed by SLAMMD. After an initial loss in the first 30 d of flight, body mass remained constant through the rest of the mission, as determined using either device.",
+      "literal": "significant body mass loss occurred compared to preflight",
+      "direction": "falls",
+      "compared_with": "antes del vuelo (báscula)",
+      "population": "25 tripulantes de la ISS"
+    },
+    {
+      "id": "smith-2005-resorption-inflight",
+      "ref": "smith-2005-bone-markers-mir",
+      "where": "Resumen, «Results»",
+      "quote": "In studies conducted during flight, bone resorption markers were also significantly higher than before flight.",
+      "literal": "bone resorption markers were also significantly higher than before flight",
+      "direction": "rises",
+      "compared_with": "antes del vuelo",
+      "population": "6 tripulantes de misiones de 4 a 6 meses en la estación Mir"
+    },
+    {
+      "id": "mehta-2017-reactivation",
+      "ref": "mehta-2017-latent-virus-iss",
+      "where": "Resumen, última frase",
+      "quote": "The data confirm that astronauts undertaking long-duration spaceflight experience both increased latent viral reactivation and changes in diurnal trajectory of salivary cortisol concentrations.",
+      "literal": "increased latent viral reactivation",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra; el resumen compara también con misiones cortas del transbordador",
+      "population": "23 astronautas de hasta 180 días en la ISS"
+    },
+    {
+      "id": "crucian-2015-wbc",
+      "ref": "crucian-2015-adaptive-immunity-iss",
+      "read_on": "2026-10-22",
+      "where": "Resumen, «Results»",
+      "quote": "Redistribution of leukocyte subsets occurred during flight, including an elevated white blood cell (WBC) count and alterations in CD8+ T-cell maturation.",
+      "literal": "an elevated white blood cell (WBC) count",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra (se midió antes, durante y después del vuelo)",
+      "population": "23 astronautas de expediciones de 6 meses en la ISS"
+    },
+    {
+      "id": "sirek-2014-onsd",
+      "ref": "sirek-2014-onsd-iss",
+      "where": "Resumen, «Results»",
+      "quote": "ONSD increased in ISS crewmembers during flight relative to before flight, with some reversal postflight.",
+      "literal": "ONSD increased in ISS crewmembers during flight relative to before flight",
+      "direction": "rises",
+      "compared_with": "antes del vuelo",
+      "population": "Tripulantes de la ISS (el resumen no dice cuántos); estudio preliminar"
+    },
+    {
+      "id": "marshall-goebel-2019-ijv-area",
+      "ref": "marshall-goebel-2019-ijv",
+      "where": "Resumen, «Results»",
+      "quote": "Mean IJV area increased from 9.8 (95% CI, -1.2 to 20.7) mm2 in the preflight seated position to 70.3 (95% CI, 59.3-81.2) mm2 during spaceflight (P < .001).",
+      "literal": "Mean IJV area increased",
+      "direction": "rises",
+      "compared_with": "antes del vuelo, sentado",
+      "population": "11 tripulantes de larga duración en la ISS; yugular izquierda"
+    },
+    {
+      "id": "baevsky-2007-rf-bp",
+      "ref": "baevsky-2007-autonomic-iss",
+      "where": "Resumen",
+      "quote": "RF and BP decreased during spaceflight (P < 0.05).",
+      "literal": "RF and BP decreased during spaceflight",
+      "direction": "falls",
+      "compared_with": "la frase no lo nombra; el estudio registró 60 y 30 días antes del vuelo",
+      "population": "8 cosmonautas varones, misiones de 162 a 196 días en la ISS; registros cada 4 semanas en vuelo, con respiración espontánea y controlada"
+    },
+    {
+      "id": "baevsky-2007-hr-hrv",
+      "ref": "baevsky-2007-autonomic-iss",
+      "where": "Resumen",
+      "quote": "Mean HR and HRV in the low- and high-frequency bands did not change during spaceflight.",
+      "literal": "did not change during spaceflight",
+      "direction": "unchanged",
+      "compared_with": "la frase no lo nombra; el estudio registró 60 y 30 días antes del vuelo",
+      "population": "8 cosmonautas varones, misiones de 162 a 196 días en la ISS; registros cada 4 semanas en vuelo, con respiración espontánea y controlada"
+    },
+    {
+      "id": "prisk-1995-respiratory-frequency",
+      "ref": "prisk-1995-gas-exchange-sls",
+      "where": "Resumen",
+      "quote": "Compared with preflight standing measurements, microG resulted in a significant reduction in tidal volume (15%) but an increase in respiratory frequency (9%).",
+      "literal": "an increase in respiratory frequency",
+      "direction": "rises",
+      "compared_with": "antes del vuelo, de pie",
+      "population": "8 sujetos en dos vuelos Spacelab (SLS-1 y SLS-2) de 9 o 14 días; en reposo"
+    },
+    {
+      "id": "conkin-2017-spo2",
+      "ref": "conkin-2017-spo2-microgravity",
+      "where": "Resumen, «Results»",
+      "quote": "Astronaut Spo2 levels at baseline, R+0, and R+2 were not significantly different from in flight, about 97% given a PIo2 of 127 mmHg.",
+      "literal": "were not significantly different from in flight",
+      "direction": "unchanged",
+      "compared_with": "antes del vuelo (en Tierra) y tras el regreso, con la misma presión inspirada de oxígeno (127 mmHg)",
+      "population": "8 astronautas varones del transbordador (STS-69 y STS-72); pulsioximetría en el dedo, 12 medidas en vuelo"
+    },
+    {
+      "id": "piltch-2025-sleep-time",
+      "ref": "piltch-2025-sleep-mir",
+      "where": "Resultados",
+      "quote": "Confirming the findings of other studies, we found that participants slept significantly less in space compared with on Earth (5.7 ± 0.6 hr [mean ± s.e.m.] inflight versus 6.7 ± 0.7 hr preflight; β = −63.4, p = 0.0002, g = −0.93; Figure 2a) despite having the same sleep opportunity between study phases (7.6 ± 0.7 hr preflight versus 7.7 ± 0.6 hr inflight; β = 10.5, p = 0.29).",
+      "literal": "slept significantly less in space",
+      "direction": "falls",
+      "compared_with": "antes del vuelo (en Tierra)",
+      "population": "5 tripulantes varones de misiones de unos 6 meses en la estación Mir; monitor Nightcap (movimientos de ojos y cuerpo), 83 noches en vuelo"
+    },
+    {
+      "id": "piltch-2025-sleep-efficiency",
+      "ref": "piltch-2025-sleep-mir",
+      "where": "Resultados",
+      "quote": "On average, the crew members had a ~16% lower sleep efficiency inflight (73% ± 3% inflight versus 89% ± 3% preflight; β = −1.07, p = 0.0001, g = −3.00; Figure 2b).",
+      "literal": "a ~16% lower sleep efficiency inflight",
+      "direction": "falls",
+      "compared_with": "antes del vuelo",
+      "population": "5 tripulantes varones de misiones de unos 6 meses en la estación Mir; monitor Nightcap (movimientos de ojos y cuerpo), 83 noches en vuelo"
+    },
+    {
+      "id": "dev-2024-pvt-early-flight",
+      "ref": "dev-2024-cognition-iss",
+      "where": "Discusión",
+      "quote": "Slower performance on the PVT was observed during early flight only.",
+      "literal": "Slower performance on the PVT was observed during early flight",
+      "direction": "rises",
+      "reads_speed": true,
+      "compared_with": "antes del vuelo (la media del grupo, corregida por el efecto de la práctica)",
+      "population": "25 astronautas (32 % mujeres) de misiones de 6 meses en la ISS; PVT de 3 minutos de la batería Cognition"
+    },
+    {
+      "id": "kunz-2017-rbc",
+      "ref": "kunz-2017-hematologic-indices-iss",
+      "where": "Resultados",
+      "quote": "RBC concentration was significantly elevated at all three in-flight time points compared to the L-180 baseline time point (Fig. 3a; L-180: mean 4.4 ± 0.4, range 3.5–5.1; Early: mean 4.8 ± 0.5, range 3.9–5.7; Mid: 4.7 ± 0.4, range 3.9–5.4; late: 4.7 ± 0.4, range 4.1–5.6).",
+      "literal": "RBC concentration was significantly elevated at all three in-flight time points",
+      "direction": "rises",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "Tripulantes de la ISS en misiones de hasta 6 meses (31 en el estudio); sangre tomada en vuelo y analizada en Tierra hasta 48 h después"
+    },
+    {
+      "id": "kunz-2017-hemoglobin",
+      "ref": "kunz-2017-hematologic-indices-iss",
+      "where": "Resultados",
+      "quote": "Hemoglobin was elevated early in flight compared to L-180, but returned to pre-flight values as the mission progressed (Fig. 3b; L-180: mean 14.1 ± 1.4, range 11.0–17.8; Early: mean 15.0 ± 1.9, range 10.7–17.5).",
+      "literal": "Hemoglobin was elevated early in flight",
+      "direction": "rises",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "Tripulantes de la ISS en misiones de hasta 6 meses (31 en el estudio); sangre tomada en vuelo y analizada en Tierra hasta 48 h después"
+    },
+    {
+      "id": "kunz-2017-hematocrit",
+      "ref": "kunz-2017-hematologic-indices-iss",
+      "where": "Resumen, «Results»",
+      "quote": "Although the stability data showed hematocrit to be mildly elevated at +48 h, there was an in-flight increase in hematocrit that was ~3-fold higher in magnitude than the anticipated increase due to the delay in processing.",
+      "literal": "there was an in-flight increase in hematocrit",
+      "direction": "rises",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "Tripulantes de la ISS en misiones de hasta 6 meses (31 en el estudio); sangre tomada en vuelo y analizada en Tierra hasta 48 h después"
+    },
+    {
+      "id": "kunz-2017-mch",
+      "ref": "kunz-2017-hematologic-indices-iss",
+      "where": "Resultados",
+      "quote": "Throughout the mission, MCH decreased, and was significantly lower than the L-180 baseline by the late-flight time point (Fig. 3c; L-180: mean 31.7 ± 1.6, range 28.8–36.4; Late: 31.3 ± 1.9, range 26.3–34.0).",
+      "literal": "MCH decreased",
+      "direction": "falls",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "Tripulantes de la ISS en misiones de hasta 6 meses (31 en el estudio); sangre tomada en vuelo y analizada en Tierra hasta 48 h después"
+    },
+    {
+      "id": "kunz-2017-platelets",
+      "ref": "kunz-2017-hematologic-indices-iss",
+      "where": "Resultados",
+      "quote": "Platelet concentration was elevated early in flight.",
+      "literal": "Platelet concentration was elevated early in flight",
+      "direction": "rises",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "Tripulantes de la ISS en misiones de hasta 6 meses (31 en el estudio); sangre tomada en vuelo y analizada en Tierra hasta 48 h después"
+    },
+    {
+      "id": "crucian-2015-lymphocytes",
+      "ref": "crucian-2015-adaptive-immunity-iss",
+      "where": "Resultados, «Peripheral leukocyte distribution»",
+      "quote": "Relative to L-180 baseline data, both the absolute WBC and granulocyte levels increased during flight, whereas levels of lymphocytes and monocytes were unaltered during flight (Figure 1a).",
+      "literal": "levels of lymphocytes and monocytes were unaltered during flight",
+      "direction": "unchanged",
+      "compared_with": "180 días antes del lanzamiento (L-180)",
+      "population": "23 astronautas de expediciones de 6 meses en la ISS; recuentos absolutos"
+    },
+    {
+      "id": "crucian-2015-neutrophils",
+      "ref": "crucian-2015-adaptive-immunity-iss",
+      "where": "Discusión",
+      "quote": "This leukocyte distribution pattern suggests that some in vivo immunological processes are occurring and persisting during long-duration spaceflight, including an elevated WBC count, largely because of an increased number of neutrophils and a shift within the CD8+ T-cell compartment toward a more active phenotype.",
+      "literal": "an increased number of neutrophils",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra; los resultados comparan con 180 días antes del lanzamiento (L-180)",
+      "population": "23 astronautas de expediciones de 6 meses en la ISS; recuentos absolutos"
+    },
+    {
+      "id": "smith-2012-resorption-inflight",
+      "ref": "smith-2012-bone-resistance-iss",
+      "where": "Resumen",
+      "quote": "Most markers of bone resorption were also increased in both groups during flight and 30 days after landing (p < 0.05).",
+      "literal": "Most markers of bone resorption were also increased in both groups during flight",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra (el estudio midió antes, durante y después del vuelo)",
+      "population": "13 tripulantes de la ISS (2006-2009), con el dispositivo de ejercicio resistivo iRED (8) o ARED (5)"
+    },
+    {
+      "id": "smith-2015-urine-volume",
+      "ref": "smith-2015-renal-stone-iss",
+      "where": "Resumen",
+      "quote": "A key factor in this increase was urine volume, which was lower during flight in all groups at all time points.",
+      "literal": "urine volume, which was lower during flight",
+      "direction": "falls",
+      "compared_with": "la frase no lo nombra",
+      "population": "Astronautas de misiones de 4 a 6 meses en la ISS (el resumen no dice cuántos), en tres grupos de contramedida"
+    },
+    {
+      "id": "strollo-1998-lh-inflight",
+      "ref": "strollo-1998-testicular-androgen",
+      "where": "Resumen, «RESULTS»",
+      "quote": "Salivary, urinary and plasma T, as well as 3ADG, decreased during flight, while LH unexpectedly increased inflight (p < 0.05).",
+      "literal": "LH unexpectedly increased inflight",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra (el estudio tomó muestras en días distintos antes, durante y después del vuelo)",
+      "population": "4 astronautas varones; LH en plasma al despertar, en un vuelo que el resumen no nombra"
+    },
+    {
+      "id": "zwart-2022-total-protein",
+      "ref": "zwart-2022-albumin-iss",
+      "where": "Resultados",
+      "quote": "No significant differences were detected for total protein concentration during flight, and no differences were detected among groups (Table 1).",
+      "literal": "No significant differences were detected for total protein concentration during flight",
+      "direction": "unchanged",
+      "compared_with": "antes del vuelo (unos 180 y 45 días antes del lanzamiento)",
+      "population": "Astronautas de la ISS de misiones de 2009 a 2018 medidos con el mismo método (52 en la tabla: 41 hombres y 11 mujeres); sangre venosa en ayunas, hasta cinco tomas en vuelo"
+    },
+    {
+      "id": "smith-2015-serum-magnesium",
+      "ref": "smith-2015-magnesium-iss",
+      "where": "Resumen",
+      "quote": "Serum magnesium increased late in flight, while urinary magnesium excretion was higher over the course of 180-day space missions.",
+      "literal": "Serum magnesium increased late in flight",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra (el estudio midió antes, durante y después del vuelo)",
+      "population": "43 astronautas (34 hombres y 9 mujeres) en misiones de 4 a 6 meses en la ISS; el magnesio en suero en vuelo, de 39"
+    },
+    {
+      "id": "buchheim-2019-lymphocyte-percent",
+      "ref": "buchheim-2019-inflammaging-cosmonauts",
+      "where": "Resumen",
+      "quote": "Analysis of blood smears showed that lymphocyte percentages, though unchanged pre- and post-flight were elevated in-flight.",
+      "literal": "were elevated in-flight",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra; el estudio midió antes del vuelo, en los días 90 y 150 de vuelo y después",
+      "population": "12 cosmonautas en una misión de más de 140 días en la ISS; porcentajes de frotis de sangre (8 en el día 90 y 10 en el día 150 de vuelo)"
+    },
+    {
+      "id": "buchheim-2019-salivary-cortisol",
+      "ref": "buchheim-2019-inflammaging-cosmonauts",
+      "where": "Resumen",
+      "quote": "While the classical markers for stress such as cortisol in saliva where not significantly altered, blood concentrations of the endocannabinoid system (ECS) were found to be highly increased in-flight indicating a biological stress response.",
+      "literal": "cortisol in saliva where not significantly altered",
+      "direction": "unchanged",
+      "compared_with": "la frase no lo nombra; el estudio midió antes del vuelo, en los días 90 y 150 de vuelo y después",
+      "population": "12 cosmonautas en una misión de más de 140 días en la ISS; el cortisol en saliva, de 8, por la mañana y por la tarde"
+    },
+    {
+      "id": "vorobiev-1995-salivary-cortisol",
+      "ref": "vorobiev-1995-altair-mir",
+      "where": "Resumen",
+      "quote": "During flight a decrease of diuresis and ANP and an increase of osmolality were found. No modifications of hematocrit, but an increase of salivary cGMP and cortisol were also observed.",
+      "literal": "an increase of salivary cGMP and cortisol",
+      "direction": "rises",
+      "compared_with": "la frase no lo nombra; el estudio tomó muestras 60 y 30 días antes del vuelo",
+      "population": "2 cosmonautas de la misión Altair-Mir 1993, uno de 21 días de vuelo y otro de 198; saliva recogida a bordo en los días 6, 12 y 18 de vuelo del primero y 7, 12 y 17 del segundo"
+    },
+    {
+      "id": "crucian-2013-leukocyte-subsets",
+      "ref": "crucian-2013-shuttle-immunity",
+      "where": "Resumen, «RESULTS»",
+      "quote": "Most bulk leukocyte subsets (WBC, differential, lymphocyte subsets) were unaltered during spaceflight, but were altered following landing.",
+      "literal": "Most bulk leukocyte subsets (WBC, differential, lymphocyte subsets) were unaltered during spaceflight",
+      "direction": "unchanged",
+      "compared_with": "la frase no lo nombra",
+      "population": "19 astronautas del transbordador; sangre tomada a bordo unas 24 h antes de aterrizar y analizada en Tierra"
+    },
+    {
+      "id": "zwart-2018-ntx-inflight",
+      "ref": "zwart-2018-dietary-acid-load",
+      "where": "Resumen, «RESULTS»",
+      "quote": "Relative to preflight values, N-telopeptide (NTX) and urinary calcium were higher during flight, and bone-specific alkaline phosphatase (BSAP) was higher toward the end of flight.",
+      "literal": "N-telopeptide (NTX) and urinary calcium were higher during flight",
+      "direction": "rises",
+      "compared_with": "antes del vuelo",
+      "population": "17 astronautas de vuelos largos con dietas controladas de 4 días antes y durante el vuelo"
+    }
+  ],
+  "indicators": {
+    "heart-rate": {
+      "direction": "unchanged",
+      "statements": ["hughson-2012-hr-bp", "xu-2013-hr-sleep", "fraser-2012-hr-daily", "baevsky-2007-hr-hrv"],
+      "scope": "Las cuatro frases son del vuelo; la subida de la frecuencia cardiaca que dan dos de estos estudios es después del vuelo, no durante."
+    },
+    "systolic-bp": {
+      "direction": "contested",
+      "statements": ["hughson-2012-hr-bp", "norsk-2015-ambulatory-bp", "baevsky-2007-rf-bp"],
+      "scope": "Miden distinto: medidas cortas sentados (Hughson 2012) frente a presión ambulatoria de 24 h (Norsk 2015). Baevsky 2007 dice «BP», sin separar la sistólica de la diastólica."
+    },
+    "diastolic-bp": {
+      "direction": "contested",
+      "statements": ["hughson-2012-hr-bp", "norsk-2015-ambulatory-bp", "baevsky-2007-rf-bp"],
+      "scope": "Miden distinto: medidas cortas sentados (Hughson 2012) frente a presión ambulatoria de 24 h (Norsk 2015). Baevsky 2007 dice «BP», sin separar la sistólica de la diastólica."
+    },
+    "respiratory-rate": {
+      "direction": "contested",
+      "statements": ["prisk-1995-respiratory-frequency", "baevsky-2007-rf-bp"],
+      "scope": "Miden distinto: en reposo y frente a de pie antes del vuelo, en vuelos de 9 o 14 días (Prisk 1995), frente a misiones de 162 a 196 días en la ISS (Baevsky 2007)."
+    },
+    "oxygen-saturation": {
+      "direction": "unchanged",
+      "statements": ["conkin-2017-spo2"],
+      "scope": "Con la misma presión inspirada de oxígeno (127 mmHg) en Tierra y en la cabina del transbordador, que respiraba un 26,5 % de oxígeno a 527 mmHg; no se midió en la atmósfera de la ISS."
+    },
+    "sleep-duration": {
+      "direction": "falls",
+      "statements": ["piltch-2025-sleep-time"],
+      "scope": "La frase es de la estación Mir (5 tripulantes, monitor Nightcap): el sueño acortado con la misma oportunidad de dormir.",
+      "searched_refs": ["barger-2014-sleep-spaceflight", "jones-2022-sleep-pvt-iss"],
+      "searched": "en la ISS, Barger 2014 (Lancet Neurol, actigrafía) da el sueño en vuelo (6,09 h) entre los dos periodos de antes del vuelo (5,86 y 6,41 h) y compara cada uno con la primera semana tras el regreso, no el vuelo con antes; Jones 2022 (Sleep, 24 astronautas, sueño autoinformado) atribuye el cambio entre fases a un sueño más largo tras volver («which was due to longer sleep durations after returning to Earth»)."
+    },
+    "sleep-efficiency": {
+      "direction": "falls",
+      "statements": ["piltch-2025-sleep-efficiency"],
+      "scope": "Es la estación Mir (5 tripulantes, monitor Nightcap); la eficiencia es la parte de la oportunidad de dormir que se pasó durmiendo."
+    },
+    "pvt-mean-rt": {
+      "direction": "rises",
+      "statements": ["dev-2024-pvt-early-flight"],
+      "scope": "Solo al principio del vuelo («during early flight only»). La frase habla de rapidez: más lento es un tiempo de reacción mayor. Es la PVT de 3 minutos de la batería Cognition.",
+      "searched_refs": ["jones-2022-sleep-pvt-iss"],
+      "searched": "Jones 2022 (Sleep, 24 astronautas en la ISS, PVT-B de 3 minutos) atribuye el cambio de la velocidad de respuesta entre fases a la semana antes del lanzamiento («driven by slower PVT-B response speed during the week prior to launch»), no a una comparación del vuelo con antes."
+    },
+    "pvt-lapses": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["jones-2022-sleep-pvt-iss", "dev-2024-cognition-iss", "tu-2022-pvt-prediction-iss"],
+      "searched": "Jones 2022 (Sleep, 24 astronautas en la ISS) dice que los lapsos variaron entre fases de la misión («exhibited variability by mission phase») sin comparar el vuelo con antes; Dev 2024 (Front Physiol, 25 astronautas en la ISS) los cuenta dentro de la puntuación de precisión de la PVT, con un umbral de 355 ms y no de 500 ms, y no da su sentido en vuelo; y Tu 2022 (Sci Rep, 24 astronautas en la ISS, PVT-B) predice la velocidad de respuesta y dice que los lapsos distinguen peor a quienes rinden alto («such as the number of lapses or false starts, were less effective in differentiating high performers such as astronauts»), sin dar su sentido en vuelo."
+    },
+    "circadian-shift": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": [
+        "flynn-evans-2016-circadian-iss", "gundel-1997-sleep-circadian-mir",
+        "monk-1998-sleep-circadian-shuttle", "dijk-2001-sleep-circadian-shuttle"
+      ],
+      "searched": "Flynn-Evans 2016 (npj Microgravity, 21 astronautas en la ISS) da el mínimo de temperatura estimado fuera del sueño en el 13 % de los sueños antes del vuelo y en el 19 % en vuelo («on 13% of sleep episodes during preflight and on 19% of sleep episodes during spaceflight»), sin compararlos; y es la frecuencia del desalineamiento, no un desfase en horas. Lo que da un desfase en horas lo da con signo, y un signo no es una subida ni una bajada: Gundel 1997 (J Sleep Res, 4 astronautas en la Mir) ve la fase de la temperatura corporal retrasada unas 2 h en el espacio frente a la base en Tierra («The circadian phase of body temperature was found to be delayed by about 2 h in space compared with baseline data»), y EMMA no declara qué signo tiene su desfase respecto al horario de misión, así que un retraso no se lee como «sube» ni como «baja»; Monk 1998 (J Biol Rhythms, 4 astronautas, transbordador STS-78, 17 días) ve los ritmos en órbita «very similar in phase and amplitude to those on the ground», en una misión programada para alterar lo menos posible los ritmos y el sueño, así que no dice lo que pasa en un horario normal, y discrepa de Gundel 1997; y Dijk 2001 (Am J Physiol, 5 astronautas, dos vuelos del transbordador de 16 y 10 días) ve el ritmo del cortisol en orina desalineado respecto al horario impuesto de menos de 24 h («appeared misaligned relative to the imposed non-24-h sleep-wake schedule»), sin horas ni signo."
+    },
+    "orthostatic-drop": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": [
+        "baevsky-2007-autonomic-iss", "fu-2019-orthostatic-tolerance-iss",
+        "lee-2015-orthostatic-intolerance-iss-shuttle", "wood-2019-inflight-leg-cuff-iss"
+      ],
+      "searched": "Baevsky 2007 (J Appl Physiol, 8 cosmonautas en la ISS) hizo la prueba ortostática solo antes y después del vuelo («Orthostatic testing was performed pre- and postflight»): en ingravidez no hay ponerse en pie. Lo mismo en lo leído después: Fu 2019 (Circulation, 12 astronautas, 6 meses de vuelo) midió la presión ambulatoria de 24 h antes, durante y después, pero la tolerancia ortostática solo antes y después («no astronaut experienced orthostatic intolerance/hypotension during activities of daily living before or after spaceflight»); Lee 2015 (Aerosp Med Hum Perform, 20 astronautas de la ISS y 65 del transbordador) hizo la prueba de inclinación diez días antes del lanzamiento, el día del aterrizaje y tres días después, y mide quién la completa, no una caída de presión (y de la ISS da 6 astronautas el día del aterrizaje y 15 a los tres días); y Wood 2019 (npj Microgravity, 8 astronautas en la ISS) hizo la prueba de ponerse en pie antes y después y, en vuelo, como sustituto, soltar unos manguitos de muslo tras 3 minutos de oclusión, con una caída de la presión media que no cambió frente a antes del vuelo («preflight −19 ± 2 mmHg vs. inflight −18 ± 5 mmHg»): es la presión media ante otro estímulo, no la sistólica al ponerse en pie, y no se lee como sentido."
+    },
+    "hrv-sdnn": {
+      "direction": "contested",
+      "statements": ["xu-2013-hrv-sleep", "otsuka-2016-total-power"],
+      "scope": "Ningún resumen nombra la SDNN: uno habla de los indicadores de dominio temporal durante el sueño; el otro, de la potencia espectral total en 24 h."
+    },
+    "hrv-rmssd": {
+      "direction": "contested",
+      "statements": ["xu-2013-hrv-sleep", "hughson-2012-high-frequency", "baevsky-2007-hr-hrv"],
+      "scope": "Ningún resumen nombra la RMSSD: uno habla de los indicadores de dominio temporal durante el sueño; los otros dos, de la banda de alta frecuencia, que baja en Hughson 2012 (6 astronautas) y no cambia en Baevsky 2007 (8 cosmonautas, registros cortos)."
+    },
+    "body-temperature": {
+      "direction": "rises",
+      "statements": ["stahn-2017-resting"],
+      "scope": "Es la temperatura central, no la de la piel."
+    },
+    "body-weight": {
+      "direction": "falls",
+      "statements": ["zwart-2014-body-mass"],
+      "scope": "La pérdida es de los primeros 30 días; después, la masa se mantuvo."
+    },
+    "ntx-telopeptide": {
+      "direction": "rises",
+      "statements": ["smith-2005-resorption-inflight", "smith-2012-resorption-inflight", "zwart-2018-ntx-inflight"],
+      "scope": "Las dos primeras frases hablan de los marcadores de resorción en conjunto (en la Mir y en la ISS), y el telopéptido N se nombra en la de después del aterrizaje de Smith 2005; la tercera (Zwart 2018, 17 astronautas) lo nombra en vuelo."
+    },
+    "latent-virus-shedding": {
+      "direction": "rises",
+      "statements": ["mehta-2017-reactivation"]
+    },
+    "leukocytes": {
+      "direction": "contested",
+      "statements": ["crucian-2015-wbc", "crucian-2013-leukocyte-subsets"],
+      "scope": "Miden misiones distintas: 6 meses en la ISS (Crucian 2015, 23 astronautas: el recuento sube) frente a vuelos cortos del transbordador (Crucian 2013, 19 astronautas, sangre tomada unas 24 h antes de aterrizar: sin cambio)."
+    },
+    "onsd-right": {
+      "direction": "rises",
+      "statements": ["sirek-2014-onsd"],
+      "scope": "El resumen no dice de qué ojo."
+    },
+    "onsd-left": {
+      "direction": "rises",
+      "statements": ["sirek-2014-onsd"],
+      "scope": "El resumen no dice de qué ojo."
+    },
+    "ijv-csa-left": {
+      "direction": "rises",
+      "statements": ["marshall-goebel-2019-ijv-area"],
+      "scope": "Frente a sentado antes del vuelo. Tumbado antes del vuelo el área era mayor que en vuelo (80,7 frente a 70,3 mm²): el sentido depende de la postura con que se compare."
+    },
+    "ijv-csa-right": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": [
+        "marshall-goebel-2019-ijv", "zamboni-2026-jugular-venous-pulse-iss",
+        "arbeille-2015-vessel-imaging-iss", "pavela-2022-jugular-surveillance-iss",
+        "david-2021-right-ijv-tilt-microgravity"
+      ],
+      "searched": "el estudio leído de la yugular en vuelo (Marshall-Goebel 2019, JAMA Netw Open) midió solo la izquierda («only the left IJV was imaged as part of this study»). Lo leído después no da una frase que se lea como sentido de la derecha: Zamboni 2026 (Sci Rep, 4 astronautas en la ISS, solo la yugular derecha) tiene medidas en vuelo de uno solo, al que le bajó el área frente a antes del vuelo tumbado («The reduction in ASTRO 0 developed between the first and fifth month in orbit»), con la estadística hecha solo entre antes y después del vuelo y con el aviso de los autores de que los estudios con la referencia sentada vieron subir el área al pasar a la ingravidez: una serie de una persona, sin estadística del vuelo y frente a tumbado, se dice y no se lee como sentido; Arbeille 2015 (Eur J Appl Physiol, 10 astronautas, 6 meses) ve subir el área de la yugular en vuelo frente a antes (JV: 178 y 225 %) sin que la frase diga el lado (Marshall-Goebel 2019 lo cita como la derecha examinada antes en vuelo); Pavela 2022 (Vasc Med, 11 astronautas en la ISS) hizo ecografía dúplex de las dos yugulares en vuelo y da velocidad pico y ecogenicidad, no el área («none had more than mild echogenicity in the right internal jugular vein»); y David 2021 (Aerosp Med Hum Perform, un astronauta) da la diferencia del área derecha en vuelo frente a los ángulos de una mesa basculante, sin su signo."
+    },
+    "cortisol-salivary": {
+      "direction": "contested",
+      "statements": ["vorobiev-1995-salivary-cortisol", "buchheim-2019-salivary-cortisol"],
+      "scope": "Dos cosmonautas de la Mir en 1993, con la saliva tomada en los primeros 18 días de vuelo (sube), frente a 8 de una misión larga en la ISS, en los días 90 y 150 (sin cambio significativo; de 12 del estudio), y en la discusión Buchheim 2019 lo da «moderately affected». Puede ser principio frente a mitad del vuelo: ninguna medida tardía sube. Ninguna de las dos frases da cuánto ni frente a qué toma.",
+      "searched_refs": ["mehta-2017-latent-virus-iss", "agha-2020-salivary-iss", "mehta-2014-shuttle-viruses"],
+      "searched": "Mehta 2017 (npj Microgravity, 23 astronautas en la ISS) dice que en vuelo cambió la trayectoria diurna del cortisol salival («The mean diurnal trajectory of salivary cortisol changed significantly during flight»), no que suba o baje; Agha 2020 (J Appl Physiol, 8 tripulantes de la ISS) da elevado el cociente cortisol/DHEA antes (L-180) y durante la misión, no el cortisol, y el cortisol más alto en quienes excretaron algún virus latente que en quienes no; Mehta 2014 (Brain Behav Immun, 17 astronautas del transbordador) da el cortisol salival de antes y de durante el vuelo elevado frente a después («Salivary cortisol measured preflight and during flight were elevated relative to post-flight»), no el vuelo frente a antes, y lo que sube en vuelo es el cociente cortisol/DHEA."
+    },
+    "hemoglobin": {
+      "direction": "rises",
+      "statements": ["kunz-2017-hemoglobin"],
+      "scope": "Solo al principio del vuelo; después volvió a los valores de antes. El resumen avisa de la posible influencia de la deshidratación o de los cambios del volumen plasmático («While susceptible to the possible influence of dehydration or plasma volume alterations»).",
+      "searched_refs": ["trudel-2022-hemolysis", "markin-1998-blood-biochemistry-mir"],
+      "searched": "Trudel 2022 (Nat Med, 14 astronautas en la ISS) da en vuelo los productos de la degradación de la hemoglobina; la hemoglobina, un año después del aterrizaje. Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir, sangre del dedo analizada a bordo) le da en vuelo una tendencia a bajar, sin estadística («tendency to decrease of CK activity, hemoglobin»), que no se lee como sentido."
+    },
+    "erythrocytes": {
+      "direction": "rises",
+      "statements": ["kunz-2017-rbc"],
+      "scope": "En las tres tomas de vuelo; con la misma salvedad de la deshidratación o del volumen plasmático que da el resumen."
+    },
+    "hematocrit": {
+      "direction": "rises",
+      "statements": ["kunz-2017-hematocrit"],
+      "scope": "Parte de la subida es del retraso de hasta 48 h hasta el análisis, que hincha el volumen corpuscular; el artículo la atribuye a las dos cosas («a combination of a true in-flight increase in RBC count and an artifactual increase in MCV resulting from the processing delay»)."
+    },
+    "mch": {
+      "direction": "falls",
+      "statements": ["kunz-2017-mch"],
+      "scope": "Significativa solo al final del vuelo."
+    },
+    "platelets": {
+      "direction": "rises",
+      "statements": ["kunz-2017-platelets"],
+      "scope": "Al principio y a mitad del vuelo; al final ya no era significativamente mayor que antes («was not significantly higher than pre-flight by the late time point»)."
+    },
+    "mcv": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["kunz-2017-hematologic-indices-iss", "trudel-2022-hemolysis"],
+      "searched": "Kunz 2017 (BMC Hematol, ISS) ve subir el volumen corpuscular medio en las muestras de vuelo, pero lo atribuye al retraso hasta el análisis y no al vuelo («we do not identify any MCV variations attributable to spaceflight»); Trudel 2022 (Nat Med, 14 astronautas en la ISS) no lo nombra en su texto completo, que da en vuelo la hemólisis y no los índices corpusculares."
+    },
+    "mchc": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["kunz-2017-hematologic-indices-iss", "trudel-2022-hemolysis"],
+      "searched": "Kunz 2017 (BMC Hematol, ISS) la midió y la dejó fuera del análisis por inestable tras el retraso hasta el análisis («not included in any subsequent analysis due to instability following delayed processing»); Trudel 2022 (Nat Med, 14 astronautas en la ISS) no la nombra en su texto completo, que da en vuelo la hemólisis y no los índices corpusculares."
+    },
+    "lymphocytes": {
+      "direction": "unchanged",
+      "statements": ["crucian-2015-lymphocytes"]
+    },
+    "neutrophils": {
+      "direction": "rises",
+      "statements": ["crucian-2015-neutrophils"],
+      "scope": "Los resultados lo dan como granulocitos («granulocyte levels increased during flight»); la discusión lo atribuye a los neutrófilos."
+    },
+    "neutrophil-lymphocyte-ratio": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["crucian-2015-adaptive-immunity-iss", "paul-2020-nlr", "crucian-2013-shuttle-immunity"],
+      "searched": "Crucian 2015 (npj Microgravity, ISS) da en vuelo los granulocitos al alza y los linfocitos sin cambio, pero no el cociente; Paul 2020 (Front Immunol) reanaliza datos de 23 astronautas y da elevado a los 180 días de vuelo el cociente granulocitos/linfocitos («In humans, GLR was elevated at 180-days in-flight»), no el NLR, que dice no haberse registrado («Retrospective NLR data were not recorded for this mission»): el NLR en vuelo es el de los roedores, y el resto del trabajo es en ratones y en cultivos; Crucian 2013 (J Clin Immunol, 19 astronautas del transbordador) da la fórmula leucocitaria sin cambio en vuelo y tampoco el cociente."
+    },
+    "neutrophils-percent": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["crucian-2015-adaptive-immunity-iss", "buchheim-2019-inflammaging-cosmonauts", "crucian-2013-shuttle-immunity"],
+      "searched": "Crucian 2015 (npj Microgravity, ISS) da en vuelo recuentos absolutos de leucocitos, no porcentajes; Buchheim 2019 (Front Physiol, 12 cosmonautas en la ISS) lleva el porcentaje de neutrófilos en vuelo a su figura 2B («Relative counts (%) of neutrophils lymphocytes and monocytes evidenced by blood smear analysis»), que no se leyó, y su texto solo da la subida de después del vuelo («an increase of neutrophils and monocytes post-flight»); Crucian 2013 (J Clin Immunol, 19 astronautas del transbordador) da sin cambio la fórmula leucocitaria («differential»), sin nombrar los neutrófilos ni decir si son recuentos o porcentajes, y su resumen no dice qué subgrupos deja fuera de «Most»."
+    },
+    "lymphocytes-percent": {
+      "direction": "rises",
+      "statements": ["buchheim-2019-lymphocyte-percent"],
+      "scope": "Una sola frase, de porcentajes de frotis en una misión de más de 140 días en la ISS (8 y 10 cosmonautas en los días 90 y 150 de vuelo); el estudio avisa de que en vuelo solo pudo mirar esos porcentajes.",
+      "searched_refs": ["crucian-2015-adaptive-immunity-iss", "crucian-2013-shuttle-immunity"],
+      "searched": "Crucian 2015 (npj Microgravity, ISS) da en vuelo recuentos absolutos (leucocitos al alza y linfocitos sin cambio), no porcentajes; Crucian 2013 (J Clin Immunol, 19 astronautas del transbordador) da sin cambio la fórmula leucocitaria («differential»), sin decir si son recuentos o porcentajes."
+    },
+    "vitamin-d-25oh": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zittermann-2000-calcium-absorption-spaceflight", "heer-2002-nutrition-european-missions", "morey-holton-1988-vitamin-d-spacelab2", "smith-2012-bone-resistance-iss", "smith-2005-nutrition-iss"],
+      "searched": "Las dos frases de sin cambio en vuelo son con la vitamina D como intervención, y un analito que se suplementa no se lee como sentido del vuelo: Zittermann 2000 (Eur J Clin Invest, un cosmonauta, N = 1, 20 días, con suplemento diario de vitamina D2: «25-hydroxyvitamin D levels did not change significantly») y Heer 2002 (Nutrition, revisión de misiones europeas: en la misión Mir 97 de 21 días, con suplemento de vitamina D, «total 25-OH-Vitamin D levels were unchanged», sin decir cuántos astronautas), que parecen la misma misión. Morey-Holton 1988 (Aviat Space Environ Med, 4 astronautas de Spacelab 2, 8 días) da la 25OHD en plasma «essentially normal during the mission», sin sentido; Smith 2012 (J Bone Miner Res, 13 tripulantes de la ISS) da un estado de vitamina D «nominal» antes y durante el vuelo (75 ± 17 nmol/L), sin sentido; Smith 2005 (J Nutr, 11 astronautas de la ISS) la da más baja después del vuelo, no durante («serum 25-hydroxycholecalciferol was decreased after flight»)."
+    },
+    "alkaline-phosphatase": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["smith-2012-bone-resistance-iss", "zwart-2018-dietary-acid-load"],
+      "searched": "Smith 2012 (J Bone Miner Res, 13 tripulantes de la ISS) da la fosfatasa alcalina ósea, no la total, y con una tendencia sin significación al final del vuelo («tended to increase during flight toward the end of the mission (p = 0.06)»); Zwart 2018 (Am J Clin Nutr, 17 astronautas) da también la ósea, más alta al final del vuelo («bone-specific alkaline phosphatase (BSAP) was higher toward the end of flight»), no la total; nada de lo leído mide la total en vuelo."
+    },
+    "calcium": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["smith-2015-renal-stone-iss", "smith-1997-portable-analyzer-shuttle", "morey-holton-1988-vitamin-d-spacelab2", "heer-2002-nutrition-european-missions"],
+      "searched": "Smith 2015 (Bone, ISS) habla del calcio en orina («elevates urinary calcium»), no del calcio en sangre; Smith 1997 (Clin Chem, transbordador, analizador portátil a bordo) da el calcio ionizado, no el total, más bajo en vuelo («Ionized calcium was decreased in flight and on landing day») y atribuye los cambios en vuelo a la técnica de toma («Changes during flight were likely related to sample collection technique»); Morey-Holton 1988 (Aviat Space Environ Med, 4 astronautas de Spacelab 2, 8 días) da el calcio en plasma «essentially normal during the mission», sin sentido; Heer 2002 (Nutrition, revisión de misiones europeas) da el calcio total en suero al alza en la misión Mir 97 de 21 días («Total serum calcium concentration and urinary calcium excretion significantly increased during this mission»), con una dieta rica en calcio y suplemento de vitamina D y sin decir cuántos astronautas: el calcio era la intervención, y un analito que se suplementa no se lee como sentido del vuelo. Sin esa intervención, no hay frase del calcio total en sangre en vuelo."
+    },
+    "urine-volume-24h": {
+      "direction": "falls",
+      "statements": ["smith-2015-urine-volume"],
+      "scope": "El resumen no dice si es orina de 24 horas ni frente a qué se compara."
+    },
+    "estradiol": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "gimunova-2024-reproductive-review"],
+      "searched": "el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) lo midió antes, durante y después del vuelo («a large set of biochemical profiles were measured pre-, in-, and postflight for both subjects») y el texto no da su resultado; la revisión sistemática de Gimunová 2024 (npj Microgravity, 16 estudios) solo lo recoge en estudios en Tierra («Earth»), ninguno en vuelo, y su único estudio en vuelo con mujeres es el del riesgo de trombosis venosa con anticonceptivos orales combinados."
+    },
+    "fsh": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["gimunova-2024-reproductive-review", "garrett-bakelman-2019"],
+      "searched": "la revisión sistemática de Gimunová 2024 (npj Microgravity, 16 estudios) solo la recoge en estudios en Tierra («Earth»), ninguno en vuelo; la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo no la nombra."
+    },
+    "lh": {
+      "direction": "rises",
+      "statements": ["strollo-1998-lh-inflight"],
+      "scope": "Una sola frase, de 4 astronautas varones en un vuelo que el resumen no nombra ni dice cuánto duró. La misma frase da la testosterona a la baja en vuelo («decreased during flight»).",
+      "searched_refs": ["strollo-1999-hormonal-review", "strollo-1997-spacelab-adrenal-gonadal"],
+      "searched": "la revisión de Strollo 1999 (Adv Space Biol Med) no da el sentido de la LH en vuelo y avisa de que su secreción a pulsos complica tener valores representativos («pulsatility poses a problem for obtaining representative values (e.g., for luteinizing hormone)»); y la comunicación de Strollo 1997 (J Gravit Physiol, Spacelab) da en su resumen el objetivo, con la LH como hipótesis («impaired luteinizing hormone (LH) output with consequent testosterone (T) hyposecretion in men»), y no da resultados; su texto no está en línea."
+    },
+    "tsh": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["ntrs-19750006310", "smith-2011-thyroid-shuttle", "garrett-bakelman-2019"],
+      "searched": "en Skylab (Leach y Rambaut 1974, NTRS, nueve tripulantes) no se midió en las muestras de vuelo y subió después del vuelo («These include total protein, carbon dioxide, thyroid stimulating hormone and thyroxine»); en el transbordador (Smith 2011, Aviat Space Environ Med, 224 hombres y 49 mujeres) subió el día del aterrizaje mientras se bebió agua yodada y dejó de hacerlo al quitar el yodo («postflight TSH was not significantly different from preflight values»), con tomas solo antes y después del vuelo; la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo nombra las hormonas tiroideas («thyroid hormones»), no la TSH."
+    },
+    "free-t4": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["ntrs-19750006310", "smith-2011-thyroid-shuttle", "garrett-bakelman-2019", "strollo-1999-hormonal-review"],
+      "searched": "en Skylab (Leach y Rambaut 1974, NTRS) la tiroxina, que era la total, no se midió en las muestras de vuelo y subió después del vuelo; en el transbordador (Smith 2011) la tiroxina total y el índice de T4 libre, que no es la T4 libre, subieron después del vuelo («elevated in men after flight»), con tomas solo antes y después; el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió las hormonas tiroideas en vuelo y el texto no da su resultado; y la revisión de Strollo 1999 (Adv Space Biol Med) da la tiroxina más baja en el espacio («which are lowered in space») sin decir si es la libre ni de qué estudio sale."
+    },
+    "beta2-microglobulin": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) la midió antes, durante y después del vuelo («protein carbonyls (myeloperoxidase, lp-PLA2, neopterin, and beta-2 microglobulin)») y el texto no da su resultado; en Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días) la sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight») y el texto no la nombra."
+    },
+    "ca-125": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "ca-15-3": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "ca-19-9": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "ca-27-29": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "cea": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "neuron-specific-enolase": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["garrett-bakelman-2019", "jones-2024-inspiration4"],
+      "searched": "ni la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo ni el texto de Inspiration4 (Jones 2024, Nature, cuatro civiles en un vuelo de tres días), cuya sangre tomada en vuelo es de gota seca («dried blood spot samples collected in-flight»), lo nombran."
+    },
+    "chromogranin-a": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["meck-2004-orthostatic-shuttle", "garrett-bakelman-2019"],
+      "searched": "Meck 2004 (Am J Physiol Heart Circ Physiol, 23 astronautas de vuelos cortos del transbordador) la midió en plasma antes del vuelo y al volver, no en vuelo («We studied 23 astronauts 10 days before launch, on landing day, and 3 days after landing»); la lista de la bioquímica que el Twins Study (Garrett-Bakelman 2019, Science, un astronauta 340 días en la ISS y su gemelo en Tierra) midió antes, durante y después del vuelo no la nombra."
+  },
+    "ast": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir"],
+      "searched": "Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir, sangre del dedo analizada a bordo) da en vuelo una tendencia a subir de la GOT, que es la AST («had been found tendency to increase, in compare with basal level, GOT, GPT»), sin estadística; como la tendencia de la fosfatasa alcalina en Smith 2012, no se lee como sentido."
+    },
+    "alt": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir"],
+      "searched": "Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir, sangre del dedo analizada a bordo) da en vuelo una tendencia a subir de la GPT, que es la ALT («had been found tendency to increase, in compare with basal level, GOT, GPT»), sin estadística; como la tendencia de la fosfatasa alcalina en Smith 2012, no se lee como sentido."
+    },
+    "glucose": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": [
+        "markin-1998-blood-biochemistry-mir", "grigoriev-1994-biochemical-status",
+        "stroud-2022-metabolomics-iss"
+      ],
+      "searched": "Lo leído no coincide y nada da un sentido medido: Markin 1998 (17 cosmonautas de la Mir) da en vuelo una tendencia a subir, sin estadística («tendency to increase, in compare with basal level, GOT, GPT, total amylase activity, glucose»); Grigor'ev 1994 (resumen en inglés de un artículo en ruso, con dos autores en común) dice que el estado bioquímico se examinó «during long (4-6 months) space flights», pero su frase de lo que sube («Space flight was found associated with increased peripheral blood levels of glucose») no dice frente a qué ni en qué toma; y Stroud 2022 (RMN del suero de 51 astronautas de la ISS), que no da la concentración sino la abundancia relativa de su señal, la nombra entre lo que baja de 10 días antes del lanzamiento al día 15 de vuelo («mainly by downregulations of glucose, pyruvate, and ethanol in males»), con la advertencia de los autores de que el metaboloma de la sangre «does not provide substantial insight into metabolic changes occurring throughout flight relative to pre-flight»."
+    },
+    "urea": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["grigoriev-1994-biochemical-status", "markin-1998-blood-biochemistry-mir"],
+      "searched": "Grigor'ev 1994 (resumen en inglés de un artículo en ruso; cosmonautas en vuelos de 4 a 6 meses) la da al alza («Space flight was found associated with increased peripheral blood levels of glucose, cholesterol, triglycerides, urea»), sin decir frente a qué ni en qué toma; Markin 1998 (17 cosmonautas de la Mir), con dos autores en común y el mismo analizador, la mide a bordo y no le encuentra tendencia definida («Some definite trends in variations of other determined biochemical parameters had not been found»)."
+    },
+    "total-protein": {
+      "direction": "unchanged",
+      "statements": ["zwart-2022-total-protein"],
+      "scope": "Una sola frase, de sangre venosa en ayunas de astronautas de la ISS entre 2009 y 2018.",
+      "searched_refs": ["grigoriev-1994-biochemical-status"],
+      "searched": "Grigor'ev 1994 (resumen en inglés de un artículo en ruso; cosmonautas en vuelos de 4 a 6 meses, sangre del dedo) las nombra entre lo que sube («Space flight was found associated with increased peripheral blood levels of […] total protein»), pero la frase no dice frente a qué ni si compara tomas de vuelo con las de antes."
+    },
+    "ldh": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["grigoriev-1994-biochemical-status"],
+      "searched": "Grigor'ev 1994 (resumen en inglés de un artículo en ruso; cosmonautas en vuelos de 4 a 6 meses) la nombra entre lo que sube («Space flight was found associated with increased peripheral blood levels of […] lactate dehydrogenase»), pero la frase no dice frente a qué ni si compara tomas de vuelo con las de antes; nada más de lo leído la nombra."
+    },
+    "magnesium": {
+      "direction": "rises",
+      "statements": ["smith-2015-serum-magnesium"],
+      "scope": "En los resultados, desde el día 120 de vuelo hasta el final de la misión (39 astronautas). De las diferencias por grupo de contramedida, los autores añaden que «all data were within normal ranges, and the magnitude of change would not be considered clinically significant»."
+    },
+    "creatinine": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir", "zheng-2023-time-resolved-iss"],
+      "searched": "Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir) mide la creatinina en vuelo y no le encuentra tendencia definida («Some definite trends in variations of other determined biochemical parameters had not been found»); Zheng 2023 (Front Physiol, 27 astronautas de la ISS) la da en una tabla con flechas y no en una frase: en suero, de los 18 astronautas con tendencia significativa, la mayoritaria en vuelo es más baja que antes, con una secundaria más alta; y en el texto pone la creatinina, sin decir de qué líquido, en un grupo de medidas con «a gradual increase in intensities»."
+    },
+    "bun-creatinine-ratio": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["grigoriev-1994-biochemical-status", "markin-1998-blood-biochemistry-mir"],
+      "searched": "Nada de lo leído da el cociente: Grigor'ev 1994 da la urea al alza, sin decir si compara tomas de vuelo con las de antes, y no nombra la creatinina; Markin 1998 (la Mir) mide las dos en vuelo y no les encuentra tendencia definida."
+    },
+    "ggt": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir"],
+      "searched": "Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir) mide la gamma-GT en vuelo y no le encuentra tendencia definida («Some definite trends in variations of other determined biochemical parameters had not been found»)."
+    },
+    "bilirubin-total": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir"],
+      "searched": "Markin 1998 (Acta Astronaut, 17 cosmonautas de la Mir) mide la bilirrubina total en vuelo y no le encuentra tendencia definida («Some definite trends in variations of other determined biochemical parameters had not been found»)."
+    },
+    "bilirubin-direct": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["markin-1998-blood-biochemistry-mir"],
+      "searched": "Markin 1998 (Acta Astronaut, la Mir) mide en vuelo solo la bilirrubina total («total bilirubin»), sin tendencia definida; la directa no la nombra nada de lo leído."
+    },
+    "albumin": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zwart-2022-albumin-iss"],
+      "searched": "Zwart 2022 (J Appl Physiol, astronautas de la ISS) la da más baja después del vuelo, no durante («All the astronauts had lower levels of serum albumin after flight than they did before the flight»); del vuelo solo cuenta cuántos tuvieron alguna medida baja, más entre las astronautas que tomaban anticonceptivos orales combinados."
+    },
+    "sodium": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zheng-2023-time-resolved-iss"],
+      "searched": "Zheng 2023 (Front Physiol, 27 astronautas de la ISS) da el sodio, sin decir de qué líquido, en una tabla con flechas y no en una frase: de los 18 astronautas con tendencia significativa, la mayoritaria en vuelo es más baja que antes, con una secundaria más alta."
+    },
+    "potassium": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zheng-2023-time-resolved-iss", "smith-1997-portable-analyzer-shuttle"],
+      "searched": "Zheng 2023 (Front Physiol, 27 astronautas de la ISS) solo trae en su tabla de lo más frecuente (16 astronautas o más con tendencia significativa) el potasio en orina, no en sangre; Smith 1997 (Clin Chem, transbordador, analizador portátil a bordo) lo da al alza en vuelo («Potassium increased in flight compared with before flight») y atribuye los cambios en vuelo a la técnica de toma («Changes during flight were likely related to sample collection technique»), por lo que no se lee como sentido."
+    },
+    "chloride": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zheng-2023-time-resolved-iss"],
+      "searched": "Zheng 2023 (Front Physiol, 27 astronautas de la ISS) solo trae en su tabla de lo más frecuente (16 astronautas o más con tendencia significativa) el cloro en orina, no en sangre."
+    },
+    "phosphate": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": ["zheng-2023-time-resolved-iss"],
+      "searched": "Zheng 2023 (Front Physiol, 27 astronautas de la ISS) solo trae en su tabla de lo más frecuente (16 astronautas o más con tendencia significativa) el fósforo en orina, no en sangre."
+    },
+    "c-reactive-protein": {
+      "direction": "no_source",
+      "statements": [],
+      "searched_refs": [
+        "zwart-2022-albumin-iss", "zwart-2013-iron-iss", "lee-2020-arterial-iss",
+        "garrett-bakelman-2019", "jones-2024-inspiration4"
+      ],
+      "searched": "Zwart 2022 (J Appl Physiol, ISS) da la PCR de alta sensibilidad en una tabla, con el efecto del tiempo «ND» (no diferente) y diferencias entre grupos que el análisis por pares no confirma («though no post hoc differences were statistically significant»); Zwart 2013 (Am J Clin Nutr, 23 tripulantes de la ISS) dice que las proteínas de fase aguda no muestran inflamación en vuelo («Acute phase proteins indicated no evidence of an inflammatory response during flight») y Lee 2020 (J Appl Physiol, 13 astronautas) que los marcadores de inflamación suben en vuelo («Biomarkers of oxidative stress and inflammation increased during spaceflight»), sin que ninguno de los dos resúmenes nombre la PCR; en el Twins Study (Garrett-Bakelman 2019, N = 1) la PCR sube después del aterrizaje, no en vuelo («CRP levels rose at R+0 and continued to rise at R+4 days»); y en Inspiration4 (Jones 2024, tres días) la prueba de PCR en vuelo no detectó nada en los dispositivos («no IgM or CRP were detected for the devices run in space following standard protocol»), y los autores lo ligan a la humedad del almacenamiento."
+    }
+  }
+}

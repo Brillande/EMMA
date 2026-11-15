@@ -1,0 +1,23 @@
+{
+  "target": "app/volumes/segment.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "segmentar con la telemetría encendida",
+      "old": "    if not telemetry_off(executable):",
+      "new": "    if False:"
+    },
+    {
+      "label": "no repetir en CPU la tarea que falla en GPU",
+      "old": "            _task(executable, ct_path, task_dir, task, subset, device, needed)\n        for mask",
+      "new": "            raise\n        for mask"
+    },
+    {
+      "label": "volver a intentar la GPU en cada tarea tras un fallo",
+      "old": "            device = \"cpu\"\n            _task(executable, ct_path, task_dir, task, subset, device, needed)",
+      "new": "            _task(executable, ct_path, task_dir, task, subset, \"cpu\", needed)"
+    }
+  ]
+}

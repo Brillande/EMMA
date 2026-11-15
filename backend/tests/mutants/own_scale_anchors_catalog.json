@@ -1,0 +1,18 @@
+{"target": "app/ingest/codes.py", "test": ["tests/test_own_scale_anchors.py"],
+ "mutations": [
+  {"label": "un ancla del catálogo cita una ficha de evidencia como si fuera su instrumento",
+   "old": "        high=\"el ánimo más positivo\",",
+   "new": "        high=\"el ánimo más positivo (basner-2011-pvt-b)\","},
+  {"label": "un ancla del catálogo se dice validada",
+   "old": "        low=\"ningún síntoma\",",
+   "new": "        low=\"ningún síntoma (validado)\","},
+  {"label": "el apetito se queda sin anclas",
+   "old": "    \"appetite-rating\": OwnScaleAnchors(",
+   "new": "    \"appetite-rating-sin-anclas\": OwnScaleAnchors("},
+  {"label": "un comentario del catálogo llama validadas a las escalas propias",
+   "old": "# Las anclas de las tres escalas de autoinforme propias de la misión (decisión del usuario,",
+   "new": "# Las anclas de las tres escalas validadas propias de la misión (decisión del usuario,"},
+  {"label": "la fecha de la decisión se pierde",
+   "old": "OWN_SCALES_DECIDED_ON = \"2026-10-15\"",
+   "new": "OWN_SCALES_DECIDED_ON = \"\""}
+ ]}

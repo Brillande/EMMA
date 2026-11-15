@@ -1,0 +1,74 @@
+{
+  "target": "app/pain_on_skeleton.py",
+  "test": [
+    "tests/test_pain_on_skeleton.py"
+  ],
+  "mutations": [
+    {
+      "label": "se pinta aunque el ajuste no valga",
+      "old": "    ] if fit[\"superposable\"] else []",
+      "new": "    ]"
+    },
+    {
+      "label": "la copia queda con los focos de EMMA",
+      "old": "            tool.FOCOS, tool.ANCLAS, tool.VB = saved",
+      "new": "            pass"
+    },
+    {
+      "label": "el dolor viejo cuenta como reciente",
+      "old": "        if now - when > RECENT:",
+      "new": "        if False:"
+    },
+    {
+      "label": "un hueso cortado por el borde del estudio sirve de ancla",
+      "old": "        {name: point for name, point in figure[\"bones\"].items() if not point[\"truncated\"]},",
+      "new": "        dict(figure[\"bones\"]),"
+    },
+    {
+      "label": "se alinea sin anclas suficientes para comprobar el ajuste",
+      "old": "    if min(len({float(item[axis]) for item in anchored}) for axis in (\"x\", \"y\")) < MIN_POSITIONS:",
+      "new": "    if False:"
+    },
+    {
+      "label": "bastan dos posiciones de las anclas por eje (el error sale nulo por construcción)",
+      "old": "MIN_POSITIONS = 3",
+      "new": "MIN_POSITIONS = 1"
+    },
+    {
+      "label": "un ajuste que le da la vuelta al cuerpo coloca el dolor",
+      "old": "    if not (across[0] > origin[0] and down[1] > origin[1]):",
+      "new": "    if False:"
+    },
+    {
+      "label": "la zona cuyo hueso no está en el TAC se pinta donde caiga",
+      "old": "        if bone is not None and bone not in present:",
+      "new": "        if False:"
+    },
+    {
+      "label": "la zona que cae fuera de la imagen del estudio se pinta",
+      "old": "        elif not (0 <= point[\"u\"] <= 1 and 0 <= point[\"v\"] <= 1):",
+      "new": "        elif False:"
+    },
+    {
+      "label": "el umbral sobre el TAC se mide como si la imagen fuera un cuerpo entero",
+      "old": "figure[\"width\"], figure[\"height\"], figure[\"height\"] / (abs(top - bottom) / 1000.0),",
+      "new": "figure[\"width\"], figure[\"height\"], figure[\"height\"] / float(points()[\"body_height_m\"]),"
+    },
+    {
+      "label": "el aborto de Polaris tumba la respuesta en vez de decirse",
+      "old": "        except SystemExit as stop:",
+      "new": "        except KeyError as stop:"
+    },
+    {
+      "label": "el dolor referido fuera del estudio se calla",
+      "old": "        if zone in fit[\"outside\"] and zone in ZONES",
+      "new": "        if False"
+    },
+    {
+      "label": "la respuesta no dice sobre qué figura se ha colocado el dolor",
+      "old": "        \"source\": OWN_CT if own else REFERENCE,",
+      "new": "        \"source\": REFERENCE,"
+    }
+  ],
+  "_nota": "Sin mutante para el VB: el ajuste es afín y el VB se cancela si se usa el mismo para ajustar y colocar (mutante equivalente). Lo que sí importa, colocar antes de devolverle el suyo, lo vigila test_every_pain_zone_is_placed_and_the_fit_holds."
+}

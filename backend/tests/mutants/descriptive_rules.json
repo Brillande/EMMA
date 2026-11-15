@@ -1,0 +1,7 @@
+{"target": "app/core/versioning.py",
+ "test": ["tests/test_descriptive_indicators.py", "-k", "rules_version"],
+ "mutations": [
+  {"label": "un indicador descriptivo cambia la versión de las reglas",
+   "old": "            if key not in DESCRIPTIVE_ONLY",
+   "new": "            if True"}
+ ]}

@@ -1,0 +1,6 @@
+{"target": "app/core/versioning.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "los plazos de caducidad salen de la version de reglas",
+   "old": "    \"app.analysis.staleness\": (\"STALE_AFTER\",),",
+   "new": "    \"app.analysis.staleness\": (),"}
+ ]}

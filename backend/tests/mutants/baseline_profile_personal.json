@@ -1,0 +1,96 @@
+{
+ "target": "app/analysis/baseline_profile.py",
+ "test": [
+  "tests/test_baseline_profile.py::test_every_text_passes_the_guard",
+  "tests/test_baseline_profile.py::test_the_profile_says_sex_is_declared_apart_and_nothing_depends_on_it_or_on_age",
+  "tests/test_baseline_profile.py::test_the_career_limit_sentence_is_the_one_read_in_the_standard",
+  "tests/test_baseline_profile.py::test_the_route_shows_the_bases_the_status_used"
+ ],
+ "mutations": [
+  {
+   "label": "el perfil deja de decir lo del sexo y la edad",
+   "old": "        \"personal_data\": personal_data(),\n",
+   "new": ""
+  },
+  {
+   "label": "la lista de lo que no tiene campo vuelve a poner el sexo",
+   "old": "NO_FIELD: tuple[str, ...] = (\"edad\",)",
+   "new": "NO_FIELD: tuple[str, ...] = (\"sexo\", \"edad\")"
+  },
+  {
+   "label": "la frase deja de decir que ningun rango ni umbral depende de ellos",
+   "old": "    \"depende de ellos: cada rango",
+   "new": "    \"depende de ellos salvo alguno: cada rango"
+  },
+  {
+   "label": "la frase calla quien declara el sexo",
+   "old": "\"El sexo no es un campo del perfil: lo declara el propio tripulante en un asiento firmado \"",
+   "new": "\"El sexo no es un campo del perfil: se guarda en un asiento firmado \""
+  },
+  {
+   "label": "la frase calla que el sexo se borra solo",
+   "old": "    \"aparte, que se puede borrar solo. La edad no tiene campo.",
+   "new": "    \"aparte. La edad no tiene campo."
+  },
+  {
+   "label": "la frase calla la fecha de nacimiento que si se guarda",
+   "old": "base se hace con sus propias lecturas. La única fecha de nacimiento que EMMA guarda es la \"\n    \"de la identidad declarada, y solo sirve para comprobar que un informe escaneado o un \"\n    \"volumen de imagen es suyo.\"",
+   "new": "base se hace con sus propias lecturas.\""
+  },
+  {
+   "label": "el sexo pasa a decidir algo mas que el ciclo",
+   "old": "\"El sexo declarado solo decide si se ofrece el seguimiento del ciclo menstrual y si la \"",
+   "new": "\"El sexo declarado decide si se ofrece el seguimiento del ciclo menstrual y si la \""
+  },
+  {
+   "label": "lo que ajusta la base pasa a ser el sexo",
+   "old": "\"sí mismo; lo que puede ajustar la línea base es la fase del ciclo registrada, no el sexo: \"",
+   "new": "\"sí mismo; lo que puede ajustar la línea base es el sexo declarado: \""
+  },
+  {
+   "label": "el perfil deja de decir para que sirve el sexo",
+   "old": "        \"cycle\": PERSONAL_DATA_CYCLE,\n",
+   "new": ""
+  },
+  {
+   "label": "la cita de la norma se recorta y ya no es la frase leida",
+   "old": "sexo: la norma dice que es «universal for all ages and sexes».",
+   "new": "sexo: la norma dice que es «universal»."
+  },
+  {
+   "label": "el limite de la frase no es el de la norma",
+   "old": "NORM_CAREER_LIMIT_MSV = 600",
+   "new": "NORM_CAREER_LIMIT_MSV = 500"
+  },
+  {
+   "label": "la cita apunta a otra ficha",
+   "old": "    \"nasa-std-3001-vol1-rev-c\",",
+   "new": "    \"nasa-std-3001-vol2-rev-f\","
+  },
+  {
+   "label": "la relevancia de la cita pierde la frase de la norma",
+   "old": "el límite de carrera de 600 mSv «is universal for all ages and \"\n    \"sexes»;",
+   "new": "el límite de carrera de 600 mSv;"
+  },
+  {
+   "label": "donde la norma si usa sexo y edad deja de nombrar la densidad osea",
+   "old": "    \"compara la densidad ósea prevuelo de [V1 4026], que es por DXA;",
+   "new": "    \"compara la densidad ósea prevuelo, que es por DXA;"
+  },
+  {
+   "label": "la privacidad deja de citar la especificacion",
+   "old": "    \"(especificación §12). El sexo se guarda",
+   "new": "    \". El sexo se guarda"
+  },
+  {
+   "label": "la privacidad calla que se guarda lo minimo",
+   "old": "\"ciclo; se guarda lo mínimo —femenino o masculino, y quién lo declaró—, y borrarlo no toca \"",
+   "new": "\"ciclo, y borrarlo no toca \""
+  },
+  {
+   "label": "una frase deja de pasar el filtro de lenguaje",
+   "old": "\"el resto del registro. La edad no se guarda: ninguna regla de EMMA la necesita.\"",
+   "new": "\"el resto del registro. La edad no se guarda nunca: ninguna regla de EMMA la necesita.\""
+  }
+ ]
+}

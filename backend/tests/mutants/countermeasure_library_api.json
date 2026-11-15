@@ -1,0 +1,6 @@
+{"target": "app/api/countermeasures.py", "test": ["tests/test_countermeasure_library.py"],
+ "mutations": [
+  {"label": "la ruta vuelve a dar solo la lista, sin grupos RIDGE ni familias",
+   "old": "    body = countermeasures.overview()\n",
+   "new": "    body = {\"countermeasures\": [item.to_dict() for item in countermeasures.library().values()]}\n"}
+ ]}

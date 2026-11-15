@@ -1,0 +1,52 @@
+{
+ "target": "app/ingest/fhir.py",
+ "test": [
+  "tests/test_device_in_reading.py::test_a_reading_without_device_serializes_byte_for_byte_as_before",
+  "tests/test_device_in_reading.py::test_fhir_carries_it_as_a_logical_identifier_without_inventing_a_system",
+  "tests/test_device_in_reading.py::test_an_empty_or_non_text_device_is_not_a_device",
+  "tests/test_device_in_reading.py::test_from_device_tags_every_reading_or_none",
+  "tests/test_device_in_reading.py::test_the_device_is_signed_only_when_it_exists"
+ ],
+ "mutations": [
+  {
+   "label": "el FHIR de una lectura sin dispositivo gana un identificador vacio",
+   "old": "                **({\"identifier\": {\"value\": self.device}} if self.device is not None else {}),\n",
+   "new": "                \"identifier\": {\"value\": self.device},\n"
+  },
+  {
+   "label": "el FHIR calla el dispositivo de una lectura que lo lleva",
+   "old": "                **({\"identifier\": {\"value\": self.device}} if self.device is not None else {}),\n",
+   "new": ""
+  },
+  {
+   "label": "el FHIR inventa un sistema de identificadores",
+   "old": "**({\"identifier\": {\"value\": self.device}} if",
+   "new": "**({\"identifier\": {\"system\": \"urn:mac\", \"value\": self.device}} if"
+  },
+  {
+   "label": "al leer un FHIR se pierde el dispositivo",
+   "old": "            device=resource.get(\"device\", {}).get(\"identifier\", {}).get(\"value\"),\n",
+   "new": "            device=None,\n"
+  },
+  {
+   "label": "un identificador vacio vale como dispositivo",
+   "old": "        if self.device is not None and (not isinstance(self.device, str) or not self.device):",
+   "new": "        if self.device is not None and not isinstance(self.device, str):"
+  },
+  {
+   "label": "un identificador que no es texto vale como dispositivo",
+   "old": "        if self.device is not None and (not isinstance(self.device, str) or not self.device):",
+   "new": "        if self.device is not None and not self.device:"
+  },
+  {
+   "label": "las lecturas del lote no se marcan con su dispositivo",
+   "old": "    return [replace(obs, device=device) for obs in observations]",
+   "new": "    return list(observations)"
+  },
+  {
+   "label": "el atajo de construccion pierde el dispositivo",
+   "old": "        model_version=model_version, device=device,\n",
+   "new": "        model_version=model_version,\n"
+  }
+ ]
+}

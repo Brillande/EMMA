@@ -1,0 +1,198 @@
+{
+ "target": "app/evidence/radiation_read.py",
+ "test": [
+  "tests/test_radiation_read.py"
+ ],
+ "mutations": [
+  {
+   "label": "una ficha que no es de NASA ni del servidor de preprints se cita",
+   "old": "    if parts.scheme != \"https\" or parts.hostname not in OFFICIAL_HOSTS:\n",
+   "new": "    if parts.scheme != \"https\":\n"
+  },
+  {
+   "label": "una ficha por http sin cifrar se cita",
+   "old": "    if parts.scheme != \"https\" or parts.hostname not in OFFICIAL_HOSTS:\n",
+   "new": "    if parts.hostname not in OFFICIAL_HOSTS:\n"
+  },
+  {
+   "label": "una ficha que no dice que se leyera ese día se cita",
+   "old": "    if not re.search(_READ_MARK.format(day=re.escape(day)), notes):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "cualquier mención de la fecha en la nota cuenta como lectura",
+   "old": "    if not re.search(_READ_MARK.format(day=re.escape(day)), notes):\n",
+   "new": "    if day not in notes:\n"
+  },
+  {
+   "label": "una frase leída otro día se coteja con la nota del día de la primera lectura",
+   "old": "    day = _quote_read_on(item, read_on)\n",
+   "new": "    day = read_on\n"
+  },
+  {
+   "label": "una frase puede fecharse antes de la primera lectura",
+   "old": "    if own and _date(f\"{key}: `read_on`\", item[QUOTE_READ_ON]) < _date(\"read_on\", read_on):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "la fecha propia de una frase no se comprueba que sea una fecha",
+   "old": "    if own and _date(f\"{key}: `read_on`\", item[QUOTE_READ_ON]) < _date(\"read_on\", read_on):\n",
+   "new": "    if own and str(item[QUOTE_READ_ON]) < read_on:\n"
+  },
+  {
+   "label": "lo que se sirve pone a cada frase el día de la primera lectura",
+   "old": "                    \"read_on\": _quote_read_on(item, raw[\"read_on\"]),\n",
+   "new": "                    \"read_on\": raw[\"read_on\"],\n"
+  },
+  {
+   "label": "una frase que no está en la nota de su ficha se enseña",
+   "old": "    if item[\"quote\"] not in notes:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "una cifra que escribe EMMA sin frase que la dé se sirve",
+   "old": "        if invented := [f for f in _written_figures(entry[field], years) if f not in quoted]:\n",
+   "new": "        if invented := list[str]():\n"
+  },
+  {
+   "label": "las cifras se cotejan solo en el texto, no en el rótulo, el alcance ni lo buscado",
+   "old": "    for field in WRITTEN_FIELDS:\n        if spelled := _SPELLED.search(entry[field]):\n",
+   "new": "    for field in (\"text\",):\n        if spelled := _SPELLED.search(entry[field]):\n"
+  },
+  {
+   "label": "una cantidad escrita con letras pasa sin cotejar",
+   "old": "        if spelled := _SPELLED.search(entry[field]):\n",
+   "new": "        if spelled := None:\n"
+  },
+  {
+   "label": "una fecha cuenta como cifra y el texto leído se rechaza",
+   "old": "    text = _NOT_A_FIGURE.sub(\" \", text)\n",
+   "new": ""
+  },
+  {
+   "label": "una cifra pegada a su unidad («12h») no cuenta",
+   "old": "_DIGITS_ES = re.compile(r\"\\d+(?:[.,]\\d+)?\")\n",
+   "new": "_DIGITS_ES = re.compile(r\"(?<![A-Za-z0-9])\\d+(?:[.,]\\d+)?(?![A-Za-z0-9])\")\n"
+  },
+  {
+   "label": "un año de una ficha con unidad detrás («2016 µSv») pasa por año",
+   "old": "        if token in years and not _UNIT_AFTER.match(text, match.end()):\n",
+   "new": "        if token in years:\n"
+  },
+  {
+   "label": "cualquier valor entre 1950 y 2049 pasa por año («tras 1999 minutos»)",
+   "old": "        if token in years and not _UNIT_AFTER.match(text, match.end()):\n",
+   "new": "        if re.fullmatch(r\"19[5-9]\\d|20[0-4]\\d\", token) and not _UNIT_AFTER.match(text, match.end()):\n"
+  },
+  {
+   "label": "el punto de los millares se quita también de un decimal («0.125» se coteja como 125)",
+   "old": "    text = _THOUSANDS_ES.sub(lambda match: match.group(0).replace(\".\", \"\"), text)\n",
+   "new": "    text = re.sub(r\"(?<=\\d)\\.(?=\\d{3}\\b)\", \"\", text)\n"
+  },
+  {
+   "label": "las centenas compuestas y el millón escritos con letras pasan sin cotejar",
+   "old": "    r\"cien|ciento|cientos|(?:dos|tres|cuatro|seis|sete|ocho|nove)cient[oa]s|quinient[oa]s|\"\n",
+   "new": "    r\"cien|ciento|cientos|\"\n"
+  },
+  {
+   "label": "un número escrito con letras solo cuenta junto a una unidad de tiempo",
+   "old": "    r\"mil|mill[oó]n|millones|millar(?:es)?|centenar(?:es)?|docenas?|decenas?)\\b\"\n",
+   "new": "    r\"mil|mill[oó]n|millones|millar(?:es)?|centenar(?:es)?|docenas?|decenas?)\\s+(?:horas?|d[ií]as?)\\b\"\n"
+  },
+  {
+   "label": "el aviso a bordo puede decir que EMMA lee HERA",
+   "old": "    if name == \"onboard_warning\" and entry[\"emma_reads_it\"] is not False:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "la nota del ciclo solar puede ser posterior a su lectura",
+   "old": "        if as_of > _date(\"read_on\", read_on):\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "la fecha de la nota del ciclo solar no tiene que ser la de su ficha",
+   "old": "        if entry[\"as_of\"] not in {ref.date for ref in refs}:\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "un campo de más (un umbral) entra sin que nadie lo vea",
+   "old": "    if extra := sorted(item.keys() - expected):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "un campo que falta no se dice",
+   "old": "    if missing := sorted(expected - item.keys()):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "una entrada sin ninguna frase de su fuente se sirve",
+   "old": "    if not isinstance(quotes, list) or not quotes:\n",
+   "new": "    if not isinstance(quotes, list):\n"
+  },
+  {
+   "label": "lo que escribe EMMA puede quedar vacío",
+   "old": "    for field in WRITTEN_FIELDS:\n        if not _text(entry, field):\n",
+   "new": "    for field in (\"label\", \"text\"):\n        if not _text(entry, field):\n"
+  },
+  {
+   "label": "la fecha de lectura no se comprueba",
+   "old": "    _date(\"read_on\", read_on)\n    cited = [ref",
+   "new": "    cited = [ref"
+  },
+  {
+   "label": "una fecha que no es AAAA-MM-DD («20261023») pasa",
+   "old": "    if not isinstance(value, str) or not re.fullmatch(r\"\\d{4}-\\d{2}-\\d{2}\", value):\n",
+   "new": "    if not isinstance(value, str):\n"
+  },
+  {
+   "label": "el alcance puede llevar su propio punto y salir con dos",
+   "old": "    if entry[\"scope\"].rstrip().endswith((\".\", \";\", \":\")):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "las fichas salen escritas a mano y no las del registro",
+   "old": "            \"sources\": [registry.cite(ref_id).to_dict() for ref_id in sources],\n",
+   "new": "            \"sources\": [{\"id\": ref_id} for ref_id in sources],\n"
+  },
+  {
+   "label": "la ficha se repite por frase en vez de ir una vez",
+   "old": "        sources = list(dict.fromkeys(item[\"ref\"] for item in entry[\"quotes\"]))\n",
+   "new": "        sources = [item[\"ref\"] for item in entry[\"quotes\"]]\n"
+  },
+  {
+   "label": "las fichas citadas no se declaran al registro",
+   "old": "    return {item[\"ref\"] for name in EXTRA_FIELDS for item in raw[name][\"quotes\"]}\n",
+   "new": "    return set()\n"
+  },
+  {
+   "target": "app/analysis/radiation.py",
+   "label": "lo leído no se valida al importar",
+   "old": "READINGS_REFS = frozenset(radiation_read.cited_refs())\n",
+   "new": "READINGS_REFS: frozenset[str] = frozenset()\n"
+  },
+  {
+   "target": "app/analysis/radiation.py",
+   "label": "el panel deja de decir que a bordo avisa HERA",
+   "old": "            \"onboard_warning\": readings[\"onboard_warning\"],\n",
+   "new": ""
+  },
+  {
+   "target": "app/analysis/radiation.py",
+   "label": "el panel deja de enseñar lo que una fuente dice del fin del refugio",
+   "old": "            \"shelter_exit\": readings[\"shelter_exit\"],\n",
+   "new": ""
+  },
+  {
+   "target": "app/analysis/radiation.py",
+   "label": "el panel deja de enseñar la fase del ciclo solar",
+   "old": "        \"solar_cycle\": readings[\"solar_cycle\"],\n",
+   "new": ""
+  },
+  {
+   "target": "app/analysis/radiation.py",
+   "label": "la permanencia en el refugio cambia con lo leído",
+   "old": "SHELTER_MAX_STAY = dt.timedelta(hours=24)\n",
+   "new": "SHELTER_MAX_STAY = dt.timedelta(hours=36)\n"
+  }
+ ]
+}

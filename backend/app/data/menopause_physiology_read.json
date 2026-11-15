@@ -1,0 +1,629 @@
+{
+  "_nota": "La menopausia y la perimenopausia, frase a frase: lo que cambia durante un sofoco, lo que se sabe de la perimenopausia (ciclos anovulatorios e irregulares), la pérdida ósea por la menopausia frente a la del vuelo y lo que se sabe en vuelo. Es hermano de cycle_physiology_read.json y no va dentro: aquel mide cada fase frente a la folicular, y sin ciclo regular no hay fase ni folicular con la que comparar. Cada `quote` es la frase exacta del resumen, del texto de PMC o del PDF, copiada con la fuente delante el día `read_on`; «[…]» marca un trozo omitido (citas o estadísticos) y lo demás es literal; del texto extraído de un PDF se normalizan solo los espacios partidos, y `sources` lo dice. `literal` es el trozo que dice el sentido y está escrito en la frase; `magnitude.text` es el trozo de la frase que da la cifra, y la cifra tiene que estar escrita en él (no basta con que esté en la frase: una desviación típica o el año de una cita no son la cifra). Cada tema (`topics`) es de una de dos clases: `change` (un indicador sube, baja o no cambia: durante el sofoco frente a antes, o entre grupos) o `figure` (una cantidad: cuánto dura, cuántos años, qué tasa). `indicator` es la clave del catálogo cuando la hay; si no, `why_no_indicator` dice por qué (EMMA no tiene temperatura de piel). La clase usa el vocabulario de las derivas del simulador (ingest/simulator.py, EVIDENCE_CLASSES): `established` (magnitud documentada), `direction_only` (sentido documentado, sin cifra), `contested` (las frases no coinciden) y `unsupported` (buscado y no encontrado, con lo leído al buscar). `in_flight` dice qué se sabe en vuelo: frases leídas que hablan de astronautas y lo buscado sin encontrar. Nada de esto entra en la base, el riesgo, los niveles ni las alertas, y nada lee el sexo de nadie. Lo valida app/evidence/menopause_physiology.py.",
+  "read_on": "2026-11-15",
+  "sources": {
+    "kronenberg-1984-hot-flash-physiology": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "low-2008-hot-flash-hemodynamics": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC2840382), no."
+    },
+    "jones-2019-core-temperature-hot-flush": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "freedman-2001-hot-flash-physiology": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "sievert-2013-hot-flash-measures": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "mann-2011-hot-flush-concordance": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "thurston-2016-hrv-vasomotor": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC4844776), no."
+    },
+    "hira-2026-hrv-vasomotor-review": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC13167700), no."
+    },
+    "avis-2015-vasomotor-duration-swan": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC4433164), no."
+    },
+    "oconnor-2009-perimenopause-ovulation": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC2783957), no."
+    },
+    "alzueta-2024-midlife-cycle-oura": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC11416332), no."
+    },
+    "greendale-2012-bmd-final-menstrual-period": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo de PMC (PMC3378821), no."
+    },
+    "smith-2014-bone-sex-iss": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "hughes-fulford-2024-women-in-space": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed y, en el texto completo de PMC (PMC13395041, XML por E-utilities de NCBI), las frases que nombran la menopausia, los sofocos o los síntomas vasomotores (búsqueda de «menopaus», «hot fl» y «vasomotor»)."
+    },
+    "rose-2022-radiation-menopause": {
+      "extent": "partial",
+      "what": "El resumen del registro de PubMed (E-utilities de NCBI); el texto completo no está en PMC."
+    },
+    "hrp-bone-fracture-evidence-report": {
+      "extent": "partial",
+      "what": "El PDF de 60 páginas pasado a texto con pypdf: la portada, las páginas 6 a 10, 14 y 42, y la búsqueda de «menopaus», «per month», «estrogen» y «women» en todas. El texto extraído parte palabras con espacios («1 –1.5%», «pre -flight», «t he»): las frases citadas los quitan, sin cambiar una letra."
+    },
+    "ochmo-mtb-013": {
+      "extent": "partial",
+      "what": "El PDF de 26 páginas (Revision D, 11-Feb-26) pasado a texto con pypdf: la página 6 entera y la búsqueda de «menopaus», «per month», «women», «female» y «estrogen» en todas."
+    }
+  },
+  "findings": [
+    {
+      "id": "low-hr-during",
+      "ref": "low-2008-hot-flash-hemodynamics",
+      "where": "resumen, resultados",
+      "quote": "Heart rate (obtained from an electrocardiogram) significantly increased during the hot flashes, but there was no difference between the responder and nonresponder groups (9 +/- 2 vs 10 +/- 1 beats/min, respectively; P > 0.05).",
+      "literal": "significantly increased during the hot flashes",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca (ECG) durante el sofoco frente a antes; los dos grupos, según les bajara o no la presión",
+      "population": "12 mujeres posmenopáusicas sanas con sofocos, 23 sofocos en laboratorio a 26 °C",
+      "magnitude": {"low": 9, "high": 10, "unit": "/min", "text": "9 +/- 2 vs 10 +/- 1 beats/min"}
+    },
+    {
+      "id": "kronenberg-hr-during",
+      "ref": "kronenberg-1984-hot-flash-physiology",
+      "where": "resumen",
+      "quote": "HR and FBF increased just before the onset of the flash and reached peak levels of 10-20 beats/min and 30-fold respectively.",
+      "literal": "HR and FBF increased",
+      "direction": "rises",
+      "measure": "aumento de la frecuencia cardiaca en el pico del sofoco («peak levels of 10-20 beats/min» solo puede ser el aumento: no hay corazón a 10-20 lpm)",
+      "population": "11 mujeres posmenopáusicas con sofocos frecuentes",
+      "magnitude": {"low": 10, "high": 20, "unit": "/min", "text": "peak levels of 10-20 beats/min"}
+    },
+    {
+      "id": "sievert-objective-hr",
+      "ref": "sievert-2013-hot-flash-measures",
+      "where": "resumen",
+      "quote": "Hot flashes can be objectively measured by increases in heart rate, finger blood flow, respiratory exchange ratio, skin temperature, and core body temperature.",
+      "literal": "increases in heart rate",
+      "direction": "rises",
+      "measure": "frecuencia cardiaca como medida objetiva de un sofoco (revisión)",
+      "population": "revisión de la fisiología y de la medida de los sofocos"
+    },
+    {
+      "id": "sievert-objective-core",
+      "ref": "sievert-2013-hot-flash-measures",
+      "where": "resumen",
+      "quote": "Hot flashes can be objectively measured by increases in heart rate, finger blood flow, respiratory exchange ratio, skin temperature, and core body temperature.",
+      "literal": "increases in heart rate, finger blood flow, respiratory exchange ratio, skin temperature, and core body temperature",
+      "direction": "rises",
+      "measure": "temperatura central como medida objetiva de un sofoco, sin decir en qué momento del sofoco (revisión)",
+      "population": "revisión de la fisiología y de la medida de los sofocos"
+    },
+    {
+      "id": "kronenberg-core-during",
+      "ref": "kronenberg-1984-hot-flash-physiology",
+      "where": "resumen",
+      "quote": "Coincident with vasodilation and sweating, finger temperature increased an average of 3.9 degrees C and esophageal temperature fell 0.2-0.6 degrees C.",
+      "literal": "esophageal temperature fell 0.2-0.6 degrees C",
+      "direction": "falls",
+      "measure": "temperatura esofágica durante la vasodilatación y la sudoración del sofoco",
+      "population": "11 mujeres posmenopáusicas con sofocos frecuentes",
+      "magnitude": {"low": -0.6, "high": -0.2, "unit": "Cel", "text": "esophageal temperature fell 0.2-0.6 degrees C"}
+    },
+    {
+      "id": "kronenberg-finger-during",
+      "ref": "kronenberg-1984-hot-flash-physiology",
+      "where": "resumen",
+      "quote": "Coincident with vasodilation and sweating, finger temperature increased an average of 3.9 degrees C and esophageal temperature fell 0.2-0.6 degrees C.",
+      "literal": "finger temperature increased an average of 3.9 degrees C",
+      "direction": "rises",
+      "measure": "temperatura de la piel del dedo durante el sofoco",
+      "population": "11 mujeres posmenopáusicas con sofocos frecuentes",
+      "magnitude": {"low": 3.9, "high": 3.9, "unit": "Cel", "text": "finger temperature increased an average of 3.9 degrees C"}
+    },
+    {
+      "id": "jones-core-before",
+      "ref": "jones-2019-core-temperature-hot-flush",
+      "where": "resumen, resultados",
+      "quote": "In the 20 minutes before a spontaneous hot flush, core temperature increased by 0.03 ± 0.12C (P < 0.05), but only 51% of hot flushes were preceded by an increase in core temperature.",
+      "literal": "core temperature increased by 0.03",
+      "direction": "rises",
+      "measure": "temperatura central en los 20 minutos previos a un sofoco espontáneo",
+      "population": "72 mujeres posmenopáusicas con sofocos, 108 sofocos en laboratorio (cinco estudios)",
+      "magnitude": {"low": 0.03, "high": 0.03, "unit": "Cel", "text": "core temperature increased by 0.03"}
+    },
+    {
+      "id": "freedman-core-before",
+      "ref": "freedman-2001-hot-flash-physiology",
+      "where": "resumen",
+      "quote": "The results suggest that small temperature elevations preceding hot flashes acting within a reduced thermoneutral zone constitute the triggering mechanism.",
+      "literal": "small temperature elevations preceding hot flashes",
+      "direction": "rises",
+      "measure": "temperatura central antes del sofoco (píldora de telemetría ingerida)",
+      "population": "revisión de la fisiología del sofoco"
+    },
+    {
+      "id": "low-duration",
+      "ref": "low-2008-hot-flash-hemodynamics",
+      "where": "resumen, resultados",
+      "quote": "Twenty-three hot flashes were recorded during the experimental sessions (3.4 +/- 1.4 min; range, 1.3-6.5 min).",
+      "literal": "range, 1.3-6.5 min",
+      "measure": "duración de cada sofoco, identificado por la subida de la sudoración esternal",
+      "population": "12 mujeres posmenopáusicas sanas con sofocos, 23 sofocos en laboratorio",
+      "magnitude": {"low": 1.3, "high": 6.5, "unit": "min", "text": "range, 1.3-6.5 min"}
+    },
+    {
+      "id": "sievert-ssc",
+      "ref": "sievert-2013-hot-flash-measures",
+      "where": "resumen",
+      "quote": "Sternal skin conductance is the method most highly correlated with subjective hot flash report.",
+      "literal": "Sternal skin conductance is the method most highly correlated",
+      "measure": "conductancia de la piel del esternón como medida del sofoco",
+      "population": "revisión de la fisiología y de la medida de los sofocos"
+    },
+    {
+      "id": "sievert-ambulatory",
+      "ref": "sievert-2013-hot-flash-measures",
+      "where": "resumen",
+      "quote": "Ambulatory monitoring allows for the tracking of hot flashes during a woman's daily routine or sleep; however, concordance is much lower with ambulatory, compared to laboratory, monitoring.",
+      "literal": "concordance is much lower with ambulatory, compared to laboratory, monitoring",
+      "measure": "concordancia entre el registro ambulatorio y lo que dice la mujer",
+      "population": "revisión de la fisiología y de la medida de los sofocos"
+    },
+    {
+      "id": "mann-ambulatory-concordance",
+      "ref": "mann-2011-hot-flush-concordance",
+      "where": "resumen, resultados",
+      "quote": "However, concordance rates for ambulatory monitoring were more homogeneous and also had a 29% concordance rate.",
+      "literal": "had a 29% concordance rate",
+      "measure": "concordancia entre la conductancia esternal ambulatoria y el sofoco referido",
+      "population": "revisión sistemática con metaanálisis exploratorio, mujeres peri y posmenopáusicas con síntomas",
+      "magnitude": {"low": 29, "high": 29, "unit": "%", "text": "had a 29% concordance rate"}
+    },
+    {
+      "id": "thurston-rsa-during",
+      "ref": "thurston-2016-hrv-vasomotor",
+      "where": "resumen, resultados",
+      "quote": "Significant decreases in respiratory sinus arrhythmia were observed during physiologically measured VMS relative to periods preceding (b[SE] = 0.13 (0.004), P < 0.0001) and after the vasomotor symptoms (b[SE] = 0.13 (0.004), P < 0.0001), adjusted for age, race, body mass index, and sleep/wake status.",
+      "literal": "Significant decreases in respiratory sinus arrhythmia",
+      "direction": "falls",
+      "measure": "arritmia sinusal respiratoria (control vagal cardiaco) durante el sofoco frente a antes y después",
+      "population": "215 mujeres de 40 a 60 años con síntomas vasomotores, 24 h de registro ambulatorio"
+    },
+    {
+      "id": "hira-trait-hrv",
+      "ref": "hira-2026-hrv-vasomotor-review",
+      "where": "resumen, conclusiones",
+      "quote": "Women with VMS and without VMS did not show differences in HRV.",
+      "literal": "did not show differences in HRV",
+      "direction": "unchanged",
+      "measure": "variabilidad (LF y HF) de mujeres con síntomas vasomotores frente a mujeres sin ellos, fuera del sofoco",
+      "population": "revisión sistemática, tres estudios en el metaanálisis, mujeres peri y posmenopáusicas"
+    },
+    {
+      "id": "avis-vms-years",
+      "ref": "avis-2015-vasomotor-duration-swan",
+      "where": "resumen, resultados",
+      "quote": "The median total VMS duration was 7.4 years.",
+      "literal": "The median total VMS duration was 7.4 years",
+      "measure": "años con síntomas vasomotores frecuentes (6 días o más en las 2 semanas previas), mediana",
+      "population": "1449 mujeres con síntomas vasomotores frecuentes de la cohorte SWAN (3302 mujeres, 7 sitios de EE. UU.)",
+      "magnitude": {"low": 7.4, "high": 7.4, "unit": "a", "text": "The median total VMS duration was 7.4 years"}
+    },
+    {
+      "id": "sievert-prevalence",
+      "ref": "sievert-2013-hot-flash-measures",
+      "where": "resumen",
+      "quote": "Up to 75% of women in the US report having experienced hot flashes during the menopausal transition.",
+      "literal": "Up to 75% of women",
+      "measure": "proporción de mujeres que dicen haber tenido sofocos en la transición (cota superior: «up to»)",
+      "population": "mujeres de EE. UU. (revisión)",
+      "magnitude": {"low": 75, "high": 75, "unit": "%", "text": "Up to 75% of women"}
+    },
+    {
+      "id": "oconnor-anovulation",
+      "ref": "oconnor-2009-perimenopause-ovulation",
+      "where": "resumen, resultados",
+      "quote": "The probability of AO cycles increased across the perimenopause (P < 0.0001); reproductive stage was a stronger predictor than age of the probability of anovulation.",
+      "literal": "The probability of AO cycles increased across the perimenopause",
+      "direction": "rises",
+      "measure": "probabilidad de ciclo anovulatorio a lo largo de la perimenopausia",
+      "population": "108 mujeres de 25 a 58 años, orina diaria 6 meses en cada uno de 5 años"
+    },
+    {
+      "id": "alzueta24-amplitude",
+      "ref": "alzueta-2024-midlife-cycle-oura",
+      "where": "resumen, resultados",
+      "quote": "In the midlife group, the temperature rhythm's mesor was higher, but period, amplitude, and number of days between menses and acrophase were similar in both groups.",
+      "literal": "period, amplitude, and number of days between menses and acrophase were similar in both groups",
+      "direction": "unchanged",
+      "measure": "amplitud del ritmo de la temperatura de dedo a lo largo del ciclo, mediana edad (42-55 años) frente a jóvenes",
+      "population": "116 mujeres sin trastornos menstruales, 53 de mediana edad (de la etapa reproductiva tardía a la transición), anillo Oura un ciclo"
+    },
+    {
+      "id": "greendale-spine",
+      "ref": "greendale-2012-bmd-final-menstrual-period",
+      "where": "resumen",
+      "quote": "Cumulative, 10-year LS BMD loss was 10.6%; 7.38% was lost during the transmenopause.",
+      "literal": "7.38% was lost during the transmenopause",
+      "measure": "densidad mineral ósea de la columna lumbar perdida en la transmenopausia (de 1 año antes a 2 años después de la última regla)",
+      "population": "862 mujeres de la cohorte SWAN con fecha de la última regla",
+      "magnitude": {"low": 7.38, "high": 7.38, "unit": "%", "text": "7.38% was lost during the transmenopause"}
+    },
+    {
+      "id": "greendale-neck",
+      "ref": "greendale-2012-bmd-final-menstrual-period",
+      "where": "resumen",
+      "quote": "Cumulative FN loss was 9.1%; 5.8% was lost during the transmenopause.",
+      "literal": "5.8% was lost during the transmenopause",
+      "measure": "densidad mineral ósea del cuello femoral perdida en la transmenopausia (de 1 año antes a 2 años después de la última regla)",
+      "population": "862 mujeres de la cohorte SWAN con fecha de la última regla",
+      "magnitude": {"low": 5.8, "high": 5.8, "unit": "%", "text": "5.8% was lost during the transmenopause"}
+    },
+    {
+      "id": "hrp-flight-rate",
+      "ref": "hrp-bone-fracture-evidence-report",
+      "where": "página 10",
+      "quote": "In astronauts, the average loss rate of pre-flight areal bone mineral density (aBMD, g/cm2) at 1–1.5% per month for hip and spine is more rapid than bone loss per year in comparable skeletal sites in the aged cohorts and may predispose astronauts to fragility independent of aBMD T-scores (Orwoll et. al., 2013; Epstein et. al., 2003).",
+      "literal": "at 1–1.5% per month for hip and spine",
+      "measure": "pérdida de densidad mineral ósea de cadera y columna por mes de vuelo largo (DXA antes y después)",
+      "population": "astronautas de vuelos largos (la parte del informe que habla de personas)",
+      "magnitude": {"low": 1, "high": 1.5, "unit": "%/mo", "text": "at 1–1.5% per month"}
+    },
+    {
+      "id": "hrp-flight-vs-menopause",
+      "ref": "hrp-bone-fracture-evidence-report",
+      "where": "página 10",
+      "quote": "The accelerated rate of bone loss in the lumbar spine of astronauts is considered ~10x faster than the vertebral aBMD loss observed in females in the onset of menopause.",
+      "literal": "~10x faster than the vertebral aBMD loss observed in females in the onset of menopause",
+      "measure": "cuántas veces es más rápida la pérdida de la columna lumbar en vuelo que la del inicio de la menopausia",
+      "population": "astronautas de vuelos largos frente a mujeres al inicio de la menopausia (la parte del informe que habla de personas)",
+      "magnitude": {"low": 10, "high": 10, "unit": "{ratio}", "text": "~10x faster"}
+    },
+    {
+      "id": "mtb013-analogous",
+      "ref": "ochmo-mtb-013",
+      "where": "página 6",
+      "quote": "A published comparison of QCT-determined loss rates of hip trabecular bone in LD astronauts compared to terrestrial cohorts suggest that accelerated loss rates in trabecular volumetric BMD during spaceflight might be analogous to skeletal effects of accelerated loss rates in females due to menopause, potentially leading to disruptions in trabecular microarchitecture.",
+      "literal": "might be analogous to skeletal effects of accelerated loss rates in females due to menopause",
+      "measure": "pérdida de hueso trabecular de la cadera en vuelo comparada con la de la menopausia (QCT)",
+      "population": "astronautas de vuelos largos frente a cohortes en Tierra"
+    },
+    {
+      "id": "smith-bone-same",
+      "ref": "smith-2014-bone-sex-iss",
+      "where": "resumen",
+      "quote": "The bone mineral density response to flight was the same for men and women, and the typical decrease in bone mineral density (whole body and/or regional) after flight was not observed for either sex for those using an advanced resistive exercise device.",
+      "literal": "The bone mineral density response to flight was the same for men and women",
+      "direction": "unchanged",
+      "measure": "respuesta de la densidad mineral ósea al vuelo, mujeres frente a hombres",
+      "population": "42 astronautas de la ISS (33 hombres y 9 mujeres), misiones de 49 a 215 días entre 2000 y 2012"
+    },
+    {
+      "id": "hughes-no-cycle-data",
+      "ref": "hughes-fulford-2024-women-in-space",
+      "where": "texto completo (PMC13395041), apartado reproductivo",
+      "quote": "There are no formal inflight data regarding menstrual cycles available for premenopausal female astronauts, as most opt to use HC […].",
+      "literal": "There are no formal inflight data regarding menstrual cycles available for premenopausal female astronauts",
+      "measure": "datos en vuelo del ciclo menstrual",
+      "population": "revisión de la fisiología de la mujer en vuelo"
+    },
+    {
+      "id": "hughes-hc-perimenopause",
+      "ref": "hughes-fulford-2024-women-in-space",
+      "where": "texto completo (PMC13395041), apartado musculoesquelético",
+      "quote": "Terrestrially, post‐menopausal hormone therapy is beneficial to the musculoskeletal system […], but there is conflicting evidence regarding the impact of HC use during the pre‐ and peri‐menopausal periods […].",
+      "literal": "there is conflicting evidence regarding the impact of HC use during the pre‐ and peri‐menopausal periods",
+      "measure": "efecto en el hueso de la anticoncepción hormonal antes de la menopausia y en la perimenopausia",
+      "population": "revisión de la fisiología de la mujer en vuelo (lo citado es de Tierra)"
+    },
+    {
+      "id": "hrp-female-privacy",
+      "ref": "hrp-bone-fracture-evidence-report",
+      "where": "página 14",
+      "quote": "The analysis was only conducted in male astronauts, as data privacy for the female astronauts could not be preserved with the low subject number.",
+      "literal": "The analysis was only conducted in male astronauts",
+      "measure": "incidencia de fractura de cadera de astronautas frente a la población que envejece",
+      "population": "astronautas (solo hombres en este análisis)"
+    },
+    {
+      "id": "rose-ovarian-reserve",
+      "ref": "rose-2022-radiation-menopause",
+      "where": "resumen",
+      "quote": "Data suggests that a typical Mars mission may reduce a women's ovarian reserve by about 50%.",
+      "literal": "a typical Mars mission may reduce a women's ovarian reserve by about 50%",
+      "measure": "reserva ovárica tras una misión a Marte (estimación, no medida en ninguna astronauta)",
+      "population": "artículo de opinión de un autor; no mide a nadie"
+    },
+    {
+      "id": "rose-time-to-menopause",
+      "ref": "rose-2022-radiation-menopause",
+      "where": "resumen",
+      "quote": "This has consequences to a woman's reproductive capacity and, more significantly, decreases the time interval to her menopause.",
+      "literal": "decreases the time interval to her menopause",
+      "measure": "tiempo hasta la menopausia tras perder reserva ovárica (razonamiento, no medido en ninguna astronauta)",
+      "population": "artículo de opinión de un autor; no mide a nadie"
+    }
+  ],
+  "topics": {
+    "hot-flash-heart-rate": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": "heart-rate",
+      "context": "durante el sofoco frente a antes",
+      "evidence": "established",
+      "direction": "rises",
+      "low": 9,
+      "high": 20,
+      "unit": "/min",
+      "findings": ["low-hr-during", "kronenberg-hr-during", "sievert-objective-hr"],
+      "magnitude_findings": ["low-hr-during", "kronenberg-hr-during"],
+      "note": "Dos estudios de laboratorio pequeños, con dos medidas distintas: +9 y +10 lpm son las subidas medias de dos grupos (Low 2008, 12 mujeres) y +10 a +20 lpm son picos (Kronenberg 1984, 11 mujeres). La envolvente junta las dos: no es un rango medido en un solo estudio. Es un pico de minutos, no un nivel: un sofoco de madrugada sube la frecuencia lo bastante para salir como lectura aguda frente a la línea base personal."
+    },
+    "hot-flash-core-temperature": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": "body-temperature",
+      "context": "durante la vasodilatación y la sudoración del sofoco frente a antes",
+      "evidence": "established",
+      "direction": "falls",
+      "low": -0.6,
+      "high": -0.2,
+      "unit": "Cel",
+      "findings": ["kronenberg-core-during"],
+      "magnitude_findings": ["kronenberg-core-during"],
+      "dissent": ["sievert-objective-core"],
+      "dissent_note": "La revisión de Sievert enumera la temperatura central entre los aumentos que sirven para detectar un sofoco sin decir en qué momento: el aumento que se ha medido es el de antes del sofoco, de unas centésimas (tema aparte), no el de durante.",
+      "note": "Un solo estudio de 1984 con temperatura esofágica (11 mujeres): la central baja de 0,2 a 0,6 °C mientras la piel se calienta y suda. Un termómetro de piel o de muñeca ve lo contrario (sube): ver el tema de la temperatura de piel."
+    },
+    "hot-flash-core-temperature-before": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": "body-temperature",
+      "context": "en los 20 minutos previos al sofoco",
+      "evidence": "established",
+      "direction": "rises",
+      "low": 0.03,
+      "high": 0.03,
+      "unit": "Cel",
+      "findings": ["jones-core-before", "freedman-core-before"],
+      "magnitude_findings": ["jones-core-before"],
+      "note": "Tres centésimas de grado de media (con una desviación típica de 0,12), y solo en el 51 % de los sofocos. Las dos fuentes coinciden en el sentido y no en lo que significa: Freedman 2001 propone esa pequeña subida como el disparador, y Jones 2019 concluye en su resumen «menopausal hot flushes are unlikely triggered by an increase in core temperature». Está muy por debajo de lo que EMMA puede distinguir del ruido de un termómetro."
+    },
+    "hot-flash-skin-temperature": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "EMMA no tiene indicador de temperatura de piel: la temperatura de un anillo o de una pulsera no es la temperatura corporal del catálogo.",
+      "context": "durante el sofoco frente a antes",
+      "evidence": "established",
+      "direction": "rises",
+      "low": 3.9,
+      "high": 3.9,
+      "unit": "Cel",
+      "findings": ["kronenberg-finger-during"],
+      "magnitude_findings": ["kronenberg-finger-during"],
+      "note": "La piel del dedo sube de media 3,9 °C en el sofoco (Kronenberg 1984). Si un día EMMA leyera la temperatura de piel de un wearable, cada sofoco sería un pico de grados, no de décimas."
+    },
+    "hot-flash-vagal-hrv": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "La arritmia sinusal respiratoria es un índice de alta frecuencia; no es la RMSSD ni la SDNN del catálogo.",
+      "context": "durante el sofoco frente a antes y después",
+      "evidence": "direction_only",
+      "direction": "falls",
+      "low": null,
+      "high": null,
+      "unit": "ms",
+      "findings": ["thurston-rsa-during"],
+      "magnitude_findings": [],
+      "note": "Un estudio grande con registro ambulatorio de 24 h (215 mujeres): el control vagal cae durante el sofoco, más durmiendo y en las más jóvenes, también en sofocos que la mujer no nota. El resumen da coeficientes de un modelo, no milisegundos."
+    },
+    "vasomotor-trait-hrv": {
+      "subject": "hot_flash",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "Las bandas LF y HF no son la RMSSD ni la SDNN del catálogo.",
+      "context": "mujeres con síntomas vasomotores frente a mujeres sin ellos, fuera del sofoco",
+      "evidence": "direction_only",
+      "direction": "unchanged",
+      "low": null,
+      "high": null,
+      "unit": "ms",
+      "findings": ["hira-trait-hrv"],
+      "magnitude_findings": [],
+      "note": "Revisión sistemática con tres estudios en el metaanálisis y una heterogeneidad del 97 %: tener sofocos no cambia la variabilidad de base que se haya medido. Lo que cambia es el episodio, no el nivel."
+    },
+    "hot-flash-episode-duration": {
+      "subject": "hot_flash",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es la duración de un episodio, no un indicador.",
+      "context": "cada sofoco, de la subida de la sudoración esternal al final",
+      "evidence": "established",
+      "low": 1.3,
+      "high": 6.5,
+      "unit": "min",
+      "findings": ["low-duration"],
+      "magnitude_findings": ["low-duration"],
+      "note": "Rango de 23 sofocos en laboratorio (media 3,4 minutos). Más corto que la ventana de muchas lecturas de un wearable: un sofoco cabe entero en una sola toma."
+    },
+    "hot-flash-frequency": {
+      "subject": "hot_flash",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es una frecuencia de episodios, no un indicador.",
+      "context": "sofocos por día medidos de forma objetiva",
+      "evidence": "unsupported",
+      "unit": "/d",
+      "searched": "Cuántos sofocos al día, medidos con un sensor y no por diario. Ninguno de los resúmenes leídos da una frecuencia diaria: la revisión de Sievert 2013 dice que la frecuencia referida varía entre poblaciones y que comparar estudios es difícil; la de Mann 2011 da concordancias, no frecuencias; SWAN (Avis 2015) cuenta años con síntomas «frecuentes» (6 días o más de cada 14), no sofocos por día. La búsqueda en PubMed «hot flash frequency per day objective monitoring postmenopausal» (2026-11-15) devolvió ensayos de tratamientos, no frecuencias basales.",
+      "searched_refs": ["sievert-2013-hot-flash-measures", "mann-2011-hot-flush-concordance", "avis-2015-vasomotor-duration-swan"]
+    },
+    "hot-flash-ambulatory-concordance": {
+      "subject": "hot_flash",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es una concordancia entre dos medidas, no un indicador.",
+      "context": "conductancia esternal ambulatoria frente al sofoco que la mujer refiere",
+      "evidence": "established",
+      "low": 29,
+      "high": 29,
+      "unit": "%",
+      "findings": ["mann-ambulatory-concordance", "sievert-ssc", "sievert-ambulatory"],
+      "magnitude_findings": ["mann-ambulatory-concordance"],
+      "note": "La medida objetiva de referencia del sofoco (la conductancia de la piel del esternón) coincide con lo que la mujer dice en un 29 % de los casos fuera del laboratorio. EMMA no mide la conductancia: lo que la tripulante declare es el dato, y un pico de FC sin declarar no se puede atribuir a un sofoco."
+    },
+    "vasomotor-symptom-years": {
+      "subject": "hot_flash",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es la duración de los síntomas en años, no un indicador.",
+      "context": "años con síntomas vasomotores frecuentes en la transición menopáusica",
+      "evidence": "established",
+      "low": 7.4,
+      "high": 7.4,
+      "unit": "a",
+      "findings": ["avis-vms-years"],
+      "magnitude_findings": ["avis-vms-years"],
+      "note": "Mediana de la cohorte SWAN; en quien empezó con ellos antes o al principio de la perimenopausia, el mismo resumen dice «median, >11.8 years». Una misión de tres años cabe entera dentro de esa ventana."
+    },
+    "hot-flash-prevalence": {
+      "subject": "hot_flash",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es una proporción de mujeres, no un indicador.",
+      "context": "mujeres de EE. UU. que dicen haber tenido sofocos en la transición",
+      "evidence": "established",
+      "low": 75,
+      "high": 75,
+      "unit": "%",
+      "findings": ["sievert-prevalence"],
+      "magnitude_findings": ["sievert-prevalence"],
+      "note": "Es una cota superior («up to»), referida, de una revisión: no es una prevalencia medida en tripulantes."
+    },
+    "perimenopause-anovulation": {
+      "subject": "perimenopause",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "La probabilidad de que un ciclo sea anovulatorio no es un indicador del catálogo.",
+      "context": "a lo largo de la perimenopausia",
+      "evidence": "direction_only",
+      "direction": "rises",
+      "low": null,
+      "high": null,
+      "unit": "%",
+      "findings": ["oconnor-anovulation"],
+      "magnitude_findings": [],
+      "note": "En la perimenopausia tardía la mayoría de los ciclos son anovulatorios (el mismo resumen: «Most cycles in late perimenopause were AO (>60%)»), y un ciclo sin ovulación no tiene el escalón lúteo de temperatura: la variación por fase de cycle_physiology_read.json no vale para él."
+    },
+    "midlife-cycle-temperature-amplitude": {
+      "subject": "perimenopause",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "Es la temperatura de la piel del dedo (anillo Oura), no la temperatura corporal del catálogo.",
+      "context": "amplitud del ritmo de temperatura del ciclo, mediana edad (42-55 años) frente a jóvenes, solo en quien tenía ciclos con oscilación",
+      "evidence": "direction_only",
+      "direction": "unchanged",
+      "low": null,
+      "high": null,
+      "unit": "Cel",
+      "findings": ["alzueta24-amplitude"],
+      "magnitude_findings": [],
+      "note": "En mujeres de mediana edad con ciclos que todavía oscilan, la amplitud del ritmo de temperatura es como en las jóvenes (96 de las 116 tenían oscilación; el resumen no dice cuántas de cada grupo). El estudio excluye trastornos menstruales y dura un ciclo: no mide ciclos irregulares."
+    },
+    "perimenopause-irregular-cycle-physiology": {
+      "subject": "perimenopause",
+      "kind": "change",
+      "indicator": "body-temperature",
+      "context": "temperatura, frecuencia cardiaca y variabilidad a lo largo de ciclos irregulares de la perimenopausia",
+      "evidence": "unsupported",
+      "unit": "Cel",
+      "searched": "Cómo varían la temperatura basal, la frecuencia cardiaca o la variabilidad en ciclos irregulares de la perimenopausia. Búsquedas en PubMed del 2026-11-15: «perimenopause wearable skin temperature irregular cycles» (0 resultados), «basal body temperature perimenopausal cycles» (3, ninguno con medida), «perimenopause heart rate variability» (33: ninguno sigue a la misma mujer en ciclos irregulares). O'Connor 2009 mide hormonas en orina, no temperatura; Alzueta 2024 excluye los trastornos menstruales y dura un ciclo; la revisión de Hira 2026 compara mujeres con y sin sofocos, no ciclos.",
+      "searched_refs": ["oconnor-2009-perimenopause-ovulation", "alzueta-2024-midlife-cycle-oura", "hira-2026-hrv-vasomotor-review"]
+    },
+    "menopause-bone-loss": {
+      "subject": "bone",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es una pérdida relativa en tres años, no la densidad en g/cm2 del catálogo.",
+      "related": ["bmd-dxa-lumbar-spine", "bmd-dxa-hip"],
+      "context": "pérdida acumulada en la transmenopausia (de 1 año antes a 2 años después de la última regla)",
+      "evidence": "established",
+      "low": 5.8,
+      "high": 7.38,
+      "unit": "%",
+      "findings": ["greendale-spine", "greendale-neck"],
+      "magnitude_findings": ["greendale-spine", "greendale-neck"],
+      "note": "Cuello femoral (5,8 %) y columna lumbar (7,38 %) en esos tres años. De 10 años de pérdida (10,6 % y 9,1 %), la mayor parte cae en la transmenopausia."
+    },
+    "flight-bone-loss-rate": {
+      "subject": "bone",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es una tasa relativa por mes de vuelo, no la densidad en g/cm2 del catálogo.",
+      "related": ["bmd-dxa-lumbar-spine", "bmd-dxa-hip"],
+      "context": "pérdida por mes de vuelo largo, cadera y columna, DXA antes y después",
+      "evidence": "established",
+      "low": 1,
+      "high": 1.5,
+      "unit": "%/mo",
+      "findings": ["hrp-flight-rate"],
+      "magnitude_findings": ["hrp-flight-rate"],
+      "note": "El informe de evidencia del HRP la da en la página 10; en la página 8 la atribuye a un estudio de cosmonautas de la Mir (Leblanc 2000), que aquí no se ha leído. El mismo informe dice en la página 42 que el ejercicio resistivo, con o sin alendronato, la atenúa."
+    },
+    "flight-vs-menopause-bone": {
+      "subject": "bone",
+      "kind": "figure",
+      "indicator": null,
+      "why_no_indicator": "Es un cociente entre dos tasas, no un indicador.",
+      "related": ["bmd-dxa-lumbar-spine"],
+      "context": "columna lumbar en vuelo frente al inicio de la menopausia",
+      "evidence": "established",
+      "low": 10,
+      "high": 10,
+      "unit": "{ratio}",
+      "findings": ["hrp-flight-vs-menopause", "mtb013-analogous"],
+      "magnitude_findings": ["hrp-flight-vs-menopause"],
+      "note": "«~10x», dice el informe de evidencia del HRP, sin cita propia en esa frase; el resumen técnico de la NASA dice que la pérdida trabecular de la cadera en vuelo «might be analogous» a la de la menopausia. Las dos pérdidas actúan por vías distintas (la carga y los estrógenos), y nada de lo leído mide qué pasa cuando coinciden en la misma persona."
+    },
+    "flight-bone-by-sex": {
+      "subject": "bone",
+      "kind": "change",
+      "indicator": null,
+      "why_no_indicator": "Es la respuesta relativa al vuelo comparada entre sexos, no un indicador.",
+      "related": ["bmd-dxa-lumbar-spine", "bmd-dxa-hip"],
+      "context": "respuesta de la densidad ósea al vuelo, mujeres frente a hombres",
+      "evidence": "direction_only",
+      "direction": "unchanged",
+      "low": null,
+      "high": null,
+      "unit": "%",
+      "findings": ["smith-bone-same"],
+      "magnitude_findings": [],
+      "note": "Es lo único medido en vuelo con mujeres que se ha leído aquí: 9 astronautas en la ISS, la misma respuesta que los hombres. El resumen no dice la edad ni el estado menopáusico de ninguna."
+    }
+  },
+  "in_flight": {
+    "evidence": "unsupported",
+    "text": "En vuelo no se ha medido nada de la menopausia: ni sofocos, ni la temperatura o la frecuencia cardiaca de una astronauta perimenopáusica o posmenopáusica, ni la pérdida ósea según el estado menopáusico. Lo que sí está escrito: que no hay datos formales en vuelo del ciclo menstrual porque la mayoría usa anticoncepción hormonal (Hughes-Fulford 2024); que la respuesta ósea al vuelo fue la misma en 9 mujeres que en 33 hombres de la ISS, sin decir su estado menopáusico (Smith 2014); que la NASA escribe que la pérdida lumbar en vuelo es unas diez veces más rápida que al inicio de la menopausia (informe de evidencia del HRP) y que la del hueso trabecular de la cadera «might be analogous» a la de la menopausia (OCHMO-MTB-013); que el análisis de fracturas de cadera de astronautas solo pudo hacerse con hombres, porque con tan pocas mujeres no se preservaba su privacidad (informe del HRP); que el efecto en el hueso de la anticoncepción hormonal en la perimenopausia es discutido (Hughes-Fulford 2024); y, como estimación de un autor sin medir a nadie, que la radiación de una misión a Marte podría reducir a la mitad la reserva ovárica y que eso acorta el tiempo hasta la menopausia (Rose 2022).",
+    "found": ["hughes-no-cycle-data", "smith-bone-same", "hrp-flight-vs-menopause", "mtb013-analogous", "hrp-female-privacy", "hughes-hc-perimenopause", "rose-ovarian-reserve", "rose-time-to-menopause"],
+    "searched": "Datos medidos en vuelo de astronautas en la perimenopausia o la menopausia, o de sofocos en vuelo. PubMed, 2026-11-15: «menopause AND (astronaut OR spaceflight)» (17 resultados: revisiones de hueso, la de Hart 2023 sobre carga, hormonas y nervios, y el comentario de Rose 2022 sobre radiación; ningún dato de vuelo), «perimenopause AND spaceflight» (1: un estudiante de aviación con menopausia precoz), «female astronauts menopause» (4), «menopause AND astronauts AND bone» (4). NTRS (ntrs.nasa.gov), 2026-11-15: «menopause» (14 resultados; por el título, hueso, radiación y reproducción, y ninguno anuncia datos de astronautas menopáusicas; los tres de resonancia de la microarquitectura trabecular de la cadera no se abrieron), «perimenopause» (0), «hot flashes» (12, ninguno de fisiología humana). Del texto completo de Hughes-Fulford 2024, todas las frases con «menopaus», «hot fl» o «vasomotor».",
+    "searched_refs": ["hughes-fulford-2024-women-in-space", "rose-2022-radiation-menopause", "smith-2014-bone-sex-iss", "hrp-bone-fracture-evidence-report"]
+  }
+}

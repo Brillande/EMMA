@@ -1,0 +1,30 @@
+{"target": "app/core/storage.py",
+ "test": [
+  "tests/test_habitat.py::test_a_declared_location_is_a_signed_ledger_entry_and_reorders_the_hypothesis",
+  "tests/test_habitat.py::test_an_unknown_module_or_a_module_out_of_place_is_refused",
+  "tests/test_habitat.py::test_the_store_refuses_what_the_api_refuses",
+  "tests/test_habitat.py::test_a_location_entry_with_a_malformed_module_is_not_delivered"
+ ],
+ "mutations": [
+  {"label": "se persiste sin ledger: la ubicacion se guarda aparte y aun asi ordena hipotesis",
+   "old": "        return self._record_action(MISSION_EVENT_ENTRY_TYPE, payload, identity)\n\n    def mission_events(self, subject: str) -> list[dict[str, Any]]:\n        return self._actions(\n            subject, MISSION_EVENT_ENTRY_TYPE, _MISSION_EVENT_FIELDS, _MISSION_EVENT_OPTIONAL\n        )",
+   "new": "        if kind == LOCATION_EVENT_KIND:\n            self.__dict__.setdefault(\"_off_ledger\", []).append(dict(payload))\n            return self.ledger.entries[-1]\n        return self._record_action(MISSION_EVENT_ENTRY_TYPE, payload, identity)\n\n    def mission_events(self, subject: str) -> list[dict[str, Any]]:\n        off_ledger = [\n            {**item, \"ledger_index\": 10**9 + position, \"signer\": \"crew-console\",\n             \"recorded\": \"2026-01-01T00:00:00+00:00\"}\n            for position, item in enumerate(self.__dict__.get(\"_off_ledger\", []))\n            if item[\"subject\"] == subject\n        ]\n        return off_ledger + self._actions(\n            subject, MISSION_EVENT_ENTRY_TYPE, _MISSION_EVENT_FIELDS, _MISSION_EVENT_OPTIONAL\n        )"},
+  {"label": "la ubicacion se encadena en memoria y no se escribe en disco",
+   "old": "        return self._record_action(MISSION_EVENT_ENTRY_TYPE, payload, identity)",
+   "new": "        return self.ledger.append(MISSION_EVENT_ENTRY_TYPE, payload, identity)"},
+  {"label": "el modulo de una ubicacion no se entrega al leer el ledger",
+   "old": "_MISSION_EVENT_OPTIONAL = (\"module\",)",
+   "new": "_MISSION_EVENT_OPTIONAL = ()"},
+  {"label": "el almacen firma una ubicacion en un modulo que no esta en la lista",
+   "old": "            if module not in MODULES:\n                raise ValueError(\n                    f\"módulo desconocido: {module}; uno de {', '.join(MODULES)}\"\n                )\n            payload[\"module\"] = module",
+   "new": "            payload[\"module\"] = module"},
+  {"label": "el almacen firma un tipo de evento de mision desconocido",
+   "old": "        if kind not in MISSION_EVENT_KINDS:\n            raise ValueError(f\"tipo de evento de misión desconocido: {kind}\")\n",
+   "new": ""},
+  {"label": "una EVA o un bloque de trabajo llevan modulo en su asiento",
+   "old": "        elif module is not None:\n            raise ValueError(\"solo una declaración de ubicación lleva módulo\")\n",
+   "new": ""},
+  {"label": "un modulo que no es texto se entrega como ubicacion",
+   "old": "            if any(not isinstance(payload[field], str) for field in present):\n                raise TamperedRecordError(f\"asiento {entry.index}: acción mal formada\")\n",
+   "new": ""}
+ ]}

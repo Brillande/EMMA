@@ -1,0 +1,41 @@
+1
+00:00:00,000 --> 00:00:01,597
+November 14, 2026.
+
+2
+00:00:01,637 --> 00:00:06,960
+A question from Mars to the flight surgeon
+takes 22 minutes to go and come back.
+
+3
+00:00:07,000 --> 00:00:10,502
+EMMA watches over crew
+health on board, offline.
+
+4
+00:00:10,542 --> 00:00:13,481
+It compares every reading
+with that same person
+
+5
+00:00:13,521 --> 00:00:16,960
+and explains each alert with
+its data and its evidence.
+
+6
+00:00:17,000 --> 00:00:19,204
+The crew decides,
+
+7
+00:00:19,244 --> 00:00:22,182
+and every data point
+is signed into a record
+
+8
+00:00:22,222 --> 00:00:24,960
+that can't be altered without it showing.
+
+9
+00:00:25,000 --> 00:00:29,960
+EMMA. Decision support
+when Earth is far away.

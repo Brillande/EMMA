@@ -1,0 +1,23 @@
+{
+  "target": "app/volumes/assets.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "el esqueleto se construye sin el control de la cadena vertebral (40 de 60 y nadie avisó)",
+      "old": "    if preset.key == \"esqueleto\":",
+      "new": "    if False:"
+    },
+    {
+      "label": "la segmentación deja de rotularse sin validar",
+      "old": "        \"estado\": UNVALIDATED,",
+      "new": "        \"estado\": \"validada\","
+    },
+    {
+      "label": "ventana fija en vez de la mediana del órgano de este estudio (Polaris)",
+      "old": "    level = int(round(float(np.median(data[healthy])))) if healthy.any() else 40",
+      "new": "    level = 40"
+    }
+  ]
+}

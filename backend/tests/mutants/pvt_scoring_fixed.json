@@ -1,0 +1,15 @@
+{"target": "app/ingest/pvt.py", "test": ["tests/test_pvt_divergences.py"],
+ "mutations": [
+  {"label": "se alinea en silencio el lapso con lo publicado (≥ en vez de >)",
+   "old": "    return rt_ms > LAPSE_THRESHOLD_MS",
+   "new": "    return rt_ms >= LAPSE_THRESHOLD_MS"},
+  {"label": "se cambia en silencio el umbral de lapso al de la versión breve",
+   "old": "LAPSE_THRESHOLD_MS = 500.0",
+   "new": "LAPSE_THRESHOLD_MS = 355.0"},
+  {"label": "se cambia en silencio el mínimo de estímulos",
+   "old": "MIN_TRIALS = 10",
+   "new": "MIN_TRIALS = 5"},
+  {"label": "la puntuación deja de usar la regla que se expone",
+   "old": "        lapses=sum(1 for rt in valid if is_lapse(rt)),",
+   "new": "        lapses=sum(1 for rt in valid if rt >= LAPSE_THRESHOLD_MS),"}
+ ]}

@@ -1,0 +1,9 @@
+{"target": "app/core/versioning.py", "test": ["tests/test_reference_basis.py"],
+ "mutations": [
+  {"label": "la huella de reglas dice el texto \"None\" donde no hay rango",
+   "old": "                canonical(code.reference_basis),",
+   "new": "                str(code.reference_basis),"},
+  {"label": "la huella de reglas da «observada» a lo que no tiene rango",
+   "old": "                canonical(code.reference_basis),",
+   "new": "                canonical(code.reference_basis or \"observed\"),"}
+ ]}

@@ -1,0 +1,10 @@
+{
+  "_nota": "Qué cuenta como ocio en el resumen del planificador que ve Tierra (app/planner_ground.py). Decisión del usuario (2026-11-12): una lista de palabras; un evento del calendario de Marplanner es de ocio si su título contiene alguna, sin distinguir mayúsculas. Es una lista declarada, no un criterio clínico, y se puede cambiar aquí.",
+  "words": [
+    "ocio", "juego", "jugar", "partida", "película", "pelicula", "cine", "serie", "música", "musica",
+    "concierto", "canción", "cancion", "lectura", "leer", "libro", "dibujo", "pintura", "manualidad",
+    "videojuego", "consola", "ajedrez", "cartas", "puzle", "puzzle", "baile", "bailar", "fiesta",
+    "game", "play", "movie", "film", "music", "song", "reading", "book", "drawing", "party", "bowling",
+    "show"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+ "target": "app/anatomy.py",
+ "test": [
+  "tests/test_anatomy.py::test_the_liver_is_a_view_without_a_level_of_its_own",
+  "tests/test_anatomy.py::test_a_region_without_level_declares_its_analytes_coherently"
+ ],
+ "mutations": [
+  {
+   "label": "la region sin nivel ensena todo el dominio de su nivel, no sus analitos",
+   "old": "        return key in self.analytes if self.level_of is not None else (",
+   "new": "        return CATALOG[key].domain is self.level_of if self.level_of is not None else ("
+  },
+  {
+   "label": "la cadena del higado deja de listar sus analitos",
+   "old": "        codes = [code for code in CATALOG.values() if region.shows(code.key)]",
+   "new": "        codes = [code for code in CATALOG.values() if code.domain in region.domains]"
+  },
+  {
+   "label": "se acepta un analito que no es del dominio de su nivel",
+   "old": "            if code.domain is not self.level_of or key in DESCRIPTIVE_ONLY:",
+   "new": "            if key in DESCRIPTIVE_ONLY:"
+  },
+  {
+   "label": "se aceptan analitos sin decir de quien es el nivel",
+   "old": "        if len(set(listed)) != 1 or (self.analytes and self.domains):",
+   "new": "        if self.analytes and self.domains:"
+  },
+  {
+   "label": "la region sin nivel no dice de quien es el nivel",
+   "old": "        return LEVEL_OF_NOTE.format(domain=self.level_of.display)",
+   "new": "        return None"
+  },
+  {
+   "label": "la region sin nivel dice que no hay nada que valorar en vez de donde estan sus contramedidas",
+   "old": "                i18n.loc(LEVEL_ELSEWHERE_RECOMMENDATIONS_NOTE).format(",
+   "new": "                i18n.loc(NOTHING_TO_ASSESS_NOTE).format("
+  },
+  {
+   "label": "la lista de analitos pierde su fuente",
+   "old": "                self.analytes_source.to_dict() if self.analytes_source is not None else None",
+   "new": "                None"
+  },
+  {
+   "label": "el paso RIESGO del higado no es el del dominio de su nivel",
+   "old": "                risk_entity.summary(region.level_of) if region.level_of is not None else None",
+   "new": "                None"
+  },
+  {
+   "label": "una region sin nivel cuyo dominio no tiene region propia arranca igual",
+   "old": "        if len(found) != 1:",
+   "new": "        if len(found) > 1:"
+  },
+  {
+   "target": "app/timeline.py",
+   "label": "corregir una ALT no obliga a recalcular la vista del higado",
+   "old": "            if region.shows(key):",
+   "new": "            if code.domain in region.domains:"
+  }
+ ]
+}

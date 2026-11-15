@@ -1,0 +1,124 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T23:37:13",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "hilos_cpu": 32,
+  "desplazamientos_reloj_gpu": [
+   "P0 núcleo (graphics): desplazamiento +0 MHz (permitido -1000…+1000), editable=1",
+   "P0 memoria: desplazamiento +0 MHz (permitido -1000…+3000), editable=1"
+  ],
+  "nota": "Portátil de desarrollo, no hardware de vuelo. GPU en W según nvidia-smi; CPU en % y en W (RAPL, Energy Meter de Windows)."
+ },
+ "fases": [
+  {
+   "fase": "reposo",
+   "inicio": 1794436590.604,
+   "fin": 1794436605.604,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 28,
+   "gpu_w_media": 5.5,
+   "gpu_w_max": 5.62,
+   "gpu_uso_pct_media": 0.29,
+   "vram_mb_media": 1240.39,
+   "cpu_sistema_pct_media": 2.41,
+   "cpu_pkg_w_media": 6.86,
+   "cpu_nucleos_w_media": 3.72,
+   "cpu_pkg_julios": 102.9,
+   "gpu_julios": 82.5
+  },
+  {
+   "fase": "ocr_pagina_A4_1",
+   "inicio": 1794436605.677,
+   "fin": 1794436606.832,
+   "duracion_s": 1.15,
+   "resultado": {
+    "caracteres": 3066
+   },
+   "muestras": 2,
+   "gpu_w_media": 5.43,
+   "gpu_w_max": 5.45,
+   "gpu_uso_pct_media": 0.0,
+   "vram_mb_media": 1240.0,
+   "cpu_sistema_pct_media": 3.52,
+   "cpu_pkg_w_media": 20.31,
+   "cpu_nucleos_w_media": 16.97,
+   "cpu_pkg_julios": 23.4,
+   "gpu_julios": 6.2
+  },
+  {
+   "fase": "ocr_pagina_A4_2",
+   "inicio": 1794436606.832,
+   "fin": 1794436607.978,
+   "duracion_s": 1.15,
+   "resultado": {
+    "caracteres": 3066
+   },
+   "muestras": 2,
+   "gpu_w_media": 5.44,
+   "gpu_w_max": 5.47,
+   "gpu_uso_pct_media": 0.5,
+   "vram_mb_media": 1240.0,
+   "cpu_sistema_pct_media": 3.0,
+   "cpu_pkg_w_media": 21.72,
+   "cpu_nucleos_w_media": 18.45,
+   "cpu_pkg_julios": 25.0,
+   "gpu_julios": 6.3
+  },
+  {
+   "fase": "whisper_dictado_1",
+   "inicio": 1794436608.303,
+   "fin": 1794436614.372,
+   "duracion_s": 6.07,
+   "resultado": {
+    "texto": "En ma, anota que esta maa más menos anameduel el arrodilla derecha, intensidad 4"
+   },
+   "muestras": 11,
+   "gpu_w_media": 5.49,
+   "gpu_w_max": 5.68,
+   "gpu_uso_pct_media": 0.0,
+   "vram_mb_media": 1240.0,
+   "cpu_sistema_pct_media": 25.93,
+   "cpu_pkg_w_media": 17.73,
+   "cpu_nucleos_w_media": 14.04,
+   "cpu_pkg_julios": 107.6,
+   "gpu_julios": 33.3
+  },
+  {
+   "fase": "whisper_dictado_2",
+   "inicio": 1794436614.372,
+   "fin": 1794436618.419,
+   "duracion_s": 4.05,
+   "resultado": {
+    "texto": "En ma, anota que esta maa más menos anameduel el arrodilla derecha, intensidad 4"
+   },
+   "muestras": 7,
+   "gpu_w_media": 5.64,
+   "gpu_w_max": 5.76,
+   "gpu_uso_pct_media": 0.14,
+   "vram_mb_media": 1240.0,
+   "cpu_sistema_pct_media": 34.51,
+   "cpu_pkg_w_media": 20.78,
+   "cpu_nucleos_w_media": 17.37,
+   "cpu_pkg_julios": 84.2,
+   "gpu_julios": 22.8
+  },
+  {
+   "fase": "reposo_final",
+   "inicio": 1794436618.419,
+   "fin": 1794436633.42,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 27,
+   "gpu_w_media": 5.52,
+   "gpu_w_max": 5.73,
+   "gpu_uso_pct_media": 0.22,
+   "vram_mb_media": 1240.0,
+   "cpu_sistema_pct_media": 1.98,
+   "cpu_pkg_w_media": 5.44,
+   "cpu_nucleos_w_media": 2.29,
+   "cpu_pkg_julios": 81.6,
+   "gpu_julios": 82.8
+  }
+ ]
+}

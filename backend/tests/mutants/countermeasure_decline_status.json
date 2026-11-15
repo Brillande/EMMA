@@ -1,0 +1,10 @@
+{"target": "app/api/routes.py",
+ "test": ["tests/test_countermeasure_decline.py", "-k", "another_source or changes_no_level"],
+ "mutations": [
+  {"label": "el estado ensena un no firmado por otra fuente",
+   "old": "    decisions = [item for item in store.followup_decisions(subject) if _counts(item, until)]\n    return _SignedActions(",
+   "new": "    decisions = list(store.followup_decisions(subject))\n    return _SignedActions("},
+  {"label": "el estado no ensena lo decidido junto a la recomendacion",
+   "old": "    decorated = with_decisions([item.to_dict() for item in recommendations], decisions)",
+   "new": "    decorated = with_decisions([item.to_dict() for item in recommendations] and [], decisions)"}
+ ]}

@@ -1,0 +1,109 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T18:50:17",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "hilos_cpu": 32,
+  "nota": "Portátil de desarrollo, no hardware de vuelo. GPU en W según nvidia-smi; CPU en % sin W."
+ },
+ "fases": [
+  {
+   "fase": "reposo",
+   "inicio": 1794419348.427,
+   "fin": 1794419368.427,
+   "duracion_s": 20.0,
+   "resultado": null,
+   "muestras": 37,
+   "gpu_w_media": 3.2,
+   "gpu_w_max": 3.52,
+   "gpu_uso_pct_media": 1.46,
+   "vram_mb_media": 1486.0,
+   "cpu_sistema_pct_media": 2.99,
+   "gpu_julios": 64.0
+  },
+  {
+   "fase": "cargar_modelo",
+   "inicio": 1794419368.427,
+   "fin": 1794419375.22,
+   "duracion_s": 6.79,
+   "resultado": {
+    "load_duration": null,
+    "eval_count": null,
+    "eval_duration": null,
+    "total_duration": null
+   },
+   "muestras": 13,
+   "gpu_w_media": 9.86,
+   "gpu_w_max": 16.11,
+   "gpu_uso_pct_media": 15.69,
+   "vram_mb_media": 4295.54,
+   "cpu_sistema_pct_media": 8.79,
+   "gpu_julios": 66.9
+  },
+  {
+   "fase": "modelo_cargado_reposo",
+   "inicio": 1794419375.22,
+   "fin": 1794419395.22,
+   "duracion_s": 20.0,
+   "resultado": null,
+   "muestras": 37,
+   "gpu_w_media": 5.0,
+   "gpu_w_max": 13.59,
+   "gpu_uso_pct_media": 0.62,
+   "vram_mb_media": 7525.0,
+   "cpu_sistema_pct_media": 5.07,
+   "gpu_julios": 100.0
+  },
+  {
+   "fase": "generar_300_tokens",
+   "inicio": 1794419395.22,
+   "fin": 1794419402.437,
+   "duracion_s": 7.22,
+   "resultado": {
+    "load_duration": 3531900,
+    "eval_count": 300,
+    "eval_duration": 6783802000,
+    "total_duration": 7194417300
+   },
+   "muestras": 13,
+   "gpu_w_media": 72.67,
+   "gpu_w_max": 90.3,
+   "gpu_uso_pct_media": 85.69,
+   "vram_mb_media": 7542.69,
+   "cpu_sistema_pct_media": 7.32,
+   "gpu_julios": 524.7
+  },
+  {
+   "fase": "descargar_modelo",
+   "inicio": 1794419402.437,
+   "fin": 1794419402.464,
+   "duracion_s": 0.03,
+   "resultado": {
+    "load_duration": null,
+    "eval_count": null,
+    "eval_duration": null,
+    "total_duration": null
+   },
+   "muestras": 0,
+   "gpu_w_media": null,
+   "gpu_w_max": null,
+   "gpu_uso_pct_media": null,
+   "vram_mb_media": null,
+   "cpu_sistema_pct_media": null,
+   "gpu_julios": null
+  },
+  {
+   "fase": "reposo_final",
+   "inicio": 1794419402.464,
+   "fin": 1794419417.465,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 28,
+   "gpu_w_media": 13.9,
+   "gpu_w_max": 90.48,
+   "gpu_uso_pct_media": 4.5,
+   "vram_mb_media": 1218.0,
+   "cpu_sistema_pct_media": 4.66,
+   "gpu_julios": 208.5
+  }
+ ]
+}

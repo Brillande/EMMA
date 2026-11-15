@@ -1,0 +1,500 @@
+/*
+ * La sección «Gravedad» (`GravityBoard.tsx`, maqueta «Panel EMMA: Salud Gravitacional de la
+ * Tripulación» de 2026-11-15) con el estilo de «Inicio»: el cuerpo lleva `ref-home grav-home`, así que
+ * hereda la rejilla de 12 columnas, las variables `--ref-*`/`--acc-*` y las tarjetas de
+ * `referenceDashboard.css`; las listas comunes las da `isolationBoard.css`. Aquí, el reparto y lo propio.
+ *
+ * COLORES DE ADORNO (§2.5 de `compliance/hmi-state-of-the-art.md`): el acento de la G de RIDGE
+ * (`--acc-gravity`), los planetas, los huesos, los vasos y el corazón no significan nada. Lo que es
+ * dato (`--lvl`, `data-tone`, las marcas) conserva el color de su tabla.
+ */
+
+.grav-home { --acc: var(--acc-gravity); }
+.grav-home small { font-size: 0.74rem; font-weight: 400; }
+.grav-home .ref-card { border-top: 2px solid var(--acc); }
+.grav-home section.ref-card { display: flex; flex-direction: column; min-width: 0; }
+.grav-home .iso-note { margin-top: auto; }
+
+/* Reparto, como la maqueta. */
+.grav-home .grav-exposure { grid-column: span 4; }
+.grav-home .grav-transition { grid-column: span 3; }
+.grav-home .ref-crew-card { grid-column: span 2; }
+.grav-home .grav-risk { grid-column: span 3; }
+.grav-home .grav-musculo { grid-column: span 5; }
+.grav-home .grav-cardio { grid-column: span 4; }
+.grav-home .grav-tests { grid-column: span 3; }
+.grav-home .ref-quick { grid-column: span 6; }
+.grav-home .grav-training { grid-column: span 6; }
+.grav-home .grav-fields { grid-column: span 3; }
+.grav-home .grav-transition-risks { grid-column: span 3; }
+.grav-home .grav-prediction { grid-column: span 3; }
+.grav-home .grav-exercises { grid-column: span 3; }
+.grav-home .nodes-fit[hidden] { display: none; }
+
+@media (max-width: 1400px) {
+  .grav-home > :not(.ref-places) { grid-column: span 6; grid-row: auto; }
+  .grav-home .grav-musculo,
+  .grav-home .grav-cardio { grid-column: span 12; }
+}
+
+@media (max-width: 760px) {
+  .grav-home > * { grid-column: span 12 !important; }
+}
+
+/* Título y exposición. */
+.grav-title { flex: none; font-size: 1.05rem; white-space: nowrap; margin-bottom: 0.4rem; }
+.grav-title > span { overflow: hidden; text-overflow: ellipsis; }
+
+.grav-exposure-body {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.grav-gauge { display: grid; justify-items: center; gap: 0.2rem; text-align: center; }
+.grav-gauge .ref-ring { width: 6.6rem; }
+.grav-gauge .ref-ring strong { font-size: 1.6rem; line-height: 1; }
+.grav-gauge .ref-ring .ref-ring-fill,
+.grav-gauge .ref-ring .ref-ring-track { stroke-width: 9; }
+
+.grav-fields-mini { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; font-size: 0.85rem; }
+.grav-fields-mini li { display: grid; grid-template-columns: 1rem minmax(0, 1fr) auto; gap: 0.4rem; align-items: center; }
+.grav-fields-mini li[data-here] { font-weight: 700; }
+.grav-fields-mini .grav-total { border-top: 1px solid var(--c-line); padding-top: 0.2rem; }
+
+/* Los planetas: bolas de color de adorno. */
+.grav-planet {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  vertical-align: -0.1rem;
+  margin-right: 0.3rem;
+  box-shadow: 0 0 5px color-mix(in srgb, var(--c-text) 25%, transparent);
+}
+.grav-planet[data-field="earth"] { background: radial-gradient(circle at 35% 35%, var(--c-cyan), var(--c-blue) 55%, color-mix(in srgb, var(--c-green) 60%, var(--c-bg))); }
+.grav-planet[data-field="iss"] { background: radial-gradient(circle at 35% 35%, var(--c-text), var(--c-gray)); border-radius: 2px; }
+.grav-planet[data-field="moon"] { background: radial-gradient(circle at 35% 35%, var(--c-text), var(--c-gray) 70%); }
+.grav-planet[data-field="mars"] { background: radial-gradient(circle at 35% 35%, var(--c-yellow), var(--c-red) 70%); }
+
+/* Transición. */
+.grav-phases { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.2rem; font-size: 0.85rem; }
+.grav-phases li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); gap: 0.35rem; align-items: center; color: var(--c-text-secondary); }
+.grav-phases li[data-now] { color: var(--c-text); font-weight: 700; }
+.grav-phases svg { width: 1rem; height: 1rem; color: var(--acc); }
+.grav-left { margin: 0.35rem 0 0; }
+
+/* Riesgo. */
+.grav-domains { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+.grav-domains li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr) auto; gap: 0.4rem; align-items: center; }
+.grav-domains svg { width: 1rem; height: 1rem; color: var(--lvl); }
+.grav-domains strong { color: var(--lvl); }
+.grav-risk.ref-card { border-color: var(--lvl, var(--acc)); }
+
+/* Listas de medidas (icono, nombre, cifra). */
+.grav-list li { grid-template-columns: 1.1rem minmax(0, 1fr) auto; }
+.grav-list li > svg { width: 1rem; height: 1rem; color: var(--acc); }
+.grav-list strong[data-tone="yellow"],
+.grav-prediction strong[data-tone="yellow"] { color: var(--c-yellow); }
+.grav-list .ref-clamp { -webkit-line-clamp: 1; line-clamp: 1; }
+
+.grav-sub { margin: 0 0 0.25rem; font-size: 0.82rem; font-weight: 600; }
+
+/* Los cuerpos: el lienzo de 152 × 310 de `BodyArt`, encogido con `zoom`, y el dibujo encima. */
+.grav-figure { margin: 0; display: grid; justify-items: center; gap: 0.1rem; }
+.grav-figure-box { position: relative; width: 152px; height: 310px; zoom: 0.76; }
+.grav-figure .ref-body-canvas,
+.grav-figure .ref-body-vector { z-index: 0; }
+.grav-figure[data-look="bone"] .ref-body-canvas,
+.grav-figure[data-look="bone"] .ref-body-vector { opacity: 0.55; }
+.grav-figure[data-look="vessels"] .ref-body-canvas,
+.grav-figure[data-look="vessels"] .ref-body-vector { opacity: 0.8; }
+.grav-figure figcaption { font-size: 0.72rem; }
+
+.grav-art { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.grav-bones { filter: drop-shadow(0 0 2px color-mix(in srgb, var(--c-cyan) 70%, transparent)); }
+.grav-bones .grav-skull,
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, var(--c-text) 35%, transparent); stroke: var(--c-text); stroke-width: 1.2; }
+.grav-bones .grav-socket { fill: color-mix(in srgb, var(--c-bg) 80%, transparent); }
+.grav-bones .grav-vertebra { fill: var(--c-text); opacity: 0.9; }
+.grav-bones .grav-bone,
+.grav-bones .grav-rib path { fill: none; stroke: var(--c-text); stroke-width: 1.4; stroke-linecap: round; opacity: 0.9; }
+.grav-bones .grav-longbone line { stroke: var(--c-text); stroke-width: 2.6; stroke-linecap: round; }
+.grav-bones .grav-longbone circle,
+.grav-bones .grav-patella { fill: var(--c-text); }
+.grav-bones .grav-site { fill: color-mix(in srgb, var(--acc) 35%, transparent); stroke: var(--acc); stroke-width: 1.6; }
+
+.grav-vessels { filter: drop-shadow(0 0 1.5px color-mix(in srgb, var(--c-text) 40%, transparent)); }
+.grav-vessels path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.grav-vessels .grav-artery path { stroke: color-mix(in srgb, var(--c-red) 85%, var(--c-text)); stroke-width: 1.6; }
+.grav-vessels .grav-vein path { stroke: color-mix(in srgb, var(--c-blue) 70%, var(--c-text)); stroke-width: 1.4; }
+.grav-vessels .grav-heart { fill: var(--c-red); stroke: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red)); stroke-width: 1; filter: drop-shadow(0 0 4px var(--c-red)); }
+
+/* Musculoesquelético: lista, dos cuerpos y zonas. */
+.grav-musculo-body {
+  display: grid;
+  grid-template-columns: minmax(11.5rem, 1.4fr) auto auto minmax(8rem, 0.9fr);
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+}
+.grav-zones ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; font-size: 0.82rem; }
+.grav-zones li { display: grid; grid-template-columns: minmax(0, 1fr) 3rem auto; gap: 0.35rem; align-items: center; }
+.grav-zones li > :nth-child(2):last-child { grid-column: 2 / -1; }
+.grav-avatar { margin-top: 0.5rem; display: flex; flex-wrap: nowrap; gap: 0.25rem; }
+.grav-avatar .command { padding: 0.12rem 0.45rem; font-size: 0.76rem; }
+
+/* Cardiovascular. */
+.grav-cardio-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.6rem; align-items: center; flex: 1; }
+.grav-cardio-side { display: grid; gap: 0.5rem; min-width: 0; }
+.grav-chart .ref-multitrend > svg { max-height: 5rem; }
+
+/* Pruebas. */
+.grav-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.28rem; font-size: 0.85rem; }
+.grav-checks li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr) auto; gap: 0.4rem; align-items: center; }
+.grav-checks svg { width: 1rem; height: 1rem; color: var(--c-text-secondary); }
+.grav-checks li[data-done] svg { color: var(--c-text); }
+.grav-checks .ref-clamp { -webkit-line-clamp: 1; line-clamp: 1; }
+
+/* Entrenamiento. */
+.grav-training-body { display: grid; gap: 0.45rem; }
+.grav-training-progress { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.6rem; align-items: center; }
+.grav-badges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.4rem; }
+.grav-badges li {
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  padding: 0.35rem 0.2rem;
+  text-align: center;
+  font-size: 0.78rem;
+  border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--acc) 10%, transparent);
+}
+.grav-badges svg { width: 1.5rem; height: 1.5rem; color: var(--acc); }
+
+/* Comparativa. */
+.grav-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.grav-table th,
+.grav-table td { padding: 0.2rem 0.3rem; text-align: left; border-bottom: 1px solid var(--c-line); }
+.grav-table thead th { font-size: 0.75rem; color: var(--c-text-secondary); font-weight: 600; }
+.grav-table td { text-align: right; }
+.grav-table tr[data-here] th,
+.grav-table tr[data-here] td { font-weight: 700; color: var(--c-text); }
+.grav-table th[scope="row"] { font-weight: 500; white-space: nowrap; }
+
+.grav-home .ref-multitrend > svg { max-height: 5rem; }
+.grav-home .ref-multitrend-tick { font-size: 10px; }
+
+/* Vuelta 2 (2026-11-15): cabe en una pantalla. RIDGE en una fila baja, como la maqueta; sus accesos
+   laterales ya están en «Inicio». */
+.grav-home .ref-quick-links { display: none; }
+.grav-home .ref-quick-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.4rem; }
+.grav-home .ref-hazard { min-height: 0; padding: 0.3rem 0.45rem; }
+.grav-home .ref-hazard-text { min-width: 0; }
+.grav-home .ref-hazard-name { display: block; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grav-home .grav-figure-box { zoom: 0.68; }
+.grav-home .grav-musculo-body,
+.grav-home .grav-cardio-body { align-items: start; }
+.grav-home .grav-figure-box { zoom: 0.6; }
+.grav-home .grav-phases { gap: 0.05rem; font-size: 0.8rem; }
+.grav-home .grav-transition .iso-note { white-space: nowrap; -webkit-line-clamp: 1; line-clamp: 1; }
+.grav-home .grav-checks { gap: 0.12rem; font-size: 0.8rem; }
+.grav-home .grav-list { gap: 0.15rem; font-size: 0.85rem; }
+.grav-home .grav-table th,
+.grav-home .grav-table td { padding: 0.1rem 0.3rem; font-size: 0.8rem; }
+.grav-home .ref-hazard { display: flex; flex-direction: row; align-items: center; gap: 0.35rem; }
+.grav-home .ref-hazard > svg { width: 1.4rem; height: 1.4rem; flex: none; }
+.grav-home .ref-hazard-text { display: grid; gap: 0.1rem; flex: 1; }
+.grav-home .grav-badges li { padding: 0.2rem; }
+.grav-home .grav-badges svg { width: 1.2rem; height: 1.2rem; }
+.grav-home .grav-chart .ref-multitrend > svg { max-height: 4rem; }
+.grav-home .grav-transition-risks .ref-multitrend > svg,
+.grav-home .grav-chart .ref-multitrend > svg { max-height: 3.2rem; }
+.grav-home .grav-exercises .ref-clamp { -webkit-line-clamp: 1; line-clamp: 1; }
+.grav-home .grav-exercises .iso-checks li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.grav-home .grav-figure figcaption { line-height: 1.1; }
+.grav-home { row-gap: 0.4rem; }
+.grav-home section.ref-card { padding-top: 0.45rem; padding-bottom: 0.45rem; }
+.grav-home .ref-card .ref-h { margin-bottom: 0.25rem; }
+.grav-home .grav-training .iso-note { display: none; }
+.grav-home .grav-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0.5rem; }
+.grav-home .grav-phases li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grav-home .grav-figure-box { zoom: 0.56; }
+.grav-home .grav-figure-box { zoom: 0.64; }
+.grav-home .grav-chart .ref-multitrend > svg { max-height: none; width: 100%; height: 4.2rem; }
+.grav-home .grav-transition-risks .ref-multitrend > svg { max-height: none; width: 100%; height: 3.4rem; }
+.grav-home .grav-figure-box { zoom: 0.6; }
+.grav-home .grav-chart .ref-multitrend > svg { height: 3.3rem; }
+.grav-home .grav-transition-risks .ref-multitrend > svg { height: 3rem; }
+.grav-home .ref-quick .ref-quick-row { width: 100%; flex: 1; }
+.grav-home .ref-quick > :not(.ref-h) { flex: 1; min-width: 0; }
+
+/* Vuelta 3: las curvas a lo ancho (el SVG guarda su proporción) y la leyenda al lado, no debajo. */
+.grav-home .grav-chart .ref-multitrend,
+.grav-home .grav-transition-risks .ref-multitrend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+.grav-home .grav-chart .ref-multitrend > svg,
+.grav-home .grav-transition-risks .ref-multitrend > svg { width: 100%; height: auto; max-height: none; }
+.grav-home .grav-chart .ref-multitrend-legend,
+.grav-home .grav-transition-risks .ref-multitrend-legend { display: grid; gap: 0.15rem; margin: 0; padding: 0; font-size: 0.7rem; }
+.grav-home .ref-multitrend-legend li > span { white-space: nowrap; }
+.grav-home .ref-quick { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.grav-home .ref-quick .ref-quick-row { grid-column: 1 / -1; }
+:where(.app[data-look="reference"]) .section-body.ref-home.grav-home .ref-quick { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+/* Vuelta 4: capas del cuerpo y accesos de «Pruebas». */
+.grav-layers { border: 0; margin: 0.35rem 0 0; padding: 0; display: grid; gap: 0.1rem; font-size: 0.78rem; }
+.grav-layers legend { padding: 0; }
+.grav-layers label { display: flex; align-items: center; gap: 0.35rem; cursor: pointer; }
+.grav-layers input { accent-color: var(--acc); margin: 0; }
+.grav-go { margin-top: auto; display: grid; gap: 0.25rem; padding-top: 0.3rem; }
+.grav-go .command { display: flex; align-items: center; gap: 0.4rem; justify-content: flex-start; padding: 0.2rem 0.5rem; font-size: 0.8rem; }
+.grav-go svg { width: 1rem; height: 1rem; }
+
+/* Vuelta 5 (2026-11-15, «trabajar más los cuerpos»): huesos con forma, fibras y red de vasos. */
+.grav-bones .grav-skull { fill: color-mix(in srgb, var(--c-text) 45%, transparent); stroke: var(--c-text); stroke-width: 0.9; }
+.grav-bones .grav-socket { fill: color-mix(in srgb, var(--c-bg) 85%, transparent); stroke: none; }
+.grav-bones .grav-teeth { stroke: color-mix(in srgb, var(--c-bg) 70%, transparent); stroke-width: 0.8; stroke-dasharray: 1 0.8; }
+.grav-bones .grav-vertebra { fill: color-mix(in srgb, var(--c-text) 85%, transparent); stroke: color-mix(in srgb, var(--c-cyan) 50%, transparent); stroke-width: 0.3; }
+.grav-bones .grav-scapula { fill: color-mix(in srgb, var(--c-text) 18%, transparent); stroke: color-mix(in srgb, var(--c-text) 55%, transparent); stroke-width: 0.6; stroke-linejoin: round; }
+.grav-bones .grav-sternum,
+.grav-bones .grav-sacrum { fill: color-mix(in srgb, var(--c-text) 70%, transparent); }
+.grav-bones .grav-rib path { stroke-width: 1.1; }
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, var(--c-text) 40%, transparent); stroke-width: 1; }
+.grav-bones path.grav-longbone { fill: color-mix(in srgb, var(--c-text) 80%, transparent); stroke: var(--c-text); stroke-width: 0.4; }
+.grav-bones path.grav-longbone.thin { fill: color-mix(in srgb, var(--c-text) 60%, transparent); }
+.grav-bones .grav-patella { fill: var(--c-text); }
+.grav-bones .grav-smallbones line { stroke: color-mix(in srgb, var(--c-text) 85%, transparent); stroke-width: 0.9; stroke-linecap: round; }
+
+.grav-muscles { mix-blend-mode: normal; }
+.grav-muscles .grav-groove path,
+.grav-muscles .grav-groove ellipse { fill: none; stroke: color-mix(in srgb, var(--c-bg) 70%, var(--c-red)); stroke-width: 1; stroke-linecap: round; opacity: 0.75; }
+.grav-muscles .grav-groove .fine { stroke-width: 0.5; opacity: 0.55; }
+.grav-muscles .grav-sheen ellipse { fill: color-mix(in srgb, var(--c-yellow) 40%, var(--c-text)); opacity: 0.18; filter: blur(1.5px); }
+
+.grav-vessels .grav-artery path { stroke-width: 1.3; }
+.grav-vessels .grav-vein path { stroke-width: 1.1; }
+.grav-vessels .fine { stroke-width: 0.55 !important; opacity: 0.85; }
+.grav-vessels .grav-heart-glow { fill: color-mix(in srgb, var(--c-red) 35%, transparent); filter: blur(4px); }
+.grav-vessels .grav-heart-line { fill: none; stroke: color-mix(in srgb, var(--c-bg) 60%, var(--c-red)); stroke-width: 0.7; }
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, var(--c-text) 22%, transparent); stroke: color-mix(in srgb, var(--c-text) 85%, transparent); stroke-width: 1.1; }
+.grav-muscles .grav-groove path,
+.grav-muscles .grav-groove ellipse { stroke: color-mix(in srgb, var(--c-bg) 50%, var(--c-red)); opacity: 0.9; }
+.grav-vessels .grav-vein path { stroke: color-mix(in srgb, var(--c-cyan) 45%, var(--c-text)); opacity: 0.75; }
+.grav-muscles .grav-hair { fill: color-mix(in srgb, var(--c-bg) 72%, var(--c-red)); stroke: color-mix(in srgb, var(--c-bg) 40%, var(--c-red)); stroke-width: 0.6; opacity: 0.95; }
+.grav-bones .grav-rib path { stroke-width: 1; }
+/* Vuelta 3: cráneo menos careta (bóveda translúcida, cuencas más suaves). */
+.grav-bones .grav-skull { fill: color-mix(in srgb, var(--c-text) 28%, transparent); stroke-width: 0.8; }
+.grav-bones .grav-socket { fill: color-mix(in srgb, var(--c-bg) 60%, transparent); }
+.grav-vessels { filter: drop-shadow(0 0 1.2px color-mix(in srgb, var(--c-red) 45%, transparent)); }
+/* Vuelta 4: cráneo anatómico y esqueleto algo más translúcido, para que el cuerpo se lea detrás. */
+.grav-bones .grav-skull { fill: color-mix(in srgb, var(--c-text) 32%, transparent); stroke: color-mix(in srgb, var(--c-text) 90%, transparent); stroke-width: 0.7; }
+.grav-bones .grav-jaw { fill: color-mix(in srgb, var(--c-text) 30%, transparent); stroke: color-mix(in srgb, var(--c-text) 85%, transparent); stroke-width: 0.6; }
+.grav-bones .grav-socket { fill: color-mix(in srgb, var(--c-bg) 70%, transparent); stroke: color-mix(in srgb, var(--c-text) 50%, transparent); stroke-width: 0.4; }
+.grav-bones .grav-cheek { fill: none; stroke: color-mix(in srgb, var(--c-text) 70%, transparent); stroke-width: 0.6; }
+.grav-bones .grav-tooth { fill: var(--c-text); opacity: 0.85; }
+.grav-bones path.grav-longbone { fill: color-mix(in srgb, var(--c-text) 68%, transparent); }
+.grav-bones .grav-vertebra { fill: color-mix(in srgb, var(--c-text) 72%, transparent); }
+/* Vuelta 5: estrías y tendones del músculo. */
+.grav-muscles .grav-fibers path { fill: none; stroke: color-mix(in srgb, var(--c-bg) 45%, var(--c-red)); stroke-width: 0.35; opacity: 0.6; stroke-linecap: round; }
+.grav-muscles .grav-tendon path { fill: none; stroke: color-mix(in srgb, var(--c-text) 75%, var(--c-yellow)); stroke-width: 0.9; opacity: 0.55; stroke-linecap: round; filter: blur(0.3px); }
+.grav-muscles .grav-sheen ellipse { opacity: 0.24; }
+.grav-muscles .grav-groove,
+.grav-muscles .grav-fibers { mix-blend-mode: multiply; }
+.grav-muscles .grav-groove path,
+.grav-muscles .grav-groove ellipse { stroke: color-mix(in srgb, var(--c-red) 55%, var(--c-bg)); opacity: 1; }
+.grav-muscles .grav-fibers path { stroke: color-mix(in srgb, var(--c-red) 70%, var(--c-bg)); opacity: 0.8; }
+.grav-muscles .grav-groove path,
+.grav-muscles .grav-groove ellipse { stroke: var(--c-red); }
+.grav-muscles .grav-fibers path { stroke: var(--c-red); opacity: 0.9; }
+.grav-muscles .grav-groove,
+.grav-muscles .grav-fibers { mix-blend-mode: normal; filter: brightness(0.38) saturate(1.6); }
+/* Vuelta 6: corazón anatómico. */
+.grav-vessels .grav-heart { fill: color-mix(in srgb, var(--c-red) 85%, var(--c-yellow)); stroke: color-mix(in srgb, var(--c-yellow) 50%, var(--c-red)); stroke-width: 0.6; filter: drop-shadow(0 0 3px var(--c-red)); }
+.grav-vessels .grav-atrium { fill: color-mix(in srgb, var(--c-red) 70%, var(--c-bg)); stroke: color-mix(in srgb, var(--c-red) 80%, var(--c-text)); stroke-width: 0.4; }
+.grav-vessels .grav-aorta { fill: none; stroke: color-mix(in srgb, var(--c-red) 85%, var(--c-text)); stroke-width: 2.2; stroke-linecap: round; }
+.grav-vessels .grav-pulmonary { fill: none; stroke: color-mix(in srgb, var(--c-blue) 60%, var(--c-text)); stroke-width: 2; stroke-linecap: round; }
+.grav-vessels .grav-vena-cava { fill: none; stroke: color-mix(in srgb, var(--c-cyan) 45%, var(--c-text)); stroke-width: 1.8; stroke-linecap: round; opacity: 0.85; }
+.grav-vessels .grav-heart-line { stroke: color-mix(in srgb, var(--c-red) 45%, var(--c-bg)); stroke-width: 0.6; }
+.grav-vessels .grav-coronary { fill: none; stroke: color-mix(in srgb, var(--c-yellow) 70%, var(--c-text)); stroke-width: 0.45; opacity: 0.85; stroke-linecap: round; }
+.grav-bones .grav-smallbones line { stroke-width: 0.85; }
+.grav-bones .grav-knuckle { fill: var(--c-text); }
+/* Vuelta 8: los cuerpos, más grandes; la fila la fija la rejilla, no ellos (medido: hasta 0,8 cabe). */
+.grav-home .grav-figure-box { zoom: 0.74; }
+/* Vuelta 9: halo de cada figura y la peana de luz bajo los pies, como en la maqueta (adorno). */
+.grav-figure[data-look="muscle"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-red) 70%, transparent)); }
+.grav-figure[data-look="bone"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-cyan) 60%, transparent)); }
+.grav-figure[data-look="vessels"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--c-cyan) 80%, transparent)); }
+.grav-figure-box::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -6px;
+  height: 16px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 55%, transparent), transparent 70%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 30%, transparent);
+}
+.grav-figure[data-look="muscle"] { --fig-glow: var(--c-red); }
+.grav-figure-box { isolation: isolate; }
+/* Vuelta 10: la peana con su color de verdad y sin rozar el rótulo. */
+.grav-figure-box::after {
+  bottom: 0;
+  height: 13px;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 85%, transparent), color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 25%, transparent) 55%, transparent 72%);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 50%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--fig-glow, var(--c-cyan)) 70%, transparent);
+}
+.grav-figure figcaption { margin-top: 0.3rem; }
+/* Vuelta 11: melena con mechones y brillo, menos casco. */
+.grav-muscles .grav-hair { opacity: 0.88; }
+.grav-muscles .grav-hair-strands path { fill: none; stroke: color-mix(in srgb, var(--c-red) 45%, var(--c-bg)); stroke-width: 0.5; opacity: 0.8; stroke-linecap: round; }
+.grav-muscles .grav-hair-strands .grav-hair-sheen { stroke: color-mix(in srgb, var(--c-yellow) 40%, var(--c-text)); stroke-width: 1.2; opacity: 0.35; filter: blur(0.6px); }
+
+/* Cuerpos procesados píxel a píxel (relieve, luz de borde, barrido): en «Gravedad» siempre el lienzo, que es
+   donde se procesan; el calco vectorial solo recolorea. */
+.grav-figure .ref-body-vector { display: none !important; }
+.grav-figure .ref-body-canvas { display: block !important; }
+
+/* Bucle «lo más parecido a la referencia» (2026-11-15). */
+.grav-muscles .grav-tendon path { stroke: var(--c-text); stroke-width: 1.3; opacity: 0.75; filter: blur(0.25px); }
+.grav-figure[data-look="muscle"] { --fig-glow: var(--c-cyan); }
+.grav-figure[data-look="muscle"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 3px color-mix(in srgb, var(--c-cyan) 55%, transparent)); }
+.grav-bones path.grav-longbone { fill: color-mix(in srgb, var(--c-text) 92%, transparent); }
+.grav-bones .grav-vertebra { fill: color-mix(in srgb, var(--c-text) 90%, transparent); }
+.grav-bones .grav-rib path { stroke-width: 1.4; opacity: 1; }
+.grav-vessels .grav-artery path { stroke: color-mix(in srgb, var(--c-red) 92%, var(--c-yellow)); stroke-width: 1.9; }
+.grav-vessels .grav-vein path { stroke: color-mix(in srgb, var(--c-blue) 75%, var(--c-text)); stroke-width: 1.5; opacity: 0.9; }
+.grav-vessels .grav-lung path { fill: none; stroke: color-mix(in srgb, var(--c-yellow) 45%, var(--c-red)); stroke-width: 0.9; opacity: 0.85; stroke-linecap: round; }
+.grav-vessels .grav-lung .fine { stroke-width: 0.5 !important; }
+/* Rendimiento (medido 2026-11-15): las sombras y desenfoques sobre el SVG de vasos (cientos de trazos) bajaban
+   la consola a ~1 imagen/s. Sin filtros dentro de los dibujos; el halo lo da la luz de borde del lienzo. */
+.grav-vessels,
+.grav-vessels * { filter: none !important; }
+.grav-vessels .grav-heart-glow { fill: color-mix(in srgb, var(--c-red) 22%, transparent); }
+.grav-muscles .grav-tendon path,
+.grav-muscles .grav-sheen ellipse,
+.grav-muscles .grav-hair-strands .grav-hair-sheen { filter: none; }
+.grav-bones { filter: none; }
+.grav-vessels .grav-organ path { fill: color-mix(in srgb, var(--c-blue) 18%, transparent); stroke: color-mix(in srgb, var(--c-cyan) 45%, transparent); stroke-width: 0.5; }
+.grav-figure[data-look="vessels"] :is(.ref-body-canvas, .ref-body-vector) { opacity: 1; }
+.grav-bones .grav-rib path { stroke-width: 1.7; }
+.grav-muscles .grav-pec-light-0 { stop-color: var(--c-text); stop-opacity: 0.28; }
+.grav-muscles .grav-pec-light-1 { stop-color: var(--c-text); stop-opacity: 0; }
+.grav-muscles .grav-pec-shadow-0 { stop-color: var(--c-bg); stop-opacity: 0.45; }
+.grav-muscles .grav-pec-shadow-1 { stop-color: var(--c-bg); stop-opacity: 0; }
+.grav-muscles .grav-pec-light-0 { stop-opacity: 0.36; }
+.grav-muscles .grav-pec-shadow-0 { stop-opacity: 0.55; }
+/* Vuelta 8: venas en azul violáceo propio, que se lean sobre el cuerpo marino como en la maqueta. */
+.grav-vessels .grav-vein path { stroke: color-mix(in srgb, color-mix(in srgb, var(--c-blue) 60%, var(--c-magenta)) 80%, var(--c-text)); stroke-width: 1.6; opacity: 0.95; }
+.grav-vessels .grav-vein .fine { stroke-width: 0.6 !important; opacity: 0.8; }
+/* Vuelta 9: pelvis y cráneo blancos y sólidos como el resto del hueso de la maqueta. */
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, var(--c-text) 72%, transparent); stroke: var(--c-text); stroke-width: 0.9; }
+.grav-bones .grav-sacrum { fill: color-mix(in srgb, var(--c-text) 92%, transparent); }
+.grav-bones .grav-skull { fill: color-mix(in srgb, var(--c-text) 78%, transparent); stroke: var(--c-text); }
+.grav-bones .grav-jaw { fill: color-mix(in srgb, var(--c-text) 72%, transparent); }
+.grav-bones .grav-socket { fill: color-mix(in srgb, var(--c-bg) 92%, transparent); stroke: none; }
+.grav-bones .grav-cheek { stroke: color-mix(in srgb, var(--c-bg) 55%, transparent); }
+.grav-bones .grav-tooth { fill: color-mix(in srgb, var(--c-bg) 25%, var(--c-text)); }
+/* Vuelta 11: surcos más sutiles, como las separaciones de la lámina de la maqueta. */
+.grav-muscles .grav-groove { opacity: 0.55; }
+.grav-muscles .grav-fibers { opacity: 0.7; }
+/* Vuelta 13: rótula de tendón blanca (el óvalo de la rodilla se rellena). */
+.grav-muscles .grav-tendon path[d*=" a4 5.5 "] { fill: color-mix(in srgb, var(--c-text) 45%, transparent); stroke-width: 0.6; }
+.grav-bones .grav-smallbones line { stroke-width: 1.1; }
+.grav-muscles .grav-tendon path[d*=" a4 5.5 "] { fill: color-mix(in srgb, var(--c-text) 75%, transparent); opacity: 0.9; }
+/* Vuelta 15: corazón y cayado como en la maqueta; clavículas gruesas. */
+.grav-vessels .grav-aorta { stroke-width: 2.4; }
+.grav-vessels .grav-pulmonary { stroke-width: 2.1; }
+.grav-bones .grav-bone { stroke-width: 2.2; }
+/* Vuelta 17: los cuerpos llenan su tarjeta como en la maqueta (medido: a 0,8 la pestaña no crece). */
+.grav-home .grav-figure-box { zoom: 0.8; }
+/* Vuelta 18: sin peana bajo los pies; la maqueta no la tiene (era un añadido nuestro). */
+.grav-figure-box::after { display: none; }
+/* Vuelta 19: agujeros de la pelvis apenas esbozados (no «ojos») y pulmones más abiertos. */
+.grav-bones .grav-obturator { fill: color-mix(in srgb, var(--c-bg) 35%, transparent); stroke: color-mix(in srgb, var(--c-text) 60%, transparent); stroke-width: 0.5; }
+.grav-vessels .grav-lung path { stroke-width: 1.1; opacity: 0.95; }
+
+/* «Riesgos por transición»: riesgo, lecturas y cambio, como las filas de la maqueta. */
+.grav-list.grav-risk-rows li { grid-template-columns: 1.1rem minmax(0, 1fr) auto auto; column-gap: 0.5rem; }
+.grav-list.grav-risk-rows li > .mark:last-child { grid-column: 3 / span 2; justify-self: end; }
+
+/* Contramedidas como las filas de la maqueta: acción a la izquierda y, a la derecha, su familia (no una dosis: no la hay). */
+.grav-cm-rows li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr) auto; column-gap: 0.5rem; align-items: center; }
+.grav-cm-family { max-width: 9rem; font-size: 0.75rem; text-align: end; }
+/* Bucle 3, vuelta 1: hueso blanco azulado y cráneo translúcido, como el esqueleto de rayos X de la maqueta. */
+.grav-bones path.grav-longbone { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 90%, transparent); stroke: none; }
+.grav-bones .grav-skull,
+.grav-bones .grav-jaw { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 80%, var(--c-cyan)) 62%, transparent); }
+.grav-bones .grav-rib path { stroke: color-mix(in srgb, var(--c-text) 88%, var(--c-cyan)); stroke-width: 1.5; }
+/* Bucle 3, vuelta 3: la musculatura de la cara, con más contraste que las fibras finas. */
+.grav-muscles .grav-groove .grav-face { stroke-width: 0.9; opacity: 1; }
+/* Bucle 3, vuelta 5: corazón con brillo y sombra (volumen). */
+.grav-vessels .grav-heart-shine { fill: color-mix(in srgb, var(--c-text) 60%, transparent); }
+.grav-vessels .grav-heart-shade { fill: color-mix(in srgb, var(--c-bg) 28%, transparent); }
+.grav-vessels .grav-deep path { stroke-width: 1; opacity: 0.9; }
+/* Bucle 3, vuelta 8: pelvis abierta por el centro. */
+.grav-bones .grav-inlet { fill: color-mix(in srgb, var(--c-bg) 78%, var(--c-blue)); stroke: color-mix(in srgb, var(--c-text) 70%, transparent); stroke-width: 0.6; }
+.grav-bones .grav-sacrum { fill: color-mix(in srgb, var(--c-text) 80%, transparent); }
+/* Vuelta 10: el hueco de la pelvis, más tenue (en la mujer, más ancho, salía como una mancha negra). */
+.grav-bones .grav-inlet { fill: color-mix(in srgb, var(--c-bg) 45%, transparent); stroke: color-mix(in srgb, var(--c-text) 55%, transparent); stroke-width: 0.5; }
+/* Vuelta 13: la luz del pectoral se veía como un óvalo amarillento; más tenue. */
+.grav-muscles .grav-pec-light-0 { stop-opacity: 0.16; }
+.grav-muscles .grav-sheen ellipse { opacity: 0.12; }
+.grav-bones .grav-joint { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 92%, transparent); }
+.grav-vessels .grav-intercostal .fine { stroke-width: 0.7 !important; opacity: 0.8; }
+/* Vuelta 19: escápulas apenas insinuadas (de frente, en la maqueta casi no se ven; salían como triángulos grises). */
+.grav-bones .grav-scapula { fill: color-mix(in srgb, var(--c-text) 8%, transparent); stroke: color-mix(in srgb, var(--c-text) 28%, transparent); stroke-width: 0.4; }
+/* Vuelta 20: cráneo menos de caricatura: cuencas azul oscuro (no negras), dientes y pómulos discretos. */
+.grav-bones .grav-socket { fill: color-mix(in srgb, color-mix(in srgb, var(--c-bg) 60%, var(--c-blue)) 80%, transparent); }
+.grav-bones .grav-tooth { fill: color-mix(in srgb, var(--c-bg) 45%, var(--c-text)); opacity: 0.55; }
+.grav-bones .grav-cheek { stroke: color-mix(in srgb, var(--c-bg) 35%, transparent); stroke-width: 0.4; }
+.grav-bones .grav-obturator { fill: color-mix(in srgb, var(--c-bg) 35%, transparent); }
+.grav-bones .grav-inlet { fill: color-mix(in srgb, var(--c-bg) 45%, transparent); }
+.grav-muscles .grav-tendon path.wide { stroke-width: 1.8; opacity: 0.8; }
+/* Vuelta 32: la cresta de la tibia, fina y tenue (recta y gruesa parecía una varilla). */
+.grav-muscles .grav-tendon path[d^="M "] { stroke-width: 0.7; opacity: 0.5; }
+/* Vuelta 35: los tendones de muñeca y tobillo también finos (los «M »), algo más visibles que la tibia. */
+.grav-muscles .grav-tendon path[d^="M "] { stroke-width: 0.8; opacity: 0.6; }
+/* Vuelta 38: venas azules (no lilas), como en la maqueta; el cuerpo ya es marino oscuro y se leen. */
+.grav-vessels .grav-vein path { stroke: color-mix(in srgb, var(--c-blue) 88%, var(--c-cyan)); opacity: 1; }
+.grav-vessels .grav-vena-cava { stroke: color-mix(in srgb, var(--c-blue) 88%, var(--c-cyan)); opacity: 1; }
+/* Vuelta 41: la sombra bajo el pectoral, más tenue (sobre la piel mate se veía como una mancha gris). */
+.grav-muscles .grav-pec-shadow-0 { stop-opacity: 0.28; }
+/* Bucle 4, vuelta 1: pelvis en mariposa, blanca como los huesos largos; costillas gruesas, como en la maqueta. */
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 88%, transparent); stroke: none; }
+.grav-bones .grav-inlet { fill: color-mix(in srgb, var(--c-bg) 40%, transparent); stroke: none; }
+.grav-bones .grav-obturator { fill: color-mix(in srgb, var(--c-bg) 40%, transparent); stroke: none; }
+.grav-bones .grav-rib path { stroke-width: 2.1; }
+/* Arterias y venas con el rojo y el azul de la maqueta: derivados del rojo y del azul de la paleta (más oscuros y
+   saturados), no escritos a mano. Adorno (§2.5): aquí el rojo no es una alarma. */
+.grav-vessels .grav-artery path { stroke: oklch(from var(--c-red) calc(l - 0.15) calc(c + 0.1) calc(h + 6)); stroke-width: 2.3; }
+.grav-vessels .grav-artery path.grav-trunk { stroke-width: 3.2; }
+.grav-vessels .grav-aorta { stroke: oklch(from var(--c-red) calc(l - 0.15) calc(c + 0.1) calc(h + 6)); }
+.grav-vessels .grav-vein path,
+.grav-vessels .grav-vena-cava,
+.grav-vessels .grav-pulmonary { stroke: oklch(from var(--c-blue) calc(l - 0.2) calc(c + 0.09) h); }
+.grav-vessels .grav-vein path { stroke-width: 1.9; }
+.grav-vessels .grav-heart { fill: oklch(from var(--c-red) calc(l - 0.1) calc(c + 0.1) calc(h + 12)); stroke: color-mix(in srgb, var(--c-yellow) 45%, var(--c-red)); stroke-width: 0.7; }
+.grav-vessels .grav-atrium { fill: oklch(from var(--c-red) calc(l - 0.22) calc(c + 0.08) calc(h + 4)); stroke: none; }
+.grav-vessels .grav-heart-glow { fill: color-mix(in srgb, oklch(from var(--c-red) calc(l - 0.1) calc(c + 0.1) calc(h + 12)) 38%, transparent); }
+.grav-bones .grav-pelvis { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 96%, transparent); }
+/* Bucle 4, vuelta 2: cráneo más blanco, como el de la maqueta; cayado y tronco pulmonar más finos (el corazón va
+   ampliado y salían como manchas encima). */
+.grav-bones .grav-skull,
+.grav-bones .grav-jaw { fill: color-mix(in srgb, color-mix(in srgb, var(--c-text) 85%, var(--c-cyan)) 86%, transparent); }
+.grav-vessels .grav-aorta { stroke-width: 1.6; }
+.grav-vessels .grav-pulmonary { stroke-width: 1.4; }
+.grav-vessels .grav-vena-cava { stroke-width: 1.2; }
+/* Bucle 4, vuelta 3: el cristal del esqueleto, casi opaco: al 55 % el azul de la maqueta se quedaba gris. */
+.grav-figure[data-look="bone"] .ref-body-canvas,
+.grav-figure[data-look="bone"] .ref-body-vector { opacity: 0.88; }

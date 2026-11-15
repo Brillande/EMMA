@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, candidata A a 16 px, dibujada píxel a píxel: anillo de 1 px y un latido más bajo que
+       en la grande, para que no se funda con el anillo. Sin borde. -->
+  <title>EMMA</title>
+  <rect width="16" height="16" rx="3" fill="#0A0D12" shape-rendering="geometricPrecision"/>
+  <path fill="#EEF2F6" d="M6 2H10V3H12V4H13V6H14V10H13V12H12V13H10V14H6V13H4V12H3V10H2V6H3V4H4V3H6Z
+                          M6 3V4H4V6H3V10H4V12H6V13H10V12H12V10H13V6H12V4H10V3Z" fill-rule="evenodd"/>
+  <path fill="#EEF2F6" d="M0 8H6V9H0Z M6 6H7V8H6Z M7 5H8V6H7Z M8 6H9V11H8Z M9 10H10V11H9Z M10 8H16V9H10Z M10 9H11V10H10Z"/>
+</svg>

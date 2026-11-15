@@ -1,0 +1,7 @@
+INFORME DE ANALÍTICA
+Paciente: María José Pérez Gómez   NHC: 00123456
+DNI 12345678Z  Tel. 612345678
+Fecha de nacimiento: 03/04/1985
+Fecha de extracción: 12/09/2026
+Hemoglobina 13,9 g/dL   Leucocitos 6,2 x10^3/µL
+Firmado por: Dra. Ana López Ruiz

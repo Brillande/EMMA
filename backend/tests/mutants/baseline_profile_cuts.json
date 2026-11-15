@@ -1,0 +1,170 @@
+{
+ "target": "app/analysis/baseline_profile.py",
+ "test": [
+  "tests/test_baseline_profile.py::test_the_cuts_are_the_percentiles_the_engine_grades_with",
+  "tests/test_baseline_profile.py::test_a_one_sided_indicator_cuts_only_on_its_side_and_says_so",
+  "tests/test_baseline_profile.py::test_a_learning_base_has_no_cuts",
+  "tests/test_baseline_profile.py::test_the_composition_counts_environment_and_type_of_the_base_readings",
+  "tests/test_baseline_profile.py::test_one_environment_all_measured_needs_no_sentence",
+  "tests/test_baseline_profile.py::test_a_borrowed_base_counts_the_family_readings",
+  "tests/test_baseline_profile.py::test_a_base_whose_readings_cannot_be_found_says_so",
+  "tests/test_baseline_profile.py::test_a_base_that_keeps_no_values_says_that_and_not_another_reason",
+  "tests/test_baseline_profile.py::test_the_cuts_method_carries_the_engine_figures_and_the_confidence_cap",
+  "tests/test_baseline_profile.py::test_the_engine_grades_exactly_as_before_the_shared_function",
+  "tests/test_baseline_profile.py::test_the_profile_cuts_are_the_engine_cuts",
+  "tests/test_baseline_profile.py::test_the_cuts_follow_the_side_that_concerns"
+ ],
+ "mutations": [
+  {
+   "label": "el corte de arriba se toma con el cuantil de abajo (en la funcion comun del motor)",
+   "target": "app/analysis/baseline.py",
+   "old": "                baseline.quantile(rule.quantile(side))",
+   "new": "                baseline.quantile(rule.quantile(\"low\"))"
+  },
+  {
+   "label": "el corte de abajo se toma con el cuantil de arriba (en la funcion comun del motor)",
+   "target": "app/analysis/baseline.py",
+   "old": "                baseline.quantile(rule.quantile(side))",
+   "new": "                baseline.quantile(rule.quantile(\"high\"))"
+  },
+  {
+   "label": "se calcula tambien el lado que no se pidio",
+   "target": "app/analysis/baseline.py",
+   "old": "                if side in sides and supported and has_values and watches(code, side) else None",
+   "new": "                if supported and has_values and watches(code, side) else None"
+  },
+  {
+   "label": "una base sin sus valores se da por una que los guarda",
+   "target": "app/analysis/baseline.py",
+   "old": "    has_values = bool(baseline.sorted_values)",
+   "new": "    has_values = True"
+  },
+  {
+   "label": "el cuantil de abajo deja de ser el espejo del de arriba",
+   "target": "app/analysis/baseline.py",
+   "old": "        return self.fraction if side == \"high\" else 1.0 - self.fraction",
+   "new": "        return self.fraction"
+  },
+  {
+   "label": "la funcion comun da por sostenida una gravedad que la base no sostiene",
+   "target": "app/analysis/baseline.py",
+   "old": "        supported = baseline.samples >= rule.min_samples",
+   "new": "        supported = True"
+  },
+  {
+   "label": "el minimo de cada gravedad no es el de la tabla del motor",
+   "target": "app/analysis/baseline.py",
+   "old": "        CutRule(severity=severity, fraction=fraction, min_samples=_SAMPLES_FOR_SEVERITY[severity])",
+   "new": "        CutRule(severity=severity, fraction=fraction, min_samples=MIN_SAMPLES)"
+  },
+  {
+   "label": "los cortes se buscan del menos exigente al mas",
+   "target": "app/analysis/baseline.py",
+   "old": "        for fraction, severity in _QUANTILE_THRESHOLDS\n",
+   "new": "        for fraction, severity in sorted(_QUANTILE_THRESHOLDS)\n"
+  },
+  {
+   "label": "el percentil avisa por los dos lados aunque solo preocupe uno",
+   "target": "app/analysis/baseline.py",
+   "old": "    return code.concerning in {side, \"both\"}",
+   "new": "    return True"
+  },
+  {
+   "label": "el corte cruzado dice el cuantil de arriba tambien por abajo",
+   "target": "app/analysis/baseline.py",
+   "old": "                quantile=cut.rule.quantile(direction), value=threshold, severity=cut.rule.severity",
+   "new": "                quantile=cut.rule.fraction, value=threshold, severity=cut.rule.severity"
+  },
+  {
+   "label": "una lectura igual al corte lo cruza",
+   "target": "app/analysis/baseline.py",
+   "old": "        if (direction == \"high\" and value > threshold) or (",
+   "new": "        if (direction == \"high\" and value >= threshold) or ("
+  },
+  {
+   "label": "se ensena con cifra un corte que la base aun no sostiene",
+   "old": "        applies = cut.supported and cut.has_values",
+   "new": "        applies = cut.has_values"
+  },
+  {
+   "label": "los cortes del perfil no van de leve a grave",
+   "old": "    for cut in sorted(personal_cuts(baseline, code), key=lambda item: item.rule.fraction):",
+   "new": "    for cut in personal_cuts(baseline, code):"
+  },
+  {
+   "label": "el texto del corte de abajo dice el percentil de arriba",
+   "old": "                    f\"{_percentile(rule.quantile('low'))} de su base)\"",
+   "new": "                    f\"{_percentile(rule.quantile('high'))} de su base)\""
+  },
+  {
+   "label": "el corte se redondea a la cifra de la lectura",
+   "old": "    decimals = display.decimals_for(code.key) + 1",
+   "new": "    decimals = display.decimals_for(code.key)"
+  },
+  {
+   "label": "un indicador de un solo lado no dice que por el otro no avisa el percentil",
+   "old": "        \"cuts_note\": ONE_SIDED_NOTE.get(code.concerning) if established else None,",
+   "new": "        \"cuts_note\": None,"
+  },
+  {
+   "label": "una base prestada de la familia no encuentra sus lecturas",
+   "old": "            for member in _family_members(state)\n",
+   "new": "            for member in ()\n"
+  },
+  {
+   "label": "se cuentan las lecturas de la ventana aunque no sean las de la base",
+   "old": "        if sorted(item.value for item in readings) == wanted:",
+   "new": "        if True:"
+  },
+  {
+   "label": "una base sin sus valores dice que las lecturas no son las de la base",
+   "old": "        return UNKNOWN_COMPOSITION if kept else NOT_KEPT_COMPOSITION",
+   "new": "        return UNKNOWN_COMPOSITION"
+  },
+  {
+   "label": "las lecturas del propio estado no se miran, solo las de la familia",
+   "old": "    def candidates() -> Iterator[list[VitalObservation]]:\n        yield own\n",
+   "new": "    def candidates() -> Iterator[list[VitalObservation]]:\n"
+  },
+  {
+   "label": "el metodo de los cortes no dice el tope por baja confianza",
+   "old": "        f\"abajo, por debajo {lower}. Una lectura con confianza por debajo de \"",
+   "new": "        f\"abajo, por debajo {lower}. Una lectura con confianza igual o mayor que \""
+  },
+  {
+   "label": "la lectura en el borde final de la ventana queda fuera",
+   "old": "    return readings[bisect.bisect_left(times, start):bisect.bisect_right(times, end)]",
+   "new": "    return readings[bisect.bisect_left(times, start):bisect.bisect_left(times, end)]"
+  },
+  {
+   "label": "los entornos no van del mas frecuente al menos",
+   "old": "    return dict(sorted(counts.items(), key=lambda pair: (-pair[1], pair[0])))",
+   "new": "    return dict(sorted(counts.items(), key=lambda pair: (pair[1], pair[0])))"
+  },
+  {
+   "label": "una base que mezcla dos entornos no lo dice",
+   "old": "    if contexts > 1:",
+   "new": "    if contexts > 2:"
+  },
+  {
+   "label": "una base con valores inferidos no lo dice",
+   "old": "    others = composition[\"samples\"] - composition[\"observation_type\"].get(\"measured\", 0)",
+   "new": "    others = 0"
+  },
+  {
+   "label": "el recuento no dice cuantas bases mezclan entornos",
+   "old": "    mixed = sum(1 for item in compositions if item and len(item[\"evidence_context\"]) > 1)",
+   "new": "    mixed = 0"
+  },
+  {
+   "label": "el recuento no dice cuantas bases tienen valores que no son medidas",
+   "old": "        if item and item[\"samples\"] > item[\"observation_type\"].get(\"measured\", 0)",
+   "new": "        if False"
+  },
+  {
+   "label": "el recuento no dice de cuantas no se sabe la composicion",
+   "old": "    unknown_make = sum(1 for item in compositions if item is None)",
+   "new": "    unknown_make = 0"
+  }
+ ]
+}

@@ -1,0 +1,354 @@
+{
+ "target": "app/environment/ephemeris.py",
+ "test": [
+  "tests/test_ephemeris_preload.py"
+ ],
+ "mutations": [
+  {
+   "label": "la precarga pide el rango entero aunque parte ya esté en caché",
+   "old": "for first, last in day_runs(missing, bridge=PRELOAD_BRIDGE_DAYS)",
+   "new": "for first, last in day_runs(days, bridge=PRELOAD_BRIDGE_DAYS)"
+  },
+  {
+   "label": "la precarga reescribe lo que ya estaba en caché",
+   "old": "        wanted = set(missing)",
+   "new": "        wanted = set(days)"
+  },
+  {
+   "label": "la precarga guarda filas de fuera del rango pedido",
+   "old": "            if epoch in wanted and epoch not in windows:",
+   "new": "            if epoch not in windows:"
+  },
+  {
+   "label": "la precarga guarda con otra clave que la lectura diaria",
+   "old": "                    cache_key(target, self.settings.observer_body, epoch),\n                    windows[epoch].to_dict(),",
+   "new": "                    f\"preload:{target}:{epoch.isoformat()}\",\n                    windows[epoch].to_dict(),"
+  },
+  {
+   "label": "la precarga sale sin pasar por la puerta",
+   "old": "                egress.authorize(\n                    self.settings, \"ephemeris\", HORIZONS_URL,\n                    f\"target={target} start={first.isoformat()} stop={last.isoformat()}\",\n                )",
+   "new": "                pass"
+  },
+  {
+   "label": "los fallos de la precarga no se traducen a «sin red»",
+   "old": "        with _horizons_errors(f\"{missing[0]} a {missing[-1]}\", not_allowed_unavailable=True):",
+   "new": "        if True:"
+  },
+  {
+   "label": "una fila fuera de medianoche se guarda bajo un día",
+   "old": "    if days != math.floor(days):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una entrada sin la forma de la caché tumba la cobertura y el retardo",
+   "old": "        except (KeyError, TypeError, ValueError):\n            return None",
+   "new": "        except (KeyError, TypeError, ValueError):\n            raise"
+  },
+  {
+   "label": "un retardo que no es un número cuenta como cubierto",
+   "old": "    return _finite(window.distance_au) and _finite(window.one_way_minutes)",
+   "new": "    return True"
+  },
+  {
+   "label": "lo leído de la caché se recuerda aunque el fichero cambie",
+   "old": "        if known is not None and known[0] == version:",
+   "new": "        if known is not None:"
+  },
+  {
+   "label": "un rango de un día se pide con inicio igual a fin",
+   "old": "(first, max(last, first + dt.timedelta(days=1)))",
+   "new": "(first, last)"
+  },
+  {
+   "label": "un rango vacío pasa por una precarga sin nada que hacer",
+   "old": "        if stop < start:",
+   "new": "        if False:"
+  },
+  {
+   "label": "los días que Horizons no dio no se dicen",
+   "old": "            not_received=tuple(day for day in missing if day not in windows),",
+   "new": "            not_received=(),"
+  },
+  {
+   "label": "una tabla sin distancia sale como error del servidor",
+   "old": "    if \"delta\" not in table.columns:",
+   "new": "    if False:"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la misión acaba el día antes del fin configurado",
+   "old": "    return start, start + dt.timedelta(days=settings.mission_days)",
+   "new": "    return start, start + dt.timedelta(days=settings.mission_days - 1)"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "un tramo cuenta un día de menos",
+   "old": "\"days\": (last - first).days + 1}",
+   "new": "\"days\": (last - first).days}"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "una cobertura a medias se da por completa",
+   "old": "    state = COMPLETE if days and count == len(days) else NONE if count == 0 else PARTIAL",
+   "new": "    state = COMPLETE if count > 0 else NONE"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "el día dentro de la misión se da por cubierto",
+   "old": "    day_cached = covered[(day - start).days] if in_mission else client.is_cached(day, target)",
+   "new": "    day_cached = in_mission or client.is_cached(day, target)"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "no se dice cómo precargar lo que falta",
+   "old": "            else HOW_TO_PRELOAD\n        ),",
+   "new": "            else None\n        ),"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "el estado no dice la cobertura",
+   "old": "                else ephemeris_coverage.coverage(settings, day=epoch, target=target)",
+   "new": "                else None"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la cobertura del estado habla de hoy y no del día que enseña",
+   "old": "                else ephemeris_coverage.coverage(settings, day=epoch, target=target)",
+   "new": "                else ephemeris_coverage.coverage(settings, target=target)"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la ruta precarga otro rango que el de la misión",
+   "old": "        result = client.preload(start, end, chosen.target)\n    except OfflineDataUnavailable as exc:\n        raise HTTPException(status_code=503",
+   "new": "        result = client.preload(start, start, chosen.target)\n    except OfflineDataUnavailable as exc:\n        raise HTTPException(status_code=503"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la ruta convierte el corte de la puerta en un 500",
+   "old": "        result = client.preload(start, end, chosen.target)\n    except OfflineDataUnavailable as exc:\n        raise HTTPException(status_code=503, detail=str(exc)) from exc",
+   "new": "        result = client.preload(start, end, chosen.target)\n    except KeyError as exc:\n        raise HTTPException(status_code=503, detail=str(exc)) from exc"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion, sin red, sale como si hubiera precargado",
+   "old": "        _report(ephemeris_coverage.coverage(settings, client, target=target))\n        return 2",
+   "new": "        _report(ephemeris_coverage.coverage(settings, client, target=target))\n        return 0"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion no dice por qué no precarga",
+   "old": "        print(f\"No se precarga: {exc}\", file=sys.stderr)",
+   "new": "        print(\"No se precarga.\", file=sys.stderr)"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion con --check sale a la red",
+   "old": "    if args.check:",
+   "new": "    if False:"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion sale con 0 aunque Horizons dejara días fuera",
+   "old": "        return 4",
+   "new": "        return 0"
+  },
+  {
+   "label": "una distancia o un tiempo de luz sin valor se guardan como NaN",
+   "old": "    raw = table[column][row]\n    if not _finite(raw):",
+   "new": "    raw = table[column][row]\n    if False:"
+  },
+  {
+   "label": "la consulta diaria sirve de la caché un retardo que no es un número",
+   "old": "        return (cached, window) if servable(window) else None",
+   "new": "        return (cached, window)"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "una misión sin días se da por completa",
+   "old": "    state = COMPLETE if days and count == len(days)",
+   "new": "    state = COMPLETE if count == len(days)"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "una misión sin días sale como culpa de Horizons",
+   "old": "    if end < start:\n        # Una configuracion sin dias",
+   "new": "    if False:\n        # Una configuracion sin dias"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion pide a Horizons una misión sin días",
+   "old": "        return 5",
+   "new": "        pass"
+  },
+  {
+   "label": "la precarga pide un solo tramo del primer al último día que falta",
+   "old": "for first, last in day_runs(missing, bridge=PRELOAD_BRIDGE_DAYS)",
+   "new": "for first, last in [(missing[0], missing[-1])]"
+  },
+  {
+   "label": "una fila fuera de medianoche tumba la precarga entera",
+   "old": "        except HorizonsResponseError:\n            unusable += 1",
+   "new": "        except ZeroDivisionError:\n            unusable += 1"
+  },
+  {
+   "label": "la consulta diaria toma la primera fila y no la de su día",
+   "old": "        return window_from_row(table, rows[epoch], epoch, target)",
+   "new": "        return window_from_row(table, 0, epoch, target)"
+  },
+  {
+   "label": "la consulta diaria sin la fila de su día sale como error del servidor",
+   "old": "        if epoch not in rows:\n            raise HorizonsResponseError(",
+   "new": "        if False:\n            raise HorizonsResponseError("
+  },
+  {
+   "label": "un fallo de disco en la precarga sale como error del servidor",
+   "old": "            except OSError as exc:\n                raise EphemerisCacheWriteError(",
+   "new": "            except ZeroDivisionError as exc:\n                raise EphemerisCacheWriteError("
+  },
+  {
+   "label": "la consulta diaria no sirve lo que obtuvo si no pudo guardarlo",
+   "old": "        except OSError as exc:\n            # La efemeride llego",
+   "new": "        except ZeroDivisionError as exc:\n            # La efemeride llego"
+  },
+  {
+   "label": "un propósito fuera de la lista blanca sale como error del servidor",
+   "old": "    except egress.EgressNotAllowed as exc:",
+   "new": "    except ZeroDivisionError as exc:"
+  },
+  {
+   "label": "lo recordado de cada fichero no tiene tope",
+   "old": "    while len(_LOADABLE) >= _LOADABLE_MAX:",
+   "new": "    while False:"
+  },
+  {
+   "label": "un fichero que ya no está se sigue recordando (un día)",
+   "old": "        except OSError:\n            _forget(str(path))\n            return False",
+   "new": "        except OSError:\n            return False"
+  },
+  {
+   "label": "un fichero que ya no está se sigue recordando (la carpeta)",
+   "old": "                _forget(str(path))\n                covered.append(False)",
+   "new": "                covered.append(False)"
+  },
+  {
+   "label": "una carpeta de caché que no se puede leer tumba la cobertura",
+   "old": "        except OSError:\n            return [False] * len(days)",
+   "new": "        except ZeroDivisionError:\n            return [False] * len(days)"
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la cobertura mira fichero a fichero",
+   "old": "    covered = client.cached_days(days, target)",
+   "new": "    covered = [client.is_cached(each, target) for each in days]"
+  },
+  {
+   "target": "app/core/cache.py",
+   "label": "la caché escribe encima de la entrada en vez de sustituirla entera",
+   "old": "            _replace(temporary, path)",
+   "new": "            path.write_text(text, encoding=\"utf-8\")"
+  },
+  {
+   "target": "app/core/cache.py",
+   "label": "la caché no espera a quien tiene la entrada abierta",
+   "old": "_REPLACE_RETRIES = (0.01, 0.02, 0.05, 0.1, 0.2)",
+   "new": "_REPLACE_RETRIES = ()"
+  },
+  {
+   "target": "app/core/cache.py",
+   "label": "una escritura fallida deja el temporal en la carpeta",
+   "old": "                os.unlink(temporary)",
+   "new": "                pass"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion dice «una consulta» aunque fueran varias",
+   "old": "        how = \"en una consulta\" if len(result.queries) == 1 else (",
+   "new": "        how = \"en una consulta\" if True else ("
+  },
+  {
+   "label": "la precarga no junta tramos cercanos",
+   "old": "PRELOAD_BRIDGE_DAYS = 7",
+   "new": "PRELOAD_BRIDGE_DAYS = 0"
+  },
+  {
+   "label": "una tabla sin ninguna fila de medianoche se da por días no recibidos",
+   "old": "    if len(table) and not rows:",
+   "new": "    if False:"
+  },
+  {
+   "label": "la consulta diaria esconde un propósito fuera de la lista blanca",
+   "old": "        if not not_allowed_unavailable:\n            raise",
+   "new": "        if False:\n            raise"
+  },
+  {
+   "label": "la precarga no traduce un propósito fuera de la lista blanca",
+   "old": ", not_allowed_unavailable=True):",
+   "new": "):"
+  },
+  {
+   "label": "una entrada sin la forma de la caché tumba el retardo",
+   "old": "        found = self._cached_window(key)",
+   "new": "        found = (self.cache.get(key), CommsWindow.from_dict(self.cache.get(key).data)) if self.cache.get(key) is not None else None"
+  },
+  {
+   "target": "scripts/preload_ephemeris.py",
+   "label": "el guion da un fallo de disco por un fallo de red",
+   "old": "        return 6",
+   "new": "        return 2"
+  },
+  {
+   "target": "app/core/cache.py",
+   "label": "la entrada se queda con los permisos del temporal (0600)",
+   "old": "            os.chmod(temporary, _FILE_MODE)\n",
+   "new": ""
+  },
+  {
+   "target": "app/core/cache.py",
+   "label": "vaciar la caché deja los temporales",
+   "old": "        for path in self.root.glob(\".*.tmp\"):",
+   "new": "        for path in []:"
+  },
+  {
+   "label": "la segunda precarga no espera a la primera: dice al momento que hay otra",
+   "old": "        if waited and not lock.acquire(timeout=PRELOAD_WAIT_SECONDS):\n",
+   "new": "        if waited and not lock.acquire(blocking=False):\n"
+  },
+  {
+   "label": "la precarga espera a otra en curso mucho mas que su tope",
+   "old": "        if waited and not lock.acquire(timeout=PRELOAD_WAIT_SECONDS):\n",
+   "new": "        if waited and not lock.acquire(timeout=PRELOAD_WAIT_SECONDS * 100):\n"
+  },
+  {
+   "label": "la precarga que espero no lo dice",
+   "old": "        return replace(result, waited_for_another=waited) if waited else result\n",
+   "new": "        return result\n"
+  },
+  {
+   "label": "la precarga no suelta el cerrojo",
+   "old": "        finally:\n            lock.release()\n",
+   "new": "        finally:\n            pass\n"
+  },
+  {
+   "label": "un cerrojo por precarga y no por carpeta",
+   "old": "        return _PRELOAD_LOCKS.setdefault(key, threading.Lock())\n",
+   "new": "        return threading.Lock()\n"
+  },
+  {
+   "label": "todas las carpetas comparten un cerrojo",
+   "old": "    key = os.path.normcase(os.path.abspath(root))\n",
+   "new": "    key = \"\"\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "otra precarga en curso sale como error del servidor",
+   "old": "    except PreloadInProgress as exc:\n        raise HTTPException(status_code=409, detail=str(exc)) from exc\n",
+   "new": ""
+  },
+  {
+   "target": "app/environment/ephemeris_coverage.py",
+   "label": "la frase de como precargar vuelve a llevar Markdown",
+   "old": "    \"con el guion backend/scripts/preload_ephemeris.py o con la orden POST /api/comms/preload \"\n",
+   "new": "    \"con el guion `backend/scripts/preload_ephemeris.py` o con la orden POST /api/comms/preload \"\n"
+  }
+ ]
+}

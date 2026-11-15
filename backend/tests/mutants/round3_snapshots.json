@@ -1,0 +1,9 @@
+{"target": "app/api/routes.py", "test": ["tests/test_context_round3.py"],
+ "mutations": [
+  {"label": "la vista de Tierra firma proyecciones",
+   "old": "    if until is None and _snapshot_predictions(",
+   "new": "    if True and _snapshot_predictions("},
+  {"label": "se firma una instantanea por consulta y no por dia",
+   "old": "        if (item[\"key\"], today) in done:\n            continue",
+   "new": ""}
+ ]}

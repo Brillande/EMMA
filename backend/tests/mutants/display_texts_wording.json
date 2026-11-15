@@ -1,0 +1,12 @@
+{"target": "app/analysis/wording.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "la trayectoria dice el nivel de ahora donde va el de antes",
+   "old": "    before = RiskLevel(trajectory[\"from_level\"]).label",
+   "new": "    before = RiskLevel(trajectory[\"to_level\"]).label"},
+  {"label": "recuperandose se rotula empeorando",
+   "old": "    \"recovering\": \"recuperándose\",",
+   "new": "    \"recovering\": \"empeorando\","},
+  {"label": "la insignia usa la forma de frase, en minuscula",
+   "old": "    return {str(level): level.label for level in RiskLevel}",
+   "new": "    return {str(level): level.display for level in RiskLevel}"}
+ ]}

@@ -1,0 +1,21 @@
+{"target": "app/advisor/countermeasures.py", "test": ["tests/test_countermeasure_library.py"],
+ "mutations": [
+  {"label": "una contramedida farmacológica se carga como otra cualquiera (o falla sin decir por qué)",
+   "old": "    if family == PHARMACOLOGICAL:\n        raise fail(",
+   "new": "    if False:\n        raise fail("},
+  {"label": "una familia ausente o desconocida se acepta",
+   "old": "    if family not in IN_SCOPE_FAMILIES:\n        raise fail(",
+   "new": "    if False:\n        raise fail("},
+  {"label": "la farmacológica cuenta como familia en el alcance",
+   "old": "IN_SCOPE_FAMILIES = tuple(key for key, item in FAMILIES.items() if item.in_scope)",
+   "new": "IN_SCOPE_FAMILIES = tuple(FAMILIES)"},
+  {"label": "la palabra de la familia sale del criterio y no de su nombre",
+   "old": "            \"family_display\": FAMILIES[self.family].display,",
+   "new": "            \"family_display\": FAMILIES[self.family].criterion,"},
+  {"label": "un grupo RIDGE se queda con las entradas de los demás peligros",
+   "old": "        ids = [item.id for item in items if item.ridge is ridge]",
+   "new": "        ids = [item.id for item in items if item.ridge is not ridge]"},
+  {"label": "la familia fuera del alcance no sale en la lista de familias",
+   "old": "            for key, family in FAMILIES.items()\n        ],",
+   "new": "            for key, family in FAMILIES.items()\n            if family.in_scope\n        ],"}
+ ]}

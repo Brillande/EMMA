@@ -1,0 +1,44 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_resources.py", "-k",
+  "missing_resource_is_said or ground_status or brings_each_recommendation"
+ ],
+ "mutations": [
+  {
+   "label": "el estado cuenta declaraciones de otra firma",
+   "old": "        [item for item in store.resource_declarations() if _counts(item, until)], until",
+   "new": "        list(store.resource_declarations()), until"
+  },
+  {
+   "label": "el estado de Tierra ve una declaracion que vale desde despues de su corte",
+   "old": "        [item for item in store.resource_declarations() if _counts(item, until)], until",
+   "new": "        [item for item in store.resource_declarations() if _counts(item, until)], None"
+  },
+  {
+   "label": "el estado no dice que recursos faltan junto a la recomendacion",
+   "old": "    decorated = resource_rules.with_resources(decorated, declared_resources)\n",
+   "new": "    decorated = resource_rules.with_resources(decorated, [])\n"
+  },
+  {
+   "label": "el contexto de mision no lleva lo declarado",
+   "old": "    payload[\"mission\"][\"available_resources\"] = resource_rules.available(declared_resources)",
+   "new": "    payload[\"mission\"][\"available_resources\"] = resource_rules.available([])"
+  },
+  {
+   "label": "una recomendacion a la que le falta un recurso se retira del estado",
+   "old": "    decorated = resource_rules.with_resources(decorated, declared_resources)\n",
+   "new": "    decorated = [\n        item for item in resource_rules.with_resources(decorated, declared_resources)\n        if not (item[\"resource_status\"] or {}).get(\"unavailable\")\n    ]\n"
+  },
+  {
+   "label": "una recomendacion a la que le falta un recurso se manda al final",
+   "old": "    decorated = resource_rules.with_resources(decorated, declared_resources)\n",
+   "new": "    decorated = sorted(\n        resource_rules.with_resources(decorated, declared_resources),\n        key=lambda item: bool((item[\"resource_status\"] or {}).get(\"unavailable\")),\n    )\n"
+  },
+  {
+   "label": "un recurso que falta rebaja el nivel global",
+   "old": "    payload[\"mission\"][\"available_resources\"] = resource_rules.available(declared_resources)",
+   "new": "    payload[\"mission\"][\"available_resources\"] = resource_rules.available(declared_resources)\n    if payload[\"mission\"][\"available_resources\"][\"unavailable\"]:\n        payload[\"overall_level\"] = \"nominal\""
+  }
+ ]
+}

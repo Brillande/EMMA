@@ -1,0 +1,13 @@
+{"target": "app/api/routes.py",
+ "test": ["tests/test_descriptive_indicators.py"],
+ "mutations": [
+  {"label": "una lectura descriptiva entra en el estado",
+   "old": "    analysed = [item for item in observations if item.key not in DESCRIPTIVE_ONLY]",
+   "new": "    analysed = list(observations)"},
+  {"label": "quien solo tiene lecturas descriptivas no sabe por qué no tiene estado",
+   "old": "    if not analysed:\n        raise HTTPException(",
+   "new": "    if False:\n        raise HTTPException("},
+  {"label": "/api/indicators no dice cuáles son descriptivos",
+   "old": "                \"descriptive_only\": code.key in DESCRIPTIVE_ONLY,",
+   "new": "                \"descriptive_only\": False,"}
+ ]}

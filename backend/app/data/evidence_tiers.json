@@ -1,0 +1,2047 @@
+{
+  "source": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+  "records": {
+    "10219849": {
+      "title": "Postprandial changes of sympathovagal balance measured by heart rate variability.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Autonomic Nervous System",
+        "Electrocardiography, Ambulatory",
+        "Female",
+        "Gastrointestinal Motility",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Postprandial Period",
+        "Reference Values",
+        "Vagus Nerve"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "10660774": {
+      "title": "Hormonal changes in humans during spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [
+        "Animals",
+        "Bone Remodeling",
+        "Hormones",
+        "Humans",
+        "Hypothalamo-Hypophyseal System",
+        "Pituitary-Adrenal System",
+        "Space Flight",
+        "Thyroid Gland"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "10978486": {
+      "title": "The effects of variety and monotony on food acceptance and intake at a midday meal.",
+      "publication_types": [
+        "Clinical Trial",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Diet",
+        "Eating",
+        "Female",
+        "Food",
+        "Humans",
+        "Male",
+        "Meat",
+        "Middle Aged",
+        "Solanum tuberosum",
+        "Vegetables"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11122318": {
+      "title": "Microgravity inhibits intestinal calcium absorption as shown by a stable strontium test.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Calcitriol",
+        "Calcium",
+        "Calcium Metabolism Disorders",
+        "Collagen",
+        "Collagen Type I",
+        "Creatinine",
+        "Humans",
+        "Hydroxycholecalciferols",
+        "Intestinal Absorption",
+        "Male",
+        "Middle Aged",
+        "Parathyroid Hormone",
+        "Peptides",
+        "Radiation Monitoring",
+        "Space Flight",
+        "Strontium",
+        "Ultraviolet Rays",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "11537535": {
+      "title": "Dose rate, dose-equivalent rate, and quality factor in SLS-1.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Computer Simulation",
+        "Cosmic Radiation",
+        "Linear Energy Transfer",
+        "Magnetics",
+        "Radiation Dosage",
+        "Radiation Monitoring",
+        "Solar System",
+        "Space Flight"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11539935": {
+      "title": "Adaptive responses of the cardiovascular system to prolonged spaceflight conditions: assessment with Holter monitoring.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Aerospace Medicine",
+        "Arrhythmia, Sinus",
+        "Electrocardiography, Ambulatory",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Parasympathetic Nervous System",
+        "Space Flight",
+        "Stress, Physiological",
+        "Sympathetic Nervous System",
+        "Time Factors",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11540662": {
+      "title": "Changes in human adrenal and gonadal function onboard Spacelab.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adrenocorticotropic Hormone",
+        "Androstane-3,17-diol",
+        "Androstenedione",
+        "Circadian Rhythm",
+        "Dehydroepiandrosterone Sulfate",
+        "Humans",
+        "Hydrocortisone",
+        "Luteinizing Hormone",
+        "Male",
+        "Saliva",
+        "Space Flight",
+        "Stress, Physiological",
+        "Testosterone",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11541607": {
+      "title": "The dynamics of blood biochemical parameters in cosmonauts during long-term space flights.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Aerospace Medicine",
+        "Alanine Transaminase",
+        "Aspartate Aminotransferases",
+        "Blood Chemical Analysis",
+        "Blood Glucose",
+        "Cholesterol, HDL",
+        "Cholesterol, LDL",
+        "Creatine Kinase",
+        "Hemoglobins",
+        "Humans",
+        "Isoenzymes",
+        "Metabolism",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11641138": {
+      "title": "Sleep, performance, circadian rhythms, and light-dark cycles during two space shuttle flights.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Research Support, U.S. Gov't, P.H.S."
+      ],
+      "mesh": [
+        "Activity Cycles",
+        "Adult",
+        "Astronauts",
+        "Body Temperature",
+        "Circadian Rhythm",
+        "Female",
+        "Humans",
+        "Hydrocortisone",
+        "Lighting",
+        "Male",
+        "Melatonin",
+        "Middle Aged",
+        "Photoperiod",
+        "Polysomnography",
+        "Psychomotor Performance",
+        "Sleep",
+        "Sleep, REM",
+        "Space Flight",
+        "Spacecraft",
+        "Surveys and Questionnaires",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "11541010": {
+      "title": "Blood volume regulating hormones, fluid and electrolyte modifications during 21 and 198-day space flights (Altair-MIR 1993).",
+      "publication_types": [
+        "Comparative Study",
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Aldosterone",
+        "Atrial Natriuretic Factor",
+        "Blood Volume",
+        "Catecholamines",
+        "Cyclic GMP",
+        "Diuresis",
+        "Humans",
+        "Hydrocortisone",
+        "Hypotension, Orthostatic",
+        "Male",
+        "Osmolar Concentration",
+        "Renin-Angiotensin System",
+        "Saliva",
+        "Space Flight",
+        "Vasopressins",
+        "Water-Electrolyte Balance",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "12361778": {
+      "title": "Nutritional interventions related to bone turnover in European space missions and simulation models.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't",
+        "Review"
+      ],
+      "mesh": [
+        "Aerospace Medicine",
+        "Bed Rest",
+        "Biomarkers",
+        "Bone Resorption",
+        "Bone and Bones",
+        "Calcium, Dietary",
+        "Energy Intake",
+        "Humans",
+        "Osteoporosis",
+        "Sodium Chloride, Dietary",
+        "Space Flight",
+        "Vitamin D",
+        "Vitamin K",
+        "Weightlessness",
+        "Weightlessness Countermeasures",
+        "Weightlessness Simulation"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "12890036": {
+      "title": "Circadian profile of cardiac autonomic nervous modulation in healthy subjects: differing effects of aging and gender on heart rate variability.",
+      "publication_types": [
+        "Clinical Trial",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Adult",
+        "Age Factors",
+        "Aged",
+        "Aging",
+        "Autonomic Nervous System",
+        "Circadian Rhythm",
+        "Female",
+        "Heart",
+        "Heart Conduction System",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Reference Values",
+        "Sex Factors",
+        "Statistics as Topic",
+        "Vagus Nerve"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "14670816": {
+      "title": "Mechanisms of postspaceflight orthostatic hypotension: low alpha1-adrenergic receptor responses before flight and central autonomic dysregulation postflight.",
+      "publication_types": [
+        "Clinical Trial",
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Research Support, U.S. Gov't, P.H.S."
+      ],
+      "mesh": [
+        "Adrenergic alpha-Agonists",
+        "Adult",
+        "Arginine Vasopressin",
+        "Autonomic Nervous System",
+        "Baroreflex",
+        "Blood Volume",
+        "Chromogranin A",
+        "Chromogranins",
+        "Endothelins",
+        "Female",
+        "Hematocrit",
+        "Humans",
+        "Hypotension, Orthostatic",
+        "Male",
+        "Methoxyhydroxyphenylglycol",
+        "Middle Aged",
+        "Norepinephrine",
+        "Phenylephrine",
+        "Receptors, Adrenergic, alpha-1",
+        "Receptors, Adrenergic, beta-2",
+        "Space Flight",
+        "Supine Position",
+        "Syncope",
+        "Tyramine",
+        "Vascular Resistance",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "15018297": {
+      "title": "Sonographic detection of pneumothorax and hemothorax in microgravity.",
+      "publication_types": [
+        "Evaluation Study",
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Animals",
+        "Female",
+        "Hemothorax",
+        "Pneumothorax",
+        "Sensitivity and Specificity",
+        "Space Flight",
+        "Swine",
+        "Ultrasonography",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "15647814": {
+      "title": "Bone markers, calcium metabolism, and calcium kinetics during extended-duration space flight on the mir space station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Alkaline Phosphatase",
+        "Amino Acids",
+        "Analysis of Variance",
+        "Astronauts",
+        "Biomarkers",
+        "Bone Resorption",
+        "Bone and Bones",
+        "Calcium",
+        "Collagen",
+        "Collagen Type I",
+        "Humans",
+        "Kinetics",
+        "Osteocalcin",
+        "Parathyroid Hormone",
+        "Peptides",
+        "Space Flight",
+        "Time Factors",
+        "Vitamin D",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "15674147": {
+      "title": "FAST at MACH 20: clinical ultrasound aboard the International Space Station.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Aerospace Medicine",
+        "Astronauts",
+        "Humans",
+        "Remote Consultation",
+        "Satellite Communications",
+        "Space Flight",
+        "Traumatology",
+        "Ultrasonography",
+        "United States",
+        "United States National Aeronautics and Space Administration",
+        "Wounds and Injuries"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "15735075": {
+      "title": "The nutritional status of astronauts is altered after long-term space flight aboard the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "8-Hydroxy-2'-Deoxyguanosine",
+        "Acute-Phase Proteins",
+        "Adult",
+        "Astronauts",
+        "Biomarkers",
+        "Body Composition",
+        "Calcifediol",
+        "Deoxyguanosine",
+        "Dietary Supplements",
+        "Energy Intake",
+        "Erythrocytes",
+        "Female",
+        "Humans",
+        "International Cooperation",
+        "Male",
+        "Middle Aged",
+        "Nutritional Status",
+        "Oxidative Stress",
+        "Space Flight",
+        "Superoxide Dismutase",
+        "Time Factors",
+        "Vitamin D"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "17446414": {
+      "title": "Autonomic cardiovascular and respiratory control during prolonged spaceflights aboard the International Space Station.",
+      "publication_types": [
+        "Comparative Study",
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Autonomic Nervous System",
+        "Blood Pressure",
+        "Cardiovascular System",
+        "Electrocardiography",
+        "Europe",
+        "Heart Rate",
+        "Humans",
+        "Hypotension, Orthostatic",
+        "International Cooperation",
+        "Male",
+        "Middle Aged",
+        "Photoplethysmography",
+        "Posture",
+        "Respiratory Function Tests",
+        "Respiratory Mechanics",
+        "Respiratory System",
+        "Space Flight",
+        "Time Factors",
+        "United States",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "18403664": {
+      "title": "Relevance of lung ultrasound in the diagnosis of acute respiratory failure: the BLUE protocol.",
+      "publication_types": [
+        "Journal Article",
+        "Multicenter Study"
+      ],
+      "mesh": [
+        "Acute Disease",
+        "Adult",
+        "Aged",
+        "Aged, 80 and over",
+        "Algorithms",
+        "Asthma",
+        "Female",
+        "Humans",
+        "Longitudinal Studies",
+        "Lung",
+        "Male",
+        "Middle Aged",
+        "Pneumonia",
+        "Pneumothorax",
+        "Pulmonary Disease, Chronic Obstructive",
+        "Pulmonary Edema",
+        "Pulmonary Embolism",
+        "Respiratory Insufficiency",
+        "Sensitivity and Specificity",
+        "Ultrasonography"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "21235106": {
+      "title": "Thyroid status of Space Shuttle crewmembers: effects of iodine removal.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Female",
+        "Humans",
+        "Iodine",
+        "Male",
+        "Space Flight",
+        "Thyroid Function Tests",
+        "Thyrotropin",
+        "Thyroxine",
+        "Triiodothyronine",
+        "Water",
+        "Water Purification"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "21532951": {
+      "title": "Maximizing sensitivity of the psychomotor vigilance test (PVT) to sleep loss.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Female",
+        "Humans",
+        "Male",
+        "Neuropsychological Tests",
+        "Psychomotor Performance",
+        "Reaction Time",
+        "Reproducibility of Results",
+        "Sensitivity and Specificity",
+        "Sleep Deprivation",
+        "Young Adult"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "22025811": {
+      "title": "Validity and Sensitivity of a Brief Psychomotor Vigilance Test (PVT-B) to Total and Partial Sleep Deprivation.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "22134699": {
+      "title": "Cardiovascular regulation during long-duration spaceflights to the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Arteries",
+        "Astronauts",
+        "Baroreflex",
+        "Blood Pressure",
+        "Cardiac Output",
+        "Cardiovascular Deconditioning",
+        "Cardiovascular Physiological Phenomena",
+        "Heart Rate",
+        "Heart Ventricles",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Posture",
+        "Respiration",
+        "Space Flight",
+        "Stroke Volume",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "22272509": {
+      "title": "Space adaptation back pain: a retrospective study.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Astronauts",
+        "Back Pain",
+        "Female",
+        "Humans",
+        "Incidence",
+        "Logistic Models",
+        "Male",
+        "Retrospective Studies",
+        "Space Flight",
+        "United States",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "22549960": {
+      "title": "Benefits for bone from resistance exercise and nutrition in long-duration spaceflight: Evidence from biochemistry and densitometry.",
+      "publication_types": [
+        "Clinical Trial",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Biochemical Phenomena",
+        "Biomarkers",
+        "Body Composition",
+        "Bone Density",
+        "Bone and Bones",
+        "Calcium",
+        "Densitometry",
+        "Diet",
+        "Exercise",
+        "Female",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Nutritional Physiological Phenomena",
+        "Parathyroid Hormone",
+        "Pelvis",
+        "Resistance Training",
+        "Space Flight",
+        "Time Factors",
+        "Vitamin D"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "22764612": {
+      "title": "Heart rate and daily physical activity with long-duration habitation of the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Astronauts",
+        "Ergometry",
+        "Exercise",
+        "Female",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Motor Activity",
+        "Space Flight",
+        "Weightlessness",
+        "Weightlessness Countermeasures"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "23008272": {
+      "title": "Is CO2 an indoor pollutant? Direct effects of low-to-moderate CO2 concentrations on human decision-making performance.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adolescent",
+        "Adult",
+        "Air Pollutants",
+        "Air Pollution, Indoor",
+        "Analysis of Variance",
+        "Carbon Dioxide",
+        "Decision Making",
+        "Dose-Response Relationship, Drug",
+        "Environmental Exposure",
+        "Environmental Monitoring",
+        "Female",
+        "Humans",
+        "Male",
+        "Surveys and Questionnaires",
+        "Ventilation",
+        "Young Adult"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "23100144": {
+      "title": "Immune system dysregulation occurs during short duration spaceflight on board the space shuttle.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Cytokines",
+        "Cytomegalovirus",
+        "Female",
+        "Herpesvirus 4, Human",
+        "Humans",
+        "Immune System",
+        "Immunophenotyping",
+        "Leukocyte Count",
+        "Male",
+        "Middle Aged",
+        "Space Flight",
+        "T-Lymphocyte Subsets",
+        "Time Factors"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "23637139": {
+      "title": "Reduced heart rate variability during sleep in long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Blood Pressure",
+        "Electrocardiography",
+        "Female",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Sleep",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "23719548": {
+      "title": "Iron status and its relations with oxidative damage and bone loss during long-duration space flight on the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "8-Hydroxy-2'-Deoxyguanosine",
+        "Adult",
+        "Biomarkers",
+        "Bone Density",
+        "Bone Resorption",
+        "Deoxyguanosine",
+        "Female",
+        "Femur",
+        "Ferritins",
+        "Humans",
+        "Iron Overload",
+        "Iron, Dietary",
+        "Linear Models",
+        "Male",
+        "Middle Aged",
+        "Nutritional Status",
+        "Oxidative Stress",
+        "Space Flight",
+        "Surveys and Questionnaires"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "24293767": {
+      "title": "Circadian variation of heart rate variability across sleep stages.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Arousal",
+        "Circadian Rhythm",
+        "Electrocardiography",
+        "Female",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Polysomnography",
+        "Sleep Stages",
+        "Sleep, REM",
+        "Young Adult"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "24479252": {
+      "title": "Doppler ultrasound of the central retinal artery in microgravity.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Astronauts",
+        "Blood Flow Velocity",
+        "Humans",
+        "Retinal Artery",
+        "Ultrasonography, Doppler",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "24578692": {
+      "title": "Monitoring training status with HR measures: do all roads lead to Rome?",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "24806559": {
+      "title": "Relationship between carbon dioxide levels and reported headaches on the international space station.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Air Pollution, Indoor",
+        "Carbon Dioxide",
+        "Female",
+        "Headache",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Spacecraft"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "24886968": {
+      "title": "Multiple latent viruses reactivate in astronauts during Space Shuttle missions.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Antibodies, Viral",
+        "Astronauts",
+        "Circadian Rhythm",
+        "Cytomegalovirus",
+        "DNA, Viral",
+        "Female",
+        "Herpesviridae Infections",
+        "Herpesvirus 3, Human",
+        "Herpesvirus 4, Human",
+        "Humans",
+        "Hydrocortisone",
+        "Infant, Newborn",
+        "Male",
+        "Middle Aged",
+        "Saliva",
+        "Space Flight",
+        "Spacecraft",
+        "Stress, Physiological",
+        "Urine",
+        "Viral Load",
+        "Viremia",
+        "Virus Activation",
+        "Virus Latency"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "25127232": {
+      "title": "Prevalence of sleep deficiency and use of hypnotic drugs in astronauts before, during, and after spaceflight: an observational study.",
+      "publication_types": [
+        "Journal Article",
+        "Observational Study",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Actigraphy",
+        "Adult",
+        "Astronauts",
+        "Female",
+        "Humans",
+        "Hypnotics and Sedatives",
+        "Male",
+        "Middle Aged",
+        "Prevalence",
+        "Pyridines",
+        "Sleep",
+        "Sleep Deprivation",
+        "Space Flight",
+        "Time Factors",
+        "Zolpidem"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "25197887": {
+      "title": "Body mass changes during long-duration spaceflight.",
+      "publication_types": [
+        "Comparative Study",
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Body Mass Index",
+        "Energy Intake",
+        "Female",
+        "Humans",
+        "Male",
+        "Monitoring, Ambulatory",
+        "Risk",
+        "Space Flight",
+        "Weight Loss",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "25774397": {
+      "title": "Fluid shifts, vasodilatation and ambulatory blood pressure reduction during long duration spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Blood Pressure",
+        "Brachial Artery",
+        "Catecholamines",
+        "Fluid Shifts",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Space Flight",
+        "Stroke Volume",
+        "Time",
+        "Vasodilation",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "25991027": {
+      "title": "Measurements of jugular, portal, femoral, and calf vein cross-sectional area for the assessment of venous blood redistribution with long duration spaceflight (Vessel Imaging Experiment).",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Female",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Space Flight",
+        "Ultrasonography",
+        "Vasodilation",
+        "Veins",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "26456109": {
+      "title": "Bone metabolism and renal stone risk during International Space Station missions.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Alendronate",
+        "Astronauts",
+        "Biomarkers",
+        "Bone Density",
+        "Bone Density Conservation Agents",
+        "Bone Resorption",
+        "Bone and Bones",
+        "Exercise",
+        "Female",
+        "Humans",
+        "Kidney Calculi",
+        "Male",
+        "Middle Aged",
+        "Risk Factors",
+        "Space Flight",
+        "Spacecraft",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "26630196": {
+      "title": "Orthostatic Intolerance After ISS and Space Shuttle Missions.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Blood Pressure",
+        "Female",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Orthostatic Intolerance",
+        "Recovery of Function",
+        "Space Flight",
+        "Spacecraft",
+        "Stroke Volume",
+        "Tilt-Table Test",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "26670248": {
+      "title": "Magnesium and Space Flight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Bed Rest",
+        "Bone Density",
+        "Female",
+        "Humans",
+        "Linear Models",
+        "Magnesium",
+        "Male",
+        "Middle Aged",
+        "Nutritional Status",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "28050606": {
+      "title": "Long-term exposure to space's microgravity alters the time structure of heart rate variability of astronauts.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28242876": {
+      "title": "Rapid adaptation to microgravity in mammalian macrophage cells.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Animals",
+        "Cell Line",
+        "Macrophages, Alveolar",
+        "Rats",
+        "Respiratory Burst",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "28265249": {
+      "title": "Heart Rate Variability and Cardiac Vagal Tone in Psychophysiological Research - Recommendations for Experiment Planning, Data Analysis, and Data Reporting.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28539140": {
+      "title": "Hemoglobin Oxygen Saturation with Mild Hypoxia and Microgravity.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Hemoglobins",
+        "Humans",
+        "Hypoxia",
+        "Male",
+        "Oximetry",
+        "Oxygen",
+        "Partial Pressure",
+        "Pulmonary Gas Exchange",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "28611675": {
+      "title": "Cardiac Autonomic Responses during Exercise and Post-exercise Recovery Using Heart Rate Variability and Systolic Time Intervals-A Review.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28649633": {
+      "title": "Latent virus reactivation in astronauts on the international space station.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28725716": {
+      "title": "Alterations in adaptive immunity persist during long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28725719": {
+      "title": "Circadian misalignment affects sleep and medication use before and during spaceflight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "28904800": {
+      "title": "Alterations in hematologic indices during long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "29170507": {
+      "title": "Increased core body temperature in astronauts during long-duration space missions.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Astronauts",
+        "Body Temperature",
+        "Humans",
+        "Space Flight",
+        "Time Factors",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "29722847": {
+      "title": "Dietary acid load and bone turnover during long-duration spaceflight and bed rest.",
+      "publication_types": [
+        "Controlled Clinical Trial",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, Non-U.S. Gov't",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Acids",
+        "Adult",
+        "Bed Rest",
+        "Bone Density",
+        "Bone and Bones",
+        "Calcium",
+        "Collagen Type I",
+        "Diet",
+        "Dietary Proteins",
+        "Female",
+        "Food Analysis",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Peptides",
+        "Potassium",
+        "Space Flight"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "30873038": {
+      "title": "Stress Related Shift Toward Inflammaging in Cosmonauts After Long-Duration Space Flight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "30975860": {
+      "title": "The NASA Twins Study: A multidimensional analysis of a year-long human spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, Non-U.S. Gov't",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Twin Study"
+      ],
+      "mesh": [
+        "Adaptation, Physiological",
+        "Adaptive Immunity",
+        "Astronauts",
+        "Body Weight",
+        "Carotid Arteries",
+        "Carotid Intima-Media Thickness",
+        "DNA Damage",
+        "DNA Methylation",
+        "Gastrointestinal Microbiome",
+        "Genomic Instability",
+        "Humans",
+        "Male",
+        "Space Flight",
+        "Telomere Homeostasis",
+        "Time Factors",
+        "United States",
+        "United States National Aeronautics and Space Administration"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "31069253": {
+      "title": "Local sleep-like events during wakefulness and their relationship to decreased alertness in astronauts on ISS.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "31240239": {
+      "title": "Effects of acute exposures to carbon dioxide on decision making and cognition in astronaut-like subjects.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "31319685": {
+      "title": "Impact of Prolonged Spaceflight on Orthostatic Tolerance During Ambulation and Blood Pressure Profiles in Astronauts.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Astronauts",
+        "Blood Pressure",
+        "Blood Pressure Monitoring, Ambulatory",
+        "Female",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Orthostatic Intolerance",
+        "Space Flight"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "31633009": {
+      "title": "Inflight leg cuff test does not identify the risk for orthostatic hypotension after long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "31722025": {
+      "title": "Assessment of Jugular Venous Blood Flow Stasis and Thrombosis During Spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Aerospace Medicine",
+        "Astronauts",
+        "Blood Flow Velocity",
+        "Cohort Studies",
+        "Female",
+        "Humans",
+        "Jugular Veins",
+        "Male",
+        "Middle Aged",
+        "Prospective Studies",
+        "Retrospective Studies",
+        "Space Flight",
+        "Thrombosis",
+        "Ultrasonography",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "31751178": {
+      "title": "Salivary antimicrobial proteins and stress biomarkers are elevated during a 6-month mission to the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Antimicrobial Cationic Peptides",
+        "Astronauts",
+        "Biomarkers",
+        "Female",
+        "Herpesviridae Infections",
+        "Humans",
+        "Hydrocortisone",
+        "Immunoglobulin A, Secretory",
+        "Male",
+        "Middle Aged",
+        "Muramidase",
+        "Saliva",
+        "Space Flight",
+        "Stress, Physiological",
+        "Time Factors",
+        "Virus Activation",
+        "Virus Latency",
+        "Virus Shedding",
+        "alpha-Amylases",
+        "Cathelicidins"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "32525433": {
+      "title": "Arterial structure and function during and after long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Astronauts",
+        "Carotid Artery, Common",
+        "Carotid Intima-Media Thickness",
+        "Female",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Space Flight",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "3264495": {
+      "title": "Vitamin D metabolites and bioactive parathyroid hormone levels during Spacelab 2.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "24,25-Dihydroxyvitamin D 3",
+        "Calcifediol",
+        "Calcitriol",
+        "Dihydroxycholecalciferols",
+        "Homeostasis",
+        "Humans",
+        "Parathyroid Hormone",
+        "Reference Values",
+        "Space Flight",
+        "Vitamin D"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "33208926": {
+      "title": "Pre-symptomatic detection of COVID-19 from smartwatch data.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Asymptomatic Diseases",
+        "COVID-19",
+        "Female",
+        "Humans",
+        "Male",
+        "Monitoring, Physiologic",
+        "Pandemics",
+        "Retrospective Studies",
+        "SARS-CoV-2",
+        "Wearable Electronic Devices"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "33224136": {
+      "title": "Neutrophil-to-Lymphocyte Ratio: A Biomarker to Monitor the Immune Status of Astronauts.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Animals",
+        "Astronauts",
+        "Biomarkers",
+        "Blood Donors",
+        "Cells, Cultured",
+        "Cytokines",
+        "Female",
+        "Granulocytes",
+        "Health Status",
+        "Humans",
+        "Inflammation",
+        "Lymphocytes",
+        "Male",
+        "Mice",
+        "Mice, Inbred C57BL",
+        "Mice, Transgenic",
+        "Neutrophils",
+        "Oxidative Stress",
+        "Space Flight",
+        "Weightlessness Simulation"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "33754979": {
+      "title": "Comparison of Internal Jugular Vein Cross-Section Area During a Russian Tilt-Table Protocol and Microgravity.",
+      "publication_types": [
+        "Case Reports",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Head-Down Tilt",
+        "Humans",
+        "Jugular Veins",
+        "Male",
+        "Russia",
+        "Ultrasonography",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "33811556": {
+      "title": "Daily 30-min exposure to artificial gravity during 60&#xa0;days of bed rest does not maintain aerobic exercise capacity but mitigates some deteriorations of muscle function: results from the AGBRESA RCT.",
+      "publication_types": [
+        "Journal Article",
+        "Randomized Controlled Trial"
+      ],
+      "mesh": [
+        "Adult",
+        "Bed Rest",
+        "Ergometry",
+        "Exercise Tolerance",
+        "Female",
+        "Gravity, Altered",
+        "Head-Down Tilt",
+        "Humans",
+        "Male",
+        "Muscle Contraction",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "34845389": {
+      "title": "Real-time alerting system for COVID-19 and other stress events using wearable data.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Accelerometry",
+        "Adolescent",
+        "Adult",
+        "Aged",
+        "Aged, 80 and over",
+        "COVID-19",
+        "Carrier State",
+        "Early Diagnosis",
+        "Exercise",
+        "Female",
+        "Fitness Trackers",
+        "Heart Rate",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "SARS-CoV-2",
+        "Sleep",
+        "Wearable Electronic Devices",
+        "Young Adult"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35023565": {
+      "title": "Sleep deficiency in spaceflight is associated with degraded neurobehavioral functions and elevated stress in astronauts on six-month missions aboard the International Space Station.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Astronauts",
+        "Humans",
+        "Longitudinal Studies",
+        "Sleep",
+        "Space Flight",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35031790": {
+      "title": "Hemolysis contributes to anemia during long-duration space flight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Anemia",
+        "Astronauts",
+        "Biomarkers",
+        "Female",
+        "Hemolysis",
+        "Humans",
+        "Male",
+        "Middle Aged",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35298459": {
+      "title": "Recommendations for daytime, evening, and nighttime indoor light exposure to best support physiology, sleep, and wakefulness in healthy adults.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Circadian Rhythm",
+        "Cognition",
+        "Eye",
+        "Humans",
+        "Lighting",
+        "Sleep",
+        "Wakefulness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35389755": {
+      "title": "Albumin, oral contraceptives, and venous thromboembolism risk in astronauts.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Astronauts",
+        "Contraceptives, Oral, Combined",
+        "Female",
+        "Humans",
+        "Male",
+        "Risk Factors",
+        "Serum Albumin",
+        "Transferrins",
+        "Venous Thromboembolism"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35502899": {
+      "title": "Surveillance for jugular venous thrombosis in astronauts.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Astronauts",
+        "Humans",
+        "Jugular Veins",
+        "Space Flight",
+        "Thrombosis",
+        "Venous Thrombosis",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35773291": {
+      "title": "Dynamic ensemble prediction of cognitive performance in spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "mesh": [
+        "Astronauts",
+        "Cognition",
+        "Humans",
+        "Psychomotor Performance",
+        "Sleep Deprivation",
+        "Space Flight",
+        "Wakefulness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "35831420": {
+      "title": "Unconscious mind activates central cardiovascular network and promotes adaptation to microgravity possibly anti-aging during 1-year-long spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Aging",
+        "Astronauts",
+        "Heart Rate",
+        "Humans",
+        "Space Flight",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "36160844": {
+      "title": "Assessing the effects of artificial gravity in an analog of long-duration spaceflight: The protocol and implementation of the AGBRESA bed rest study.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "36316345": {
+      "title": "LifeSnaps, a 4-month multi-modal dataset capturing unobtrusive snapshots of our lives in the wild.",
+      "publication_types": [
+        "Dataset",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Humans",
+        "Ecological Momentary Assessment",
+        "Exercise",
+        "Mental Health",
+        "Sleep",
+        "Surveys and Questionnaires"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "36319708": {
+      "title": "Longitudinal metabolomic profiles reveal sex-specific adjustments to long-duration spaceflight and return to Earth.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Male",
+        "Female",
+        "Humans",
+        "Space Flight",
+        "Astronauts",
+        "Time Factors",
+        "Biomarkers",
+        "Metabolomics"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "37520819": {
+      "title": "Time-resolved molecular measurements reveal changes in astronauts during spaceflight.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "38238348": {
+      "title": "The effect of space travel on human reproductive health: a systematic review.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "38357726": {
+      "title": "Development of optic disc edema during 30 days of hypercapnic head-down tilt bed rest is associated with short sleep duration and blunted temperature amplitude.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Female",
+        "Humans",
+        "Papilledema",
+        "Bed Rest",
+        "Sleep Duration",
+        "Carbon Dioxide",
+        "Head-Down Tilt",
+        "Temperature",
+        "Space Flight",
+        "Hypercapnia",
+        "Sleep"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "38862026": {
+      "title": "Molecular and physiological changes in the SpaceX Inspiration4 civilian crew.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Intramural",
+        "Research Support, N.I.H., Extramural",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Female",
+        "Humans",
+        "Male",
+        "Astronauts",
+        "Cognition",
+        "Space Flight",
+        "Stress, Physiological",
+        "Time Factors",
+        "Weightlessness",
+        "Monitoring, Physiologic",
+        "Multiomics",
+        "Adaptation, Physiological",
+        "Databases as Topic"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "38862028": {
+      "title": "The Space Omics and Medical Atlas (SOMA) and international astronaut biobank.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "mesh": [
+        "Animals",
+        "Female",
+        "Humans",
+        "Male",
+        "Mice",
+        "Aerospace Medicine",
+        "Astronauts",
+        "Atlases as Topic",
+        "Biological Specimen Banks",
+        "Cytokines",
+        "Databases, Factual",
+        "Datasets as Topic",
+        "Epigenomics",
+        "Gene Expression Profiling",
+        "Genomics",
+        "Internationality",
+        "Metabolomics",
+        "Microbiota",
+        "Multiomics",
+        "Organ Specificity",
+        "Precision Medicine",
+        "Proteomics",
+        "Space Flight",
+        "Telomere",
+        "Twins"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "39523514": {
+      "title": "Changes to human sleep architecture during long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "mesh": [
+        "Humans",
+        "Space Flight",
+        "Male",
+        "Adult",
+        "Sleep",
+        "Wakefulness",
+        "Female",
+        "Polysomnography",
+        "Time Factors",
+        "Sleep, REM",
+        "Middle Aged",
+        "Astronauts",
+        "Weightlessness",
+        "Sleep Stages"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "39633651": {
+      "title": "Cognitive performance in ISS astronauts on 6-month low earth orbit missions.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "41224762": {
+      "title": "Spaceflight Standard Measures is a multidisciplinary study that systematically monitors risks to astronaut health and performance.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "41245329": {
+      "title": "Food acceptability and selection by astronauts on International Space Station missions informs strategies and risks for deep space exploration.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "41461188": {
+      "title": "Environmental Carbon Dioxide and Temperature Effects on Sleep Quality During Space Analogs.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Humans",
+        "Carbon Dioxide",
+        "Temperature",
+        "Sleep Quality",
+        "Space Flight",
+        "Male",
+        "Adult",
+        "Actigraphy",
+        "Space Simulation",
+        "Astronauts",
+        "Female",
+        "Middle Aged",
+        "Hypercapnia",
+        "Sleep"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "41565403": {
+      "title": "Feasibility of portable Raman SERS for blood biomarker monitoring in spaceflight conditions.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Spectrum Analysis, Raman",
+        "Space Flight",
+        "Biomarkers",
+        "Gold",
+        "Humans",
+        "Metal Nanoparticles",
+        "Feasibility Studies"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "42161258": {
+      "title": "Ultrasound-Based Hepatorenal Index (HRI): Measurement Principles, Normal Values, and Clinical Application.",
+      "publication_types": [
+        "Journal Article",
+        "Review"
+      ],
+      "mesh": [
+        "Humans",
+        "Ultrasonography",
+        "Reference Values",
+        "Elasticity Imaging Techniques",
+        "Sensitivity and Specificity",
+        "Reproducibility of Results",
+        "Image Interpretation, Computer-Assisted",
+        "Kidney",
+        "Liver",
+        "Liver Diseases"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "42337157": {
+      "title": "Space radiation and microgravity as models of accelerated aging: modulation of hepatic miRNA-TGF-&#x3b2; networks associated with senescence and fibrosis.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [],
+      "retrieved": "2026-10-31"
+    },
+    "42716986": {
+      "title": "Physiological adaptation of the jugular venous pulse during long-duration spaceflight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Jugular Veins",
+        "Space Flight",
+        "Humans",
+        "Adaptation, Physiological",
+        "Weightlessness",
+        "Astronauts",
+        "Central Venous Pressure",
+        "Ultrasonography",
+        "Electrocardiography"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "8032722": {
+      "title": "[Effects of a long-term space flight on human biochemical status].",
+      "publication_types": [
+        "English Abstract",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Blood",
+        "Humans",
+        "Space Flight",
+        "Time Factors"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "8567575": {
+      "title": "Pulmonary gas exchange and its determinants during sustained microgravity on Spacelabs SLS-1 and SLS-2.",
+      "publication_types": [
+        "Clinical Trial",
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Carbon Dioxide",
+        "Female",
+        "Forced Expiratory Volume",
+        "Humans",
+        "Male",
+        "Mass Spectrometry",
+        "Middle Aged",
+        "Oxygen Consumption",
+        "Pulmonary Gas Exchange",
+        "Respiratory Dead Space",
+        "Respiratory Function Tests",
+        "Respiratory Mechanics",
+        "Space Flight",
+        "Vital Capacity",
+        "Weightlessness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "8598068": {
+      "title": "Heart rate variability: standards of measurement, physiological interpretation and clinical use. Task Force of the European Society of Cardiology and the North American Society of Pacing and Electrophysiology.",
+      "publication_types": [
+        "Guideline",
+        "Journal Article",
+        "Practice Guideline"
+      ],
+      "mesh": [
+        "Diabetic Neuropathies",
+        "Electrocardiography",
+        "Heart Rate",
+        "Humans",
+        "Methods",
+        "Myocardial Infarction",
+        "Reproducibility of Results"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "9125693": {
+      "title": "The alteration of human sleep and circadian rhythms during spaceflight.",
+      "publication_types": [
+        "Comparative Study",
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Circadian Rhythm",
+        "Humans",
+        "Middle Aged",
+        "Sleep Stages",
+        "Sleep, REM",
+        "Space Flight",
+        "Wakefulness"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "9491251": {
+      "title": "The effect of microgravity on testicular androgen secretion.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Humans",
+        "Hypogonadism",
+        "Hypogravity",
+        "Luteinizing Hormone",
+        "Male",
+        "Space Flight",
+        "Stress, Psychological",
+        "Testis",
+        "Testosterone",
+        "Water-Electrolyte Balance"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "9191561": {
+      "title": "Assessment of a portable clinical blood analyzer during space flight.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Aerospace Medicine",
+        "Blood Chemical Analysis",
+        "Blood Glucose",
+        "Blood Specimen Collection",
+        "Calcium",
+        "Evaluation Studies as Topic",
+        "Female",
+        "Hematocrit",
+        "Humans",
+        "Hydrogen-Ion Concentration",
+        "Male",
+        "Potassium",
+        "Reproducibility of Results",
+        "Sodium",
+        "Space Flight"
+      ],
+      "retrieved": "2026-11-01"
+    },
+    "9591620": {
+      "title": "Joint NASA-ESA-DARA Study. Part three: characterization of sleep under ambient CO2-levels of 0.7% and 1.2%.",
+      "publication_types": [
+        "Journal Article"
+      ],
+      "mesh": [
+        "Adult",
+        "Aerospace Medicine",
+        "Astronauts",
+        "Carbon Dioxide",
+        "Humans",
+        "Male",
+        "Sleep Stages"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "9591623": {
+      "title": "Joint NASA-ESA-DARA Study. Part three: effects of chronically elevated CO2 on mental performance during 26 days of confinement.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "mesh": [
+        "Adult",
+        "Aerospace Medicine",
+        "Carbon Dioxide",
+        "Cognition",
+        "Humans",
+        "Male",
+        "Motor Skills",
+        "Spacecraft",
+        "Visual Perception"
+      ],
+      "retrieved": "2026-10-31"
+    },
+    "9615283": {
+      "title": "Sleep and circadian rhythms in four orbiting astronauts.",
+      "publication_types": [
+        "Journal Article",
+        "Research Support, U.S. Gov't, Non-P.H.S.",
+        "Research Support, U.S. Gov't, P.H.S."
+      ],
+      "mesh": [
+        "Adult",
+        "Affect",
+        "Astronauts",
+        "Biomarkers",
+        "Body Temperature",
+        "Circadian Rhythm",
+        "Humans",
+        "Hydrocortisone",
+        "Light",
+        "Male",
+        "Melatonin",
+        "Middle Aged",
+        "Movement",
+        "Sleep",
+        "Sleep Stages",
+        "Sleep, REM",
+        "Space Flight",
+        "Surveys and Questionnaires",
+        "Weightlessness",
+        "Work Schedule Tolerance"
+      ],
+      "retrieved": "2026-10-31"
+    }
+  }
+}

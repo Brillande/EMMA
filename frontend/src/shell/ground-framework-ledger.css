@@ -1,0 +1,1466 @@
+/*
+ * Tierra, «Marco y fuentes» y «Registro y documentos», bajo la concha de la maqueta: el marco de NASA
+ * (`[data-ui="framework"]`, con los riesgos y la credibilidad dentro), los perfiles de misión (que
+ * comparten la pestaña, la tabla y la lista de frases leídas), el coste de medir (`.contents`,
+ * `.drivers`), los bancos de prueba (`.ridge-matrix`), los conjuntos de datos, las instalaciones, las
+ * personas, las fuentes del contexto, la documentación (`.report-text`), la auditoría (`.hash-wrap`) y
+ * la copia de Polaris (`.polaris-table`). Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que se vio (capturas del 2026-11-07, `ground-05-framework` y `ground-06-ledger` con la concha
+ * nueva, 1672 × 941; «Marco y fuentes» mide decenas de miles de píxeles, así que se miró por trozos,
+ * con un banco, un conjunto, una instalación, una organización, una fuente, un riesgo y una capa
+ * abiertos, y los pasajes de la búsqueda en la documentación con marcado de muestra inyectado, con las
+ * clases de `DocsPanel.tsx`): los paneles ya eran tarjetas de la maqueta y el mobiliario común
+ * (`furniture.css`) ya vestía los títulos de panel, los mandos de exportar y filtrar, la entrada de
+ * buscar, la fila de cada plegable, las cabeceras de las tablas y las listas de referencias; pero por
+ * dentro seguía la consola clásica, y estas dos pestañas son casi todo texto de inventario. Cada
+ * apartado (huecos del MDA, IMM, lo leído, RIDGE, riesgos, hipótesis, escalera, catálogos…) era un
+ * título pegado al párrafo anterior, sin nada que dijera dónde acaba uno y empieza el siguiente; cada
+ * lista de definiciones (`.kv`: el estado de cada hueco, cada hipótesis, cada banco, cada conjunto,
+ * el ancla del registro, las cifras de la copia de Polaris) era dos columnas de texto a pelo, y
+ * cuando una definición lleva dentro otra lista (los bancos y la escalera de validación), las dos se
+ * confundían; las siete hipótesis y los bloques de lo leído corrían seguidos, uno tras otro; la
+ * matriz de riesgos, la de peligros por banco, la escalera de hitos, los asientos del registro y las
+ * herramientas de Polaris flotaban sin marco bajo su cabecera; un plegable abierto (un riesgo del
+ * HRP, HERA, OSD-569, Columbus, una organización, una fuente) dejaba caer su ficha entera debajo de
+ * la fila sin nada que la cerrase; las clases de medida llevaban la viñeta del navegador; y el texto
+ * de un pasaje de la documentación salía en monoespaciada sin caja. Al lado de «Inicio» parecían dos
+ * interfaces.
+ *
+ * Por qué así: cada pieza toma la forma que la maqueta da a la suya. Los apartados, `.ref-h3` sobre su
+ * filete; cada lista de definiciones, la tira de datos de la ruta (`.ref-stats`: el «marco», filete
+ * atenuado, 8 px, azul marino) con una clave por fila, y la lista anidada en una definición, colgada
+ * de un filete como las referencias (`.evidence` en el mobiliario), para que no haya marco dentro de
+ * marco; cada hipótesis, cada bloque de lo leído, cada validación y cada regla leída del coste, una
+ * tarjeta (`.ref-card`) cuya primera línea es su cabecera; las tablas, dentro del marco, como la de
+ * calidad del dato en `data.css` (el mismo dibujo: líneas solo entre filas; aquí van por arriba de
+ * cada fila y no por abajo porque los `div.contents` rompen `:last-of-type`); la leyenda de la matriz
+ * RIDGE, en el marco, como la leyenda de una gráfica en «Tendencias»; las clases de medida y las
+ * frases leídas de un perfil, filas con filete y punto, como «Próximas acciones» (`.ref-next li`); el
+ * plegable de una ficha, cerrado, sigue siendo la fila de acceso del mobiliario y, abierto, pasa a
+ * ser una tarjeta cuyo título es esa fila, como el informe abierto en `imaging.css`; la búsqueda, en
+ * la caja interior de un formulario, y el pasaje leído, en el marco.
+ *
+ * Lo que no se toca: el color de toda marca (`.mark.c-*`, tabla F.5-1): el cian de lo sin clasificar,
+ * de lo sin verificar, de lo sin leer y de lo que a la copia le falta; el gris de lo no disponible; el
+ * amarillo de una población que no son solo personas; el verde de «la cadena verifica» y el rojo si un
+ * asiento falla (veredicto de integridad); la cursiva y el cian del dato caducado; el anillo con punto
+ * del filtro elegido (`Chosen`). Los hashes del registro siguen enteros, monoespaciados y copiables: la
+ * raíz de Merkle se parte donde ya lo hacía (`.hash-wrap`, `styles.css`) y la tabla sigue
+ * desplazándose dentro de su caja. Los mandos, las entradas, los plegables, las insignias, las
+ * cabeceras de tabla y las listas de referencias son del mobiliario: aquí solo la caja que los rodea;
+ * todo mando y entrada conserva su alto táctil (`styles.css` lo fija por `[id^="ground-panel-"]`, y
+ * el mobiliario también). El marco va alrededor de la pieza y nunca detrás de una insignia.
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha va en
+ * `:where()`, que no cuenta, y cada regla se acota a sus paneles porque `.kv`, `.quality-table`,
+ * `.drivers`, `.inline-form`, `.report-text` y los plegables aparecen en otras secciones con otra
+ * dueña (`data.css`, `imaging.css`, `routines.css`, `mission.css`). La lista de dueños es una sola, la
+ * de los once paneles de las dos pestañas, siempre entera: un panel sin `h3` o sin `.kv` no casa y ya
+ * está, y así ninguna copia de la lista puede quedarse corta. Ninguna de las piezas de aquí tenía
+ * borde en la hoja clásica: todas lo estrenan con el atajo. En baja visión y alto contraste se
+ * engrosan a 2 px los marcos (la caja del `.kv`, la de cada tabla, la tarjeta, la caja del
+ * formulario, la del pasaje), como hace `styles.css` con el panel y `data.css` con los suyos; los
+ * filetes de dentro (entre filas, bajo un título) son separadores dentro del marco y se quedan como
+ * están, también como allí. La única regla que tiene que ganar al mobiliario es la del plegable
+ * abierto (su fila pasa de caja a título): lleva `main`, el panel y el plegable, por encima de la
+ * del mobiliario. Los tres patrones («marco», «filas con filete», «colgado de un filete») y la receta
+ * de la tarjeta se escriben una vez cada uno, con la lista de sus dueños; juntarlos con los de las
+ * otras hojas en `furniture.css` es decisión de la fusión.
+ */
+
+/* ---- Apartados: `.ref-h3` sobre su filete; los subapartados, un punto más pequeños ---- */
+
+/* Cada `h3` abre un apartado del inventario (`PanelTitle as="h3"`, con `.section-gap` o sin él);
+   aquí gana un margen que lo despega del párrafo anterior y el filete de la tarjeta debajo. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  h3 {
+  margin: 1rem 0 0.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1rem;
+}
+
+/* El `h4` (un bloque de lo leído, el perfil de misión dentro del coste, el esquema de niveles) no
+   lleva filete: la jerarquía se ve en que solo el apartado lo tiene. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  h4 {
+  margin: 0.8rem 0 0.3rem;
+  font-size: 0.95rem;
+}
+
+/* El título de «Coste de medir» va dentro de la fila de su plegable (`h2.inline`): el mismo cuerpo
+   que los demás títulos de panel del mobiliario, no el `h2` clásico. */
+:where(.app[data-look="reference"]) .panel[data-ui="measurement-cost"] > summary > h2 {
+  font-size: 1.1rem;
+}
+
+/* Las frases sueltas de un panel, de un apartado, de una ficha o de un plegable respiran como en una
+   tarjeta de «Inicio» (`.ref-card p`); `styles.css` las deja a margen cero. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  :is(article, section, details, [role="group"]) > p,
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  > p {
+  margin: 0.25rem 0;
+}
+
+/* ---- Marco: la tira de datos de la ruta para cada lista de definiciones, una clave por fila ---- */
+
+/* Las definiciones de estas dos pestañas: los huecos del MDA, el RIDGE de cada dominio, cada
+   hipótesis, la regla de detección y cada riesgo del HRP, cada capa de credibilidad, las dimensiones
+   del coste y las listas del equipo, cada validación, la escalera y cada banco, cada conjunto y
+   catálogo y CIPHER, cada eslabón de Columbus, cada fuente, el ancla del registro firmado y las cifras
+   de la copia de Polaris. El hueco entre columnas va como relleno de la clave y no como `gap`, para
+   que el filete de cada fila sea una sola línea de lado a lado. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  .kv {
+  gap: 0;
+  margin: 0.35rem 0;
+  padding: 0 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* Las filas: cada clave y su definición, también las que un `div.contents` agrupa (el coste, las
+   fases de un conjunto, los eslabones de una validación), que son hijas de la rejilla igualmente. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  :is(.kv > dt, .kv > dd, .kv > .contents > dt, .kv > .contents > dd) {
+  padding: 0.35rem 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  :is(.kv > dt, .kv > .contents > dt) {
+  padding-right: 1rem;
+}
+
+/* El filete separa las filas por arriba, de la segunda en adelante (`* +`: la que tiene otra
+   delante), y no por abajo salvo la última como en `data.css`: con los `div.contents` por medio,
+   `:last-of-type` ya no señala la última fila —cada `div` tiene su propia última `dd`—. Una fila
+   empieza en su `dt` (o en su `div.contents`); su `dd` lleva la misma línea para que cruce las dos
+   columnas. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"],
+    .panel[data-ui="mission-profiles"],
+    .panel[data-ui="measurement-cost"],
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"],
+    .panel[data-ui="docs"],
+    .panel[data-ui="audit"],
+    .panel[data-ui="polaris"]
+  )
+  :is(.kv > * + dt, .kv > * + dt + dd, .kv > * + .contents > :is(dt, dd)) {
+  border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+/* En pantalla estrecha `styles.css` pone la clave encima de su definición (mismo punto de corte):
+   entonces la línea va solo sobre la clave, que abre la fila. Los selectores repiten los de arriba
+   (solo sus `dd`) para empatar en especificidad y ganar por orden. */
+@media (max-width: 640px) {
+  :where(.app[data-look="reference"])
+    :is(
+      .panel[data-ui="framework"],
+      .panel[data-ui="mission-profiles"],
+      .panel[data-ui="measurement-cost"],
+      .panel[data-ui="testbeds"],
+      .panel[data-ui="datasets"],
+      .panel[data-ui="facilities"],
+      .panel[data-ui="people"],
+      .panel[data-ui="context-sources"],
+      .panel[data-ui="docs"],
+      .panel[data-ui="audit"],
+      .panel[data-ui="polaris"]
+    )
+    :is(.kv > * + dt + dd, .kv > * + .contents > dd) {
+    border-top: 0;
+  }
+}
+
+/* ---- Colgado de un filete: la lista de definiciones dentro de una definición ---- */
+
+/* Lo que cada validación tiene de EMMA («No muestra», «Cifras en», «Ficha»), cada peldaño de la
+   escalera («Fortaleza», «Limitación», «Uso», «Bancos») y el hueco de un eslabón de Columbus
+   («Falta», «Buscado en»): colgados de un filete bajo su clave, sin marco dentro del marco ni filetes
+   entre sus filas, que son pocas y cortas. La lista anidada es siempre hija de una `dd` de la lista
+   de fuera (directa, en Columbus; dentro de un `div.contents`, en las validaciones y la escalera), y
+   ese paso es lo que da a estas reglas más especificidad que a las del marco y de las filas de
+   arriba, que también le casan; ninguna anidada usa `div.contents` por dentro. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="testbeds"], .panel[data-ui="facilities"]) :is(.kv > dd, .kv > .contents > dd) > .kv {
+  margin: 0.3rem 0 0.1rem 0.2rem;
+  padding: 0 0 0 0.9rem;
+  border: 0;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  border-radius: 0;
+  background: none;
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="testbeds"], .panel[data-ui="facilities"]) :is(.kv > dd, .kv > .contents > dd) > .kv > :is(dt, dd) {
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+  border-top: 0;
+}
+
+/* Las fichas que citan a una persona, bajo su nombre (lista sin clase dentro de `.evidence`): colgadas
+   del mismo filete que las referencias del mobiliario, con la viñeta en el verde azulado de la maqueta
+   (es signo de lista, no color con sentido). El margen de arriba lo pone el marcado (`.mt-0`) y aquí
+   no se toca. */
+:where(.app[data-look="reference"]) .panel[data-ui="people"] .evidence > li > ul {
+  margin-left: 0.2rem;
+  margin-bottom: 0.25rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="people"] .evidence > li > ul > li::marker {
+  color: var(--ref-teal);
+}
+
+/* El dibujo de una clave que es una marca sin color (el peligro RIDGE de cada dominio, el entorno de
+   evidencia de una validación): en el verde azulado, como el de las demás claves en el mobiliario.
+   Con clase `c-*`, color con sentido: se deja. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="framework"], .panel[data-ui="testbeds"]) .kv > dt > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* ---- Marco: las tablas y la leyenda de la matriz, dentro de él ---- */
+
+/* La matriz de riesgos, la escalera de hitos, los asientos del registro, las herramientas de Polaris
+   (que además se desplaza en vertical dentro de su caja), los perfiles lado a lado y la matriz de
+   peligros por banco: todas siguen desplazándose en horizontal dentro de su caja (`styles.css`). Un
+   poco de aire alrededor: el mobiliario redondea las esquinas de la cabecera y, pegada al marco,
+   quedaba una cuña sin fondo entre las dos curvas. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"] .quality-table,
+    .panel[data-ui="mission-profiles"] .quality-table,
+    .panel[data-ui="datasets"] .quality-table,
+    .panel[data-ui="audit"] .quality-table,
+    .panel[data-ui="polaris"] .quality-table,
+    .panel[data-ui="testbeds"] .ridge-matrix
+  ) {
+  padding: 0.3rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* La leyenda de la matriz RIDGE (los cuatro estados con su marca) es la clave de lo que la tabla
+   enseña: en el marco, como la leyenda de una gráfica en «Tendencias». El color de cada marca no
+   cambia. */
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] p[role="note"] {
+  margin: 0.4rem 0;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* ---- Tarjeta: cada hipótesis, bloque leído, validación y regla leída, y cada ficha abierta ---- */
+
+/* La receta de la tarjeta de la maqueta (`.ref-card`: borde `--ref-edge`, 9 px, degradado y
+   resplandor), una sola vez, para sus dos dueños de aquí: los `article` del marco (las siete
+   hipótesis y los bloques de lo leído en las fuentes), de los bancos (las dos validaciones) y del
+   coste (las reglas que se apoyan en una fuente); y los plegables de ficha abiertos (un riesgo del
+   HRP, una capa de credibilidad, un banco, un conjunto, un catálogo, una instalación, una
+   organización —y las fichas sin ninguna— y una fuente del contexto). La credibilidad es un apartado
+   con su título (`article.section-gap`), no una ficha, y queda fuera; CIPHER, en los conjuntos, es
+   otro apartado y no está en esta lista; los plegables de recuento o de lista (la regla de
+   detección, los riesgos del HRP, los once factores, los ejes, las personas de las fichas, punto por
+   punto) siguen como los deja el mobiliario. */
+:where(.app[data-look="reference"])
+  :is(
+    :is(.panel[data-ui="framework"], .panel[data-ui="measurement-cost"], .panel[data-ui="testbeds"]) article:not(.section-gap),
+    .panel[data-ui]
+      details[open]:is(
+        [data-ui="hrp-risk"],
+        [data-ui="credibility-layer"],
+        [data-ui="testbed"],
+        [data-ui="dataset"],
+        [data-ui="dataset-catalog"],
+        [data-ui="facility"],
+        [data-ui="organization"],
+        [data-ui="people-no-organization"],
+        [data-ui="context-source"]
+      )
+  ) {
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* El `article`: su primera línea —el enunciado de la hipótesis, el título del bloque, el de la
+   validación, la base de la regla— es la cabecera, sobre un filete. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="framework"], .panel[data-ui="measurement-cost"], .panel[data-ui="testbeds"]) article:not(.section-gap) {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.8rem 0.7rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="framework"], .panel[data-ui="measurement-cost"], .panel[data-ui="testbeds"]) article:not(.section-gap) > :first-child {
+  margin-top: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+/* El plegable de ficha: cerrado, su ficha entera iba suelta bajo la fila; abierto, como el informe
+   abierto de `imaging.css`, la fila pasa a ser el título de la tarjeta sobre un filete, con el peso
+   de un título, y la punta de flecha del mobiliario sigue en su sitio para cerrarla. El selector del
+   resumen lleva `main`, el panel y el plegable para pasar de la especificidad del mobiliario
+   (`main details[open] > summary`). */
+:where(.app[data-look="reference"])
+  .panel[data-ui]
+  details[open]:is(
+    [data-ui="hrp-risk"],
+    [data-ui="credibility-layer"],
+    [data-ui="testbed"],
+    [data-ui="dataset"],
+    [data-ui="dataset-catalog"],
+    [data-ui="facility"],
+    [data-ui="organization"],
+    [data-ui="people-no-organization"],
+    [data-ui="context-source"]
+  ) {
+  margin: 0.4rem 0;
+  padding: 0.3rem 0.75rem 0.75rem;
+}
+
+:where(.app[data-look="reference"])
+  main
+  .panel[data-ui]
+  details[open]:is(
+    [data-ui="hrp-risk"],
+    [data-ui="credibility-layer"],
+    [data-ui="testbed"],
+    [data-ui="dataset"],
+    [data-ui="dataset-catalog"],
+    [data-ui="facility"],
+    [data-ui="organization"],
+    [data-ui="people-no-organization"],
+    [data-ui="context-source"]
+  )
+  > summary {
+  margin: 0 0 0.6rem;
+  padding-left: 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  border-radius: 0;
+  background: none;
+  color: var(--c-text);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"])
+  main
+  .panel[data-ui]
+  details[open]:is(
+    [data-ui="hrp-risk"],
+    [data-ui="credibility-layer"],
+    [data-ui="testbed"],
+    [data-ui="dataset"],
+    [data-ui="dataset-catalog"],
+    [data-ui="facility"],
+    [data-ui="organization"],
+    [data-ui="people-no-organization"],
+    [data-ui="context-source"]
+  )
+  > summary:hover {
+  background: none;
+}
+
+:where(.app[data-look="reference"])
+  main
+  .panel[data-ui]
+  details[open]:is(
+    [data-ui="hrp-risk"],
+    [data-ui="credibility-layer"],
+    [data-ui="testbed"],
+    [data-ui="dataset"],
+    [data-ui="dataset-catalog"],
+    [data-ui="facility"],
+    [data-ui="organization"],
+    [data-ui="people-no-organization"],
+    [data-ui="context-source"]
+  )
+  > summary::after {
+  right: 0.3rem;
+}
+
+/* ---- Filas con filete: las clases de medida y las frases de un perfil, como «Próximas acciones» ---- */
+
+/* Cada indicador de una clase (continuo y pasivo, con operador, con muestra…), cada aspecto de un
+   perfil en «Hoy se sabe después» y cada frase leída de un perfil en la tabla de perfiles: una fila
+   con su raya y el punto del color del marco (adorno, ni casilla ni señal), en vez de la viñeta del
+   navegador. Las dimensiones de cada indicador, debajo, siguen siendo las referencias del
+   mobiliario. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="measurement-cost"], .panel[data-ui="mission-profiles"]) .drivers {
+  list-style: none;
+  margin: 0.45rem 0;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="measurement-cost"], .panel[data-ui="mission-profiles"]) .drivers > li {
+  position: relative;
+  padding: 0.35rem 0 0.35rem 1.05rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="measurement-cost"], .panel[data-ui="mission-profiles"]) .drivers > li:last-child {
+  border-bottom: 0;
+}
+
+/* El punto va a la altura de la primera línea aunque la fila se parta (`lh`). Su contenido es un
+   espacio de ancho cero, no vacío: WebKit deja de anunciar como lista un `ul` sin viñetas salvo que
+   sus filas tengan algún marcador, y un `::before` con contenido cuenta como tal. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="measurement-cost"], .panel[data-ui="mission-profiles"]) .drivers > li::before {
+  content: "\200B";
+  position: absolute;
+  left: 0;
+  top: calc(0.35rem + 0.5lh - 0.225rem);
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ref-teal);
+  box-shadow: 0 0 4px var(--ref-glow);
+}
+
+/* ---- Documentación y copia de Polaris: la búsqueda en su caja; el pasaje leído, en el marco ---- */
+
+/* La entrada y el mando de buscar en la documentación, y la de filtrar herramientas con su recuento:
+   la caja interior de un formulario de la maqueta (la de `.silence-form` en el mobiliario). La
+   entrada y el mando son del mobiliario. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="docs"], .panel[data-ui="polaris"]) .inline-form {
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 85%, transparent);
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* Cada pasaje, tal cual lo da el backend (`pre-wrap` y monoespaciada siguen puestos por
+   `styles.css`), en el marco, separado de su título y de su fichero. */
+:where(.app[data-look="reference"]) .panel[data-ui="docs"] .report-text {
+  margin: 0.4rem 0 0.3rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 55%, transparent);
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los marcos que nacen en esta hoja se engrosan a 2 px como el del panel en `styles.css`, y en baja
+   visión pasan al color del texto secundario (ver la cabecera: los filetes de dentro del marco no).
+   Van al final para ganar por orden con la misma especificidad que las reglas de arriba; la del
+   plegable abierto lleva aquí el mismo selector que allí. La lista anidada (la `.kv` de una `dd`)
+   solo tiene filete izquierdo y es el que se engrosa. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel[data-ui="framework"] :is(.kv, .quality-table, article:not(.section-gap)),
+    .panel[data-ui="mission-profiles"] .quality-table,
+    .panel[data-ui="measurement-cost"] :is(.kv, article),
+    .panel[data-ui="testbeds"] :is(.kv, .ridge-matrix, p[role="note"], article),
+    .panel[data-ui="datasets"] :is(.kv, .quality-table),
+    .panel[data-ui="facilities"] .kv,
+    .panel[data-ui="context-sources"] .kv,
+    .panel[data-ui="docs"] :is(.inline-form, .report-text),
+    .panel[data-ui="audit"] :is(.kv, .quality-table),
+    .panel[data-ui="polaris"] :is(.kv, .quality-table, .inline-form),
+    .panel[data-ui]
+      details[open]:is(
+        [data-ui="hrp-risk"],
+        [data-ui="credibility-layer"],
+        [data-ui="testbed"],
+        [data-ui="dataset"],
+        [data-ui="dataset-catalog"],
+        [data-ui="facility"],
+        [data-ui="organization"],
+        [data-ui="people-no-organization"],
+        [data-ui="context-source"]
+      )
+  ) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel[data-ui="framework"] :is(.kv, .quality-table, article:not(.section-gap)),
+    .panel[data-ui="mission-profiles"] .quality-table,
+    .panel[data-ui="measurement-cost"] :is(.kv, article),
+    .panel[data-ui="testbeds"] :is(.kv, .ridge-matrix, p[role="note"], article),
+    .panel[data-ui="datasets"] :is(.kv, .quality-table),
+    .panel[data-ui="facilities"] .kv,
+    .panel[data-ui="context-sources"] .kv,
+    .panel[data-ui="docs"] :is(.inline-form, .report-text),
+    .panel[data-ui="audit"] :is(.kv, .quality-table),
+    .panel[data-ui="polaris"] :is(.kv, .quality-table, .inline-form),
+    .panel[data-ui]
+      details[open]:is(
+        [data-ui="hrp-risk"],
+        [data-ui="credibility-layer"],
+        [data-ui="testbed"],
+        [data-ui="dataset"],
+        [data-ui="dataset-catalog"],
+        [data-ui="facility"],
+        [data-ui="organization"],
+        [data-ui="people-no-organization"],
+        [data-ui="context-source"]
+      )
+  ) {
+  border-color: var(--c-text-secondary);
+}
+
+/*
+ * ---- El tablero (decisión del usuario, 2026-11-07): la rejilla de «Inicio» y sus piezas ----
+ *
+ * Lo que se vio (capturas a 1672 y 1300 px): las dos pestañas eran una columna de paneles a todo el
+ * ancho; en «Marco y fuentes», «Coste de medir» es un plegable cerrado de una fila (72 px) junto a
+ * bancos (4 000 px) y conjuntos (5 000 px); las instalaciones, dos filas; y «Personas y
+ * organizaciones», ciento y pico organizaciones, una por fila a todo el ancho (5 700 px). Emparejar
+ * paneles de alturas tan distintas deja tarjetas casi vacías. Se probó bancos y conjuntos, los dos
+ * largos, a media anchura uno junto a otro: cada uno pasaba de 4 000-5 000 px a 9 500 (sus listas de
+ * definiciones y la escalera de hitos, partidas en media columna), sin ahorrar altura y peor de leer.
+ * Así que en «Marco y fuentes» todo va a todo el ancho, lo largo abajo como en «Inicio», y el tablero
+ * está dentro de cada tarjeta: sus piezas arriba y las filas de plegables de instalaciones, personas
+ * y fuentes en baldosas (varias por fila, como las rutas de estudios en `imaging.css`; un plegable
+ * abierto ocupa la fila entera), que bajan «Personas y organizaciones» de 5 700 a 3 100 px. En
+ * «Registro y documentos», la documentación (cuatro columnas) junto al registro firmado (ocho: a
+ * siete la tabla de asientos partía el tipo en dos líneas); debajo, lo que se comparte y la copia
+ * de Polaris, a todo el ancho (solo colocadas: sus paneles son de otras hojas). Las piezas (la cifra, el medidor, las píldoras) van con la receta de las otras
+ * secciones: la ficha y, a su lado, las píldoras; el filete de cada píldora toma el color real de
+ * la marca que lleva (ninguno nuevo; los paneles de Tierra no llevan estilo en línea, así que va por
+ * `:has()` como en `mission.css`), y el teal de la maqueta si la marca no lleva color. La marca va
+ * hija de la píldora o dentro de su único `span` (las píldoras con rótulo y cifra van en uno: la
+ * píldora es flexible y partía la frase en columnas).
+ */
+
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-cyan, > span > .c-cyan) {
+  --lvl: var(--c-cyan);
+}
+
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-yellow, > span > .c-yellow) {
+  --lvl: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-gray, > span > .c-gray) {
+  --lvl: var(--c-gray);
+}
+
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-red, > span > .c-red) {
+  --lvl: var(--c-red);
+}
+
+/* Lo desconocido (`UNKNOWN_MARK`: un tipo de asiento o un estado que la interfaz no conoce) lleva el
+   color del texto, no el teal de la maqueta, que se confundiría con el cian del dato ausente. */
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-text, > span > .c-text) {
+  --lvl: var(--c-text);
+}
+
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .board-pill:has(> .c-blue, > span > .c-blue) {
+  --lvl: var(--c-blue);
+}
+
+/* La celda no se ensancha con lo que lleva dentro: sin esto, a media anchura una tabla (la de los
+   asientos, la escalera de hitos cuando se probó a media anchura) empujaba su panel más allá de la
+   rejilla en vez de desplazarse en su caja (`.table-scroll`). */
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) > .slot {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+:where(.app[data-look="reference"] #ground-panel-ledger) > .slot:has(> .slot-body > [data-ui="docs"]) {
+  --span: 5;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #ground-panel-ledger) > .slot:has(> .slot-body > [data-ui="audit"]) {
+  --span: 7;
+  --span-mid: 12;
+}
+
+/* La fila de piezas: la ficha (o las fichas) y, al lado, las píldoras; si no caben, debajo. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"] :is(.framework-board, .risks-board),
+    .panel[data-ui="testbeds"] .testbeds-board,
+    .panel[data-ui="datasets"] .datasets-board,
+    .panel[data-ui="audit"] .audit-board
+  ) {
+  align-items: flex-start;
+  margin: 0.4rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"] :is(.framework-board, .risks-board),
+    .panel[data-ui="testbeds"] .testbeds-board,
+    .panel[data-ui="datasets"] .datasets-board,
+    .panel[data-ui="audit"] .audit-board
+  )
+  > .board-stats {
+  flex: 0 0 auto;
+  grid-template-columns: none;
+  grid-auto-columns: minmax(7.5rem, auto);
+  grid-auto-flow: column;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="framework"] :is(.framework-board, .risks-board),
+    .panel[data-ui="testbeds"] .testbeds-board,
+    .panel[data-ui="datasets"] .datasets-board,
+    .panel[data-ui="audit"] .audit-board
+  )
+  > .board-tally {
+  flex: 1 1 14rem;
+  align-self: center;
+  margin: 0;
+}
+
+/* Cuarta ronda (R4-8): las fichas con cifra, con el ancho de su rótulo en una línea junto a su
+   insignia. La ficha es contenedor de su ancho (`container-type`, `styles.css`), así que no se
+   ensancha con su texto: a 7,5 rem, «Documentos leídos» o «Fichas del registro» bajaban a dos
+   renglones bajo la insignia y cada ficha medía 126 px de alto. Aquí cada columna lleva el ancho de
+   su rótulo (medido a 0,875 rem). En los conjuntos se probó y no: con tres fichas anchas, sus
+   píldoras de población bajaban a otro renglón y el panel crecía. */
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-board > .board-stats {
+  grid-auto-columns: minmax(7.5rem, 11rem);
+}
+
+/* El registro: la ficha es la protagonista; el veredicto de integridad, con su marca y su color,
+   bajo la cifra y sin recortar (el motivo de un fallo puede ser largo). */
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-board .stat-tile {
+  min-width: 11rem;
+  max-width: 100%;
+  padding: 0.55rem 0.8rem 0.65rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-board .stat-tile > .mark {
+  overflow-wrap: anywhere;
+}
+
+/* Las fichas de personas: tres en fila, como las tiras de «Inicio». En su tercio de fila, con
+   columnas de 9 rem la tercera bajaba sola a otro renglón, y con columnas iguales más estrechas el
+   rótulo «Organizaciones» se partía a media palabra (segunda ronda, 2026-11-08: `styles.css` parte
+   los rótulos en cualquier punto). Así cada ficha mide lo que su rótulo, partido solo entre
+   palabras, y las tres caben en la fila. */
+:where(.app[data-look="reference"]) .panel[data-ui="people"] > .board-stats {
+  grid-template-columns: repeat(3, minmax(0, auto));
+  margin: 0.4rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="people"] > .board-stats .stat-label {
+  overflow-wrap: break-word;
+}
+
+/* Cuarta ronda (R4-8): con el reparto completo, cada ficha con el ancho de su rótulo en una línea
+   (ver las fichas del marco, arriba). Va detrás de la regla de las tres columnas para ganarle. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="people"] > .board-stats {
+    grid-template-columns: 10.5rem 8rem minmax(11rem, 1fr);
+  }
+}
+
+/* Coste de medir: las piezas van en la fila del plegable, que se lee cerrado, en una línea aparte
+   del título: la cifra y su medidor a un lado, la píldora cian al otro. */
+:where(.app[data-look="reference"]) .panel[data-ui="measurement-cost"] > summary {
+  flex-wrap: wrap;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="measurement-cost"] > summary > .cost-board {
+  flex: 1 1 100%;
+  margin: 0.2rem 0 0.1rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="measurement-cost"] .cost-board-meter {
+  display: grid;
+  flex: 1 1 18rem;
+  gap: 0.25rem;
+  max-width: 34rem;
+}
+
+/* Los plegables de instalaciones y fuentes, en baldosas: hasta la cuarta ronda el panel era una
+   rejilla; ahora es una fila flexible que envuelve (más abajo, con el primer «Ver detalle» en la
+   línea del título), con las fichas cerradas en baldosas de 19 rem. */
+
+/* Cerrada, cada fila llena su baldosa también en alto: con un nombre que pasa a dos líneas al lado
+   de otro de una, la hilera quedaba dentada. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="facilities"], .panel[data-ui="people"], .panel[data-ui="context-sources"])
+  > details:not([open])
+  > summary {
+  box-sizing: border-box;
+  height: 100%;
+}
+
+/* La documentación: cada PDF, una baldosa de igual ancho con su hoja y su rótulo. En su tercio de
+   fila (segunda ronda, 2026-11-08) iban de una en una, cuatro filas que fijaban el alto de la fila
+   entera junto al registro: con 9 rem caben dos por fila. */
+:where(.app[data-look="reference"]) .panel[data-ui="docs"] .measure-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  align-items: stretch;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="docs"] .measure-actions > a.command {
+  display: flex;
+  align-items: center;
+  min-height: calc(var(--touch) + 0.75rem);
+  padding: 0.55rem 0.75rem;
+  border-radius: 9px;
+}
+
+/* ---- Listas largas del marco en columnas (2026-11-08, «que se parezca bastante más a la referencia») ---- */
+
+/* «Marco y fuentes» medía más de 16 000 px a 1672 de ancho: las listas de documentos leídos, de
+   hipótesis por estado y de anclas sin leer iban en una sola columna de renglones cortos sobre una
+   tarjeta de 70 rem. Con sitio, a dos columnas (varias columnas de CSS: el orden de lectura sigue
+   siendo el de la lista, de arriba abajo y luego la siguiente columna); ningún elemento se parte
+   entre dos columnas. Nada se quita ni se recorta. */
+@container board (min-width: 56rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="framework"] ul.evidence {
+    columns: 2;
+    column-gap: 1.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="framework"] ul.evidence > li {
+    break-inside: avoid;
+  }
+}
+
+/* ---- Lote «muestra» (2026-11-08): cada pestaña como un tablero de mosaicos ---- */
+
+/* Lo que se vio (1672 × 941): «Marco y fuentes» medía más de 16 000 px —el marco de NASA solo, unos
+   9 000, con cada cita, cada hipótesis y cada bloque leído abiertos uno tras otro— y «Registro y
+   documentos», 3 100. Ellande pidió una pantalla por sección, como la muestra. El texto largo de cada
+   apartado ya va tras «Ver detalle» (`BoardDetail`, en cada panel); aquí, la forma del tablero: los
+   apartados del marco son baldosas en columnas fijas (`.framework-col`; desde la quinta ronda, cuatro
+   en el tablero: los huecos, el IMM y lo leído; el RIDGE y la credibilidad; las hipótesis y los
+   anclajes; los riesgos). Se probó con varias
+   columnas de CSS, que se reequilibran: abrir un detalle movía las baldosas de columna bajo el
+   cursor. Y los paneles van de dos en dos o de tres en tres en
+   la rejilla de la sección. Los plegables con `data-ui` siguen a la vista, cerrados, en baldosas. */
+
+@container board (min-width: 56rem) {
+  /* Quinta ronda (R5-9): dos columnas en el cuerpo intermedio (las cuatro `.framework-col` del
+     tablero, de dos en dos); con el reparto completo, una por `.framework-col` (más abajo). */
+  :where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-parts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    column-gap: 0.75rem;
+  }
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part {
+  break-inside: avoid;
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.75rem 0.65rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 10%, transparent), transparent 2.6rem),
+    color-mix(in srgb, var(--ref-navy) 55%, transparent);
+  box-shadow: 0 0 12px var(--ref-glow) inset;
+}
+
+/* La cabecera de la baldosa: su título, sin el margen de apartado (la baldosa ya lo separa). */
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part > h3:first-child,
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part > :first-child > h3:first-child {
+  margin-top: 0;
+}
+
+/* Dentro de una baldosa, las listas en una sola columna: la baldosa ya es una columna. */
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part ul.evidence {
+  columns: auto;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) {
+  margin-top: 0.45rem;
+  padding: 0.4rem 0.6rem 0.5rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part .board-tally {
+  margin: 0.3rem 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .hypothesis-head {
+  margin: 0;
+}
+
+/* Cada ficha de una baldosa (una hipótesis, un bloque leído): su cabecera y, en la misma línea, su
+   «Ver detalle»; abierto, el detalle baja a la fila entera. A dos por fila, las hipótesis partían su
+   estado en cinco renglones y medían 190 px cada una; así, una línea o dos. */
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) > * {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) > :first-child {
+  flex: 1 1 10rem;
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) > .board-detail:nth-child(2) {
+  flex: 0 1 auto;
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-part article:not(.section-gap) > .board-detail:has(> .board-detail-body:not([hidden])) {
+  flex-basis: 100%;
+}
+
+/* Cuarta ronda (R4-8): los apartados de bancos y conjuntos, que iban uno bajo otro (cada panel medía
+   930 px), en baldosas como las del marco y en columnas fijas (`.board-col`, en el orden del
+   documento: abrir un detalle no mueve baldosas de columna): tantas como columnas declara el panel
+   (dos los bancos, tres los conjuntos; las personas, una baldosa por columna, solo con el reparto
+   completo: en el intermedio su panel va a media fila). Por debajo de 44 rem de cuerpo y en baja
+   visión, una columna. */
+@container board (min-width: 44rem) {
+  :where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"], .panel[data-ui="datasets"]) > .board-parts {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    align-items: start;
+    column-gap: 0.6rem;
+  }
+}
+
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="people"] > .board-parts {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    align-items: start;
+    column-gap: 0.6rem;
+  }
+}
+
+.app[data-low-vision="on"] :is(.panel[data-ui="testbeds"], .panel[data-ui="datasets"], .panel[data-ui="people"]) > .board-parts {
+  display: block;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"], .panel[data-ui="datasets"], .panel[data-ui="people"]) .board-part {
+  margin: 0 0 0.6rem;
+  padding: 0.5rem 0.7rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 10%, transparent), transparent 2.6rem),
+    color-mix(in srgb, var(--ref-navy) 55%, transparent);
+  box-shadow: 0 0 12px var(--ref-glow) inset;
+}
+
+/* La cabecera de la baldosa, sin el margen de apartado: la baldosa ya lo separa. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"], .panel[data-ui="datasets"], .panel[data-ui="people"]) .board-part > :is(h3, article):first-child,
+:where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"], .panel[data-ui="datasets"], .panel[data-ui="people"]) .board-part > article:first-child > h3:first-child {
+  margin-top: 0;
+}
+
+/* El primer «Ver detalle» de cada panel (el principio, las reglas, la cadena, cómo se cuentan, de
+   dónde salen), en la línea del título cuando cabe, como el mando de la cabecera de una tarjeta de
+   la muestra: solo, en su renglón, medía 50 px por panel. El panel pasa a una fila flexible que
+   envuelve; todo lo demás ocupa la fila entera, salvo las fichas cerradas de instalaciones,
+   organizaciones y fuentes, que siguen en baldosas de 19 rem como en la rejilla de antes. Abierto,
+   el detalle baja a la fila entera. Las márgenes verticales no se funden en una fila flexible;
+   medido, el panel queda igualmente más bajo. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"]
+  ) {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  column-gap: 0.6rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"]
+  )
+  > * {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"]
+  )
+  > h2:first-child {
+  flex: 1 1 12rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="testbeds"],
+    .panel[data-ui="datasets"],
+    .panel[data-ui="facilities"],
+    .panel[data-ui="people"],
+    .panel[data-ui="context-sources"]
+  )
+  > h2:first-child
+  + .board-detail:not(:has(> .board-detail-body:not([hidden]))) {
+  flex: 0 1 auto;
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="facilities"], .panel[data-ui="people"], .panel[data-ui="context-sources"])
+  > details:is([data-ui="facility"], [data-ui="context-source"]):not([open]) {
+  flex: 1 1 19rem;
+  align-self: stretch;
+}
+
+/* Los bancos, los conjuntos y los catálogos, en baldosas como las instalaciones; abierta, la ficha
+   ocupa la fila entera. Las validaciones, una junto a otra. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"] .testbeds-banks, .panel[data-ui="datasets"] .datasets-folds) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  align-items: start;
+  column-gap: 0.5rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="testbeds"] .testbeds-banks, .panel[data-ui="datasets"] .datasets-folds) > details[open] {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-validations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  align-items: start;
+  column-gap: 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-validations > article:has(.board-detail-body:not([hidden])) {
+  grid-column: 1 / -1;
+}
+
+/* Colocación en la rejilla de 12 columnas: el marco a todo el ancho (ya en columnas por dentro); los
+   perfiles (8) con el coste de medir (4); bancos y conjuntos a mitades; instalaciones, personas y
+   fuentes a tercios. En el cuerpo intermedio, enteros los anchos y a mitades los de tercio. */
+/* Cuarta ronda (R4-8, 2026-11-08: «todavía se puede asemejar más»). Medido a 1672 × 941: la pestaña
+   pasaba de 2 860 px, tres vistas; la muestra es una. Aquí, el marco en nueve columnas y, a su
+   derecha, en una columna estrecha, los perfiles y el coste de medir uno encima de otro (el marco
+   ocupa dos filas de la rejilla: `grid-row: span 2`, sin `order` ni `dense`, el orden del documento
+   es el de lectura). Debajo, bancos y conjuntos a mitades, cada uno con sus apartados en dos
+   columnas (`.board-parts`), e instalaciones, personas y fuentes a tercios. En el cuerpo intermedio
+   (1300 px de ventana), como antes: todo a lo ancho y los tercios a mitades. */
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="framework"]) {
+  --span: 9;
+  --span-mid: 12;
+  grid-row: span 2;
+}
+
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > :is([data-ui="mission-profiles"], [data-ui="measurement-cost"])) {
+  --span: 3;
+  --span-mid: 12;
+  align-self: start;
+}
+
+/* Los conjuntos, con tres columnas de baldosas, algo más anchos que los bancos, con dos. */
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="testbeds"]) {
+  --span: 5;
+  --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="datasets"]) {
+  --span: 7;
+  --span-mid: 12;
+}
+
+/* Las personas, con sus dos baldosas lado a lado, el tercio más ancho; las fuentes, el más corto. En
+   el cuerpo intermedio, a mitades como antes (las personas, con sus baldosas una bajo otra). */
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="facilities"]) {
+  --span: 4;
+  --span-mid: 6;
+}
+
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="people"]) {
+  --span: 5;
+  --span-mid: 6;
+}
+
+:where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="context-sources"]) {
+  --span: 3;
+  --span-mid: 6;
+}
+
+/* El alto que el marco (dos filas) saca a los perfiles va a la segunda fila, la del coste de medir:
+   una pista flexible es la que recibe el sobrante de un ítem que la cruza. Con las dos `auto`, la
+   rejilla lo repartía a partes iguales y abría un hueco entre los perfiles y el coste. La primera
+   fila es la cabecera de la sección (`.board-frame-h`, de la concha), que también es ítem de esta
+   rejilla: por eso la pista flexible es la tercera. */
+:where(.app[data-look="reference"]) #ground-panel-framework:has(> .board-frame-h) {
+  grid-template-rows: auto auto 1fr;
+}
+
+.app[data-low-vision="on"] #ground-panel-framework {
+  grid-template-rows: none;
+}
+
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"] #ground-panel-framework) > .slot:has(> .slot-body > [data-ui="framework"]) {
+    grid-row: auto;
+  }
+}
+
+.app[data-low-vision="on"] #ground-panel-framework > .slot:has(> .slot-body > [data-ui="framework"]) {
+  grid-row: auto;
+}
+
+/* Las listas que pasan del centenar de filas (las organizaciones, las fuentes del contexto), en
+   baldosas; abierta, la ficha ocupa la fila entera. La primera ronda las metió en una caja con barra
+   de desplazamiento (24 rem) para que el panel midiera una vista y no cinco; en la segunda
+   (2026-11-08) van tras «Ver detalle», que ya las guarda, y la caja sobra: abierto, el detalle se lee
+   entero, sin una barra dentro de la página. Lo mismo las tablas de perfiles, de la escalera de
+   hitos, de riesgos y de peligros por banco. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="people"] .people-orgs, .panel[data-ui="context-sources"] .context-folds) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  align-content: start;
+  align-items: start;
+  column-gap: 0.5rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="people"] .people-orgs, .panel[data-ui="context-sources"] .context-folds) > details[open] {
+  grid-column: 1 / -1;
+}
+
+/* La copia de Polaris: su tabla ya se desplaza en su caja (`styles.css`, 28 rem); en el tablero, una
+   caja algo más baja, para que el panel quepa con lo que se comparte en una vista y media. Cuarta
+   ronda (R4-8): de 18 rem (unas ocho filas) a 14 (unas seis). */
+:where(.app[data-look="reference"]) .panel[data-ui="polaris"] .polaris-table {
+  max-height: 14rem;
+}
+
+/* «Ver detalle» en estas dos pestañas: medio centenar de mandos (cada apartado, cada bloque leído,
+   cada hipótesis); a lo ancho y centrado, con su rótulo partido en dos renglones en una baldosa
+   estrecha, cada uno medía 70 px. Aquí, al ancho de su rótulo y alineado a la izquierda; el alto
+   táctil (`--touch`) no cambia. La letra estaba a 0,85 rem; en la segunda ronda sube al suelo del
+   proyecto, 0,875 rem (decisión del usuario: «súbelas si no rompe el formato»). */
+:where(.app[data-look="reference"] :is(#ground-panel-framework, #ground-panel-ledger)) .panel:not([data-ui="sharing"]) .board-detail > .board-detail-toggle {
+  width: auto;
+  max-width: 100%;
+  padding-block: 0.2rem;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+/* La copia de Polaris (su panel es de otra sesión; aquí solo su caja): la lista de cambios §5a, en
+   dos columnas con sitio, como las listas largas del marco. Nada se quita. */
+@container board (min-width: 56rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="polaris"] > ul.evidence {
+    columns: 2;
+    column-gap: 1.6rem;
+  }
+
+  :where(.app[data-look="reference"]) .panel[data-ui="polaris"] > ul.evidence > li {
+    break-inside: avoid;
+  }
+}
+
+/* ---- Cuarta ronda (R4-8, 2026-11-08): «Registro y documentos» en menos alto ---- */
+
+/* Medido a 1672 × 941: la pestaña medía 2 544 px, casi tres vistas; lo más alto, la copia de
+   Polaris (1 050 px: cinco cifras en cinco renglones, la tabla y los cambios §5a a dos columnas) y
+   «Qué se comparte» (650 px, con seis columnas para cinco destinos: la sexta, vacía, estrechaba las
+   otras y partía sus píldoras en dos renglones). Solo cajas: ninguno de los dos paneles es de esta
+   unidad, y nada se pliega ni se quita. */
+
+/* Los destinos, repartiéndose todo el ancho: con cinco (los que manda hoy el backend), cinco
+   columnas. `auto-fit` no sirve: el título y las frases cruzan todas las columnas, así que ninguna
+   queda vacía y no se pliega. Con otro número de destinos, la rejilla de `data.css` de siempre.
+   El id fuera de `:where()`: tiene que ganar a esa rejilla, que es de otra hoja. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group))) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* La frase de si hay red y el «Ver detalle» de por qué esta tabla, en un mismo renglón (tres
+     columnas y dos); abierto, el detalle baja a la fila entera. */
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group)))
+    > p {
+    grid-column: 1 / span 3;
+    align-self: center;
+  }
+
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group)))
+    > .board-detail:not(:has(> .board-detail-body:not([hidden]))) {
+    grid-column: 4 / span 2;
+  }
+}
+
+/* Las cinco cifras de la copia (cargan, no se importan, en uso, commit, procedencia), en una fila
+   de cinco pares clave-cifra, como la tira de datos de una ruta de la muestra, en vez de cinco
+   renglones; cada par, separado del anterior por un filete vertical. En el cuerpo intermedio, de
+   dos en dos. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv {
+    grid-template-columns: repeat(5, max-content minmax(0, 1fr));
+  }
+}
+
+@container board (min-width: 44rem) and (max-width: 64rem) {
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv {
+    grid-template-columns: repeat(2, max-content minmax(0, 1fr));
+  }
+
+  /* De dos en dos, la clave que abre renglón no lleva filete a su izquierda. */
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv > dt:nth-of-type(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@container board (min-width: 44rem) {
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv > :is(dt, dd) {
+    border-top: 0;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv > dd {
+    padding-right: 1rem;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .kv > dd + dt {
+    padding-left: 1rem;
+    border-left: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+  }
+}
+
+/* Los cambios §5a, a tres columnas con el reparto completo: cada uno es un párrafo corto. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > ul.evidence {
+    columns: 3;
+  }
+}
+
+/* ---- Quinta ronda (R5-9, 2026-11-09): «Registro y documentos» en menos de dos vistas ---- */
+
+/* Medido a 1672 × 941 tras la cuarta ronda: 2 247 px. Lo que alargaba: la copia de Polaris (895 px:
+   la tabla y, debajo, los cambios §5a a tres columnas, unos 450 px de párrafos), «Qué se comparte»
+   (508 px: el destino de Tierra, con sus dos categorías partidas en tres renglones en una quinta
+   parte del ancho, y la frase de la red en un renglón propio bajo el título) y la primera fila
+   (300 px: el «Ver detalle» de los documentos y la raíz de Merkle, cada uno en su renglón bajo las
+   piezas). Nada se pliega ni se quita: cajas y sitio. */
+
+/* La primera fila: los documentos, algo más anchos (cinco columnas de doce, reglas de arriba): sus
+   cuatro PDF van de tres en tres y no de dos en dos; el registro, en las otras siete. */
+
+/* El registro firmado: a la derecha de la ficha (la cifra y el veredicto de integridad, que nunca se
+   pliegan), sus píldoras, la raíz de Merkle y el «Ver detalle» de los asientos, en una columna
+   (`.audit-side`, solo en el tablero); abierto, la tabla de asientos baja dentro de esa columna. */
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-board {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-side {
+  display: grid;
+  flex: 1 1 20rem;
+  align-content: start;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-side > :is(.board-tally, .kv) {
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-side > .board-detail {
+  margin-top: 0;
+}
+
+/* En una columna estrecha (tableta, baja visión), la ficha encima y lo demás debajo. */
+@container board (max-width: 44rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-board {
+    flex-wrap: wrap;
+  }
+}
+
+.app[data-low-vision="on"] .panel[data-ui="audit"] .audit-board {
+  flex-wrap: wrap;
+}
+
+/* «Qué se comparte»: el destino de Tierra (el segundo, con sus categorías a la vista, que son lo que
+   sale del equipo y no se pliega) lleva más ancho que los que se quedan: en una quinta parte, cada
+   categoría ocupaba tres renglones y su columna, 390 px, fijaba el alto del panel. Y el título, la
+   frase de si hay red y el «Ver detalle» de por qué esta tabla, en una sola línea (dos columnas, dos
+   y una); abierto, el detalle baja a la fila entera. Las cuatro reglas, solo con los cinco destinos
+   de hoy y Tierra el segundo; si no, la rejilla de la cuarta ronda. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group))):has(> :nth-child(2 of .sharing-group)[data-destination="ground"]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group))):has(> :nth-child(2 of .sharing-group)[data-destination="ground"])
+    > h2:first-child {
+    grid-column: 1 / span 2;
+    align-self: center;
+  }
+
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group))):has(> :nth-child(2 of .sharing-group)[data-destination="ground"])
+    > h2:first-child
+    + p {
+    grid-column: 3 / span 2;
+    margin: 0;
+  }
+
+  :where(.app[data-look="reference"])
+    #ground-panel-ledger
+    .panel[data-ui="sharing"]:has(> :nth-child(5 of .sharing-group)):not(:has(> :nth-child(6 of .sharing-group))):has(> :nth-child(2 of .sharing-group)[data-destination="ground"])
+    > h2:first-child
+    + p
+    + .board-detail:not(:has(> .board-detail-body:not([hidden]))) {
+    grid-column: 5 / span 1;
+  }
+}
+
+/* La copia de Polaris (su panel es de otra sesión; aquí solo su caja): con el reparto completo, la
+   tabla de herramientas a la izquierda y, a su derecha, los cambios §5a, en una caja que se desplaza
+   como ya lo hacía la tabla (14 rem). Antes iban debajo, a tres columnas, unos 450 px de párrafos.
+   El orden del documento no cambia (tabla, título de los cambios, cambios): la tabla ocupa dos filas
+   de la rejilla del panel y el título y la lista se colocan a su lado, en la segunda columna. Nada
+   se recorta: la caja se desplaza, con el teclado también (Chromium, el motor de la aplicación de
+   escritorio, hace enfocable una caja que se desplaza; el panel no es de esta unidad y no puede
+   darle `tabIndex`). Es la excepción a «nada de caja con barra» de las rondas anteriores, que valía
+   para lo que ya va tras «Ver detalle»: aquí no hay detalle donde guardarlo sin tocar el panel. Con
+   otro reparto o en baja visión, uno bajo otro como en la cuarta ronda. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: 1rem;
+    align-items: start;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > * {
+    grid-column: 1 / -1;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .polaris-table {
+    grid-column: 1;
+    grid-row: span 2;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .polaris-table ~ :is(h3, p, ul.evidence) {
+    grid-column: 2;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > .polaris-table ~ h3 {
+    margin-top: 0;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-ledger) .panel[data-ui="polaris"] > ul.evidence {
+    columns: auto;
+    max-height: 11rem;
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+.app[data-low-vision="on"] #ground-panel-ledger .panel[data-ui="polaris"] {
+  display: block;
+}
+
+.app[data-low-vision="on"] #ground-panel-ledger .panel[data-ui="polaris"] > ul.evidence {
+  max-height: none;
+}
+
+/* Abierto el detalle de los asientos, la columna de al lado pasa a la fila entera, bajo la ficha:
+   la tabla necesita el ancho del panel. */
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-board:has(> .audit-side > .board-detail > .board-detail-body:not([hidden])) {
+  flex-wrap: wrap;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="audit"] .audit-side:has(> .board-detail > .board-detail-body:not([hidden])) {
+  flex-basis: 100%;
+}
+
+/* ---- Quinta ronda (R5-9, 2026-11-09): «Marco y fuentes», las filas más bajas ---- */
+
+/* Medido a 1672 × 941 tras la cuarta ronda: 2 309 px. El marco (764 px, con sus apartados en tres
+   columnas de 520 px) fijaba la primera fila; los conjuntos (664 px, con CIPHER y lo no encontrado
+   en la tercera columna, 480 px) la segunda. Aquí: el marco en cuatro columnas (`FrameworkPanel`),
+   lo no encontrado de los conjuntos bajo la escalera (`DatasetsPanel`) y, en los bancos, el «Ver
+   detalle» de las validaciones bajo sus píldoras, al lado de la ficha (`.board-side`). */
+
+/* Los bancos: la ficha y, a su lado, las píldoras de cada validación con su «Ver detalle» debajo;
+   abierto, esa columna baja a la fila entera, bajo la ficha, para que las dos fichas de validación
+   tengan el ancho del panel. */
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-board > .board-side {
+  display: grid;
+  flex: 1 1 14rem;
+  align-content: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-board > .board-side > .board-tally {
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-board > .board-side > .board-detail {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="testbeds"] .testbeds-board > .board-side:has(> .board-detail > .board-detail-body:not([hidden])) {
+  flex-basis: 100%;
+}
+
+/* Quinta ronda (R5-9): con el reparto completo, una columna por `.framework-col` (cuatro en el tablero,
+   `FrameworkPanel.tsx`), en el orden del documento; por debajo de 64 rem, dos (arriba); en baja visión,
+   una sola. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="framework"] .framework-parts {
+    grid-template-columns: none;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+}
+
+.app[data-low-vision="on"] .panel[data-ui="framework"] .framework-parts {
+  display: block;
+}

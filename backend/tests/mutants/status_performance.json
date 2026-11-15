@@ -1,0 +1,54 @@
+{
+ "target": "app/api/timeline.py",
+ "test": [
+  "tests/test_status_performance.py"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica rehace el estado entero, que verifica la cadena y firma instantaneas",
+   "old": "        status = routes.chronicle_status(settings, store, subject, until, assessed)",
+   "new": "        status = _status(settings, store, subject, until)"
+  },
+  {
+   "label": "la cronica vuelve a consultar las lecturas para el posvuelo",
+   "old": "        assessed.stored if assessed else None,",
+   "new": "        None,"
+  },
+  {
+   "label": "cada instante recibe las tendencias del primero que se pidio",
+   "target": "app/api/routes.py",
+   "old": "        return self._trends_before[end]",
+   "new": "        return next(iter(self._trends_before.values()))"
+  },
+  {
+   "label": "lo que la cronica toma del estado pierde los seguimientos",
+   "target": "app/api/routes.py",
+   "old": "        \"followups\": followup_items,\n        \"mission\": {\"events\": _mission_events(store, subject, until)},",
+   "new": "        \"followups\": [],\n        \"mission\": {\"events\": _mission_events(store, subject, until)},"
+  },
+  {
+   "label": "lo que la cronica toma del estado pierde la trayectoria de cada dominio",
+   "target": "app/api/routes.py",
+   "old": "            domain: {\"trajectory\": change}",
+   "new": "            domain: {\"trajectory\": None}"
+  },
+  {
+   "label": "el estado vuelve a leer las declaraciones de sistemas para el contexto de cada alerta",
+   "target": "app/api/routes.py",
+   "old": "                settings, store, subject, until, assessed, actions.adoptions, declarations,\n",
+   "new": "                settings, store, subject, until, assessed, actions.adoptions, None,\n"
+  },
+  {
+   "label": "el estado vuelve a leer los eventos de mision para el contexto de cada alerta",
+   "target": "app/api/routes.py",
+   "old": "                events,\n            ),\n        ),",
+   "new": "                None,\n            ),\n        ),"
+  },
+  {
+   "label": "el estado verifica la cadena en memoria y deja de comparar el disco",
+   "target": "app/api/routes.py",
+   "old": "    verification = store.verify_integrity()\n",
+   "new": "    verification = store.ledger.verify()\n"
+  }
+ ]
+}

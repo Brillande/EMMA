@@ -1,0 +1,118 @@
+{
+ "target": "app/evidence/context_sources.py",
+ "test": [
+  "tests/test_context_sources.py"
+ ],
+ "mutations": [
+  {
+   "label": "una ficha sin rastro de la lectura de ese día pasa",
+   "old": "    if day not in (ref.notes or \"\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "la fecha propia de una fuente se ignora y se contrasta la del fichero",
+   "old": "    day = _day(own, key) if own is not None else read_on",
+   "new": "    day = read_on"
+  },
+  {
+   "label": "una fecha propia que no es una fecha pasa",
+   "old": "    day = _day(own, key) if own is not None else read_on",
+   "new": "    day = own if own is not None else read_on"
+  },
+  {
+   "label": "una fecha con la forma de una fecha pero que no existe pasa",
+   "old": "        dt.date.fromisoformat(value)",
+   "new": "        pass"
+  },
+  {
+   "label": "la fecha del fichero no se comprueba como fecha",
+   "old": "    read_on = _day(raw.get(\"read_on\"), \"el fichero\")",
+   "new": "    read_on = str(raw.get(\"read_on\"))"
+  },
+  {
+   "label": "un inventario sin el enunciado del reto pasa",
+   "old": "    if CHALLENGE_REF not in seen:",
+   "new": "    if False:"
+  },
+  {
+   "label": "la fecha servida por fuente es siempre la del fichero",
+   "old": "    return str(item[\"read_on\"] or raw[\"read_on\"])",
+   "new": "    return str(raw[\"read_on\"])"
+  },
+  {
+   "label": "la nota lleva la fecha del fichero, no la del enunciado",
+   "old": "        \"note\": _note(raw),",
+   "new": "        \"note\": NOTE.format(day=raw[\"read_on\"]),"
+  },
+  {
+   "label": "una ficha que no está en el registro se escapa con otro error",
+   "old": "        raise ContextSourcesError(f\"{key}: {error}\") from None",
+   "new": "        raise"
+  },
+  {
+   "label": "una fuente que nombra una lista que no existe pasa",
+   "old": "    if unknown := sorted(set(named) - lists):",
+   "new": "    if unknown := []:"
+  },
+  {
+   "label": "una lista repetida en una fuente pasa",
+   "old": "    if len(set(named)) != len(named):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una fuente de las listas del equipo sin su rótulo pasa",
+   "old": "        if not _text(item, \"listed_as\") or item[\"why_added\"] is not None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una fuente de fuera de las listas sin su motivo pasa",
+   "old": "    elif item[\"listed_as\"] is not None or not _text(item, \"why_added\"):",
+   "new": "    elif False:"
+  },
+  {
+   "label": "un estado desconocido pasa",
+   "old": "    if item[\"status\"] not in STATUSES:",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo leído entero con un motivo de no leerse pasa",
+   "old": "        if item[\"not_read\"] is not None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "lo no leído sin decir por qué pasa",
+   "old": "    elif not _text(item, \"not_read\"):",
+   "new": "    elif False:"
+  },
+  {
+   "label": "lo no leído con un motivo vacío pasa",
+   "old": "    elif not _text(item, \"not_read\"):",
+   "new": "    elif item[\"not_read\"] is None:"
+  },
+  {
+   "label": "una fuente sin decir para qué la tiene EMMA pasa",
+   "old": "    if not _text(item, \"emma_use\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un campo de más en una fuente pasa",
+   "old": "    if extra := sorted(item.keys() - expected):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "una lectura sin fecha, o con una que no tiene la forma de una fecha, pasa",
+   "old": "    if not (isinstance(value, str) and _ISO_DATE.fullmatch(value)):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una fuente repetida pasa",
+   "old": "        if item[\"ref\"] in seen:",
+   "new": "        if False:"
+  },
+  {
+   "label": "el estado servido no es el de la fuente",
+   "old": "                \"status_text\": i18n.tr(STATUSES[item[\"status\"]], STATUSES_EN[item[\"status\"]]),",
+   "new": "                \"status_text\": i18n.tr(STATUSES[\"read\"], STATUSES_EN[\"read\"]),"
+  }
+ ]
+}

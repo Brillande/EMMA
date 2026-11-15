@@ -1,0 +1,168 @@
+{
+  "_nota": "Lo leído sobre la exposición PERSONAL a la luz (la luz que llega a los ojos de un tripulante), distinta de la iluminación de la cabina, que ya se leyó (environment/habitat.py). Cada `quote` es la frase o la fila exacta de la fuente, copiada con la fuente delante el día `read_on`, en su idioma; `where` dice la sección, `ref` la ficha del registro (data/evidence_refs.json). `nasa_personal_limit` es null porque no se encontró ninguno: `searched` dice dónde se buscó. `recommendations` son las cifras publicadas para una persona, con la frase que las escribe (`literal` está en la cita) y a quién se aplican. Nada de esto se evalúa ni entra en el riesgo (invariante 5): EMMA no mide la luz en el ojo de nadie. El cargador (app/evidence/light_exposure.py) rechaza una frase sin fuente, una cifra que su frase no escribe y un límite de NASA sin frase.",
+  "read_on": "2026-10-14",
+  "sources": {
+    "nasa-std-3001-vol2-rev-f": {
+      "extent": "partial",
+      "what": "PDF oficial de la Rev F: 6.8.2.4 [V2 6117] con su justificación y 8.7.8 [V2 8055] con la tabla 8.7-2 y sus notas. El PDF se recorrió buscando «circadian», «melanopic» y «light exposure»."
+    },
+    "nasa-std-3001-vol1-rev-c": {
+      "extent": "partial",
+      "what": "PDF oficial de la Rev C: la sección 6.1 [V1 6001] con su justificación. El PDF se recorrió buscando «light», «circadian» y «melanopic»."
+    },
+    "ochmo-tb-026": {
+      "extent": "partial",
+      "what": "PDF oficial de la Rev C: antecedentes, notas de aplicación, seguridad de la iluminación y la lista de requisitos."
+    },
+    "hrp-sleep-evidence-report-2016": {
+      "extent": "partial",
+      "what": "PDF en NTRS: portada, autores, el apartado sobre la luz como contramedida y la conclusión (VIII)."
+    },
+    "caddick-2016-sleep-environment": {
+      "extent": "partial",
+      "what": "PDF en NTRS: el resumen y el apartado 3.4 «Light»."
+    },
+    "lockley-brainard-2016-lighting-effects": {
+      "extent": "full",
+      "what": "Las diapositivas en NTRS, en texto; las figuras solo por sus rótulos."
+    },
+    "brown-2022-melanopic-light": {
+      "extent": "partial",
+      "what": "Texto completo en PMC y en la revista: el resumen y el apartado «Expert consensus-based recommendations» con «Additional considerations»; del resto, la frase sobre el trabajo de noche."
+    }
+  },
+  "statements": [
+    {
+      "id": "v2-8055-requirement",
+      "label": "El requisito circadiano de la norma es del sistema de iluminación",
+      "quote": "The system shall provide the levels of light to support the physiological effects of light in accordance with Table 8.7-2--Physiological Lighting Specifications.",
+      "ref": "nasa-std-3001-vol2-rev-f",
+      "where": "§8.7.8 Physiological Effects of Light (Circadian Entrainment), [V2 8055], texto del requisito"
+    },
+    {
+      "id": "v2-8055-cornea",
+      "label": "Sus cifras se miden en la córnea",
+      "quote": "Melanopic EDI is measured at the cornea in the vertical plane. Both EDI and DER thresholds for each lighting condition must be met.",
+      "ref": "nasa-std-3001-vol2-rev-f",
+      "where": "Table 8.7-2--Physiological Lighting Specifications (Circadian Entrainment), nota 1"
+    },
+    {
+      "id": "v2-6117-requirement",
+      "label": "El único límite de exposición de la tripulación a la luz es de seguridad del ojo y de la piel, fuente a fuente",
+      "quote": "The system shall limit crew exposure from Visible, Infrared (IR), near-IR and Ultraviolet (UV) artificial light sources (180 nm to 3000 nm) at or below the threshold limit value (TLV) as calculated per ACGIH version 2022 or later.",
+      "ref": "nasa-std-3001-vol2-rev-f",
+      "where": "§6.8.2.4 Artificial Light Exposure Limits, [V2 6117], texto del requisito"
+    },
+    {
+      "id": "v2-6117-rationale",
+      "label": "Para qué es ese límite",
+      "quote": "This requirement is intended to prevent ocular and skin injury caused by overexposure to visible, IR, near-IR and UV artificial light sources.",
+      "ref": "nasa-std-3001-vol2-rev-f",
+      "where": "§6.8.2.4, [V2 6117], Rationale"
+    },
+    {
+      "id": "v1-6001-light-countermeasure",
+      "label": "La norma de salud de la tripulación nombra la luz como contramedida, sin cifra",
+      "quote": "Integrate, including time to facilitate, countermeasures for sleep shifting, fatigue, and sleep issues (e.g., light, naps, and pharmaceutical/non-pharmaceutical)",
+      "ref": "nasa-std-3001-vol1-rev-c",
+      "where": "§6.1 Circadian Shifting Operations and Fatigue Management, [V1 6001], Rationale, punto g (página 50)"
+    },
+    {
+      "id": "tb026-blue-before-sleep",
+      "label": "El resumen técnico de iluminación lo dice sin cifra",
+      "quote": "For example, blue light inhibits the production of melatonin, and should be avoided before crewmembers go to sleep.",
+      "ref": "ochmo-tb-026",
+      "where": "Background, página 2"
+    },
+    {
+      "id": "hrp-light-informs-recommendations",
+      "label": "El informe de evidencia lo deja por informar",
+      "quote": "The long-term safety and efficacy of light as a non-pharmaceutical aid for alertness, circadian shifting, and sleep will inform requirements for the lunar and Mars crew habitats as well as recommendations to the crews, flight controllers, and flight medical operations.",
+      "ref": "hrp-sleep-evidence-report-2016",
+      "where": "VIII. Conclusion, página 59"
+    },
+    {
+      "id": "caddick-sleep-dark",
+      "label": "Una revisión de NASA Ames, para el lugar de dormir",
+      "quote": "Based on this evidence, all light should be eliminated from the sleep environment.",
+      "ref": "caddick-2016-sleep-environment",
+      "where": "3.4 Light, primer párrafo"
+    },
+    {
+      "id": "caddick-personal-lighting",
+      "label": "La misma revisión, sobre la luz que controla cada tripulante",
+      "quote": "However, if such a strategy is utilized, it is important that crewmembers maintain some autonomy in controlling dimmer, personal lighting as would be the case at home on Earth.",
+      "ref": "caddick-2016-sleep-environment",
+      "where": "3.4 Light, segundo párrafo"
+    },
+    {
+      "id": "ssla-schedule",
+      "label": "En la ISS, un horario de ajustes de las lámparas de cabina, no un límite personal",
+      "quote": "We have designed a Dynamic Lighting Schedule that has 3 pre-set light settings and guidelines for how to use in various scenarios",
+      "ref": "lockley-brainard-2016-lighting-effects",
+      "where": "Diapositiva «Project Background»"
+    },
+    {
+      "id": "brown-daytime",
+      "label": "De día",
+      "quote": "Throughout the daytime, the recommended minimum melanopic EDI is 250 lux at the eye measured in the vertical plane at approximately 1.2 m height (i.e., vertical illuminance at eye level when seated).",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Expert consensus-based recommendations, «Daytime light recommendations for indoor environments»"
+    },
+    {
+      "id": "brown-evening",
+      "label": "Por la tarde, desde al menos 3 horas antes de acostarse",
+      "quote": "During the evening, starting at least 3 hours before bedtime, the recommended maximum melanopic EDI is 10 lux measured at the eye in the vertical plane approximately 1.2 m height.",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Expert consensus-based recommendations, «Evening light recommendations for residential and other indoor environments»"
+    },
+    {
+      "id": "brown-night",
+      "label": "Donde se duerme",
+      "quote": "The recommended maximum ambient melanopic EDI is 1 lux measured at the eye.",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Expert consensus-based recommendations, «Nighttime light recommendations for the sleep environment»"
+    },
+    {
+      "id": "brown-night-vision",
+      "label": "De noche, si una actividad exige ver",
+      "quote": "In case certain activities during the nighttime require vision, the recommended maximum melanopic EDI is 10 lux measured at the eye in the vertical plane at approximately 1.2 m height.",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Expert consensus-based recommendations, «Nighttime light recommendations for the sleep environment»"
+    },
+    {
+      "id": "brown-scope",
+      "label": "A quién se aplican",
+      "quote": "These recommendations are derived based on data from (and intended to apply to) healthy adults (aged 18 to 55) with regular daytime schedules.",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Expert consensus-based recommendations, «Additional considerations»"
+    },
+    {
+      "id": "brown-not-shift-work",
+      "label": "Ni a quien trabaja de noche",
+      "quote": "Current light exposure advice for night shift workers is still not mature [134], and we want to stress that the present recommendations are not intended for this purpose.",
+      "ref": "brown-2022-melanopic-light",
+      "where": "Special cases and exceptions, párrafo sobre el trabajo a turnos"
+    }
+  ],
+  "nasa_personal_limit": null,
+  "searched": [
+    "NASA-STD-3001 Vol 2 Rev F: [V2 8055] y su tabla 8.7-2 son un requisito del sistema de iluminación por periodo, medido en la córnea; [V2 6117] limita la exposición a cada fuente artificial para no dañar el ojo ni la piel, con las fórmulas de la ACGIH. Ninguno es una dosis de luz para una persona.",
+    "NASA-STD-3001 Vol 1 Rev C: [V1 6001] nombra la luz como contramedida en la planificación de horarios, sin cifra.",
+    "OCHMO-TB-026 Rev C (iluminación): sin cifra para la persona.",
+    "Informe de evidencia del HRP sobre sueño y desincronización circadiana (2016) y la revisión de NASA Ames sobre el entorno de sueño (Caddick et al. 2016): recomiendan sin cifra.",
+    "El estudio Lighting Effects de la ISS (Lockley y Brainard): su presentación de 2016 da los ajustes de las lámparas de cabina y sus hipótesis; no se encontró ninguna publicación de sus resultados."
+  ],
+  "recommendations": {
+    "quantity": "iluminancia melanópica equivalente (EDI melanópica), medida en el ojo",
+    "setting": "interiores en Tierra",
+    "items": [
+      {"period": "day", "label": "De día (mínimo)", "statement": "brown-daytime", "literal": "minimum melanopic EDI is 250 lux", "low": 250.0, "high": null},
+      {"period": "evening", "label": "Desde 3 horas antes de acostarse (máximo)", "statement": "brown-evening", "literal": "maximum melanopic EDI is 10 lux", "low": null, "high": 10.0},
+      {"period": "sleep", "label": "Donde se duerme (máximo)", "statement": "brown-night", "literal": "maximum ambient melanopic EDI is 1 lux", "low": null, "high": 1.0},
+      {"period": "night-vision", "label": "De noche, si hace falta ver (máximo)", "statement": "brown-night-vision", "literal": "maximum melanopic EDI is 10 lux", "low": null, "high": 10.0}
+    ],
+    "scope": ["brown-scope", "brown-not-shift-work"]
+  },
+  "context": ["v2-8055-requirement", "v2-8055-cornea", "v2-6117-requirement", "v2-6117-rationale", "v1-6001-light-countermeasure", "tb026-blue-before-sleep", "hrp-light-informs-recommendations", "caddick-sleep-dark", "caddick-personal-lighting", "ssla-schedule"]
+}

@@ -1,0 +1,19 @@
+{"target": "app/api/descriptive.py",
+ "test": ["tests/test_descriptive_indicators.py", "-k", "panel"],
+ "mutations": [
+  {"label": "el panel no dice por dónde se registra cada uno",
+   "old": "    if key in diary:\n        return {\"route\": DIARY_ROUTE, \"text\": HOW_DIARY}",
+   "new": "    if False:\n        return {\"route\": DIARY_ROUTE, \"text\": HOW_DIARY}"},
+  {"label": "las lecturas no empiezan por la última",
+   "old": "        mine = sorted(by_key[key], key=lambda item: item.effective, reverse=True)",
+   "new": "        mine = sorted(by_key[key], key=lambda item: item.effective)"},
+  {"label": "la lista no respeta cuántas se piden",
+   "old": "            \"readings\": [_reading(reading) for reading in mine[:limit]],",
+   "new": "            \"readings\": [_reading(reading) for reading in mine],"},
+  {"label": "un código propio calla lo que se buscó en LOINC",
+   "old": "        \"searched\": LOINC_SEARCHED.get(code.key),",
+   "new": "        \"searched\": None,"},
+  {"label": "el panel calla lo leído de la medida",
+   "old": "            \"instrument\": instruments_read.measure(key),",
+   "new": "            \"instrument\": None,"}
+ ]}

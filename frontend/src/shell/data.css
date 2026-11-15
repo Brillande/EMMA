@@ -1,0 +1,615 @@
+/*
+ * «Calidad y sensores» como tablero de la maqueta (decisión del usuario, 2026-11-07: cada sección se
+ * parece al tablero «Inicio» pero con sus apartados propios): la colocación de sus seis paneles en la
+ * rejilla de 12 columnas de `board.css`, lo que sus piezas del tablero necesitan (`StatTile` con su
+ * medidor, el anillo y las píldoras de `dashboard/HomeCharts.tsx`, la tira de parámetros) y la forma
+ * de la maqueta por dentro de cada panel (la primera pasada de esta hoja): capacidad de vigilancia
+ * (`[data-ui="monitoring"]`), base del veredicto (`[data-ui="verdict-basis"]`), calidad del dato y
+ * línea base (`.quality-table`), dispositivos vinculados (`.inline-form`) y qué se comparte
+ * (`.sharing*`). También la línea base en «Historial» y la compartición en «Registro» de Tierra: esta
+ * hoja es la única dueña de esos paneles en las dos consolas (su colocación en esas pestañas es de
+ * sus hojas). Solo bajo `.app[data-look="reference"]`; la clásica (`#clasica`) no cambia: las piezas
+ * van en `<BoardOnly>` y todo lo de aquí va bajo la concha.
+ *
+ * Primera pasada (capturas del 2026-11-07, `crew-06-data`, `ground-02-history` y `ground-06-ledger`
+ * con la concha nueva): los paneles ya eran tarjetas de la maqueta y el mobiliario común
+ * (`furniture.css`) ya vestía los mandos, las entradas, los plegables, las insignias y la cabecera
+ * de la tabla; pero por dentro seguía la consola clásica. Las capacidades de vigilancia y los
+ * dispositivos eran listas sin forma; «En qué se apoya», definiciones sueltas sobre el fondo del
+ * panel; la tabla de calidad flotaba sin marco; el formulario de vincular era una fila de controles
+ * sin caja; y cada destino de «Qué se comparte» era un título suelto con sus plegables debajo. Aquí
+ * cada pieza toma la forma que la maqueta da a la suya: las listas, las filas con filete de
+ * «Próximas acciones» (`.ref-next li`); las definiciones, el marco de la tira de datos de la ruta
+ * (filete `--ref-edge`, radio pequeño, una clave por fila); la tabla, dentro de ese mismo marco; el
+ * formulario, la caja interior de la tarjeta (la de `.silence-form` en el mobiliario); y cada
+ * destino, una tarjeta (`.ref-card`) con su título (`.ref-h3`).
+ *
+ * Segunda pasada, el tablero (capturas del 2026-11-08 a 1672 × 941): los seis paneles seguían en una
+ * sola columna, cada uno a todo el ancho de 1123 px; «Vigilancia» era una lista de siete filas
+ * cortas con media pantalla de aire a la derecha, «En qué se apoya» ocho definiciones a lo ancho, y
+ * ninguna cifra se leía de un vistazo: cuántas capacidades hay disponibles, cuántas lecturas de las
+ * recientes son de baja confianza o qué parte del veredicto se apoya en la base personal había que
+ * buscarlo en una frase. Ahora: arriba, «Vigilancia» (4) con el anillo de capacidades disponibles y
+ * «En qué se apoya» (8) con las fichas de lecturas y base personal; «Calidad del dato» a todo el
+ * ancho con sus tres fichas (su tabla es ancha); «Línea base personal» (7) con la tira de parámetros
+ * del motor y «Dispositivos vinculados» (5) con las píldoras de vínculos; y «Qué se comparte» a todo
+ * el ancho, con sus destinos repartidos en una rejilla de columnas (abajo). En el cuerpo intermedio (≤ 64 rem) la
+ * primera fila se parte a mitades y lo demás baja a todo el ancho.
+ *
+ * Los destinos de «Qué se comparte» van en una rejilla de columnas de 20 rem (tres a 1120 px de
+ * panel, dos a 750 px, una por debajo), cada tarjeta con su propio alto (`align-items: start`): sin
+ * eso los dos destinos cortos de la primera fila se estiraban hasta el alto de «Se queda a bordo».
+ * Se probaron antes columnas de texto (`columns`), que reparten mejor el alto, y se descartaron (lo
+ * vio la revisión): al abrir un pliegue las columnas se vuelven a equilibrar y las tarjetas de los
+ * otros destinos saltan de columna bajo el puntero. En la rejilla, abrir un pliegue solo alarga su
+ * fila. El título y las dos frases del panel cruzan todas las columnas, y «Se queda a bordo», el
+ * destino largo, ocupaba dos filas.
+ *
+ * Tercera pasada, una pantalla por sección (lote «muestra», 2026-11-08: la página medía ~2700 px a
+ * 1672 × 941 y solo se veían «Vigilancia», «En qué se apoya» y la cabeza de «Calidad del dato»): el
+ * texto largo de cada panel va detrás de «Ver detalle» (`BoardDetail`, en los componentes) y aquí
+ * cambia el reparto. «Vigilancia» (4) ocupa dos filas a la izquierda; a su lado, «En qué se apoya»
+ * (8) y debajo «Calidad del dato» (8), que ya no necesita todo el ancho con su tabla plegada. Debajo,
+ * línea base (7) y dispositivos (5), y «Qué se comparte» con sus cinco destinos como mosaicos en una
+ * fila (columnas de 12 rem: cinco a 1120 px de panel, tres a 750 px). En el cuerpo intermedio
+ * «Vigilancia» vuelve a una fila, y línea base y dispositivos siguen lado a lado (7 y 5): plegados,
+ * ninguno de los dos necesita ya todo el ancho (a 1300 px de ventana, cada uno a todo el ancho
+ * alargaba la página unos 130 px).
+ *
+ * Lo que no se toca: el color de cada marca (`.mark.c-*`: la confianza baja en amarillo, la
+ * capacidad sin datos en cian, lo no disponible en gris, una petición caída en rojo), la cursiva y
+ * el cian del dato caducado, la mayúscula que `styles.css` pone a las cabeceras que vienen del
+ * backend y ningún mando ni entrada (conservan su alto táctil por el mobiliario). Las píldoras toman
+ * en su filete el color real de su marca (`--lvl`, como `LevelPill`) y ninguno nuevo; el medidor es
+ * neutro (`Meter`). El marco va alrededor de la pieza y nunca detrás de una insignia.
+ *
+ * Especificidad a propósito baja, como en las otras hojas de sección: el prefijo de la concha y el
+ * id de la sección van en `:where()`, que no cuenta, y cada regla se acota a su panel
+ * (`.panel[data-ui="…"]`) porque `.kv`, `.inline-form`, `ul` y `.quality-table` aparecen en otras
+ * secciones con otra dueña. El marco de `.kv` y el de `.quality-table` son piezas generales de la
+ * maqueta: si otra sección los quiere iguales, su sitio es `furniture.css`, no una copia. Donde la
+ * pieza ya tenía borde no se usa el atajo `border`; los marcos nuevos nacen aquí con él y, al final,
+ * se engrosan a 2 px en baja visión y alto contraste, como hace `styles.css` con el panel. Cada
+ * patrón (fila con filete, marco, colgado de un filete) se escribe una vez, con la lista de sus
+ * dueños (lo pidió la revisión).
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`): la pestaña `crew-data` ---- */
+
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="monitoring"]) {
+  --span: 4;
+  --span-mid: 6;
+  grid-row: span 2;
+}
+
+/* En el cuerpo intermedio «Vigilancia» y «En qué se apoya» van a mitades y «Calidad del dato» baja a
+   todo el ancho: con las dos filas de «Vigilancia» quedaría media fila vacía junto a la segunda. */
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="monitoring"]) {
+    grid-row: auto;
+  }
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="verdict-basis"]) {
+  --span: 8;
+  --span-mid: 6;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="data-quality"]) {
+  --span: 8;
+  --span-mid: 12;
+}
+
+/* Con lecturas dudosas, su tabla (seis columnas) va a la vista y no se pliega nunca: entonces
+   «Calidad del dato» vuelve a todo el ancho y «Vigilancia» a una sola fila, para no dejar media
+   fila vacía a su lado. Lo vio la revisión: en 8 de 12 columnas la tabla se apretaba justo cuando
+   importa. */
+:where(.app[data-look="reference"] #crew-panel-data:has(> .slot > .slot-body > [data-ui="data-quality"] > .quality-table))
+  > .slot:has(> .slot-body > [data-ui="data-quality"]) {
+  --span: 12;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data:has(> .slot > .slot-body > [data-ui="data-quality"] > .quality-table))
+  > .slot:has(> .slot-body > [data-ui="monitoring"]) {
+  grid-row: auto;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="baseline-profile"]) {
+  --span: 7;
+  --span-mid: 7;
+}
+
+/* «Dispositivos vinculados» no se estira con la altura de su vecina: con los pliegues de la línea
+   base cerrados ya le sobraban 300 px bajo el formulario (visto en la primera captura, 617 px de
+   celda para 330 de contenido), y con «Por indicador y estado» abierto la vecina pasa de 2000 px. */
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="sensor-bindings"]) {
+  --span: 5;
+  --span-mid: 5;
+  align-self: start;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) > .slot:has(> .slot-body > [data-ui="sharing"]) {
+  --span: 12;
+}
+
+/* ---- Vigilancia: el anillo de capacidades disponibles y las píldoras por causa, encima de la lista ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="monitoring"]) .monitoring-board {
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+/* El anillo con la densidad de «Inicio»; la cifra de dentro es la que se lee (el `aria-label` la dice). */
+:where(.app[data-look="reference"] .panel[data-ui="monitoring"]) .monitoring-board .ref-ring-col {
+  flex: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="monitoring"]) .monitoring-board .board-tally {
+  flex: 1 1 8rem;
+  margin: 0;
+}
+
+/* El anillo, neutro como el medidor: en este panel «disponible» no lleva color (`AVAILABLE_MARK`), y
+   el degradado verde con halo del anillo de «Inicio» pintaría de nominal una vigilancia reducida.
+   La cifra de dentro y el `aria-label` dicen cuántas. */
+:where(.app[data-look="reference"] .panel[data-ui="monitoring"]) .monitoring-board .ref-ring-fill {
+  stroke: var(--c-text-secondary);
+  filter: none;
+}
+
+/* ---- Las fichas con cifra («En qué se apoya», «Calidad del dato») y su medidor ---- */
+
+:where(.app[data-look="reference"] .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"])) .board-stats {
+  margin: 0.35rem 0 0.6rem;
+}
+
+/* El medidor bajo la cifra (base personal, baja confianza): la pista en los tonos de la maqueta, con
+   el borde que ya tenía (solo el color). Misma especificidad que `.meter` y menos que
+   `.meter.meter-oor`: fuera de escala seguiría el borde discontinuo en texto secundario. */
+:where(.app[data-look="reference"] .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"]) .stat-tile) .meter-block {
+  margin-top: 0.2rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"]) .stat-tile) .meter {
+  height: 8px;
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* ---- Línea base: la tira de parámetros del motor (ventana, cierre, mínimo), como la tira de datos de la ruta ---- */
+
+/* No lleva la clase `.ref-stats` de «Inicio»: sus últimas reglas (`referenceDashboard.css`, «Rutas»)
+   pintan el dibujo de cada clave sobre el acento del peligro (`--acc`), que aquí no existe. Es el
+   mismo dibujo con el marco de las definiciones de esta hoja. Nace aquí con borde. */
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  margin: 0.35rem 0 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip > div {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip dt {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.875rem;
+  color: var(--c-text-secondary);
+}
+
+/* El dibujo de la clave es un signo (de qué es el dato), como el de un rótulo de campo en el mobiliario. */
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip dt > .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip dd {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+/* ---- Dispositivos vinculados: las píldoras de vínculos, bajo la frase del backend ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="sensor-bindings"]) > .board-tally {
+  margin: 0.3rem 0 0.45rem;
+}
+
+/* ---- Filas con filete: las listas de la sección, como «Próximas acciones» de la maqueta ---- */
+
+/* Las capacidades de vigilancia, las listas de la línea base (indicadores sin base, otros vuelos,
+   rango del catálogo y, dentro de un indicador, sus frases leídas), los vínculos de sensores
+   vigentes y el historial de declaraciones de su plegable (también filas: cada una es una
+   declaración firmada, y el plegable y el color secundario ya dicen que son pasadas), y las listas
+   de «Qué se comparte» (módulos, propósitos, rutas). Las píldoras del tablero (`ul.board-tally`)
+   quedan fuera: son una fila, no una lista con filete. Las de rejilla pierden su hueco: el filete
+   separa. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="monitoring"] .capabilities,
+    .panel[data-ui="baseline-profile"] ul,
+    .panel[data-ui="sensor-bindings"] ul:not(.board-tally),
+    .panel[data-ui="sharing"] .sharing-list
+  ) {
+  list-style: none;
+  margin: 0.3rem 0;
+  padding-left: 0;
+  gap: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="monitoring"] .capabilities,
+    .panel[data-ui="baseline-profile"] ul,
+    .panel[data-ui="sensor-bindings"] ul:not(.board-tally),
+    .panel[data-ui="sharing"] .sharing-list
+  )
+  > li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="monitoring"] .capabilities,
+    .panel[data-ui="baseline-profile"] ul,
+    .panel[data-ui="sensor-bindings"] ul:not(.board-tally),
+    .panel[data-ui="sharing"] .sharing-list
+  )
+  > li:last-child {
+  border-bottom: 0;
+}
+
+/* Lo que deja de vigilarse, colgado bajo el nombre de la capacidad. El nombre va detrás de dos
+   dibujos anidados —la marca del estado envuelve a la marca de la capacidad (`MonitoringPanel`)—,
+   cada uno de 1em con su hueco de 0,35em: la frase arranca a la altura de la palabra, a 2,7em. */
+:where(.app[data-look="reference"]) .panel[data-ui="monitoring"] .capabilities > li > p {
+  margin-top: 0.15rem;
+  padding-left: 2.7em;
+}
+
+/* ---- Colgado de un filete: lo anidado, como las referencias (`.evidence` en el mobiliario) ---- */
+
+/* Las frases leídas de un indicador (lista dentro de la fila del indicador) y los hosts de cada
+   propósito, bajo su frase. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="baseline-profile"] li ul, .panel[data-ui="sharing"] .sharing-hosts) {
+  margin-left: 0.2rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+}
+
+/* ---- El marco de la tira de datos de la ruta: para las definiciones y para la tabla ---- */
+
+/* «En qué se apoya», la ficha de cada categoría compartida (qué queda fuera, dónde se impone) y la
+   tabla de calidad y la de línea base, que siguen desplazándose dentro de su caja en pantalla
+   estrecha (`styles.css`). */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="verdict-basis"] .kv,
+    .panel[data-ui="sharing"] .kv,
+    .panel[data-ui="data-quality"] .quality-table,
+    .panel[data-ui="baseline-profile"] .quality-table
+  ) {
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* Un poco de aire alrededor de la tabla: el mobiliario redondea las esquinas de su cabecera y,
+   pegada al marco, quedaba una cuña sin fondo entre las dos curvas; abajo, el filete de la última
+   fila no se dobla con el marco. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="data-quality"], .panel[data-ui="baseline-profile"]) .quality-table {
+  padding: 0.3rem 0.45rem;
+}
+
+/* Una clave por fila. El hueco entre columnas va como relleno de la clave y no como `gap`, para que
+   el filete de cada fila sea una sola línea de lado a lado. */
+:where(.app[data-look="reference"]) :is(.panel[data-ui="verdict-basis"], .panel[data-ui="sharing"]) .kv {
+  gap: 0;
+  padding: 0 0.7rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="verdict-basis"], .panel[data-ui="sharing"]) .kv > :is(dt, dd) {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="verdict-basis"], .panel[data-ui="sharing"]) .kv > dt {
+  padding-right: 1rem;
+}
+
+:where(.app[data-look="reference"]) :is(.panel[data-ui="verdict-basis"], .panel[data-ui="sharing"]) .kv > :is(dt, dd):last-of-type {
+  border-bottom: 0;
+}
+
+/* En pantalla estrecha `styles.css` pone la clave encima de su definición (mismo punto de corte):
+   entonces el filete va solo bajo la definición, que cierra la fila. */
+@media (max-width: 640px) {
+  :where(.app[data-look="reference"]) :is(.panel[data-ui="verdict-basis"], .panel[data-ui="sharing"]) .kv > dt {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+
+/* ---- Dispositivos vinculados: la declaración, en la caja interior de la tarjeta ---- */
+
+/* Sus entradas y mandos son del mobiliario. `.inline-form` también vive en las recomendaciones, por
+   eso va acotado al panel. */
+:where(.app[data-look="reference"]) .panel[data-ui="sensor-bindings"] .inline-form {
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 85%, transparent);
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* ---- Qué se comparte: los destinos en rejilla, cada uno una tarjeta con su título ---- */
+
+/* El panel es la rejilla (ver la cabecera); lo que no es un destino —el título, las frases, su «Ver
+   detalle», el aviso de no disponible— cruza todas las columnas. El número de columnas sale del
+   ancho del panel (`auto-fill`), no de la ventana: 12 rem dejan los cinco destinos en una fila. */
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  column-gap: 0.6rem;
+  align-items: start;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] > :not(.sharing-group) {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] > p {
+  margin: 0.2rem 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] > p:last-of-type {
+  margin-bottom: 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group {
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.6rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* El título del destino, como `.ref-h3`, con el filete de la tarjeta debajo. */
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group > h3 {
+  margin-bottom: 0.2rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 1.05rem;
+}
+
+/* Mosaicos llenos de color (R4-4, 2026-11-08: «todavía se puede asemejar más»). Los cinco destinos
+   son la fila de categorías de la sección, como «Variables RIDGE – Acceso rápido» de la muestra,
+   donde cada mosaico va lleno de color. Se llena la cabecera del destino (su nombre), una banda de
+   lado a lado con la receta de `.tile-acc` (`board.css`): el acento al 30 % sobre `--ref-navy`,
+   que solo baja al 24 % (más lleno que `.tile-acc`, que baja al 14 %), y el filete del acento
+   debajo. El resto de la tarjeta sigue con su fondo: lleva las píldoras de grado con su marca («lo
+   impone el código»), y un adorno no va detrás de una marca. El mismo acento en los cinco: un color
+   por destino se leería como un grado. El acento de la sección es casi cian (70 %), y una banda
+   llena de cian se leería como «dato caducado o ausente» (F.5-1): la banda lo lleva mitad con azul
+   (`--band-acc`, un 35 % de cian), que sigue siendo de la familia de la sección. Texto en
+   `--c-text`: 7,3:1 en el peor punto (el 30 %) con la paleta base; si se cambian los porcentajes,
+   se vuelve a medir. Con alto contraste, sin relleno (abajo). */
+:where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] .sharing-group > h3 {
+  --band-acc: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 50%, var(--c-blue));
+  margin: -0.6rem -0.75rem 0.2rem;
+  padding: 0.45rem 0.75rem 0.4rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--band-acc) 80%, var(--c-text));
+  border-radius: 8px 8px 0 0;
+  color: var(--c-text);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--band-acc) 30%, var(--ref-navy)), color-mix(in srgb, var(--band-acc) 24%, var(--ref-navy)));
+  box-shadow: inset 0 0 14px color-mix(in srgb, var(--band-acc) 30%, transparent);
+}
+
+.app[data-look="reference"][data-high-contrast="on"] #crew-panel-data .panel[data-ui="sharing"] .sharing-group > h3 {
+  background: none;
+  box-shadow: none;
+}
+
+/* Las píldoras del destino (cuántos tipos de dato y de qué grado) y su «Ver detalle», a todo el
+   ancho de la tarjeta, que es una rejilla: sin esto caerían en una de sus columnas de plegables. */
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group > :is(.board-tally, .board-detail) {
+  grid-column: 1 / -1;
+  margin: 0 0 0.15rem;
+}
+
+/* El detalle de un mosaico, abierto, no lo ensancha: los plegables movidos dentro pierden el
+   `min-width: 0` que `styles.css` da a `.sharing-group > details`, y un host o una ruta larga
+   empujaba la columna (lo vio la revisión). */
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group > .board-detail,
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group > .board-detail > .board-detail-body > details {
+  min-width: 0;
+}
+
+/* En un mosaico de 12 rem, «Lo impone el código en parte 1» no cabe en una línea y la píldora se
+   parte en dos renglones con la cifra a la derecha (captura del 2026-11-08). La letra se bajó a
+   0,76 rem para meterla en una; segunda ronda (2026-11-08), letra al suelo: vuelve a la de toda
+   píldora (0,875 rem) porque a 0,76 también partía «en parte». El radio menor la deja leerse como
+   caja y no como cápsula rota. */
+:where(.app[data-look="reference"]) .panel[data-ui="sharing"] .sharing-group > .board-tally > .board-pill {
+  border-radius: 0.6rem;
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los marcos que nacen en esta hoja se engrosan a 2 px como el del panel en `styles.css`, y en baja
+   visión pasan al color del texto secundario. Van al final para ganar por orden con la misma
+   especificidad que las reglas de arriba. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel[data-ui="verdict-basis"] .kv,
+    .panel[data-ui="sharing"] .kv,
+    .panel[data-ui="data-quality"] .quality-table,
+    .panel[data-ui="baseline-profile"] .quality-table,
+    .panel[data-ui="baseline-profile"] .board-strip,
+    .panel[data-ui="sensor-bindings"] .inline-form,
+    .panel[data-ui="sharing"] .sharing-group
+  ) {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel[data-ui="verdict-basis"] .kv,
+    .panel[data-ui="sharing"] .kv,
+    .panel[data-ui="data-quality"] .quality-table,
+    .panel[data-ui="baseline-profile"] .quality-table,
+    .panel[data-ui="baseline-profile"] .board-strip,
+    .panel[data-ui="sensor-bindings"] .inline-form,
+    .panel[data-ui="sharing"] .sharing-group
+  ) {
+  border-color: var(--c-text-secondary);
+}
+
+/* ---- Quinta ronda (R5-7, 2026-11-09): fichas en una línea y destinos que llenan la fila ---- */
+
+/* Lo que se vio (1672 × 941, página de 1767 px): las fichas de «En qué se apoya» y «Calidad del
+   dato» medían 110 px cada una (rótulo arriba, cifra grande debajo, aire); «Vigilancia» se estiraba
+   a su lado; y en «Qué se comparte» los cinco destinos ocupaban cinco de seis columnas (la sexta,
+   vacía: el título y las frases cruzan todas y `auto-fill` no la pliega), así que cada mosaico
+   medía 215 px y las categorías que salen del equipo, a la vista, se partían en cuatro líneas:
+   «Lo ve Tierra» llegaba a 490 px. Ahora la ficha lleva el rótulo y la cifra en una fila, como los
+   signos vitales de la maqueta (rótulo a la izquierda, cifra a la derecha), y el medidor debajo;
+   la cifra no se encoge (sigue a 2,25 rem, la del mobiliario). Los destinos van en cinco columnas
+   iguales a lo ancho. Nada se pliega de nuevo. */
+:where(.app[data-look="reference"]) .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"]) .board-stats > .stat-tile {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.8rem;
+  padding: 0.25rem 0.9rem 0.3rem;
+}
+
+:where(.app[data-look="reference"] .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"]) .stat-tile) .meter-block {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"]) .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"]) .board-stats > .stat-tile > :not(.stat-label, .stat-value) {
+  grid-column: 1 / -1;
+}
+
+/* En el cuerpo intermedio «En qué se apoya» va a media rejilla y sus fichas no dan para rótulo y
+   cifra en una fila: vuelven a ir uno encima del otro. */
+@container board (max-width: 64rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="verdict-basis"] .board-stats > .stat-tile {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Las filas de capacidades, más juntas: la lista de «Vigilancia» marcaba el alto de las dos filas
+   de arriba. La frase de lo que deja de vigilarse sigue entera, debajo de su capacidad. */
+:where(.app[data-look="reference"]) .panel[data-ui="monitoring"] .capabilities > li {
+  padding: 0.2rem 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="monitoring"] .capabilities > li > p {
+  margin-top: 0.05rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="monitoring"] .monitoring-board {
+  margin: 0 0 0.1rem;
+}
+
+/* Los cinco destinos llenan la fila cuando la sección da (en el cuerpo intermedio sigue la rejilla
+   de 12 rem de arriba): seis columnas, y «Lo ve Tierra» ocupa dos. Es el único destino con dos
+   categorías a la vista (lo que sale del equipo no se pliega) y, en una columna, cada una se partía
+   en tres o cuatro líneas: el mosaico medía 380 px frente a los 215 de los demás. Un destino más
+   que el backend añadiera bajaría a otra fila. */
+@container board (min-width: 64rem) {
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] > .sharing-group[data-destination="ground"] {
+    grid-column: span 2;
+  }
+
+  /* El título, la frase de si hay red y su «Ver detalle», cerrado, en una sola fila. Abierto, cada
+     uno vuelve a su fila a todo el ancho (la regla de arriba), con el texto del detalle debajo. */
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"]:has(> .board-detail > .board-detail-body[hidden]) > h2 {
+    grid-column: 1 / 3;
+    align-self: center;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"]:has(> .board-detail > .board-detail-body[hidden]) > p {
+    grid-column: 3 / 5;
+    align-self: center;
+    margin: 0;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] > .board-detail:has(> .board-detail-body[hidden]) {
+    grid-column: 5 / -1;
+    align-self: center;
+    justify-self: end;
+    margin: 0;
+  }
+}
+
+/* En el cuerpo intermedio (1300 px de ventana), tres columnas con «Lo ve Tierra» en dos: dos filas
+   llenas, en lugar de cuatro columnas con «No se guarda» sola en la segunda fila. */
+@container board (min-width: 44.01rem) and (max-width: 64rem) {
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] > .sharing-group[data-destination="ground"] {
+    grid-column: span 2;
+  }
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] > .board-detail {
+  margin-bottom: 0.5rem;
+}
+
+/* Menos aire alrededor de las piezas, sin tocar ningún mando (conservan su alto táctil): las fichas,
+   las filas de las definiciones, la tira de la línea base y el relleno de cada destino. */
+:where(.app[data-look="reference"] .panel:is([data-ui="verdict-basis"], [data-ui="data-quality"])) .board-stats {
+  margin: 0.1rem 0 0.2rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="verdict-basis"] .kv > :is(dt, dd) {
+  padding-block: 0.25rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip {
+  margin: 0.25rem 0 0.3rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] .sharing-group {
+  row-gap: 0.2rem;
+}
+
+/* Cada parámetro del motor en una línea, la clave y su valor, como la tira de datos de la ruta de
+   la maqueta («Duración 4,5 días»): la tira pasa de dos renglones a uno. */
+:where(.app[data-look="reference"] .panel[data-ui="baseline-profile"]) .board-strip > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.45rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] .sharing-group {
+  margin-bottom: 0.2rem;
+  padding: 0.5rem 0.6rem 0.55rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-data) .panel[data-ui="sharing"] .sharing-group > h3 {
+  margin: -0.5rem -0.6rem 0.2rem;
+  padding-inline: 0.6rem;
+}

@@ -1,0 +1,193 @@
+/*
+ * «Distancia y comunicaciones» y «Sincronización y datos» (`HomeDistance.tsx`, maqueta de la ISS del
+ * lote «reservas», 2026-11-14) con el estilo de «Inicio»: las tarjetas (`ref-frame`, `ref-card`), los
+ * títulos y las variables `--ref-*`/`--acc-*` son las de `referenceDashboard.css`; aquí solo el
+ * reparto y lo propio de sus piezas. En la rejilla de 12 columnas de «Inicio», como la maqueta: 7 y 5.
+ *
+ * COLORES DE ADORNO (§2.5 de `compliance/hmi-state-of-the-art.md`): los planetas y el acento de la
+ * fila de la tripulación no significan nada. Lo que es dato (las marcas de lo que falta, no aplica o
+ * está caído) conserva el color de su tabla.
+ */
+
+.ref-home .dist-comms { grid-column: span 7; }
+.ref-home .dist-sync { grid-column: span 5; }
+
+@media (max-width: 1400px) {
+  .ref-home .dist-comms,
+  .ref-home .dist-sync { grid-column: span 12; }
+}
+
+.dist-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr) minmax(0, 1.5fr);
+  gap: 0.4rem;
+}
+
+.dist-sync-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 0.4rem;
+}
+
+@media (max-width: 900px) {
+  .dist-grid,
+  .dist-sync-grid { grid-template-columns: 1fr; }
+}
+
+/* Filas de cuerpos: dibujo, nombre, distancia y tiempo de luz, en recuadros finos como la maqueta. */
+
+.dist-bodies ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dist-row {
+  display: grid;
+  /* El nombre entero («Tierra», «Luna»); lo que se recorta, si no cabe, es la frase de dónde va la
+     nave, que sigue entera en su `title`. */
+  grid-template-columns: 1.4rem auto minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.dist-row .ref-thumb {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.dist-row[data-here="true"] {
+  border: 2px solid var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 16%, transparent);
+}
+
+.dist-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dist-km,
+.dist-lt {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dist-km {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dist-place {
+  display: inline-block;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  font-size: 0.875rem;
+}
+
+.dist-missing {
+  grid-column: span 2;
+  text-align: right;
+}
+
+.dist-foot {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* El retardo: la cifra grande, como la de la maqueta. */
+
+.dist-delay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-color: color-mix(in srgb, var(--acc, var(--ref-edge)) 60%, var(--ref-edge));
+}
+
+.dist-big {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.dist-delay .secondary {
+  font-size: 0.875rem;
+}
+
+/* Nodos: nombre, dónde, retardo y enlace. */
+
+.dist-node {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.1rem 0.4rem;
+  align-items: center;
+  padding: 0.08rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+.dist-node-delay {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dist-node-link {
+  grid-column: 1 / -1;
+  font-size: 0.875rem;
+}
+
+.dist-relays {
+  grid-template-columns: 1fr;
+  border-bottom: 0;
+}
+
+/* Pares rótulo-valor de la sincronización. */
+
+.dist-kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.6rem;
+  margin: 0;
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+.dist-kv dt {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--c-text-secondary);
+}
+
+.dist-kv dd {
+  margin: 0;
+  text-align: right;
+}
+
+/* Sin desbordar la tarjeta: cada pieza encoge y su texto parte (visto en la captura del 2026-11-14). */
+.dist-sync-grid > *,
+.dist-grid > * {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* El almacenamiento, en la columna estrecha: el rótulo encima de su valor, sin partir letra a letra. */
+.dist-sync-grid > :last-child .dist-kv {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 0.4rem;
+}
+
+.dist-sync-grid > :last-child .dist-kv dd {
+  text-align: left;
+  margin-bottom: 0.2rem;
+}

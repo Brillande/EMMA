@@ -1,0 +1,45 @@
+{
+ "target": "app/timeline.py",
+ "test": [
+  "tests/test_alert_history.py::test_the_chronicle_tells_closed_episodes_marked_as_a_recomputation",
+  "tests/test_alert_history.py::test_an_episode_without_a_known_start_does_not_claim_one_in_the_chronicle",
+  "tests/test_alert_history.py::test_without_history_the_chronicle_is_the_one_it_was"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica repite como historia el episodio que sigue abierto",
+   "old": "        if item[\"open\"]:",
+   "new": "        if False:"
+  },
+  {
+   "label": "el principio de un episodio recalculado no lleva la marca de recalculo",
+   "old": "f\"{item['id']}:start\", recomputed=True)",
+   "new": "f\"{item['id']}:start\")"
+  },
+  {
+   "label": "un episodio recalculado lleva el nivel, y con el la insignia de una alerta activa",
+   "old": "f\"{item['id']}:end\", recomputed=True)",
+   "new": "f\"{item['id']}:end\", recomputed=True, level=item[\"peak_level\"])"
+  },
+  {
+   "label": "la fuente ya no dice que no es un asiento firmado",
+   "old": "    source = f\"recálculo de hoy, {history['rules_version']}; no es un asiento firmado\"",
+   "new": "    source = f\"análisis del estado, reglas {history['rules_version']}\""
+  },
+  {
+   "label": "la frase de la cronica pierde el rotulo de recalculo",
+   "old": "    label = str(history[\"label\"]).lower()",
+   "new": "    label = \"historia\""
+  },
+  {
+   "label": "un episodio sin comienzo conocido se cuenta como si empezara en su primer paso",
+   "old": "            if item[\"start_unknown\"]",
+   "new": "            if False"
+  },
+  {
+   "label": "la cronica no entrega la historia con sus limites y su tope",
+   "old": "        \"recomputed\": history,",
+   "new": "        \"recomputed\": None,"
+  }
+ ]
+}

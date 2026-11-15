@@ -1,0 +1,76 @@
+{
+  "_nota": "Efectos e interacciones de las contramedidas de la biblioteca (conversación de ideación: «una intervención puede mejorar una variable y empeorar otra… expected benefits / possible adverse effects / interactions»). Fichero APARTE de countermeasures.json y fuera de la huella de reglas (core/versioning.py resume solo la biblioteca): decir dónde cae un efecto no cambia ninguna recomendación ni ningún nivel. Una entrada por contramedida, por su id de la biblioteca; la carga (advisor/effects.py) falla si falta alguna, si sobra alguna, si el id no existe o si un dominio o indicador no es del enumerado. `benefit` dice sobre qué se espera el beneficio: el dominio clínico que la entrada trata (tiene que ser el mismo que su `domain`) o, en las comprobaciones de hábitat, el parámetro de cabina que comprueban; ninguna magnitud, porque la biblioteca no escribe cuánto. `adverse` es null cuando la entrada de la biblioteca no escribe ningún efecto adverso («no declarado», que no es «no tiene»), y una lista cuando lo escribe: por cada efecto, dónde puede caer (`affects`: un dominio del enumerado o un indicador del catálogo), qué dice de él la nota (`text`) y de dónde sale (`basis`). Un efecto solo se declara aquí si la nota de la entrada o su protocolo lo dice; declararlo sin nota no carga. `interactions` guarda lo que una fuente leída diga de dos contramedidas adoptadas a la vez (par de ids, ficha del registro de evidencia, relevancia y frase literal); hoy está vacía: ninguna fuente leída dice cómo interactúan, y la nota de co-adopción lo dice con esas palabras. Escrito el 2026-10-31.",
+  "effects": [
+    {
+      "countermeasure_id": "cv-exercise-session",
+      "benefit": {"domain": "cardiovascular"},
+      "adverse": [
+        {
+          "affects": {"indicator": "heart-rate"},
+          "text": "El esfuerzo eleva el pulso durante la sesión y justo después; por eso la medida de seguimiento se toma en reposo.",
+          "basis": "La nota de efectos de la propia entrada (diseño EMMA): habla del esfuerzo, no de una fuente que lo cuantifique."
+        },
+        {
+          "affects": {"indicator": "systolic-bp"},
+          "text": "El esfuerzo eleva la presión durante la sesión y justo después; una lectura tomada entonces no es de reposo.",
+          "basis": "La nota de efectos de la propia entrada (diseño EMMA): habla del esfuerzo, no de una fuente que lo cuantifique."
+        }
+      ]
+    },
+    {"countermeasure_id": "cv-hydration-salt", "benefit": {"domain": "cardiovascular"}, "adverse": null},
+    {"countermeasure_id": "cv-repeat-rest", "benefit": {"domain": "cardiovascular"}, "adverse": null},
+    {"countermeasure_id": "bh-protect-sleep", "benefit": {"domain": "behavioral"}, "adverse": null},
+    {"countermeasure_id": "bh-circadian-lighting", "benefit": {"domain": "behavioral"}, "adverse": null},
+    {"countermeasure_id": "bh-repeat-pvt", "benefit": {"domain": "behavioral"}, "adverse": null},
+    {"countermeasure_id": "bh-social-contact", "benefit": {"domain": "behavioral"}, "adverse": null},
+    {"countermeasure_id": "rad-storm-shelter", "benefit": {"domain": "radiation"}, "adverse": null},
+    {"countermeasure_id": "rad-shielded-module", "benefit": {"domain": "radiation"}, "adverse": null},
+    {"countermeasure_id": "rad-hold-eva", "benefit": {"domain": "radiation"}, "adverse": null},
+    {"countermeasure_id": "rad-log-dosimeter", "benefit": {"domain": "radiation"}, "adverse": null},
+    {"countermeasure_id": "bone-resistive-load", "benefit": {"domain": "bone"}, "adverse": null},
+    {
+      "countermeasure_id": "bone-calcium-vitd",
+      "benefit": {"domain": "bone"},
+      "adverse": [
+        {
+          "affects": {"domain": "genitourinary"},
+          "text": "Del calcio, la fuente dice «Excess may cause kidney stones»: lo dice del exceso del nutriente, no de revisar la ingesta, que mira también si sobra.",
+          "basis": "OCHMO-MTB-013 Rev D (p. 15, columna «Cons»), citada en la nota de efectos de la entrada; leída el 2026-10-14."
+        },
+        {
+          "affects": {"indicator": "calcium"},
+          "text": "De la vitamina D, la fuente dice «Requires supplementation, risk of hypercalcemia»: lo dice del nutriente, no de revisar la ingesta.",
+          "basis": "OCHMO-MTB-013 Rev D (p. 15, columna «Cons»), citada en la nota de efectos de la entrada; leída el 2026-10-14."
+        }
+      ]
+    },
+    {"countermeasure_id": "bone-log-impacts", "benefit": {"domain": "bone"}, "adverse": null},
+    {"countermeasure_id": "imm-symptom-diary", "benefit": {"domain": "immune"}, "adverse": null},
+    {"countermeasure_id": "imm-hygiene", "benefit": {"domain": "immune"}, "adverse": null},
+    {"countermeasure_id": "imm-viral-sample", "benefit": {"domain": "immune"}, "adverse": null},
+    {"countermeasure_id": "sans-repeat-both-eyes", "benefit": {"domain": "neuro-ocular"}, "adverse": null},
+    {"countermeasure_id": "sans-vision-log", "benefit": {"domain": "neuro-ocular"}, "adverse": null},
+    {"countermeasure_id": "sans-review-baseline", "benefit": {"domain": "neuro-ocular"}, "adverse": null},
+    {"countermeasure_id": "gu-void-repeat", "benefit": {"domain": "genitourinary"}, "adverse": null},
+    {"countermeasure_id": "gu-intake-log", "benefit": {"domain": "genitourinary"}, "adverse": null},
+    {"countermeasure_id": "gu-review-postvoid", "benefit": {"domain": "genitourinary"}, "adverse": null},
+    {"countermeasure_id": "msk-repeat-pain-map", "benefit": {"domain": "musculoskeletal"}, "adverse": null},
+    {"countermeasure_id": "msk-log-activity", "benefit": {"domain": "musculoskeletal"}, "adverse": null},
+    {"countermeasure_id": "msk-review-zones", "benefit": {"domain": "musculoskeletal"}, "adverse": null},
+    {"countermeasure_id": "gu-hydration-target", "benefit": {"domain": "genitourinary"}, "adverse": null},
+    {"countermeasure_id": "gu-log-intake-output", "benefit": {"domain": "genitourinary"}, "adverse": null},
+    {"countermeasure_id": "nut-menu-variety", "benefit": {"domain": "nutrition"}, "adverse": null},
+    {"countermeasure_id": "nut-log-intake", "benefit": {"domain": "nutrition"}, "adverse": null},
+    {"countermeasure_id": "hab-co2-sensor-crosscheck", "benefit": {"parameter": "cabin-ppco2"}, "adverse": null},
+    {"countermeasure_id": "hab-co2-removal-check", "benefit": {"parameter": "cabin-ppco2"}, "adverse": null},
+    {"countermeasure_id": "hab-o2-sensor-crosscheck", "benefit": {"parameter": "cabin-ppo2"}, "adverse": null},
+    {"countermeasure_id": "hab-pressure-sensor-crosscheck", "benefit": {"parameter": "cabin-pressure"}, "adverse": null},
+    {"countermeasure_id": "hab-temperature-sensor-crosscheck", "benefit": {"parameter": "cabin-temperature"}, "adverse": null},
+    {"countermeasure_id": "hab-noise-sensor-crosscheck", "benefit": {"parameter": "cabin-noise"}, "adverse": null},
+    {"countermeasure_id": "hab-co-sensor-crosscheck", "benefit": {"parameter": "cabin-co"}, "adverse": null},
+    {"countermeasure_id": "hab-ammonia-sensor-crosscheck", "benefit": {"parameter": "cabin-ammonia"}, "adverse": null},
+    {"countermeasure_id": "hab-formaldehyde-sensor-crosscheck", "benefit": {"parameter": "cabin-formaldehyde"}, "adverse": null},
+    {"countermeasure_id": "hab-humidity-sensor-crosscheck", "benefit": {"parameter": "cabin-humidity"}, "adverse": null}
+  ],
+  "interactions": []
+}

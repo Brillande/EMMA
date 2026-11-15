@@ -1,0 +1,238 @@
+EMMA — Environment and Medical Monitoring Assistant
+Copyright (C) 2026 los creadores de EMMA  [PENDIENTE: nombres de los titulares]
+
+Este programa es software libre: puedes redistribuirlo y/o modificarlo bajo los términos de la
+GNU Affero General Public License tal como la publica la Free Software Foundation, en su
+versión 3 o, a tu elección, cualquier versión posterior. El texto completo está en LICENSE.
+
+Este programa se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA, ni
+siquiera la garantía implícita de COMERCIABILIDAD o IDONEIDAD PARA UN FIN CONCRETO.
+
+EMMA es una herramienta de apoyo a la decisión. No es un producto sanitario certificado, no
+diagnostica ni prescribe, y no sustituye el juicio clínico.
+
+--------------------------------------------------------------------------------------------
+Código de terceros incorporado
+
+Polaris — https://github.com/BeyondTheProtocol/polaris
+Copia literal: commit 20527939e00b9ebc063a0024210e6f9df663d989 (desde el 2026-10-08). El código adaptado
+de abajo procede del commit 7bf47257f563fa0942a0b73d820191a125be92a2, el que se copió primero.
+Copyright (C) 2026 la autora de Polaris, que opera bajo el nombre «Beyond the Protocol».
+Licencia: GNU AGPL-3.0-or-later.
+
+Ficheros de EMMA con código de Polaris ADAPTADO a mano (procede del commit
+7bf47257f563fa0942a0b73d820191a125be92a2, el que se copió primero). Cada uno lo declara en su
+cabecera, con el fichero de origen y los cambios hechos (AGPL-3.0 §5a):
+
+  Origen en Polaris                               Destino en EMMA
+  tools/honestidad_lint.py (_TRIGGERS)            backend/app/text_guard.py (_OVERCLAIM)
+  tools/decision_alto_riesgo.py (_TTO, _ACCION,   backend/app/text_guard.py (_ACTION, _DELIBERATE)
+    _DELIBERA_FUERTE)
+  tools/cotejo_invariante.py (_AUSENCIA,          backend/app/interpret/cotejo.py
+    _PRESENCIA, _NEG_RE, afirma_estado_alteracion)
+  tools/salida.py (aprobación con nonce)          backend/app/core/storage.py (sign_draft)
+  tools/decision_alto_riesgo.py (acta a dos voces) backend/app/core/storage.py (countersign_draft)
+  tools/tier_evidencia.py (_fetch_pubmed)         backend/scripts/grade_sources.py
+  tools/verifica_citas.py (clasifica,             backend/app/evidence/citations.py (classify, check_*)
+    check_doi/pmid/nct, estados)                  backend/tests/test_citations_live.py
+  tools/soporte_cita.py (numeros, cotejar)        backend/app/evidence/support.py (numbers, check)
+                                                  backend/tests/test_citation_support_live.py
+  tools/visor3d.py (lesiones)                     backend/app/volumes/geometry.py (lesions)
+  tools/visor3d.py (assets, _hd, PRESETS)         backend/app/volumes/assets.py (build, Preset)
+  tools/visor3d.py (segmenta, telemetría apagada) backend/app/volumes/segment.py
+  tools/visor3d_web/main.js (visor NiiVue)        frontend/src/volumes/VolumeViewer.tsx
+                                                  frontend/src/volumes/looks.ts (colores)
+  tools/visor3d_web/render.js (render 3D)         frontend/src/volumes/SegmentationPreview.tsx
+  evals/honestidad.json (método de gemelos)       backend/tests/data/text_guard_evals.json
+  Comité de voces de casas distintas (patrón)     backend/app/interpret/draft.py (verificadores)
+
+Ficheros de EMMA que LLAMAN a la copia literal (polaris/tools/, por app.polaris.load; el commit,
+en polaris/ADOPTADO.txt). Los que antes adaptaban y hoy llaman, y los añadidos el 2026-10-07.
+De cada herramienta que aparece aquí, la tabla nombra entre paréntesis todo lo que EMMA toma de
+ella (funciones, clases y constantes, por su nombre en Polaris) y todos los ficheros de
+backend/app y backend/scripts que lo toman; backend/tests/test_polaris_texts.py lo lee del
+código y falla si falta o sobra un nombre:
+
+  Origen en Polaris                               Destino en EMMA
+  tools/local.py (_ANTI)                          backend/app/interpret/draft.py (DATA_GUARD)
+  tools/honestidad_lint.py (_TRIGGERS)            backend/app/text_guard.py (avisos)
+  tools/decision_alto_riesgo.py (_ACCION,         backend/app/text_guard.py (avisos)
+    _DELIBERA_FUERTE)
+  tools/decision_alto_riesgo.py (disparar,        backend/app/decision_risk.py
+    _canon_txt)
+  tools/decision_alto_riesgo.py                   backend/app/evidence/source_check.py
+    (_existencia_citas)
+  tools/tier_evidencia.py (teje, SENALES,         backend/app/evidence/tier.py
+    senales_desde_registro, senales_desde_texto,
+    _resultado)
+  tools/sintomas.py (es_alarma)                   backend/app/pain/alarm.py
+  tools/ocr_informes.py (_tsv_a_texto, DPI,       backend/app/reports/ocr.py
+    LANGS, CONF_MINIMA, TEXT_LAYER_MIN_CHARS)
+  tools/deid.py (de_identificar_verificado,       backend/app/reports/deid.py
+    _mapa_normalizado)
+  tools/deid_eval.py (cargar_brat,                backend/scripts/deid_report.py
+    offsets_cuadran, puntuar, fugas)
+  tools/verifica_citas.py (_limpia_doi)           backend/app/evidence/citations.py (clean_doi)
+  tools/soporte_cita.py (_limpia_fuente,          backend/app/evidence/support.py
+    entidades, _num_canon, _plano)
+  tools/visor3d.py (ply_binario, _malla, _taubin, backend/app/volumes/geometry.py
+    _caja_de, _icosfera, _elipsoide,
+    _diametro_axial_mayor, empareja, evolucion)
+  tools/visor3d.py (nifti_limpio)                 backend/app/volumes/assets.py
+  tools/visor3d.py (_revisa_cadena,              backend/app/volumes/spine.py
+    _orden_columna, CADENA, VERTEBRA_MIN_MM3)
+  tools/visor3d.py (verifica_sin_pii, _trozos_pii, backend/app/volumes/privacy.py
+    nifti_limpio)
+  tools/visor3d.py (proyecta_anterior, _uv)       backend/app/volumes/skeleton_view.py
+  tools/borde.py (egress_check, halted,           backend/app/core/egress.py
+    HALT_FILES)
+  tools/borde.py (CANARIO_FILE)                   backend/app/polaris/__init__.py
+  tools/mutantes.py (Campana)                     backend/scripts/mutants.py, backend/tests/mutants/
+
+Los demás módulos de EMMA que llaman a la copia lo declaran en su cabecera (la línea SPDX y qué
+usan de ella); cuáles son lo dice backend/tests/test_polaris_headers.py, que falla si a alguno
+le falta.
+
+Copia literal: polaris/tools/ (134 herramientas, sus fichas y visor3d_web/), polaris/tests/
+(sus pruebas de lo copiado), polaris/evals/, polaris/docs/ y los LICENSE, NOTICE, CITATION.cff,
+README.md y CHANGELOG.md de Polaris (lista en polaris/MANIFEST.sha256, vigilada por
+backend/tests/test_polaris_copy.py). Su NOTICE, en polaris/NOTICE, es el aviso de su autora.
+Cambios decididos a la copia (AGPL §5a): polaris/CAMBIOS.json y la sección "Cambios" de
+polaris/ORIGEN.md (colores y textos del visor web del hígado; la ruta del Python de NER en
+Windows en tools/deid.py; SRC y OUT por variable de entorno en tools/transcribe_audios.py;
+fecha_cotejo traída de una prueba a tools/estado_actual.py, para que su orden `cotejado` no
+importe una prueba, que no viaja con la aplicación). Se copia byte a byte
+del commit de arriba; los únicos cambios son esos, decididos uno a uno. El
+pegamento de EMMA vive fuera de esa carpeta (backend/app/polaris/, incluidos compat/fcntl.py,
+compat/memguard.py y compat/winlock.py para Windows, y compat/resource.py y
+compat/sitecustomize.py solo para las pruebas de la copia;
+frontend/scripts/build-polaris.mjs; backend/app/volumes/polaris_web.py;
+y backend/app/data/polaris_web/, el visor de Polaris compilado por build-polaris.mjs).
+El empaquetado de la aplicación de escritorio copia los avisos de Polaris (LICENSE, NOTICE,
+CITATION.cff, README.md, CHANGELOG.md, ORIGEN.md, CAMBIOS.json, MANIFEST.sha256 y ADOPTADO.txt)
+a resources/polaris/ y, junto al código copiado y sus fichas, a
+resources/backend/_internal/polaris/ (backend/packaging/freeze.py, desktop/package.json). En la
+aplicación instalada, qué commit es y qué huella tiene cada fichero lo dicen esos dos últimos.
+
+--------------------------------------------------------------------------------------------
+Modelo de la búsqueda semántica, empaquetado en el backend (backend/app/data/kb-model/):
+  intfloat/multilingual-e5-small, ONNX int8, commit 614241f622f53c4eeff9890bdc4f31cfecc418b3.
+  Licencia MIT. Copyright (c) Liang Wang, Nan Yang, Xiaolong Huang, Linjun Yang, Rangan
+  Majumder, Furu Wei (Microsoft). https://huggingface.co/intfloat/multilingual-e5-small
+  Se ejecuta con onnxruntime (MIT, Microsoft) y tokenizers (Apache-2.0, Hugging Face).
+
+--------------------------------------------------------------------------------------------
+SPICE, empaquetado en el backend de la aplicación de escritorio (desde el 2026-11-11), para
+calcular sin red el retardo con Tierra (backend/app/environment/spice.py):
+  SpiceyPy — https://github.com/AndrewAnnex/SpiceyPy — Copyright (c) 2015-2025 Andrew Annex.
+  Licencia MIT; su texto viaja en el paquete (resources/backend/_internal/
+  spiceypy-<versión>.dist-info/licenses/LICENSE).
+  Lleva dentro la biblioteca CSPICE del SPICE Toolkit de NAIF (Navigation and Ancillary
+  Information Facility, JPL, NASA), https://naif.jpl.nasa.gov/naif/. Reglas de NAIF
+  (https://naif.jpl.nasa.gov/naif/rules.html, leídas el 2026-11-11): incluir módulos del Toolkit
+  «as part of a package supporting a customer-built SPICE-based tool is entirely appropriate»;
+  su uso en productos comerciales está permitido sin tasas ni licencia; se entrega «AS-IS»,
+  sin garantía de ningún tipo. La página no dice «dominio público». NAIF anima a reconocer el
+  uso de SPICE (https://naif.jpl.nasa.gov/naif/credit.html): este aviso lo hace.
+  Exportación: según esas mismas reglas, SPICE está designado TSPA (Technology and Software
+  Publicly Available) y quien fuera de NAIF produzca un producto derivado que lo incorpore
+  «must obtain her/his own export designation». EMMA lo incorpora sin modificar, en un proyecto
+  de código abierto (AGPL-3.0-or-later) y para un uso civil; no se ha pedido designación propia.
+  Quien redistribuya EMMA como producto debe comprobar la clasificación de exportación que le
+  aplique.
+
+--------------------------------------------------------------------------------------------
+Componentes de terceros empaquetados en la interfaz
+
+  NiiVue 0.69.0 — https://github.com/niivue/niivue — BSD-2-Clause. Sus dependencias (fflate,
+  gl-matrix, nifti-reader-js, zarrita, numcodecs, @zarrita/storage, unzipit,
+  reference-spec-reader, @lukeed/uuid, @lukeed/csprng, array-equal: MIT; @ungap/structured-clone:
+  ISC) viajan en el paquete de la interfaz.
+
+  three.js 0.186.1 — https://github.com/mrdoob/three.js — MIT. Con sus complementos
+  OrbitControls, RoomEnvironment y PLYLoader (mapa de dolor, vista ilustrada).
+
+  BodyParts3D 4.0 — https://dbarchive.biosciencedbc.jp/en/bodyparts3d/ — "BodyParts3D, ©
+  The Database Center for Life Science licensed under CC Attribution 4.0 International"
+  (licencia verificada en https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html el
+  2026-10-01). Obra derivada: backend/app/data/anatomy/esqueleto-anterior.png y esqueleto.json
+  (vista anterior y centroides por hueso, generados con polaris/tools/esqueleto_referencia.py),
+  con su atribución en backend/app/data/anatomy/ATRIBUCION.txt. El atlas original no se empaqueta.
+
+  @mediapipe/tasks-vision 1.2.2 — https://github.com/google-ai-edge/mediapipe — Apache License,
+  Version 2.0 (Copyright Google LLC). Su JavaScript y su WebAssembly (vision_wasm_internal.js y
+  .wasm) viajan en el paquete de la interfaz para la vista que sigue la cara (demostración,
+  frontend/src/lib/faceCamera.ts). Su registro de uso hacia Google no sale: lo paran la CSP y
+  blockForeignFetch.
+
+  Modelo face_landmarker.task (MediaPipe Face Landmarker, float16, versión 1; dentro, BlazeFace
+  de corto alcance, Face Mesh V2 y Blendshape V2) — Google — Apache License, Version 2.0, según
+  sus fichas de modelo. Descargado el 2026-11-03 de storage.googleapis.com/mediapipe-models;
+  origen, SHA-256 y fichas en frontend/public/mediapipe/ORIGEN.txt. El texto de la licencia
+  Apache-2.0 viaja al lado, en frontend/public/mediapipe/LICENSE-Apache-2.0.txt (en el paquete,
+  mediapipe/LICENSE-Apache-2.0.txt).
+
+  vosk-browser 0.0.8 — Ciaran O'Reilly, https://github.com/ccoreilly/vosk-browser — Apache License,
+  Version 2.0 (COPYING del repositorio, leído el 2026-11-03). Viaja en el paquete de la interfaz
+  para escuchar la palabra «EMMA» (frontend/src/assistant/wake/). Lleva dentro, compilados a
+  WebAssembly, Vosk (Alpha Cephei, Apache-2.0) y Kaldi (Apache-2.0), y en JavaScript uuid 9.0.0 (MIT). Su
+  trabajador se sirve como fichero propio (vosk/vosk-worker.js) con el mismo código, sin cambios,
+  y una guarda delante para que no salga a la red; frontend/src/assistant/wake/voskWorker.ts dice
+  por qué.
+
+  Modelo vosk-model-small-es-0.42 — Alpha Cephei (AC Technologies LLC) — Apache License, Version
+  2.0, según la tabla de modelos de Vosk. Descargado el 2026-11-03 de alphacephei.com/vosk/models
+  y reempaquetado como .tar.gz sin cambiar ningún fichero; origen, SHA-256 y licencia en
+  frontend/public/vosk/ORIGEN.txt, con el texto de la licencia al lado
+  (frontend/public/vosk/LICENSE-Apache-2.0.txt; en el paquete, vosk/LICENSE-Apache-2.0.txt).
+
+  Modelo vosk-model-small-en-us-0.15 — Alpha Cephei Inc — Apache License, Version 2.0, según la
+  tabla de modelos de Vosk. Descargado el 2026-11-15 de alphacephei.com/vosk/models y
+  reempaquetado como .tar.gz sin cambiar ningún fichero, para escuchar «EMMA» con la interfaz en
+  inglés; origen, SHA-256 y licencia en frontend/public/vosk/ORIGEN.txt, con el mismo texto de
+  licencia al lado.
+
+  IBM Plex Sans e IBM Plex Mono 5.3.0 (paquetes @fontsource/ibm-plex-sans y
+  @fontsource/ibm-plex-mono) — Copyright 2017-2019 IBM Corp. — SIL Open Font License,
+  Version 1.1. Las fuentes viajan en el paquete de la interfaz; el texto de la licencia, con
+  el aviso de copyright de cada fuente, al lado: frontend/public/fonts/ (en el paquete, fonts/).
+
+  Marca de EMMA (desktop/build/brand/: logotipos, marcas e icono del instalador) — obra propia
+  del proyecto, dibujada como SVG sin generador de imágenes; misma licencia que EMMA
+  (AGPL-3.0-or-later). Es un borrador pendiente de que el equipo lo adopte.
+
+Programas externos opcionales (no se empaquetan)
+
+  TotalSegmentator — https://github.com/wasserth/TotalSegmentator — código Apache-2.0; tareas
+  usadas (total, liver_vessels, liver_segments, liver_lesions, head_glands_cavities) de licencia
+  abierta según `totalseg_info`. Se instala aparte con PyTorch y sus pesos.
+
+--------------------------------------------------------------------------------------------
+Datos de terceros que viajan con la aplicación (conservan su propia licencia)
+
+  Ecografía pulmonar — Katumba A. et al., Mendeley Data, doi:10.17632/hb3p34ytvx.2, CC BY 4.0
+  Hígado en modo B — Byra M. et al., Zenodo, doi:10.5281/zenodo.1009146, CC BY 4.0
+  OSD-569 (hemograma de Inspiration4) — NASA Open Science Data Repository, https://osdr.nasa.gov
+  Registros de PubMed (tipos de publicación y MeSH) — NCBI/NLM, dominio público de EE. UU.
+  Instantánea de NASA DONKI (SEP), si viaja: backend/app/data/donki_snapshot.json — NASA/CCMC vía
+    api.nasa.gov, obra del Gobierno de EE. UU. sin copyright en EE. UU.; URL, fecha y licencia
+    van dentro del fichero
+  TAC de ejemplo del visor 3D — dataset de TotalSegmentator v2.0.1, Wasserthal J. et al.,
+    Radiol Artif Intell 2023; Zenodo, doi:10.5281/zenodo.10047292, CC BY 4.0
+  Núcleos SPICE genéricos naif0012.tls (segundos intercalares) y de432s.bsp (efemérides
+    planetarias DE432 de JPL) — NAIF, JPL/NASA, https://naif.jpl.nasa.gov/pub/naif/
+    generic_kernels/ — redistribuidos sin modificar, como permiten las reglas de NAIF
+    («Redistribution of SPICE kernels distributed by NAIF is permitted as long as they have
+    not been modified»); la página no dice «dominio público». Se comprueban por tamaño y huella
+    al empaquetarlos y al cargarlos; origen y huellas junto a ellos, en
+    resources/backend/_internal/spice/ORIGEN-NUCLEOS-SPICE.txt. Solo en la aplicación de
+    escritorio: no están en el repositorio (backend/scripts/fetch_spice_kernels.py los baja).
+
+Detalle y citas: compliance/imaging-data-provenance.md y README.md.
+
+--------------------------------------------------------------------------------------------
+Marplanner — https://github.com/diegomarino/marplanner
+Copia literal en marplanner/: commit 6c061d43e3dc39476ad9238c1823b09257a831f3 (desde el 2026-11-12),
+sin el despliegue en la nube ni el CI (marplanner/ADOPTADO.txt).
+Copyright (c) 2026 Diego Mariño. Licencia: MIT (marplanner/LICENSE). Sus dependencias y corpus de
+terceros conservan sus licencias (marplanner/THIRD_PARTY_NOTICES.md).

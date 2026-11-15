@@ -1,0 +1,28 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "toda lectura firma la clave `recorded_by`, aunque nadie la anotara: lo ya firmado deja de reproducirse",
+   "old": "            if observation.recorded_by is not None else {}\n",
+   "new": "            if True else {}\n"
+  },
+  {
+   "label": "quién anotó no entra en lo firmado",
+   "old": "            if observation.recorded_by is not None else {}\n",
+   "new": "            if False else {}\n"
+  },
+  {
+   "label": "al leer lo firmado se pierde quién anotó",
+   "old": "        recorded_by=payload.get(\"recorded_by\"),\n",
+   "new": "        recorded_by=None,\n"
+  },
+  {
+   "label": "un asiento anterior al campo no se puede leer",
+   "old": "        recorded_by=payload.get(\"recorded_by\"),\n",
+   "new": "        recorded_by=payload[\"recorded_by\"],\n"
+  }
+ ]
+}

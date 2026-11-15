@@ -1,0 +1,95 @@
+{
+  "_nota": "Lo que el Integrated Medical Model (IMM) de NASA publica sobre radiación: la probabilidad de al menos un síndrome agudo de radiación por misión de referencia, del informe «Ranking of Medical Conditions by Probability» (2 de febrero de 2015, iMED v5.0). Cada cifra va con la fila tal cual del PDF y la tabla de la que sale; cada perfil de EMMA dice a qué misión de referencia se asimila y por qué (decisión de EMMA, no del IMM). Petición del usuario, 2026-11-14: «queremos simularlos con el IMM», y «solo los parámetros del IMM». Lo valida `evidence/imm_radiation.py`. Descriptivo: no entra en ningún nivel, alerta ni riesgo.",
+  "ref": "imm-ranking-2015",
+  "read_on": "2026-11-14",
+  "condition": "Acute Radiation Syndrome",
+  "condition_display": "síndrome agudo de radiación",
+  "measure_quote": "the probability of at least one event occurring was calculated for each of the applicable ninety-eight of the one hundred listed medical conditions (Appendix A) using condition-specific incidence data from iMED and mission-specific parameters.",
+  "measure_display": "probabilidad de al menos un síndrome agudo de radiación en la misión, para un tripulante",
+  "caveat_quote": "iMED medical data and resources are baselined to the ISS environment, which includes low earth orbit, no gravity transitions, and vehicle ambient atmosphere equal to approximately 14.7 psi terrestrial ambient atmosphere. (During exploration missions, this has potential impact to the incidence values for the following medical conditions: including Acute Radiation Syndrome,",
+  "caveat_display": "Los datos del IMM están referidos al entorno de la ISS; en misiones de exploración eso puede cambiar la incidencia del síndrome agudo de radiación, y el informe lo dice.",
+  "drms": [
+    {
+      "key": "leo-6",
+      "display": "órbita baja, seis meses",
+      "drm_quote": "Low Earth Orbit 1 male   6 months     1",
+      "table": "Table 2: Six month Low Earth Orbit with 1 EVA",
+      "row_quote": "Acute Radiation Syndrome 1.41E-03",
+      "probability": "1.41E-03",
+      "months": 6,
+      "evas": 1
+    },
+    {
+      "key": "leo-12",
+      "display": "órbita baja, doce meses",
+      "drm_quote": "Low Earth Orbit 1 male 12 months     2",
+      "table": "Table 3: Twelve month Low Earth Orbit with 2 EVAs",
+      "row_quote": "Acute Radiation Syndrome 2.83E-03",
+      "probability": "2.83E-03",
+      "months": 12,
+      "evas": 2
+    },
+    {
+      "key": "deep-space-sortie",
+      "display": "salida al espacio profundo, un mes",
+      "drm_quote": "Deep Space Sortie 1 male   1 month     5",
+      "table": "Table 4: One month Deep Space Sortie with 5 EVAs",
+      "row_quote": "Acute Radiation Syndrome 2.36E-04",
+      "probability": "2.36E-04",
+      "months": 1,
+      "evas": 5
+    },
+    {
+      "key": "lunar-12",
+      "display": "visita y hábitat lunar, doce meses",
+      "drm_quote": "Lunar Visit/Habitation 1 male 12 months   50",
+      "table": "Table 5: Twelve month Lunar Visit and Habitation with 50 EVAs",
+      "row_quote": "Acute Radiation Syndrome 2.83E-03",
+      "probability": "2.83E-03",
+      "months": 12,
+      "evas": 50
+    },
+    {
+      "key": "deep-space-journey-12",
+      "display": "viaje y hábitat en espacio profundo, doce meses",
+      "drm_quote": "Deep Space Journey/Habitation 1 male 12 months     5",
+      "table": "Table 6: Twelve month Deep Space Journey and Habitation with 5 EVAs",
+      "row_quote": "Acute Radiation Syndrome 2.83E-03",
+      "probability": "2.83E-03",
+      "months": 12,
+      "evas": 5
+    },
+    {
+      "key": "planetary-36",
+      "display": "misión planetaria, treinta y seis meses",
+      "drm_quote": "Planetary 1 male 36 months   50",
+      "table": "Table 7: Thirty-six month Planetary mission with 50 EVAs",
+      "row_quote": "Acute Radiation Syndrome 8.45E-03",
+      "probability": "8.45E-03",
+      "months": 36,
+      "evas": 50
+    }
+  ],
+  "profiles": {
+    "leo": {
+      "drm": "leo-6",
+      "reason": "la misión de referencia del IMM en órbita baja de seis meses, la duración de una expedición de la estación"
+    },
+    "cislunar": {
+      "drm": "deep-space-sortie",
+      "reason": "el IMM no tiene una misión cislunar; la salida corta al espacio profundo es la más parecida a un vuelo de Orion alrededor de la Luna"
+    },
+    "lunar-surface": {
+      "drm": "lunar-12",
+      "reason": "la misión de referencia del IMM de visita y hábitat lunar"
+    },
+    "mars-transit": {
+      "drm": "deep-space-journey-12",
+      "reason": "el IMM no tiene un tránsito a Marte; el viaje y hábitat en espacio profundo es el tramo fuera de la magnetosfera más parecido"
+    },
+    "mars-surface": {
+      "drm": "planetary-36",
+      "reason": "la misión planetaria del IMM, la única con estancia en otro planeta"
+    }
+  }
+}

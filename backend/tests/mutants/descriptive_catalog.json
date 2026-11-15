@@ -1,0 +1,16 @@
+{"target": "app/ingest/codes.py",
+ "test": ["tests/test_descriptive_indicators.py"],
+ "mutations": [
+  {"label": "lo que evalúa un dominio cuenta también los descriptivos",
+   "old": "    return tuple(code for code in by_domain(domain) if code.key not in DESCRIPTIVE_ONLY)",
+   "new": "    return by_domain(domain)"},
+  {"label": "la prensión se registra en kilos, unidad de masa, con un código de fuerza",
+   "old": "_GRIP_FORCE_UNIT = \"kgf\"",
+   "new": "_GRIP_FORCE_UNIT = \"kg\""},
+  {"label": "un descriptivo deja de serlo sin que nada lo note",
+   "old": "    for code in (VISION_CHANGE, NASA_TLX, VO2_PEAK, GRIP_RIGHT, GRIP_LEFT, VITAMIN_D_25OH)",
+   "new": "    for code in (VISION_CHANGE, NASA_TLX, GRIP_RIGHT, GRIP_LEFT, VITAMIN_D_25OH)"},
+  {"label": "el VO2 pico se registra con otra unidad que la de su propiedad",
+   "old": "    unit=DESCRIPTIVE_LOINC[\"vo2-peak\"].example_ucum, system=CodeSystem.LOINC,",
+   "new": "    unit=\"mL/min\", system=CodeSystem.LOINC,"}
+ ]}

@@ -1,0 +1,85 @@
+{
+ "target": "app/ingest/bindings.py",
+ "test": [
+  "tests/test_device_in_reading.py::test_nothing_declared_says_nothing",
+  "tests/test_device_in_reading.py::test_each_signed_reading_is_judged_against_the_binding_of_its_instant",
+  "tests/test_device_in_reading.py::test_one_reading_is_told_in_the_singular",
+  "tests/test_device_in_reading.py::test_a_reading_without_identifier_is_compared_with_the_whole_source_binding",
+  "tests/test_device_in_reading.py::test_a_withdrawn_binding_and_one_that_names_nobody_give_no_notice",
+  "tests/test_device_in_reading.py::test_two_bindings_are_two_groups_in_ledger_order",
+  "tests/test_device_in_reading.py::test_the_status_never_repeats_the_whole_identifier",
+  "tests/test_device_in_reading.py::test_an_unreadable_binding_record_is_said_not_guessed"
+ ],
+ "mutations": [
+  {
+   "label": "una lectura firmada se juzga contra el vinculo de hoy, no el de su instante",
+   "old": "        held = in_force(declarations, obs.source, obs.device, obs.effective)\n",
+   "new": "        held = in_force(\n            declarations, obs.source, obs.device, dt.datetime.max.replace(tzinfo=dt.UTC))\n"
+  },
+  {
+   "label": "una lectura con identificador se juzga contra el vinculo de la fuente entera",
+   "old": "        held = in_force(declarations, obs.source, obs.device, obs.effective)\n",
+   "new": "        held = in_force(declarations, obs.source, None, obs.effective)\n"
+  },
+  {
+   "label": "se avisa de las lecturas del propio tripulante vinculado",
+   "old": "        if held is None or bound_to is None or bound_to == subject:",
+   "new": "        if held is None or bound_to is None:"
+  },
+  {
+   "label": "un vinculo retirado sigue senalando lecturas",
+   "old": "        bound_to = held.get(\"crew\") if held is not None and held[\"action\"] == BIND else None",
+   "new": "        bound_to = \"alguien\" if held is not None else None"
+  },
+  {
+   "label": "se comparan lecturas que no son de una fuente de wearable",
+   "old": "    compared = [obs for obs in observations if obs.source in SOURCES]",
+   "new": "    compared = list(observations)"
+  },
+  {
+   "label": "el estado repite el identificador entero del dispositivo",
+   "old": "            \"device_display\": device_short(obs.device),",
+   "new": "            \"device_display\": device_display(obs.device),"
+  },
+  {
+   "label": "el identificador abreviado es el identificador entero",
+   "old": "    return f\"…{device[-SHORT_DEVICE_TAIL:]}\"",
+   "new": "    return device"
+  },
+  {
+   "label": "el texto calla que EMMA las analiza igual y que decide una persona",
+   "old": "f\"EMMA no comprueba quién lo lleva puesto. {ANALYSED_ANYWAY}\"",
+   "new": "\"EMMA no comprueba quién lo lleva puesto.\""
+  },
+  {
+   "label": "sin vinculos declarados se dice algo",
+   "old": "        return {**base, \"kind\": \"none\"}\n",
+   "new": "        return {**base, \"kind\": \"none\", \"text\": \"No hay vínculos declarados.\"}\n"
+  },
+  {
+   "label": "un registro de vinculos ilegible se da por «nada que avisar»",
+   "old": "    if declarations is None:\n        return {\n            **base, \"kind\": \"not-checked\"",
+   "new": "    if declarations is None:\n        return {\n            **base, \"kind\": \"none\""
+  },
+  {
+   "label": "«desde cuando» es la ultima lectura senalada, no la primera",
+   "old": "        \"since\": min(group[\"first\"] for group in told),",
+   "new": "        \"since\": max(group[\"first\"] for group in told),"
+  },
+  {
+   "label": "la primera lectura de un grupo es la ultima que se miro",
+   "old": "        group[\"first\"], group[\"last\"] = min(group[\"first\"], at), max(group[\"last\"], at)",
+   "new": "        group[\"first\"], group[\"last\"] = at, max(group[\"last\"], at)"
+  },
+  {
+   "label": "se dan por senaladas todas las lecturas comparadas",
+   "old": "    mismatched = sum(group[\"readings\"] for group in told)",
+   "new": "    mismatched = len(compared)"
+  },
+  {
+   "label": "los indicadores de un grupo no se cuentan por indicador",
+   "old": "        counts[obs.key] = counts.get(obs.key, 0) + 1",
+   "new": "        counts[obs.key] = 1"
+  }
+ ]
+}

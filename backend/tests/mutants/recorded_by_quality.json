@@ -1,0 +1,18 @@
+{
+ "target": "app/analysis/data_quality.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "el registro diario se sigue llamando alta manual",
+   "old": "    \"crew-diary\": \"registro diario\",\n",
+   "new": "    \"crew-diary\": \"alta manual\",\n"
+  },
+  {
+   "label": "la PVT de la consola se llama como cualquier PVT",
+   "old": "    \"console-pvt\": \"test PVT en la consola\",\n",
+   "new": "    \"console-pvt\": \"test PVT\",\n"
+  }
+ ]
+}

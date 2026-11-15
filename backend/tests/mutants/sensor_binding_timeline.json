@@ -1,0 +1,33 @@
+{
+ "target": "app/timeline.py",
+ "test": [
+  "tests/test_sensor_bindings.py::test_the_chronicle_tells_the_declaration_without_the_identifier"
+ ],
+ "mutations": [
+  {
+   "label": "la cronica no cuenta la declaracion de un vinculo",
+   "old": "    for item in sensor_bindings.history(counted(store.sensor_bindings())):",
+   "new": "    for item in sensor_bindings.history([]):"
+  },
+  {
+   "label": "la declaracion se fecha en la hora de firma y no en el instante desde el que vale",
+   "old": "            mission, until, item, \"since\", \"sensor\",",
+   "new": "            mission, until, item, None, \"sensor\","
+  },
+  {
+   "label": "Tierra ve en la cronica un vinculo firmado despues de su corte",
+   "old": "    for item in sensor_bindings.history(counted(store.sensor_bindings())):",
+   "new": "    for item in sensor_bindings.history(store.sensor_bindings()):"
+  },
+  {
+   "label": "una retirada se cuenta como un vinculo declarado",
+   "old": "            \"sensor-binding-declared\" if item[\"bound\"] else \"sensor-binding-withdrawn\",",
+   "new": "            \"sensor-binding-declared\","
+  },
+  {
+   "label": "la cronica no dice quien declaro",
+   "old": "            sensor_bindings.sentence(item), item[\"declared_by\"])",
+   "new": "            sensor_bindings.sentence(item), \"\")"
+  }
+ ]
+}

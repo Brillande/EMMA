@@ -1,0 +1,15 @@
+{
+  "_nota": "Contraparte en inglés de habitat_modules.json (2026-11-15): cada cadena castellana que se enseña, con su inglés. Las claves de módulo no se traducen. Traducción automática, sin revisar por una persona; lo vigila tests/test_habitat_en.py.",
+  "strings": {
+    "Parámetro de diseño de EMMA, sin respaldo bibliográfico: EMMA no modela una nave concreta. La lista es una partición funcional mínima de un hábitat de larga duración y se sustituye por la del vehículo real al desplegar.": "EMMA design parameter, without bibliographic support: EMMA does not model a specific spacecraft. The list is a minimal functional partition of a long-duration habitat and is replaced by that of the real vehicle on deployment.",
+    "Un módulo es un identificador de esta lista, no una observación clínica: no lleva código LOINC ni entra en el catálogo de indicadores.": "A module is an identifier from this list, not a clinical observation: it carries no LOINC code and does not enter the indicator catalogue.",
+    "Hábitat principal": "Main habitat",
+    "Volumen común. Es el módulo de una lectura que no declara otro.": "Common volume. It is the module of a reading that does not declare another one.",
+    "Laboratorio": "Laboratory",
+    "Zona de trabajo y experimentos.": "Work and experiments area.",
+    "Camarotes": "Crew quarters",
+    "Zona de descanso de la tripulación.": "Crew rest area.",
+    "Esclusa": "Airlock",
+    "Acceso al exterior y preparación de EVA.": "Access to the outside and EVA preparation."
+  }
+}

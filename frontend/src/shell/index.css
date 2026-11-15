@@ -1,0 +1,26 @@
+/*
+ * Las secciones de la consola, por dentro, al estilo de la maqueta (decisión del usuario, 2026-11-07):
+ * una hoja por unidad de trabajo, todas bajo `.app[data-look="reference"]`, para que la concha clásica
+ * (`#clasica`) no cambie y para que varias unidades avancen en paralelo sin pisarse. La concha (fondo,
+ * franja, carril) está en `consoleShell.css`; las piezas de «Inicio», en `dashboard/referenceDashboard.css`.
+ * `palette.test.ts` escanea estas hojas: ningún color escrito a mano y toda `--c-*` de la paleta.
+ */
+
+@import "./furniture.css";
+@import "./board.css";
+@import "./hazards.css";
+@import "./body.css";
+@import "./routines.css";
+@import "./mission.css";
+@import "./data.css";
+@import "./log.css";
+@import "./imaging.css";
+@import "./library-env.css";
+@import "./ground-received.css";
+@import "./ground-trends.css";
+@import "./planner.css";
+@import "./ground-framework-ledger.css";
+@import "./assistant-about.css";
+@import "./header.css";
+@import "./rail.css";
+@import "./art.css";

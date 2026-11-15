@@ -1,0 +1,47 @@
+{
+ "target": "app/api/volumes.py",
+ "test": [
+  "tests/test_contrast_phase.py::test_declaring_writes_one_console_entry_and_the_latest_holds",
+  "tests/test_contrast_phase.py::test_what_cannot_be_signed_is_a_422_and_writes_nothing",
+  "tests/test_contrast_phase.py::test_a_study_that_does_not_exist_is_a_404",
+  "tests/test_contrast_phase.py::test_the_listed_density_carries_the_declared_phase_and_the_same_figures",
+  "tests/test_contrast_phase.py::test_the_evolution_state_is_the_same_with_and_without_declared_phases"
+ ],
+ "mutations": [
+  {
+   "label": "el listado respeta declaraciones que no firmo la consola",
+   "old": "        phase = contrast_phase.describe(declared, study, CONSOLE_IDENTITY)",
+   "new": "        phase = contrast_phase.describe(declared, study, SEGMENTER_SIGNER)"
+  },
+  {
+   "label": "la fase declarada no llega a la densidad del listado",
+   "old": "            _with_phase(_with_density(store, _with_spine_review(store, segmentation)), phase)",
+   "new": "            _with_density(store, _with_spine_review(store, segmentation))"
+  },
+  {
+   "label": "un estudio inexistente no es un 404",
+   "old": "    except KeyError as exc:\n        raise HTTPException(status_code=404, detail=str(exc.args[0])) from exc\n    return {\"ledger_index\": entry.index}",
+   "new": "    except KeyError as exc:\n        raise HTTPException(status_code=422, detail=str(exc.args[0])) from exc\n    return {\"ledger_index\": entry.index}"
+  },
+  {
+   "label": "la declaracion acepta campos que nadie definio",
+   "old": "class ContrastPhaseIn(BaseModel):\n    model_config = ConfigDict(extra=\"forbid\")",
+   "new": "class ContrastPhaseIn(BaseModel):\n    model_config = ConfigDict(extra=\"ignore\")"
+  },
+  {
+   "label": "la comparacion no encuentra la fase del estudio leido sin su indice",
+   "old": "        {**study, \"ledger_index\": study_index}, CONSOLE_IDENTITY,",
+   "new": "        study, CONSOLE_IDENTITY,"
+  },
+  {
+   "label": "la comparacion cruza las fases de los dos estudios en la densidad",
+   "old": "    a, b = _with_phase(a, phase_a), _with_phase(b, phase_b)",
+   "new": "    a, b = _with_phase(a, phase_b), _with_phase(b, phase_a)"
+  },
+  {
+   "label": "la comparacion da la fase del posterior como la del anterior",
+   "old": "        \"fase_contraste\": contrast_phase.compare(phase_a, phase_b),",
+   "new": "        \"fase_contraste\": contrast_phase.compare(phase_b, phase_a),"
+  }
+ ]
+}

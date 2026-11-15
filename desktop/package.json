@@ -1,0 +1,143 @@
+{
+  "name": "emma-desktop",
+  "productName": "EMMA",
+  "version": "0.1.0",
+  "description": "EMMA — monitorizacion autonoma de salud para misiones de larga duracion",
+  "author": "EMMA — NASA Space Apps 2026",
+  "license": "AGPL-3.0-or-later",
+  "private": true,
+  "main": "main.cjs",
+  "devDependencies": {
+    "electron": "44.4.5",
+    "electron-builder": "26.15.3"
+  },
+  "scripts": {
+    "start": "npm --prefix ../frontend run build && electron .",
+    "build:frontend": "npm --prefix ../frontend run build",
+    "build:backend": "node scripts/build-backend.mjs",
+    "build:planner": "node ../planner-bridge/build-marplanner.mjs",
+    "dist": "npm run build:frontend && npm run build:backend && npm run build:planner && electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "mission.emma.desktop",
+    "productName": "EMMA",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "package.json",
+      "build/icon.ico"
+    ],
+    "extraResources": [
+      {
+        "from": "../frontend/dist",
+        "to": "frontend"
+      },
+      {
+        "from": "../backend/build/desktop/dist/emma-backend",
+        "to": "backend"
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE"
+      },
+      {
+        "from": "../NOTICE",
+        "to": "NOTICE"
+      },
+      {
+        "from": "../polaris/LICENSE",
+        "to": "polaris/LICENSE"
+      },
+      {
+        "from": "../polaris/NOTICE",
+        "to": "polaris/NOTICE"
+      },
+      {
+        "from": "../polaris/CITATION.cff",
+        "to": "polaris/CITATION.cff"
+      },
+      {
+        "from": "../polaris/ORIGEN.md",
+        "to": "polaris/ORIGEN.md"
+      },
+      {
+        "from": "../polaris/CAMBIOS.json",
+        "to": "polaris/CAMBIOS.json"
+      },
+      {
+        "from": "../polaris/README.md",
+        "to": "polaris/README.md"
+      },
+      {
+        "from": "../polaris/CHANGELOG.md",
+        "to": "polaris/CHANGELOG.md"
+      },
+      {
+        "from": "../polaris/MANIFEST.sha256",
+        "to": "polaris/MANIFEST.sha256"
+      },
+      {
+        "from": "../polaris/ADOPTADO.txt",
+        "to": "polaris/ADOPTADO.txt"
+      },
+      {
+        "from": "build/marplanner",
+        "to": "marplanner"
+      },
+      {
+        "from": "build/marplanner/node_modules",
+        "to": "marplanner/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../planner-bridge",
+        "to": "planner-bridge",
+        "filter": [
+          "register.mjs",
+          "better-sqlite3.mjs",
+          "ledger-client.mjs",
+          "ledger-worker.mjs",
+          "egress.mjs",
+          "undici.mjs",
+          "compat-windows.mjs",
+          "ground-summary.mjs",
+          "summary-server.mjs",
+          "summary-worker.mjs",
+          "run-marplanner.mjs"
+        ]
+      },
+      {
+        "from": "../marplanner/ORIGEN.md",
+        "to": "marplanner/ORIGEN.md"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "license": "../LICENSE",
+      "deleteAppDataOnUninstall": true
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableCookieEncryption": true,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    }
+  }
+}

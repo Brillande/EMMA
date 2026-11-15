@@ -1,0 +1,11 @@
+{"target": "app/api/routes.py",
+ "test": ["tests/test_prior_response.py", "-k",
+          "another_identity or before_its_cut or brings_what_happened"],
+ "mutations": [
+  {"label": "la respuesta previa cuenta adopciones de otra firma o posteriores al corte de Tierra",
+   "old": "        recommendations, actions.decisions, payload[\"followups\"], declared_resources\n",
+   "new": "        recommendations, actions.decisions, followups(store.followup_decisions(subject), {str(domain): risk.level for domain, risk in status.domains.items()}, observations, latest), declared_resources\n"},
+  {"label": "el estado no trae lo que paso la otra vez",
+   "old": "    decorated = with_prior_response(decorated, followup_items)\n",
+   "new": "    decorated = with_prior_response(decorated, [])\n"}
+ ]}

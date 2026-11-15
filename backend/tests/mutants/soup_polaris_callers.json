@@ -1,0 +1,33 @@
+{
+  "target": "app/waiting.py",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "un módulo empieza a llamar a una herramienta y la ficha no lo nombra en su fila",
+      "old": "    return polaris.load(\"atascos\")",
+      "new": "    polaris.load(\"visor3d\")\n    return polaris.load(\"atascos\")"
+    },
+    {
+      "label": "el código carga una herramienta de la copia que no tiene fila en la ficha",
+      "old": "    return polaris.load(\"atascos\")",
+      "new": "    polaris.load(\"salida\")\n    return polaris.load(\"atascos\")"
+    },
+    {
+      "label": "el módulo que la ficha cita deja de llamar a la herramienta",
+      "old": "    return polaris.load(\"atascos\")",
+      "new": "    return polaris.load(\"cronica\")"
+    },
+    {
+      "label": "una carga declarada como indirecta pasa a hacerse por su nombre y sigue en la lista de indirectas",
+      "old": "    return polaris.load(\"atascos\")",
+      "new": "    polaris.load(\"deid_ner\")\n    return polaris.load(\"atascos\")"
+    },
+    {
+      "label": "un módulo empieza a pedirle a una herramienta un nombre que su fila no escribe",
+      "old": "    return polaris.load(\"atascos\")",
+      "new": "    polaris.load(\"atascos\").recopilar\n    return polaris.load(\"atascos\")"
+    }
+  ]
+}

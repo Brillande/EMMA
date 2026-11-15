@@ -1,0 +1,11 @@
+{
+  "target": "app/ingest/codes.py",
+  "test": ["tests/test_names_es.py"],
+  "mutations": [
+    {
+      "label": "el nombre que leen las frases vuelve a ser el de LOINC en inglés",
+      "old": "        return name_es(self.key)",
+      "new": "        return self.display"
+    }
+  ]
+}

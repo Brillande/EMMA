@@ -1,0 +1,66 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+*.local
+
+# Cachés de datos externos: se regeneran desde las APIs de NASA
+data/cache/*
+!data/cache/.gitkeep
+
+# Dataset MMASH (24 MB). Open Access ODbL; se descarga con
+# scripts/fetch_mmash.py o a mano desde PhysioNet.
+data/mmash/
+# HC18 (CC BY 4.0, ~133 MB): scripts/fetch_hc18.py. Ver compliance/imaging-data-provenance.md.
+data/hc18/
+# LifeSnaps (CC BY 4.0, zip de 615 MB y lo normalizado): scripts/fetch_lifesnaps.py. Hallazgo 31 de
+# compliance/external-validation.md.
+data/lifesnaps/
+# Núcleos SPICE de NAIF (~10 MB): backend/scripts/fetch_spice_kernels.py. Ver environment/spice.py.
+data/spice/
+
+# Secretos: la api_key de DONKI nunca se commitea
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Empaquetado de la aplicacion de escritorio (se regenera con desktop: npm run dist)
+backend/build/
+# Marplanner compilado para el instalador (planner-bridge/build-marplanner.mjs): se regenera.
+desktop/build/marplanner/
+desktop/release/
+
+# Entorno de TotalSegmentator (PyTorch, varios GB) y los TAC descargados del dataset
+.venv-seg/
+# Capa NER de la de-identificación (backend/scripts/install_deid_ner.py): torch, transformers y
+# el modelo del BSC. Programa externo opcional, no se versiona ni viaja en el instalador.
+.venv-deid/
+# Transcripción de audios (backend/scripts/install_voice.py): torch, Whisper y su modelo base.
+.venv-voice/
+data/ct-sources/
+data/ultrasound-sources/
+# BodyParts3D (CC BY 4.0, zip de 65 MB y sus piezas): se baja aparte; lo que usa la app ya está
+# generado en backend/app/data/anatomy/.
+data/bodyparts3d/
+
+# Copias de trabajo aisladas de los agentes (/batch): son otras ramas de este mismo repositorio.
+.claude/worktrees/
+
+data/upscale/
+
+# Material de defensa ante el jurado: no se versiona (decisión del usuario, 2026-11-10).
+docs/entrega/defensa-tablas.md

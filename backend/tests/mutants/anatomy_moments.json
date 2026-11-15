@@ -1,0 +1,83 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_anatomy.py::test_moments_are_the_phase_changes_the_landing_and_each_postflight_day",
+    "tests/test_anatomy.py::test_a_replayed_flight_lands_when_it_landed_and_skips_the_configured_phases",
+    "tests/test_anatomy.py::test_a_moment_needs_readings_before_and_after_it",
+    "tests/test_anatomy.py::test_each_postflight_day_falls_in_one_milestone",
+    "tests/test_anatomy.py::test_a_long_daily_recovery_gives_one_moment_per_milestone",
+    "tests/test_anatomy.py::test_a_chronicle_fact_is_the_moment_it_names",
+    "tests/test_timeline.py::test_the_chronicle_links_its_milestones_to_the_moments_of_the_body",
+    "tests/test_timeline.py::test_the_chronicle_moments_come_from_the_readings_the_status_analyses"
+  ],
+  "mutations": [
+    {
+      "label": "R+30 deja de ser un hito leido",
+      "old": "    MilestoneSource((0, 1, 7, 30), STANDARD_MEASURES_SOURCE, STANDARD_MEASURES_SCOPE),",
+      "new": "    MilestoneSource((0, 1, 7), STANDARD_MEASURES_SOURCE, STANDARD_MEASURES_SCOPE),"
+    },
+    {
+      "label": "el dia de un hito cae en el tramo siguiente",
+      "old": "    return next((milestone for milestone in POSTFLIGHT_MILESTONES if day <= milestone), None)",
+      "new": "    return next((milestone for milestone in POSTFLIGHT_MILESTONES if day < milestone), None)"
+    },
+    {
+      "label": "el tramo del dia de ahora no se pide en el dia de antes",
+      "old": "        segments = _segments(postflight, postflight_milestone, last)",
+      "new": "        segments = _segments(postflight, postflight_milestone, last + dt.timedelta(days=1))"
+    },
+    {
+      "label": "un tramo se pide en su primer dia y no en el ultimo",
+      "old": "        if instant < cutoff and (held is None or instant > held[1]):",
+      "new": "        if instant < cutoff and (held is None or instant < held[1]):"
+    },
+    {
+      "label": "la clave de un tramo es la del hito y no la de su dia",
+      "old": "                f\"R+{day}\", \"postflight_milestone\", _milestone_display(milestone, day), instant,",
+      "new": "                f\"R+{milestone}\", \"postflight_milestone\", _milestone_display(milestone, day), instant,"
+    },
+    {
+      "label": "un tramo se rotula como si su lectura fuera la del dia del hito",
+      "old": "    if day == milestone:\n        return i18n.tr(\n            f\"R+{milestone}: última lectura de ese día\"",
+      "new": "    if True:\n        return i18n.tr(\n            f\"R+{milestone}: última lectura de ese día\""
+    },
+    {
+      "label": "un cambio de fase no es el momento que acaba un segundo antes",
+      "old": "             and dt.datetime.fromisoformat(item[\"until\"]) + _BEFORE == at),",
+      "new": "             and dt.datetime.fromisoformat(item[\"until\"]) == at),"
+    },
+    {
+      "label": "un hecho posvuelo enlaza con un hito pedido antes que el",
+      "old": "             and dt.datetime.fromisoformat(item[\"until\"]) >= at),",
+      "new": "             ),"
+    },
+    {
+      "label": "un hecho posvuelo enlaza con el ultimo hito y no con el primero que lo cuenta",
+      "old": "        found = min(",
+      "new": "        found = max("
+    },
+    {
+      "label": "un dia posvuelo resumido no enlaza",
+      "old": "POSTFLIGHT_FACTS = frozenset({\"postflight-sample\", \"postflight-day\"})",
+      "new": "POSTFLIGHT_FACTS = frozenset({\"postflight-sample\"})"
+    },
+    {
+      "target": "app/timeline.py",
+      "label": "ningun hecho de la cronica enlaza con su momento",
+      "old": "        event[\"moment\"] = anatomy.chronicle_moment(event, moments)",
+      "new": "        event[\"moment\"] = None"
+    },
+    {
+      "target": "app/api/timeline.py",
+      "label": "a Tierra le llegan los momentos de ahora",
+      "old": "        history, _moments(settings, assessed) if assessed and until is None else None,",
+      "new": "        history, _moments(settings, assessed) if assessed else None,"
+    },
+    {
+      "target": "app/api/timeline.py",
+      "label": "los momentos de la cronica cuentan las lecturas que el estado aparta",
+      "old": "    return anatomy.moments(assessed.observations, settings.mission_start, settings.mission_days)",
+      "new": "    return anatomy.moments(assessed.stored or [], settings.mission_start, settings.mission_days)"
+    }
+  ]
+}

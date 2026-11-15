@@ -1,0 +1,9 @@
+{"target": "app/ingest/codes.py", "test": ["tests/test_hydration_nutrition.py"],
+ "mutations": [
+  {"label": "la ingesta 24 h (VRat) con unidad de volumen y no de tasa (invariante 2)",
+   "old": "unit=\"mL/(24.h)\", system=CodeSystem.LOINC, domain=Domain.GENITOURINARY,",
+   "new": "unit=\"mL\", system=CodeSystem.LOINC, domain=Domain.GENITOURINARY,"},
+  {"label": "la guia de aceptabilidad pasa a rango observado y podria alertar",
+   "old": "    concerning=\"low\", reference_basis=ReferenceBasis.GUIDELINE,\n    physical_min=1, physical_max=9,",
+   "new": "    concerning=\"low\", reference_basis=ReferenceBasis.OBSERVED,\n    physical_min=1, physical_max=9,"}
+ ]}

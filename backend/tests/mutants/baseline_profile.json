@@ -1,0 +1,86 @@
+{
+ "target": "app/analysis/baseline_profile.py",
+ "test": [
+  "tests/test_baseline_profile.py::test_every_figure_is_the_one_the_engine_judged_with",
+  "tests/test_baseline_profile.py::test_a_learning_base_shows_no_median_and_says_what_judges_meanwhile",
+  "tests/test_baseline_profile.py::test_the_latest_state_comes_first_and_decides_the_indicator",
+  "tests/test_baseline_profile.py::test_a_thin_state_borrows_its_family_and_says_which_readings",
+  "tests/test_baseline_profile.py::test_doubtful_readings_are_not_counted_as_the_state_own",
+  "tests/test_baseline_profile.py::test_a_reading_that_cannot_be_placed_in_one_state_is_left_out_and_counted",
+  "tests/test_baseline_profile.py::test_the_catalog_range_is_shown_as_backup_and_not_as_threshold",
+  "tests/test_baseline_profile.py::test_two_states_at_the_last_instant_are_both_the_latest",
+  "tests/test_baseline_profile.py::test_the_danger_limit_shown_is_the_one_the_engine_crosses"
+ ],
+ "mutations": [
+  {
+   "label": "con dos estados a la misma ultima hora, basta uno establecido",
+   "old": "            \"established\": all(row[\"established\"] for row in current) if current else None,",
+   "new": "            \"established\": any(row[\"established\"] for row in current) if current else None,"
+  },
+  {
+   "label": "con dos estados a la misma ultima hora, solo uno es la ultima lectura",
+   "old": "                       latest=dev.effective == newest_time[key])",
+   "new": "                       latest=dev is mine[0][1])"
+  },
+  {
+   "label": "la actividad fisica se ensena con el limite general y no con el de esfuerzo",
+   "old": "    exerting = state is Context.ACTIVE",
+   "new": "    exerting = False"
+  },
+  {
+   "label": "una base prestada de la familia se da por del propio estado",
+   "old": "    from_family = samples != exact",
+   "new": "    from_family = False"
+  },
+  {
+   "label": "las lecturas de baja confianza cuentan como del estado y una base propia se lee como prestada",
+   "old": "        if not obs.is_low_confidence:\n            usable",
+   "new": "        if True:\n            usable"
+  },
+  {
+   "label": "la familia se escribe como el estado entero, reposo incluido, y no como la agrupa el motor",
+   "old": "if item.family is family and item.family is not item]",
+   "new": "if item.family is family]"
+  },
+  {
+   "label": "una base en aprendizaje se da por establecida",
+   "old": "    established = not deviation.used_population_range",
+   "new": "    established = True"
+  },
+  {
+   "label": "una base en aprendizaje ensena su mediana como si se juzgara contra ella",
+   "old": "    median = baseline.center if (established and baseline is not None) else None",
+   "new": "    median = baseline.center if baseline is not None else None"
+  },
+  {
+   "label": "el sueno se juzga con el limite general y no con el de reposo",
+   "old": "    at_rest = state.family in {Context.REST, Context.SLEEP}",
+   "new": "    at_rest = state.family is Context.REST"
+  },
+  {
+   "label": "sin limite de peligro se dice que avisa el limite mientras aprende",
+   "old": "    if no_limit:\n        return \"Mientras aprende no avisa",
+   "new": "    if False:\n        return \"Mientras aprende no avisa"
+  },
+  {
+   "label": "el indicador toma la base de cualquier estado y no la de su ultima lectura",
+   "old": "        current = [row for row in rows if row[\"latest\"]]",
+   "new": "        current = rows[-1:]"
+  },
+  {
+   "label": "los estados no van del mas reciente al mas antiguo y la ultima lectura no va primero",
+   "old": "            key=lambda pair: pair[1].effective,\n            reverse=True,",
+   "new": "            key=lambda pair: pair[1].effective,\n            reverse=False,"
+  },
+  {
+   "label": "una lectura que no se puede atribuir a un estado se atribuye a uno cualquiera",
+   "old": "        if len(found) != 1:",
+   "new": "        if not found:"
+  },
+  {
+   "label": "el rango del catalogo pierde su procedencia",
+   "old": "        \"text\": f\"Rango del catálogo: {span} ({basis}). {RANGE_ROLE}\",",
+   "new": "        \"text\": f\"Rango del catálogo: {span}. {RANGE_ROLE}\","
+  }
+ ]
+}

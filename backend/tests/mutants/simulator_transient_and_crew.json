@@ -1,0 +1,27 @@
+{"target": "app/ingest/simulator.py",
+ "test": [
+  "tests/test_simulator.py::test_the_transient_perturbation_rises_holds_and_ceases",
+  "tests/test_simulator.py::test_outside_the_episode_the_transient_series_is_the_nominal_one",
+  "tests/test_simulator.py::test_only_the_whole_ship_scenarios_reach_the_whole_crew",
+  "tests/test_simulator.py::test_the_solar_event_reaches_the_four_crew_members"
+ ],
+ "mutations": [
+  {"label": "el evento solar vuelve a ser de un solo tripulante",
+   "old": "ENVIRONMENTAL_SCENARIOS = frozenset({Scenario.CO2_FATIGUE, Scenario.SPE_EVENT})",
+   "new": "ENVIRONMENTAL_SCENARIOS = frozenset({Scenario.CO2_FATIGUE})"},
+  {"label": "la perturbacion pasajera no cesa",
+   "old": "    falling = 1.0 - (mission_day - ceases) / ramp_days\n",
+   "new": "    falling = 1.0\n"},
+  {"label": "el episodio no se aplica a la serie",
+   "old": "    Scenario.TRANSIENT_SLEEP_LOSS: (_TRANSIENT_EFFECTS, transient_level),\n",
+   "new": ""},
+  {"label": "el sueño sube en vez de bajar en el episodio",
+   "old": "    \"sleep-duration\": -LITERATURE[\"transient_sleep_loss_h\"].value,",
+   "new": "    \"sleep-duration\": LITERATURE[\"transient_sleep_loss_h\"].value,"},
+  {"label": "el episodio se cuela en los demas escenarios",
+   "old": "effects, profile = _TIMED_EFFECTS.get(self.scenario, ({}, None))",
+   "new": "effects, profile = _TIMED_EFFECTS[Scenario.TRANSIENT_SLEEP_LOSS]"},
+  {"label": "el episodio se ancla al principio y no al final de la ventana",
+   "old": "    onset = total_days - LITERATURE[\"transient_onset_days_before_end\"].value",
+   "new": "    onset = LITERATURE[\"transient_onset_days_before_end\"].value"}
+ ]}

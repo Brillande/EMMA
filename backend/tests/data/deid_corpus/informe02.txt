@@ -1,0 +1,5 @@
+Nombre: Ignacio Martín Sanz
+NIE: X1234567L
+Correo: ignacio.martin@correo-ejemplo.es
+Domicilio: C/ Mayor 12, 3ºB, Madrid
+Glucosa 92 mg/dL   Creatinina 0,9 mg/dL

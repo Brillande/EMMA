@@ -1,0 +1,16 @@
+{
+  "target": "app/ingest/simulator.py",
+  "test": ["tests/test_spe_demo_offline.py"],
+  "mutations": [
+    {
+      "label": "el escenario de vuelta ancla el pico al final, como spe-event",
+      "old": "        if self.scenario is Scenario.SPE_EVENT_RECOVERY:\n            return max(0.5, total_days - LITERATURE[\"spe_recovery_onset_days_before_end\"].value)",
+      "new": "        if False:\n            return 0.0"
+    },
+    {
+      "label": "el escenario de vuelta no lleva pico de dosis",
+      "old": "        if self.scenario not in SPE_SCENARIOS:",
+      "new": "        if self.scenario is not Scenario.SPE_EVENT:"
+    }
+  ]
+}

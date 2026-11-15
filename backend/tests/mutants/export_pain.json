@@ -1,0 +1,52 @@
+{
+  "target": "app/export.py",
+  "test": [
+    "tests/test_knowledge.py::test_pain_exports_to_pdf_with_what_the_ledger_holds",
+    "tests/test_knowledge.py::test_a_dictated_note_is_never_presented_as_typed",
+    "tests/test_knowledge.py::test_no_pain_reports_is_said_not_invented",
+    "tests/test_knowledge.py::test_a_note_cannot_open_a_heading_or_a_table",
+    "tests/test_knowledge.py::test_the_copy_is_restored_after_exporting_pain"
+  ],
+  "mutations": [
+    {
+      "label": "el PDF de dolor omite la marca de «comentar con el médico de a bordo»",
+      "old": "        if discuss.get(\"reasons\"):",
+      "new": "        if False:"
+    },
+    {
+      "label": "una nota dictada se presenta como escrita por quien informa, sin decir que la transcribió un modelo",
+      "old": "    if origin == \"escrita\":",
+      "new": "    if origin in (\"escrita\", \"dictada-revisada\"):"
+    },
+    {
+      "label": "un origen de nota desconocido se da por verificado",
+      "old": "», sin verificar:\"",
+      "new": "», verificada:\""
+    },
+    {
+      "label": "tras exportar, sys.argv queda con las rutas del PDF (cerrojo sin restaurar)",
+      "old": "            sys.argv = saved_argv",
+      "new": "            pass"
+    },
+    {
+      "label": "tras exportar, la copia queda con SimpleDocTemplate sustituido",
+      "old": "            tool.SimpleDocTemplate = original",
+      "new": "            pass"
+    },
+    {
+      "label": "el PDF de dolor sale con el título del caso de la autora de Polaris",
+      "old": "        kwargs[\"title\"] = title",
+      "new": "        pass"
+    },
+    {
+      "label": "sin informes, el PDF calla en vez de decir que el ledger no tiene ninguno",
+      "old": "        lines.append(\"Sin anotaciones de dolor en el ledger.\")",
+      "new": "        pass"
+    },
+    {
+      "label": "un salto de línea en la nota abre un título o una tabla en el documento",
+      "old": "            text = re.sub(r\"\\s+\", \" \", str(report[\"note\"])).strip()",
+      "new": "            text = str(report[\"note\"]).strip()"
+    }
+  ]
+}

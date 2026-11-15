@@ -1,0 +1,13 @@
+{
+  "target": "app/api/safe_mode.py",
+  "test": [
+    "tests/test_safe_mode.py"
+  ],
+  "mutations": [
+    {
+      "label": "el modo seguro no llega a la puerta de salida",
+      "old": "    return str(state[\"reason\"] or \"sin motivo\") if state[\"active\"] else None",
+      "new": "    return None"
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+ "target": "app/ingest/food_item.py",
+ "test": [
+  "tests/test_food_item.py",
+  "-k",
+  "not same_status and not simulated"
+ ],
+ "mutations": [
+  {
+   "label": "la forma descompuesta de una tilde se firma tal cual y el mismo plato se escribe de dos maneras",
+   "old": "    return \" \".join(unicodedata.normalize(\"NFC\", text).split())\n",
+   "new": "    return \" \".join(text.split())\n"
+  },
+  {
+   "label": "un nombre más largo que el tope se firma",
+   "old": "    if len(name) > MAX_LENGTH:\n",
+   "new": "    if len(name) > MAX_LENGTH + 1:\n"
+  },
+  {
+   "label": "una cifra sola se firma como si nombrara un plato",
+   "old": "    if not any(char.isalpha() and char not in ALLOWED_PUNCTUATION for char in name):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "el ordinal «º», que Unicode cuenta como letra, basta para nombrar un plato",
+   "old": "    if not any(char.isalpha() and char not in ALLOWED_PUNCTUATION for char in name):\n",
+   "new": "    if not any(char.isalpha() for char in name):\n"
+  },
+  {
+   "label": "marcas, emojis y caracteres de control entran en lo firmado",
+   "old": "    refused = sorted({char for char in name if not _allowed(char)})\n",
+   "new": "    refused: list[str] = []\n"
+  },
+  {
+   "label": "el filtro de lenguaje no mira el nombre del plato",
+   "old": "    found = check(name)\n",
+   "new": "    found = []\n"
+  },
+  {
+   "label": "las mayúsculas separan un mismo plato en dos",
+   "old": "    return normalize(food).casefold()\n",
+   "new": "    return normalize(food)\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "toda lectura lleva `focus` en FHIR, también sin alimento: el recurso de antes cambia",
+   "old": "            **({\"focus\": [{\"display\": self.food}]} if self.food is not None else {}),\n",
+   "new": "            **({\"focus\": [{\"display\": self.food}]} if True else {}),\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "el alimento no sale en FHIR",
+   "old": "            **({\"focus\": [{\"display\": self.food}]} if self.food is not None else {}),\n",
+   "new": "            **({\"focus\": [{\"display\": self.food}]} if False else {}),\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "al leer FHIR se pierde el alimento",
+   "old": "            food=(resource.get(\"focus\") or [{}])[0].get(\"display\"),\n",
+   "new": "            food=None,\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "el atajo de construcción pierde el alimento",
+   "old": "        food=food,\n",
+   "new": ""
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "cualquier indicador puede llevar un alimento",
+   "old": "            if self.code.key not in FOOD_ITEM_KEYS:\n",
+   "new": "            if False:\n"
+  },
+  {
+   "target": "app/ingest/fhir.py",
+   "label": "un alimento vacío o con espacios en los bordes se construye",
+   "old": "            if not isinstance(self.food, str) or not self.food or self.food != self.food.strip():\n",
+   "new": "            if not isinstance(self.food, str):\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "toda lectura firma la clave `food`, aunque no lleve alimento: lo ya firmado deja de reproducirse",
+   "old": "        **({\"food\": observation.food} if observation.food is not None else {}),\n",
+   "new": "        **({\"food\": observation.food} if True else {}),\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "el alimento no entra en lo firmado",
+   "old": "        **({\"food\": observation.food} if observation.food is not None else {}),\n",
+   "new": "        **({\"food\": observation.food} if False else {}),\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "al leer lo firmado se pierde el alimento",
+   "old": "        food=payload.get(\"food\"),\n",
+   "new": "        food=None,\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "un asiento anterior al campo no se puede leer",
+   "old": "        food=payload.get(\"food\"),\n",
+   "new": "        food=payload[\"food\"],\n"
+  },
+  {
+   "target": "app/core/storage.py",
+   "label": "una enmienda saca la valoración de su plato",
+   "old": "                    observation = replace(observation, food=carried)\n",
+   "new": "                    pass\n"
+  },
+  {
+   "target": "app/api/diary.py",
+   "label": "el diario firma el alimento tal como llega, sin la regla",
+   "old": "    food = _food_or_422(payload.key, payload.food)\n",
+   "new": "    food = payload.food\n"
+  },
+  {
+   "target": "app/api/diary.py",
+   "label": "el diario deja de exigir el alimento en la valoración",
+   "old": "        return food_item.accept(key, food, require=True)\n",
+   "new": "        return food_item.accept(key, food, require=False)\n"
+  },
+  {
+   "label": "una anotación de otro indicador puede llevar un plato (la regla, en `accept`)",
+   "old": "        if food is not None:\n            raise ValueError(NOT_ALLOWED_HERE)\n",
+   "new": "        if False:\n            raise ValueError(NOT_ALLOWED_HERE)\n"
+  },
+  {
+   "label": "una valoración sin alimento se firma aunque la ruta lo exija",
+   "old": "        if require and key in REQUIRED:\n            raise ValueError(MISSING)\n",
+   "new": "        if False:\n            raise ValueError(MISSING)\n"
+  },
+  {
+   "label": "la regla no se aplica al nombre que llega",
+   "old": "    refused = problem(food)\n    if refused is not None:\n        raise ValueError(refused)\n",
+   "new": "    refused = None\n    if refused is not None:\n        raise ValueError(refused)\n"
+  },
+  {
+   "label": "se firma el nombre sin normalizar",
+   "old": "    return normalize(food)\n",
+   "new": "    return food\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "la serie de un plato se toma en el orden en que llega",
+   "old": "    ordered = sorted(ratings, key=lambda item: item.effective)\n",
+   "new": "    ordered = list(ratings)\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "dos valoraciones del mismo día cuentan como dos días",
+   "old": "    days = len({item.effective.astimezone(dt.UTC).date() for item in ordered})\n",
+   "new": "    days = len(ordered)\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "sin criterio leído se cuentan cero por debajo en cada plato",
+   "old": "        \"below\": below if compared else None,\n",
+   "new": "        \"below\": below,\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "a igualdad de veces, el plato valorado por última vez no va primero",
+   "old": "    built.sort(key=lambda dish: dt.datetime.fromisoformat(dish[\"last_effective\"]), reverse=True)\n",
+   "new": "    pass\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "el plato más valorado no va primero",
+   "old": "    built.sort(key=lambda dish: dish[\"times\"], reverse=True)\n",
+   "new": "    pass\n"
+  },
+  {
+   "target": "app/analysis/food_acceptability.py",
+   "label": "las valoraciones sin alimento se cuentan como de un plato",
+   "old": "    with_food = sum(dish[\"times\"] for dish in by_dish)\n",
+   "new": "    with_food = len(rated)\n"
+  }
+ ]
+}

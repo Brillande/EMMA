@@ -1,0 +1,13 @@
+{
+ "target": "app/ingest/habitat_simulator.py",
+ "test": [
+  "tests/test_habitat_flow.py::test_the_simulated_light_leaves_every_other_series_as_it_was"
+ ],
+ "mutations": [
+  {
+   "label": "la luz sale del generador comun y mueve el ruido de los demas parametros",
+   "old": "                    source = own if key in OWN_STREAM else rng",
+   "new": "                    source = rng"
+  }
+ ]
+}

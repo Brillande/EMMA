@@ -1,0 +1,13 @@
+{
+  "target": "app/export.py",
+  "test": [
+    "tests/test_polaris_console.py::test_while_one_adapter_holds_the_console_the_other_two_wait"
+  ],
+  "mutations": [
+    {
+      "label": "exportar a PDF vuelve a redirigir la consola solo bajo el cerrojo de export",
+      "old": "            with console.captured():",
+      "new": "            with __import__(\"contextlib\").redirect_stdout(__import__(\"io\").StringIO()):"
+    }
+  ]
+}

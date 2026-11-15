@@ -1,0 +1,513 @@
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { BriefingWorkspace } from "@/daily-briefing/admin/BriefingWorkspace";
+import { LanguageProvider } from "@/i18n";
+import { PRINT_INTENT_ENQUEUED_EVENT } from "@/printing/queueWakeup";
+import { Role } from "../../src/shared";
+import type { Briefing, MemberDTO } from "../../src/shared";
+
+type FetchCall = Parameters<typeof globalThis.fetch>;
+
+const ben: MemberDTO = {
+  id: "member-ben",
+  displayName: "Ben",
+  colorKey: "teal",
+  role: Role.child,
+  lifecycle: "active",
+  createdAt: 1,
+  updatedAt: 1,
+  celebration: { preset: "confetti" },
+  birthDate: null,
+};
+
+const TODAY = "2026-10-15";
+const PAST = "2026-10-14";
+
+function briefing(date: string, status: Briefing["status"] = "ready"): Briefing {
+  return {
+    id: `b-${date}`,
+    memberId: "member-ben",
+    date,
+    status,
+    payload: {
+      schemaVersion: 2,
+      member: { id: "member-ben", displayName: "Ben" },
+      date,
+      blocks: [],
+    },
+    createdAt: 1,
+    updatedAt: 2,
+  };
+}
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status });
+}
+
+interface Backend {
+  printingActive?: boolean;
+  historyFails?: boolean;
+  previewStatus?: Record<string, number>;
+  generate?: (body: Record<string, unknown>) => Response;
+  print?: () => Response;
+  /** The first N stored-briefing reads fail. */
+  readFails?: number;
+  /** Ben has no stored briefings at all. */
+  noHistory?: boolean;
+  /** Dates with no stored briefing for Ben. */
+  notGenerated?: string[];
+  /** Holds the read of a date until the promise resolves. */
+  readGate?: Record<string, Promise<void>>;
+}
+
+function mockBackend(backend: Backend = {}) {
+  const calls: Array<{ url: string; method: string; body?: unknown }> = [];
+  let historyFailures = backend.historyFails ? 1 : 0;
+  let readFailures = backend.readFails ?? 0;
+  const fetchMock = vi.fn(async (...args: FetchCall) => {
+    const [input, init] = args;
+    const url = String(input);
+    const method = init?.method ?? "GET";
+    calls.push({ url, method, body: init?.body ? JSON.parse(String(init.body)) : undefined });
+    if (url === "/api/settings") return json({ locale: { timezone: "UTC", language: "en" } });
+    if (url === "/api/printing/status") return json({ active: backend.printingActive ?? true });
+    if (url.startsWith("/api/daily-briefing/history/")) {
+      if (historyFailures > 0) {
+        historyFailures -= 1;
+        return json({ error: "internal_error", message: "x" }, 500);
+      }
+      return json({
+        today: TODAY,
+        entries:
+          url.endsWith("member-ben") && !backend.noHistory
+            ? [
+                { id: "b1", date: TODAY, status: "ready", updatedAt: 2 },
+                { id: "b0", date: PAST, status: "render-failed", updatedAt: 1 },
+              ]
+            : [],
+      });
+    }
+    const preview = url.match(/^\/api\/daily-briefing\/[^/]+\/(\d{4}-\d{2}-\d{2})\/preview\.png/);
+    if (preview) {
+      const status = backend.previewStatus?.[preview[1]] ?? 200;
+      return status === 200
+        ? new Response(new Blob([new Uint8Array([137, 80, 78, 71])]), { status })
+        : json(status === 202 ? { status: "rendering" } : { error: "x", message: "x" }, status);
+    }
+    if (url === "/api/daily-briefing/generate" && method === "POST") {
+      return backend.generate?.(JSON.parse(String(init?.body))) ?? json(briefing(TODAY));
+    }
+    const print = url.match(/^\/api\/daily-briefing\/[^/]+\/[^/]+\/print$/);
+    if (print && method === "POST")
+      return backend.print?.() ?? json({ jobId: "j1", enqueued: true });
+    const read = url.match(/^\/api\/daily-briefing\/member-(ben|cleo)\/(\d{4}-\d{2}-\d{2})$/);
+    if (read) {
+      await backend.readGate?.[read[2]];
+      if (readFailures > 0) {
+        readFailures -= 1;
+        return json({ error: "internal_error", message: "x" }, 500);
+      }
+      return read[1] === "ben" && !backend.notGenerated?.includes(read[2])
+        ? json({
+            generated: true,
+            // Same status as the history entry for that date.
+            briefing: briefing(read[2], read[2] === PAST ? "render-failed" : "ready"),
+            printedStatus: "none",
+          })
+        : json({ generated: false });
+    }
+    throw new Error(`unexpected fetch: ${method} ${url}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  return calls;
+}
+
+type WorkspaceProps = Parameters<typeof BriefingWorkspace>[0];
+
+function renderWorkspace(props: Partial<WorkspaceProps> = {}) {
+  const onGenerated = vi.fn();
+  const onOpenBlocks = vi.fn();
+  const onDateChange = vi.fn();
+  // The page owns the date: a small stateful harness lets date changes flow back.
+  function Harness() {
+    const [date, setDate] = useState<string | null>(null);
+    return (
+      <BriefingWorkspace
+        member={ben}
+        date={date}
+        today={null}
+        onDateChange={(next) => {
+          onDateChange(next);
+          setDate(next);
+        }}
+        active
+        blocked={false}
+        refreshKey={0}
+        onGenerated={onGenerated}
+        onBusyChange={() => {}}
+        onOpenBlocks={onOpenBlocks}
+        {...props}
+      />
+    );
+  }
+  render(
+    <LanguageProvider>
+      <Harness />
+    </LanguageProvider>
+  );
+  return { onGenerated, onOpenBlocks, onDateChange };
+}
+
+describe("BriefingWorkspace", () => {
+  beforeEach(() => {
+    URL.createObjectURL = vi.fn(() => "blob:briefing");
+    URL.revokeObjectURL = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    cleanup();
+  });
+
+  it("shows the first member's history, today's payload and image", async () => {
+    mockBackend();
+    renderWorkspace();
+    expect(await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`)).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByTestId(`daily-briefing-history-entry-${PAST}`)).toHaveTextContent(
+      "Render failed"
+    );
+    expect(await screen.findByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+      `"date": "${TODAY}"`
+    );
+    expect(screen.getByTestId("daily-briefing-status")).toHaveTextContent("Ready");
+    expect(await screen.findByTestId("daily-briefing-admin-preview-image")).toHaveAttribute(
+      "src",
+      "blob:briefing"
+    );
+    expect(screen.getByTestId("daily-briefing-generate")).toHaveTextContent("Regenerate");
+  });
+
+  it("selecting a past entry loads it; a 409 on a render-failed briefing says so", async () => {
+    mockBackend({ previewStatus: { [PAST]: 409 } });
+    renderWorkspace();
+    fireEvent.click(await screen.findByTestId(`daily-briefing-history-entry-${PAST}`));
+    await waitFor(() =>
+      expect(screen.getByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+        `"date": "${PAST}"`
+      )
+    );
+    const state = await screen.findByTestId("daily-briefing-image-state");
+    await waitFor(() => expect(state).toHaveAttribute("data-state", "noRaster"));
+    expect(state).toHaveTextContent("Render failed for this briefing.");
+  });
+
+  it("regenerates today with only memberId, and a past date with the date", async () => {
+    const calls = mockBackend({
+      generate: (body) => json(briefing((body.date as string | undefined) ?? TODAY)),
+    });
+    const { onGenerated } = renderWorkspace();
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    await waitFor(() => expect(onGenerated).toHaveBeenCalledTimes(1));
+    fireEvent.click(screen.getByTestId(`daily-briefing-history-entry-${PAST}`));
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    await waitFor(() => expect(onGenerated).toHaveBeenCalledTimes(2));
+    expect(
+      calls.filter((call) => call.url === "/api/daily-briefing/generate").map((c) => c.body)
+    ).toEqual([{ memberId: "member-ben" }, { memberId: "member-ben", date: PAST }]);
+  });
+
+  it("reports a paused day instead of generating", async () => {
+    mockBackend({
+      generate: () =>
+        json({ skipped: true, reason: "paused", memberId: "member-ben", date: TODAY }),
+    });
+    const { onGenerated } = renderWorkspace();
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    expect(await screen.findByTestId("daily-briefing-paused-notice")).toHaveTextContent(
+      `Ben's briefing is paused on ${TODAY}`
+    );
+    expect(onGenerated).not.toHaveBeenCalled();
+  });
+
+  it("prints through the queue and says so; Print is disabled when Printing is off", async () => {
+    const calls = mockBackend();
+    renderWorkspace();
+    await screen.findByTestId("daily-briefing-generated-payload");
+    await waitFor(() => expect(screen.getByTestId("daily-briefing-print")).toBeEnabled());
+    fireEvent.click(screen.getByTestId("daily-briefing-print"));
+    expect(await screen.findByTestId("daily-briefing-print-notice")).toHaveTextContent(
+      "Sent to the printer queue."
+    );
+    expect(calls.some((c) => c.url === `/api/daily-briefing/member-ben/${TODAY}/print`)).toBe(true);
+
+    cleanup();
+    mockBackend({ printingActive: false });
+    renderWorkspace();
+    await screen.findByTestId("daily-briefing-generated-payload");
+    expect(screen.getByTestId("daily-briefing-print")).toBeDisabled();
+    expect(screen.getByTestId("daily-briefing-print-unavailable")).toBeVisible();
+  });
+
+  it("wakes the print executor whenever Print queues a job, so it prints without waiting for the poll", async () => {
+    const wakeups = vi.fn();
+    window.addEventListener(PRINT_INTENT_ENQUEUED_EVENT, wakeups);
+    try {
+      mockBackend();
+      renderWorkspace();
+      await waitFor(() => expect(screen.getByTestId("daily-briefing-print")).toBeEnabled());
+      fireEvent.click(screen.getByTestId("daily-briefing-print"));
+      await screen.findByTestId("daily-briefing-print-notice");
+      expect(wakeups).toHaveBeenCalledTimes(1);
+
+      cleanup();
+      wakeups.mockClear();
+      mockBackend({ print: () => json({ jobId: "j1", enqueued: false }) });
+      renderWorkspace();
+      await waitFor(() => expect(screen.getByTestId("daily-briefing-print")).toBeEnabled());
+      fireEvent.click(screen.getByTestId("daily-briefing-print"));
+      expect(await screen.findByTestId("daily-briefing-print-notice")).toHaveTextContent(
+        "Already waiting in the printer queue."
+      );
+      expect(wakeups).toHaveBeenCalledTimes(1);
+    } finally {
+      window.removeEventListener(PRINT_INTENT_ENQUEUED_EVENT, wakeups);
+    }
+  });
+
+  it("shows still-rendering with a Retry that refetches", async () => {
+    mockBackend({ previewStatus: { [TODAY]: 202 } });
+    renderWorkspace();
+    const state = await screen.findByTestId("daily-briefing-image-state");
+    await waitFor(() => expect(state).toHaveAttribute("data-state", "rendering"));
+    const fetchMock = vi.mocked(globalThis.fetch);
+    const before = fetchMock.mock.calls.filter(([u]) => String(u).includes("preview.png")).length;
+    fireEvent.click(screen.getByTestId("daily-briefing-image-retry"));
+    await waitFor(() =>
+      expect(fetchMock.mock.calls.filter(([u]) => String(u).includes("preview.png")).length).toBe(
+        before + 1
+      )
+    );
+  });
+
+  it("offers Retry when the history fails to load", async () => {
+    mockBackend({ historyFails: true });
+    renderWorkspace();
+    expect(await screen.findByTestId("daily-briefing-history-error")).toBeVisible();
+    fireEvent.click(screen.getByTestId("daily-briefing-history-retry"));
+    expect(await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`)).toBeVisible();
+  });
+
+  it("offers Open Blocks from the paused notice", async () => {
+    mockBackend({
+      generate: () =>
+        json({ skipped: true, reason: "paused", memberId: "member-ben", date: TODAY }),
+    });
+    const { onOpenBlocks } = renderWorkspace();
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    expect(await screen.findByTestId("daily-briefing-paused-notice")).toHaveTextContent(
+      /in Blocks to generate or regenerate it/
+    );
+    fireEvent.click(screen.getByTestId("daily-briefing-paused-open-blocks"));
+    expect(onOpenBlocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("changing the date loads that date and refetches the image", async () => {
+    const calls = mockBackend();
+    renderWorkspace();
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    fireEvent.change(screen.getByTestId("daily-briefing-admin-preview-date"), {
+      target: { value: "2026-09-07" },
+    });
+    expect(screen.queryByTestId("daily-briefing-admin-preview-show")).toBeNull();
+    await waitFor(() =>
+      expect(calls.some((c) => c.url === "/api/daily-briefing/member-ben/2026-09-07")).toBe(true)
+    );
+    await waitFor(() =>
+      expect(
+        vi
+          .mocked(globalThis.fetch)
+          .mock.calls.some(([u]) =>
+            /^\/api\/daily-briefing\/member-ben\/2026-09-07\/preview\.png\?v=/.test(String(u))
+          )
+      ).toBe(true)
+    );
+  });
+
+  it("clears the paused notice once the tab is hidden", async () => {
+    mockBackend({
+      generate: () =>
+        json({ skipped: true, reason: "paused", memberId: "member-ben", date: TODAY }),
+    });
+    const props = {
+      member: ben,
+      date: null,
+      today: null,
+      onDateChange: () => {},
+      blocked: false,
+      refreshKey: 0,
+      onGenerated: () => {},
+      onBusyChange: () => {},
+      onOpenBlocks: () => {},
+    };
+    const { rerender } = render(
+      <LanguageProvider>
+        <BriefingWorkspace {...props} active />
+      </LanguageProvider>
+    );
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    expect(await screen.findByTestId("daily-briefing-paused-notice")).toBeVisible();
+    rerender(
+      <LanguageProvider>
+        <BriefingWorkspace {...props} active={false} />
+      </LanguageProvider>
+    );
+    rerender(
+      <LanguageProvider>
+        <BriefingWorkspace {...props} active />
+      </LanguageProvider>
+    );
+    expect(screen.queryByTestId("daily-briefing-paused-notice")).not.toBeInTheDocument();
+  });
+
+  it("shows the image first and keeps the raw payload in collapsed technical details", async () => {
+    mockBackend();
+    renderWorkspace();
+    const payload = await screen.findByTestId("daily-briefing-generated-payload");
+    const details = payload.closest("details");
+    expect(details).not.toBeNull();
+    expect(details).not.toHaveAttribute("open");
+    expect(details).toHaveTextContent("Technical details");
+    const image = await screen.findByTestId("daily-briefing-admin-preview-image");
+    expect(image.compareDocumentPosition(payload) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("shows no image frame for a date without a briefing", async () => {
+    const calls = mockBackend({ notGenerated: [PAST] });
+    renderWorkspace();
+    await screen.findByTestId("daily-briefing-generated-payload");
+    fireEvent.change(screen.getByTestId("daily-briefing-admin-preview-date"), {
+      target: { value: PAST },
+    });
+    expect(await screen.findByTestId("daily-briefing-no-briefing")).toBeVisible();
+    expect(screen.queryByTestId("daily-briefing-image-state")).not.toBeInTheDocument();
+    expect(calls.some((c) => c.url.includes(`/${PAST}/preview.png`))).toBe(false);
+  });
+
+  it("offers a way back to today after browsing another date", async () => {
+    mockBackend();
+    const { onDateChange } = renderWorkspace();
+    await screen.findByTestId(`daily-briefing-history-entry-${TODAY}`);
+    expect(screen.queryByTestId("daily-briefing-preview-today")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId(`daily-briefing-history-entry-${PAST}`));
+    fireEvent.click(await screen.findByTestId("daily-briefing-preview-today"));
+    expect(onDateChange).toHaveBeenLastCalledWith(TODAY);
+    await waitFor(() =>
+      expect(screen.queryByTestId("daily-briefing-preview-today")).not.toBeInTheDocument()
+    );
+  });
+
+  it("explains a paused day up front, links to Blocks and does not offer Generate", async () => {
+    mockBackend({ notGenerated: [TODAY] });
+    const { onOpenBlocks } = renderWorkspace({ briefingDays: ["mon", "tue", "wed", "fri"] });
+    // TODAY (2026-10-15) is a Thursday.
+    expect(await screen.findByTestId("daily-briefing-paused-notice")).toHaveTextContent(
+      `Ben's briefing is paused on ${TODAY}`
+    );
+    expect(screen.getByTestId("daily-briefing-generate")).toBeDisabled();
+    fireEvent.click(screen.getByTestId("daily-briefing-paused-open-blocks"));
+    expect(onOpenBlocks).toHaveBeenCalledTimes(1);
+  });
+
+  it("says only once that there is nothing yet for a member with no briefings", async () => {
+    mockBackend({ noHistory: true, notGenerated: [TODAY] });
+    renderWorkspace();
+    expect(await screen.findByTestId("daily-briefing-history-empty")).toBeVisible();
+    await waitFor(() =>
+      expect(
+        vi
+          .mocked(globalThis.fetch)
+          .mock.calls.some(([u]) => String(u) === `/api/daily-briefing/member-ben/${TODAY}`)
+      ).toBe(true)
+    );
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(screen.queryByTestId("daily-briefing-no-briefing")).not.toBeInTheDocument();
+  });
+
+  it("offers Retry when the stored briefing fails to load", async () => {
+    mockBackend({ readFails: 1 });
+    renderWorkspace();
+    fireEvent.click(await screen.findByTestId("daily-briefing-read-retry"));
+    expect(await screen.findByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+      `"date": "${TODAY}"`
+    );
+  });
+
+  it("shows the server's message when Generate or Print fails", async () => {
+    mockBackend({
+      generate: () => json({ error: "validation_error", message: "Generation broke" }, 400),
+      print: () => json({ error: "internal_error", message: "x" }, 500),
+    });
+    const { onGenerated } = renderWorkspace();
+    await screen.findByTestId("daily-briefing-generated-payload");
+    fireEvent.click(screen.getByTestId("daily-briefing-generate"));
+    expect(await screen.findByTestId("daily-briefing-action-error")).toBeVisible();
+    expect(onGenerated).not.toHaveBeenCalled();
+
+    await waitFor(() => expect(screen.getByTestId("daily-briefing-print")).toBeEnabled());
+    fireEvent.click(screen.getByTestId("daily-briefing-print"));
+    await waitFor(() =>
+      expect(screen.getByTestId("daily-briefing-action-error")).toHaveTextContent(
+        "Failed to send the briefing to the printer."
+      )
+    );
+  });
+
+  it("fetches nothing while the tab is hidden", () => {
+    const calls = mockBackend();
+    renderWorkspace({ active: false });
+    expect(calls.filter((c) => c.url.startsWith("/api/daily-briefing"))).toEqual([]);
+  });
+
+  it("keeps the payload when the already-selected history entry is clicked again", async () => {
+    mockBackend();
+    renderWorkspace();
+    const payload = await screen.findByTestId("daily-briefing-generated-payload");
+    expect(payload).toHaveTextContent(`"date": "${TODAY}"`);
+    fireEvent.click(screen.getByTestId(`daily-briefing-history-entry-${TODAY}`));
+    expect(screen.getByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+      `"date": "${TODAY}"`
+    );
+  });
+
+  it("ignores a slower read for a date that is no longer selected", async () => {
+    let releasePast: () => void = () => {};
+    const pastGate = new Promise<void>((resolve) => {
+      releasePast = resolve;
+    });
+    mockBackend({ readGate: { [PAST]: pastGate } });
+    renderWorkspace();
+    await screen.findByTestId("daily-briefing-generated-payload");
+    fireEvent.click(screen.getByTestId(`daily-briefing-history-entry-${PAST}`));
+    fireEvent.click(screen.getByTestId(`daily-briefing-history-entry-${TODAY}`));
+    await waitFor(() =>
+      expect(screen.getByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+        `"date": "${TODAY}"`
+      )
+    );
+    releasePast();
+    await pastGate;
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(screen.getByTestId("daily-briefing-generated-payload")).toHaveTextContent(
+      `"date": "${TODAY}"`
+    );
+  });
+});

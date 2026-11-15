@@ -1,0 +1,15 @@
+{"target": "app/analysis/context.py", "test": ["tests/test_habitat.py"],
+ "mutations": [
+  {"label": "un solo tripulante basta para culpar al habitat",
+   "old": "    if len(affected) >= 2:\n        demoted: list[dict[str, Any]] = []",
+   "new": "    if len(affected) >= 1:\n        demoted: list[dict[str, Any]] = []"},
+  {"label": "una excursion de confort cuenta como causa",
+   "old": "        if item.kind == \"health\" and item.end >= since and item.start <= reference",
+   "new": "        if item.end >= since and item.start <= reference"},
+  {"label": "una excursion antigua explica un cambio nuevo",
+   "old": "        if item.kind == \"health\" and item.end >= since and item.start <= reference",
+   "new": "        if item.kind == \"health\""},
+  {"label": "la hipotesis deja de decir que es correlacion",
+   "old": "        \"kind\": \"shared_environment\",\n        \"label\": LABEL,",
+   "new": "        \"kind\": \"shared_environment\",\n        \"label\": \"causa\","}
+ ]}

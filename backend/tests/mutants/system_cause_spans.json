@@ -1,0 +1,28 @@
+{"target": "app/environment/systems.py",
+ "test": [
+  "tests/test_habitat_system_cause.py",
+  "tests/test_system_status.py::test_a_vocabulary_that_cannot_be_honest_is_not_loaded"
+ ],
+ "mutations": [
+  {"label": "un sistema que no es de soporte vital entra como causa candidata",
+   "old": "        if system not in SYSTEMS or not SYSTEMS[system].life_support:\n",
+   "new": "        if system not in SYSTEMS:\n"},
+  {"label": "un estado nominal entra como causa candidata",
+   "old": "            if first[\"state\"] not in STATES or not STATES[first[\"state\"]].off_nominal:\n",
+   "new": "            if first[\"state\"] not in STATES:\n"},
+  {"label": "una correccion que se refiere a un instante anterior no borra el tramo",
+   "old": "            if end is not None and dt.datetime.fromisoformat(end) <= dt.datetime.fromisoformat(\n",
+   "new": "            if False and dt.datetime.fromisoformat(end) <= dt.datetime.fromisoformat(\n"},
+  {"label": "el tramo empieza en la ultima declaracion de la racha y no en la primera",
+   "old": "            spans.append({**first, \"start\": first[\"at\"], \"end\": end, \"declarations\": run})\n",
+   "new": "            spans.append({**first, \"start\": run[-1][\"at\"], \"end\": end, \"declarations\": run})\n"},
+  {"label": "dos declaraciones seguidas del mismo estado son dos tramos",
+   "old": "        if scope and scope[-1][-1][\"state\"] == item[\"state\"]:\n",
+   "new": "        if False:\n"},
+  {"label": "sin declarar puede ser fuera de lo nominal",
+   "old": "    if states[default].off_nominal:\n",
+   "new": "    if False:\n"},
+  {"label": "un sistema puede no decir si es de soporte vital",
+   "old": "    if any(not isinstance(item.life_support, bool) for item in systems.values()):\n",
+   "new": "    if False:\n"}
+ ]}

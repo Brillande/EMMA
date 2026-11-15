@@ -1,0 +1,235 @@
+{
+  "_nota": "Hipótesis de diseño H1-H7 de la base de conocimiento del equipo (docs/contexto/knowledge-base-v1.md §13). El enunciado es copia literal: no se retoca (lo vigila tests/test_framework.py). Lo demás es inventario de EMMA: qué módulo y qué ruta tocan cada hipótesis, en qué estado queda y qué NO demuestra EMMA sobre ella. Ninguna figura como probada: el vocabulario de estados (app/evidence/design_hypotheses.py) no tiene esa palabra. Los identificadores llevan el prefijo KB- porque H1…H18 a secas son los PELIGROS de compliance/risk-management-file.md, que son otra cosa. Sin cifras que cambien con el código. Revisado contra el código el 2026-10-09. El 2026-10-13 se leyeron las tres referencias de NTRS de la arquitectura CDSS de ExMC (20220017869, 20160012678 y 20205008731): dejaron de figurar en `unread_anchors`, están en el registro de evidencia y lo leído se sirve desde data/nasa_framework_read.json; el «no demuestra» de KB-H1 se puso al día con ello. El 2026-10-14, todo texto de aquí que nombra un hueco del Human Research Roadmap dice el estado que se leyó de él (lo vigila tests/test_gap_status_texts.py).",
+  "source": {
+    "document": "docs/contexto/knowledge-base-v1.md",
+    "section": "13",
+    "title": "Hipótesis prioritarias que deben probarse"
+  },
+  "hypotheses": [
+    {
+      "id": "KB-H1",
+      "label": "H1",
+      "statement": "Existe todavía un hueco entre datos médicos/ambientales heterogéneos y una capa personalizada, longitudinal y explicable de decisión a bordo.",
+      "status": "architecture",
+      "touches": [
+        {
+          "module": "app.core.ledger",
+          "method": null,
+          "route": null,
+          "what": "Registro encadenado y firmado por el que entra toda observación, venga de la fuente que venga."
+        },
+        {
+          "module": "app.analysis.risk",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Un único estado por tripulante, con el motivo de cada nivel."
+        },
+        {
+          "module": "app.api.routes",
+          "method": "GET",
+          "route": "/api/framework",
+          "what": "Cita los huecos Med 07 y Med 10 tal como los enuncia NTRS 20200000567 (2020), junto al estado que publica hoy el Human Research Roadmap: Med 07 cerrado y Med 10 fusionado en Medical-701."
+        },
+        {
+          "module": "app.evidence.nasa_framework",
+          "method": "GET",
+          "route": "/api/framework",
+          "what": "Lo leído en las fuentes de NASA el 2026-10-13, con su frase y su dirección: la arquitectura CDSS de ExMC, el estado de Med 07 (cerrado) y de Med 10 (fusionado en Medical-701) según el Human Research Roadmap y las limitaciones que NASA declara del IMM."
+        }
+      ],
+      "not_demonstrated": "Que el hueco siga abierto hoy, ni que EMMA lo cierre. Leído el 2026-10-13: el Human Research Roadmap publica Med07 como cerrado («NASA now has the capability to comprehensively process medically-relevant information to support medical operations during exploration missions») y Med10 como fusionado en Medical-701, que sigue abierto. Las tres referencias de la arquitectura CDSS de ExMC están leídas (de la de 2021, el resumen de una página, que es lo que NTRS ofrece) y describen lo que NASA pide a ese sistema, no un hueco que EMMA ocupe. Lo que NASA da por cerrado o por abierto es su propia capacidad: EMMA no se ha evaluado frente a esos documentos. Siguen sin leer el concepto de operaciones HRP-48033 y los requisitos HRP-48034 y HRP-48035, y del IMM solo se han leído sus páginas públicas y el Apéndice E de la norma. Sigue siendo una hipótesis: haber leído los documentos no la prueba."
+    },
+    {
+      "id": "KB-H2",
+      "label": "H2",
+      "statement": "El baseline individual y la tendencia son más útiles para determinadas señales que comparar únicamente con rangos poblacionales.",
+      "status": "partly-real-data",
+      "real_data": "MMASH: 22 personas sanas, 24 h, en Tierra. Sobre esa fisiología se miden juntas la tasa de falsa alarma y la sensibilidad a deterioros inyectados, que son paramétricos y no casos clínicos. No es fisiología de vuelo.",
+      "touches": [
+        {
+          "module": "app.analysis.baseline",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Línea base personal móvil por indicador; sin ella solo se vigilan límites de peligro absoluto, y el estado dice sobre cuál de las dos vías se apoya."
+        },
+        {
+          "module": "app.analysis.trend",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Tendencia sostenida de cada indicador."
+        },
+        {
+          "module": "app.validation.mmash",
+          "method": null,
+          "route": null,
+          "what": "Carga MMASH para las pruebas marcadas `external`."
+        },
+        {
+          "module": "app.validation.injection",
+          "method": null,
+          "route": null,
+          "what": "Inyecta deterioros de magnitud conocida sobre esa misma fisiología para medir la sensibilidad."
+        }
+      ],
+      "documents": ["compliance/external-validation.md"],
+      "not_demonstrated": "Que la línea base personal sea más útil que un rango poblacional en vuelo: EMMA no tiene una comparación de las dos vías sobre datos reales de vuelo. El propio documento de validación declara que, con 24 h por sujeto, MMASH apenas ejercita la vía de base personal y que no valida la deriva de vuelo."
+    },
+    {
+      "id": "KB-H3",
+      "label": "H3",
+      "statement": "Algunas variables clínicas costosas pueden inferirse parcialmente mediante señales operacionales de bajo coste; debe demostrarse por dominio.",
+      "status": "architecture",
+      "touches": [
+        {
+          "module": "app.analysis.inferred",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Banda de pérdida de densidad mineral ósea rotulada «inferido»: una banda de población aplicada al día de misión, no una estimación a partir de las señales de este tripulante."
+        },
+        {
+          "module": "app.ingest.fhir",
+          "method": null,
+          "route": null,
+          "what": "Cada observación declara si es medida, inferida o predicha."
+        },
+        {
+          "module": "app.ingest.cost",
+          "method": "GET",
+          "route": "/api/indicators",
+          "what": "Coste de medir de cada indicador, para distinguir lo que se puede vigilar a diario de lo que exige laboratorio."
+        }
+      ],
+      "not_demonstrated": "Que alguna variable costosa se pueda inferir de señales de bajo coste: EMMA no tiene ningún modelo que lo haga, ni datos con que contrastarlo, en ningún dominio. La banda ósea no se estrecha con el ejercicio registrado, y lo dice: desde el 2026-10-10 lo medido del ejercicio (minutos e impactos de la última semana) se enseña junto a la banda, rotulado como medido, sin modificarla."
+    },
+    {
+      "id": "KB-H4",
+      "label": "H4",
+      "statement": "Correlacionar cambios simultáneos de varios tripulantes con telemetría de hábitat puede mejorar el aislamiento de causa.",
+      "status": "simulated",
+      "scenario": "co2-fatigue",
+      "touches": [
+        {
+          "module": "app.analysis.context",
+          "method": "GET",
+          "route": "/api/crew",
+          "what": "Con dos o más tripulantes fuera de nominal y una excursión de cabina en la misma ventana, propone primero el contexto ambiental compartido, rotulado como hipótesis."
+        },
+        {
+          "module": "app.api.habitat",
+          "method": "GET",
+          "route": "/api/crew/compare",
+          "what": "El mismo indicador en cada tripulante contra su propia línea base, con el parámetro de cabina sobre el mismo eje."
+        },
+        {
+          "module": "app.api.mission",
+          "method": "POST",
+          "route": "/api/crew/hypotheses/review",
+          "what": "Una persona confirma o descarta la hipótesis de causa compartida, firmado."
+        },
+        {
+          "module": "app.ingest.habitat_simulator",
+          "method": "POST",
+          "route": "/api/simulate",
+          "what": "Atmósfera de cabina simulada, con valores de diseño declarados."
+        }
+      ],
+      "not_demonstrated": "Que la correlación mejore el aislamiento de la causa. En el escenario simulado la causa común está puesta por construcción, y no hay datos reales de varios tripulantes con telemetría de hábitat. La salida es una coincidencia temporal, no una prueba de causalidad."
+    },
+    {
+      "id": "KB-H5",
+      "label": "H5",
+      "statement": "Un Countermeasure Twin que conozca recursos, protocolos y respuesta previa añade más valor que una alerta aislada.",
+      "status": "simulated",
+      "touches": [
+        {
+          "module": "app.advisor.countermeasures",
+          "method": "GET",
+          "route": "/api/countermeasures",
+          "what": "Biblioteca de contramedidas como datos: indicación, recursos que pide, tiempo de tripulación, protocolo o fuente y seguimiento; lo que no tiene fuente lo dice."
+        },
+        {
+          "module": "app.advisor.followup",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Adopción y cierre firmados por una persona; el estado del seguimiento se deriva de los datos."
+        },
+        {
+          "module": "app.advisor.prior_response",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Junto a cada recomendación, lo que pasó las otras veces que se adoptó esa contramedida, con la advertencia de que no es una prueba de causa."
+        },
+        {
+          "module": "app.core.resources",
+          "method": "GET",
+          "route": "/api/resources",
+          "what": "Recursos que una persona declara disponibles o no, sobre el vocabulario que nombran las contramedidas; cada recomendación dice qué pide y qué falta o está sin declarar."
+        }
+      ],
+      "not_demonstrated": "Que añada más valor que una alerta aislada: no hay comparación ni estudio con usuarios. De los recursos de a bordo EMMA solo conoce lo que una persona declara, recurso a recurso, sobre un vocabulario cerrado: no lleva inventario ni cantidades, y lo no declarado no se da por disponible. La respuesta previa es descriptiva: junto a cada recomendación se enseña cuántas veces se adoptó antes esa contramedida para ese tripulante, cómo se cerró y lo que su seguimiento evaluó; compara niveles en el tiempo, sin grupo de control, y no es una prueba de eficacia ni cambia qué se recomienda."
+    },
+    {
+      "id": "KB-H6",
+      "label": "H6",
+      "statement": "La radiación ofrece un buen caso end-to-end para demo porque conecta hazard, dosimetría, exposición acumulada, contexto, acción y seguimiento.",
+      "status": "simulated",
+      "scenario": "spe-event",
+      "touches": [
+        {
+          "module": "app.environment.donki",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Evento de partículas solares activo."
+        },
+        {
+          "module": "app.environment.dosimetry",
+          "method": "GET",
+          "route": "/api/radiation/dose",
+          "what": "Dosis equivalente a partir de dosimetría de la ISS, declarando si está medida o estimada y con qué factor de calidad."
+        },
+        {
+          "module": "app.analysis.radiation",
+          "method": "GET",
+          "route": "/api/status",
+          "what": "Tres escalas: aguda con su tiempo hasta la acción, de misión (inferida) y de carrera frente al límite."
+        },
+        {
+          "module": "app.advisor.countermeasures",
+          "method": "GET",
+          "route": "/api/countermeasures",
+          "what": "Refugio frente a la tormenta como contramedida estructurada, con su seguimiento."
+        }
+      ],
+      "not_demonstrated": "«Buen caso para demo» es un juicio de diseño, no algo que EMMA mida. El evento del escenario es simulado; la dosimetría real es de la ISS, no de un tripulante de esta misión; la dosis de misión es inferida y la de carrera depende de una dosis previa que alguien declara."
+    },
+    {
+      "id": "KB-H7",
+      "label": "H7",
+      "statement": "La alimentación puede ser un segundo caso porque es una contramedida cotidiana con interacción con recursos, microbioma, metabolismo y aceptabilidad.",
+      "status": "simulated",
+      "scenario": "menu-fatigue",
+      "touches": [
+        {
+          "module": "app.ingest.codes",
+          "method": "GET",
+          "route": "/api/indicators",
+          "what": "Dominio de nutrición: ingesta energética, aceptabilidad, apetito y fracción de ración que se deja, con códigos propios y su justificación."
+        },
+        {
+          "module": "app.ingest.simulator",
+          "method": "POST",
+          "route": "/api/simulate",
+          "what": "Escenario de fatiga de menú, con su parámetro de deriva clasificado «sin respaldo en lo leído» (hasta el 2026-10-26, «contestado»)."
+        },
+        {
+          "module": "app.analysis.food_acceptability",
+          "method": "GET",
+          "route": "/api/nutrition/food-acceptability",
+          "what": "Cada valoración de la comida por debajo de 6,0 marcada «por debajo del criterio de aceptable de la comida», con la frase de NASA-STD-3001 Vol. 2 [V2 7002] y su página. Marca sobre la comida: no entra en ningún nivel ni alerta."
+        }
+      ],
+      "not_demonstrated": "Que la fatiga de menú ocurra, ni que la alimentación funcione como contramedida: el escenario es una hipótesis simulada. EMMA no modela inventario, vida útil, microbioma ni metabolismo, y la aceptabilidad es una guía sobre la comida, no un umbral sobre la persona. El hueco del Human Research Roadmap sobre fatiga de menú, FN-205, figura archivado y retirado del plan de investigación actual (leído el 2026-10-13): el escenario no responde a un hueco abierto de NASA."
+    }
+  ],
+  "unread_anchors": []
+}

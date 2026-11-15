@@ -1,0 +1,678 @@
+/*
+ * «Biblioteca» y los entornos de la misión bajo la concha de la maqueta: la biblioteca de contramedidas
+ * (`.library-table`, `.library-research`, `.research-quote`), las guías, los aspectos de cada entorno
+ * (`.environment-aspects`, `.active-environment`, la cabecera del carril) y la matriz de perfiles. En
+ * las dos consolas. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que vi (capturas del 2026-11-07 con la concha nueva, 1672 × 941: `crew-14-library`, las cinco
+ * pestañas `env-*` de las dos consolas y la matriz de «Marco y fuentes» de Tierra): los paneles ya
+ * eran tarjetas de la maqueta y el mobiliario común (`furniture.css`) ya vestía los mandos del filtro,
+ * los pliegues y la cabecera de cada tabla; pero por dentro seguía la consola clásica. El filtro por
+ * familia era una fila de mandos suelta entre dos párrafos; cada tabla de contramedidas flotaba sin
+ * marco bajo su pliegue, con la acción de cada fila en el mismo peso que su indicación; las frases
+ * literales de una fuente (`.research-quote`) iban a pelo, sin nada que las dijera citas; los pasos de
+ * cada guía, los «no encontrado», las familias de «Cómo leerlo» y las frases leídas de un aspecto
+ * eran listas con la viñeta y la sangría del navegador; el glosario, una lista de definiciones con la
+ * sangría de 40 px de `dd`; los aspectos de un entorno, un rótulo en negrita y su frase debajo,
+ * sueltos sobre el panel, y «Perfil declarado» una palabra con su anillo; en el carril, «Entorno de la
+ * misión» era dos líneas de texto sobre el fondo de la barra. Al lado de «Inicio» parecían dos
+ * interfaces.
+ *
+ * Aquí cada pieza toma la forma que la maqueta da a la suya, con los tres patrones de las otras
+ * hojas, cada uno escrito una vez con la lista de sus dueños: «marco» (la tira de datos de la ruta,
+ * `.ref-stats`: filete `--ref-edge` atenuado, radio 8 px, fondo `--ref-navy`) para el filtro por
+ * familia, cada tabla, los aspectos del entorno, el glosario, la ficha de cada fuente de un paso y
+ * «Entorno de la misión» en el carril (el selector de ubicación de la maqueta, `.ref-select-like`);
+ * «filas con filete» (las listas, como «Próximas acciones», `.ref-next li`, con el número o el punto
+ * en `--ref-teal`); y «colgado de un filete» (como `.evidence` en el mobiliario) para cada cita
+ * literal. Los aspectos y los términos van una clave por fila, como `.ref-kv`: la clave a la
+ * izquierda y lo leído a la derecha, con la raya entre filas. «Perfil declarado» es la píldora de lo
+ * elegido (`.ref-place[aria-pressed]`): anillo `--ref-teal` y fondo teñido, en la pestaña del entorno
+ * y en la columna de la matriz; se reconoce por el dibujo de «elegido» (`data-pictogram="ring-dot"`,
+ * el mismo contrato que usa `hazards.css` para el acento de cada peligro), porque `Chosen` no deja
+ * otra señal en el marcado y esta hoja no toca ningún `.tsx`. La investigación («En investigación:
+ * no se ofrecen») se separa de los cinco peligros con un filete arriba: no es de la biblioteca.
+ *
+ * Lo que no se toca: la gradación de evidencia de cada fuente (`SourceGrade`: amarillo si es
+ * preclínica, gris si se desconoce), el amarillo con triángulo de la salvedad de alcance, el cian con
+ * el anillo punteado de «EMMA no tiene fuente» y de «sin verificar», el gris de un estado que la
+ * interfaz no reconoce, el color de toda marca `c-*` y las citas y textos del backend, que se muestran
+ * tal cual (la cursiva de un `<q>` o un `<blockquote>` es la del navegador). Un dibujo pasa a
+ * `--ref-teal` solo cuando nombra (la familia en el filtro —también la que no tiene entradas— y en
+ * «Cómo leerlo», el aspecto en su clave, el perfil en la cabecera de la matriz, el entorno en el
+ * carril) y nunca si él o su dueño llevan una clase `c-*`; el anillo de la familia elegida va en el
+ * mismo color, como el de las regiones de «Cuerpo». Los mandos del filtro, las entradas y el mando de
+ * «Declarar como entorno de la misión» (`.silence-form`), los pliegues, las insignias y las cabeceras
+ * de tabla son del mobiliario común: aquí solo la caja que los rodea, y conservan su alto táctil.
+ *
+ * Especificidad a propósito baja: el prefijo de la concha va dentro de `:where()`, que no cuenta, y
+ * cada regla se acota a su panel (`.panel[data-ui="…"]`) porque `.quality-table`, `.drivers`,
+ * `.research-quote` y las listas de un pliegue aparecen en otras secciones con otra dueña. Ninguna
+ * de estas piezas tenía borde en la hoja clásica: todos los marcos nacen aquí con el atajo y, al
+ * final, se engrosan a 2 px en baja visión y alto contraste, como hace `styles.css` con el panel; la
+ * píldora de lo elegido conserva su `--ref-teal` y solo engorda, como la fase actual en «Misión y
+ * hábitat». Las rayas entre filas se quedan finas en esos modos, como en las demás hojas: separan,
+ * no enmarcan. El marco de `.quality-table` repite el de `data.css` (misma pieza, otros paneles):
+ * cada unidad escribe solo su hoja, y juntarlos en `furniture.css` es decisión de la fusión.
+ */
+
+/* ---- Colocación en la rejilla de 12 columnas (`board.css`) y las piezas del tablero ---- */
+
+/*
+ * Segunda pasada (decisión del usuario, 2026-11-07: cada sección como el tablero de «Inicio», con sus
+ * apartados propios). Lo que se vio (capturas del 2026-11-08, 1672 × 941): en «Biblioteca» la
+ * biblioteca y las guías iban una debajo de otra a todo el ancho (1123 px), las guías con once filas
+ * de una línea a lo ancho de la pantalla; en cada entorno, diez aspectos en una lista de clave y
+ * frase de 1300 px de alto, sin nada que dijera de un vistazo cuántos tienen fuente.
+ *
+ * Colocación: en las dos «Biblioteca», la biblioteca a 7 columnas y las guías a 5 a su lado (en el
+ * cuerpo intermedio, las dos a 12); las dos se alinean arriba de su celda en vez de estirarse hasta
+ * el alto de la otra con un marco vacío (con los pliegues cerrados, las guías son las más altas; con
+ * uno de la biblioteca abierto, al revés). En cada entorno, el perfil a 12, y
+ * dentro sus aspectos como tarjetas en rejilla (tres por fila en el escritorio, dos en el cuerpo
+ * intermedio, una en pantalla estrecha); «Declarar como entorno de la misión» se queda dentro del
+ * perfil, bajo las cifras, porque declara ese perfil y no otro.
+ *
+ * Piezas (los componentes las montan en `BoardOnly`; aquí su sitio y su tono): en las guías, dos
+ * fichas (guías y términos del glosario, `.guides-board`); en el entorno, el anillo de aspectos
+ * leídos en una fuente, una píldora por estado con la palabra y la marca del backend y la ficha de
+ * páginas leídas (`.environment-board`). El anillo es neutro, como el de «Vigilancia» en `data.css`:
+ * «leído» no lleva color aquí y el verde de «Inicio» lo pintaría de nominal. Las píldoras conservan
+ * el color de su marca (cian lo sin verificar, gris lo desconocido).
+ */
+
+:where(.app[data-look="reference"] :is(#crew-panel-library, #ground-panel-library))
+  > .slot:has(> .slot-body > [data-ui="countermeasure-library"]) {
+  /* 7 + 5 (lote «muestra»): a 4 columnas, las filas de una línea de las guías cortaban casi todos los
+     títulos («Peso y masa cor…»). */
+  --span: 7;
+  --span-mid: 12;
+  align-self: start;
+}
+
+:where(.app[data-look="reference"] :is(#crew-panel-library, #ground-panel-library))
+  > .slot:has(> .slot-body > [data-ui="guides"]) {
+  --span: 5;
+  --span-mid: 12;
+  align-self: start;
+  /* Las filas de una línea de las guías (más abajo) cortan su título con puntos suspensivos; sin
+     esto, la celda de la rejilla crecía hasta el título entero y el panel se salía de su columna. */
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"]))
+  > .slot:has(> .slot-body > [data-ui="environment-profile"]) {
+  --span: 12;
+}
+
+/* Las dos fichas de las guías, lado a lado aun en la columna de 4. */
+:where(.app[data-look="reference"] .panel[data-ui="guides"]) .guides-board {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  margin: 0.4rem 0 0.5rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="guides"]) .guides-board .stat-tile {
+  padding: 0.5rem 0.7rem 0.6rem;
+}
+
+/* El anillo, las píldoras y la ficha en una fila; la ficha no se estira más que una baldosa. */
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-board {
+  align-items: center;
+  gap: 0.6rem 1.2rem;
+  margin: 0.5rem 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-board .ref-ring-col {
+  flex: none;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-board .board-tally {
+  flex: 1 1 10rem;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-board .environment-stats {
+  flex: 0 0 11rem;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-board .ref-ring-fill {
+  stroke: var(--c-text-secondary);
+  filter: none;
+}
+
+/* ---- Marco: como la tira de datos de la ruta (`.ref-stats`) ---- */
+
+/* Sus dueños: el filtro por familia (la bandeja que junta sus mandos), cada tabla (las de la
+   biblioteca y la de investigación bajo su pliegue, la matriz de Tierra), los términos del glosario
+   (con las filas dentro; los aspectos de un entorno son tarjetas, más abajo), la ficha de cada fuente que sostiene un paso
+   (`EvidenceEntry`, debajo de su cita) y «Entorno de la misión» en la cabecera del carril. Esta
+   última es la única pieza de la hoja fuera de `main`: el mobiliario deja el carril a la concha,
+   pero la cabecera es de los entornos y no tenía forma. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="countermeasure-library"] .library-filter,
+    .panel:is([data-ui="countermeasure-library"], [data-ui="mission-profiles"]) .quality-table,
+    .panel[data-ui="guides"] [data-ui="glossary"] > dl,
+    .panel[data-ui="guides"] [data-ui="guide-step-source"] > div,
+    .rail-header > .active-environment
+  ) {
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 65%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* El filtro, separado de los párrafos de arriba y del primer pliegue. */
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] .library-filter {
+  margin: 0.6rem 0;
+  padding: 0.5rem 0.7rem;
+}
+
+/* Un poco de aire alrededor de cada tabla: el mobiliario redondea las esquinas de su cabecera y,
+   pegada al marco, quedaba una cuña sin fondo entre las dos curvas. Siguen desplazándose dentro de
+   su caja en pantalla estrecha (`styles.css`). */
+:where(.app[data-look="reference"]) .panel:is([data-ui="countermeasure-library"], [data-ui="mission-profiles"]) .quality-table {
+  padding: 0.3rem 0.45rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] [data-ui="guide-step-source"] > div {
+  margin: 0.4rem 0;
+  padding: 0.45rem 0.7rem;
+}
+
+/* El rótulo pequeño encima y el entorno, con su dibujo en el color de la maqueta, debajo. */
+:where(.app[data-look="reference"]) .rail-header > .active-environment {
+  margin: 0.2rem 0 0;
+  padding: 0.4rem 0.65rem 0.45rem;
+}
+
+:where(.app[data-look="reference"]) .rail-header > .active-environment > strong {
+  font-size: 1rem;
+}
+
+:where(.app[data-look="reference"]) .rail-header > .active-environment > strong > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* ---- Una clave por fila (`.ref-kv`): el aspecto o el término a la izquierda, lo leído a la derecha,
+   con la raya entre filas ---- */
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl) {
+  display: grid;
+  gap: 0;
+  margin: 0.6rem 0;
+  padding: 0 0.7rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl)
+  > div {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl)
+  > div:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl)
+  > div
+  > dt {
+  font-weight: 600;
+}
+
+/* La definición pierde la sangría de 1,5em (`styles.css`) y la de 40 px del navegador: la columna
+   ya la separa de su clave. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl)
+  > div
+  > dd {
+  margin: 0;
+  min-width: 0;
+}
+
+/* El dibujo del aspecto solo nombra: en el color de la maqueta. Con clase `c-*` sería un estado. */
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] .environment-aspects dt > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* En pantalla estrecha, la clave encima de lo leído (el mismo corte que `.kv` en `styles.css`). */
+@media (max-width: 640px) {
+  :where(.app[data-look="reference"])
+    :is(.panel[data-ui="environment-profile"] .environment-aspects, .panel[data-ui="guides"] [data-ui="glossary"] > dl)
+    > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Los aspectos de un entorno, en rejilla de tarjetas ---- */
+
+/* El tablero (segunda pasada): la lista de clave y frase pasa a tarjetas, como las de los peligros en
+   «Inicio». La lista deja de ser marco (cada tarjeta lo es) y reparte sus filas en columnas de al
+   menos 20 rem; cada aspecto, su nombre arriba sobre un filete y lo leído debajo. Las tarjetas de una
+   misma fila se estiran a la más alta. Más específico que la regla de una clave por fila, a propósito. */
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+  gap: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div {
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div:last-child {
+  border-bottom: 1px solid var(--ref-edge);
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dt {
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* ---- Filas con filete: las listas, como «Próximas acciones» de la maqueta ---- */
+
+/* Sus dueños: las listas de texto de los pliegues de la biblioteca (las familias de «Cómo leerlo»,
+   buscado y no encontrado, leído y no incluido, qué se leyó), los pasos de cada guía (numerados: el
+   número en el color de la maqueta), lo leído de vuelo y lo no encontrado de una guía, y las frases
+   leídas de un aspecto (en la pestaña del entorno y en la matriz de Tierra). Conservan su viñeta o
+   su número, que es lo que las sigue anunciando como listas; solo cambia el color del marcador. */
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="countermeasure-library"] details > ul,
+    .panel[data-ui="guides"] details[data-ui="guide"] > :is(ol, ul),
+    .panel[data-ui="guides"] details[data-ui="guides-not-found"] > ul,
+    .panel:is([data-ui="environment-profile"], [data-ui="mission-profiles"]) details[data-ui="profile-matrix-statements"] > .drivers
+  ) {
+  margin: 0.35rem 0;
+  padding-left: 1.3rem;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="countermeasure-library"] details > ul,
+    .panel[data-ui="guides"] details[data-ui="guide"] > :is(ol, ul),
+    .panel[data-ui="guides"] details[data-ui="guides-not-found"] > ul,
+    .panel:is([data-ui="environment-profile"], [data-ui="mission-profiles"]) details[data-ui="profile-matrix-statements"] > .drivers
+  )
+  > li {
+  padding: 0.3rem 0 0.3rem 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="countermeasure-library"] details > ul,
+    .panel[data-ui="guides"] details[data-ui="guide"] > :is(ol, ul),
+    .panel[data-ui="guides"] details[data-ui="guides-not-found"] > ul,
+    .panel:is([data-ui="environment-profile"], [data-ui="mission-profiles"]) details[data-ui="profile-matrix-statements"] > .drivers
+  )
+  > li:last-child {
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"])
+  :is(
+    .panel[data-ui="countermeasure-library"] details > ul,
+    .panel[data-ui="guides"] details[data-ui="guide"] > :is(ol, ul),
+    .panel[data-ui="guides"] details[data-ui="guides-not-found"] > ul,
+    .panel:is([data-ui="environment-profile"], [data-ui="mission-profiles"]) details[data-ui="profile-matrix-statements"] > .drivers
+  )
+  > li::marker {
+  color: var(--ref-teal);
+}
+
+/* ---- Colgado de un filete: cada frase literal de una fuente, en la biblioteca y en las guías ---- */
+
+/* La cita (`<blockquote>`, en su idioma) y su pie: la raya a la izquierda la dice cita, como
+   `.draft-quote` en la clásica y `.evidence` en el mobiliario, sin la sangría que `styles.css` le
+   quitó para que la columna no creciera. */
+:where(.app[data-look="reference"]) .panel:is([data-ui="countermeasure-library"], [data-ui="guides"]) .research-quote {
+  margin: 0.35rem 0 0.45rem;
+  padding: 0.1rem 0 0.1rem 0.7rem;
+  border-left: 2px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+:where(.app[data-look="reference"]) .panel:is([data-ui="countermeasure-library"], [data-ui="guides"]) .research-quote > figcaption {
+  margin-top: 0.15rem;
+}
+
+/* ---- Biblioteca: el filtro, la fila de la tabla y la investigación aparte ---- */
+
+/* La familia en el filtro —en cada mando y en la que no tiene entradas, que es un `span`— y en cada
+   fila de «Cómo leerlo», con su dibujo en el color de la maqueta; también el rótulo «Familia» (un
+   `span`, no un `label`: el mobiliario no lo alcanza). La marca elegida envuelve a la de la familia
+   (`Chosen`), así que su anillo va igual, como en las regiones de «Cuerpo». Una marca `c-*` sería
+   un estado y se deja. */
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] .library-filter > span:first-child > .pictogram,
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] .library-filter .mark:not([class*="c-"]) > .pictogram,
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] details[data-ui="library-how-to-read"] li > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* La acción de cada contramedida es el título de su fila; su indicación, debajo, sigue en
+   secundario y sin peso. Texto del backend en los dos casos. */
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] table.library-table th[scope="row"] {
+  font-weight: 600;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] table.library-table th[scope="row"] > .secondary {
+  font-weight: 400;
+}
+
+/* Las contramedidas en investigación no son de la biblioteca (no tienen familia ni mando de adoptar):
+   un filete arriba las separa de los cinco peligros. */
+:where(.app[data-look="reference"]) .panel[data-ui="countermeasure-library"] > .library-research {
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+/* ---- Guías: «Leído en vuelo» como el título de una tarjeta (`.ref-h3`) ---- */
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"] > h4 {
+  margin: 0.9rem 0 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+  font-size: 0.95rem;
+}
+
+/* ---- Entornos: «Perfil declarado», la píldora de lo elegido; el dibujo del perfil en la matriz ---- */
+
+/* En la pestaña del entorno declarado (un párrafo bajo el título) y en la cabecera de su columna en
+   la matriz de Tierra. El anillo de «elegido» sigue siendo la señal: la píldora solo le da la caja
+   de `.ref-place[aria-pressed]`. */
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] > p, .panel[data-ui="mission-profiles"] table.profile-matrix th > .secondary)
+  > .mark:has(> [data-pictogram="ring-dot"]) {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.2rem;
+  padding: 0.1em 0.75em 0.1em 0.5em;
+  border: 1px solid var(--ref-teal);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ref-teal) 18%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+:where(.app[data-look="reference"])
+  :is(.panel[data-ui="environment-profile"] > p, .panel[data-ui="mission-profiles"] table.profile-matrix th > .secondary)
+  > .mark:has(> [data-pictogram="ring-dot"])
+  > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* El perfil en la cabecera de cada columna y el aspecto en la de cada fila: dibujos que nombran. */
+:where(.app[data-look="reference"]) .panel[data-ui="mission-profiles"] table.profile-matrix th > .mark:not([class*="c-"]) > .pictogram {
+  color: var(--ref-teal);
+}
+
+/* Las frases sueltas de estos paneles (la nota de la biblioteca y la de los efectos, el alcance de
+   las guías, las notas y las páginas leídas de un entorno) respiran como en una tarjeta de «Inicio»
+   (`.ref-card p`); `styles.css` deja todo `p` sin margen. */
+:where(.app[data-look="reference"])
+  .panel:is([data-ui="countermeasure-library"], [data-ui="guides"], [data-ui="environment-profile"], [data-ui="mission-profiles"])
+  > p {
+  margin: 0.25rem 0;
+}
+
+/* ---- Baja visión y alto contraste (§5.40) ---- */
+
+/* Los marcos que nacen en esta hoja (la lista de arriba) y los dos filetes que separan secciones (la
+   investigación, «Leído en vuelo») se engrosan a 2 px como el del panel en `styles.css`, y en baja
+   visión pasan al color del texto secundario. La píldora de lo elegido solo engorda. Van al final
+   para ganar por orden con la misma especificidad que las reglas de arriba. */
+:where(.app[data-look="reference"][data-low-vision="on"])
+  :is(
+    .panel[data-ui="countermeasure-library"] .library-filter,
+    .panel:is([data-ui="countermeasure-library"], [data-ui="mission-profiles"]) .quality-table,
+    .panel[data-ui="guides"] [data-ui="glossary"] > dl,
+    .panel[data-ui="guides"] [data-ui="guide-step-source"] > div,
+    .rail-header > .active-environment,
+    .panel[data-ui="countermeasure-library"] > .library-research,
+    .panel[data-ui="guides"] details[data-ui="guide"] > h4
+  ) {
+  border-color: var(--c-text-secondary);
+}
+
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  :is(
+    .panel[data-ui="countermeasure-library"] .library-filter,
+    .panel:is([data-ui="countermeasure-library"], [data-ui="mission-profiles"]) .quality-table,
+    .panel[data-ui="guides"] [data-ui="glossary"] > dl,
+    .panel[data-ui="guides"] [data-ui="guide-step-source"] > div,
+    .rail-header > .active-environment,
+    .panel[data-ui="countermeasure-library"] > .library-research,
+    .panel[data-ui="guides"] details[data-ui="guide"] > h4,
+    .panel[data-ui="environment-profile"] > p > .mark:has(> [data-pictogram="ring-dot"]),
+    .panel[data-ui="mission-profiles"] table.profile-matrix th > .secondary > .mark:has(> [data-pictogram="ring-dot"])
+  ) {
+  border-width: 2px;
+}
+
+/* Las tarjetas de los aspectos (segunda pasada) siguen al panel: 2 px en los dos modos y, en baja
+   visión, el color del texto secundario. */
+:where(.app[data-look="reference"]:is([data-low-vision="on"], [data-high-contrast="on"]))
+  .panel[data-ui="environment-profile"]
+  dl.environment-aspects
+  > div {
+  border-width: 2px;
+}
+
+:where(.app[data-look="reference"][data-low-vision="on"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div {
+  border-color: var(--c-text-secondary);
+}
+
+/* La miniatura del destino al frente de la fila de piezas (2026-11-08): adorno, como en los botones
+   de ubicación de «Inicio», a tamaño de anillo y con su halo. */
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-planet {
+  display: grid;
+  flex: none;
+  place-items: center;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="environment-profile"]) .environment-planet > .ref-thumb {
+  width: 5.2rem;
+  height: 5.2rem;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-cyan) 35%, transparent));
+}
+
+/* ---- Los grupos RIDGE de la biblioteca con el acento de su letra (2026-11-08) ---- */
+
+/* En «Inicio» cada peligro RIDGE lleva su acento (adorno, desviación declarada de F.5-1 en
+   `compliance/hmi-state-of-the-art.md` §2.5); en la biblioteca los cinco pliegues «RIDGE: …» eran
+   iguales. Aquí el resumen de cada pliegue toma ese acento en el filete y un velo detrás, elegido por
+   el dibujo de su peligro (`data-pictogram`), como las tarjetas de «Los cinco peligros». Las mezclas
+   son las de `referenceDashboard.css`. No es un nivel: nada de amarillo ni rojo con significado. El
+   resumen va sin `:where()`: la caja común de los pliegues (`furniture.css`) pesa más. */
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"] {
+  --acc: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"]:has(> summary [data-pictogram="ridge-radiation"]) {
+  --acc: color-mix(in srgb, var(--c-magenta) 55%, var(--c-blue));
+}
+
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"]:has(> summary [data-pictogram="ridge-isolation"]) {
+  --acc: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"]:has(> summary [data-pictogram="ridge-distance"]) {
+  --acc: color-mix(in srgb, var(--c-cyan) 60%, var(--c-green));
+}
+
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"]:has(> summary [data-pictogram="ridge-gravity"]) {
+  --acc: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red));
+}
+
+:where(.app[data-look="reference"]) details[data-ui="library-ridge-group"]:has(> summary [data-pictogram="ridge-environment"]) {
+  --acc: var(--c-green);
+}
+
+.app[data-look="reference"] details[data-ui="library-ridge-group"] > summary {
+  border-color: color-mix(in srgb, var(--acc) 65%, var(--ref-edge));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--acc) 26%, transparent), transparent 70%);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 22%, transparent);
+}
+
+.app[data-look="reference"] details[data-ui="library-ridge-group"] > summary .pictogram {
+  color: color-mix(in srgb, var(--acc) 70%, var(--c-text));
+}
+
+/* Con alto contraste, sin velo ni halo detrás del texto del resumen: solo el filete de su acento. */
+.app[data-look="reference"][data-high-contrast="on"] details[data-ui="library-ridge-group"] > summary {
+  background: none;
+  box-shadow: none;
+}
+
+/* ---- Una vista por sección (lote «muestra», 2026-11-08) ---- */
+
+/*
+ * Lo que se vio (capturas del 2026-11-08, 1672 × 941): cada entorno medía 2272-2739 px, diez tarjetas
+ * de 20 rem llenas de frases citadas, y en «Biblioteca» las guías eran once tarjetas de dos renglones
+ * (1511 px la página a bordo, 1677 en Tierra), con dos párrafos de introducción a 15 px encima de la
+ * biblioteca. La muestra enseña mosaicos: un dibujo grande, un nombre y una palabra.
+ *
+ * Entornos: cada aspecto es un mosaico de 12,5 rem (cinco por fila en el escritorio): su dibujo grande
+ * en el acento de la sección (adorno: nombra, no avisa), su nombre debajo y su estado con la palabra y
+ * la marca del backend (el cian con el anillo punteado de «sin verificar» se queda tal cual); lo
+ * leído, detrás de su «Ver detalle», que al abrirse ensancha el mosaico a toda la fila para que la
+ * frase se lea a lo ancho y no en una columna de 12 rem. Las notas de la matriz, detrás del último.
+ *
+ * Guías: una fila de una línea por guía, con el dibujo de la familia de su indicador y el número de
+ * pasos en una píldora a la derecha; el título se corta con puntos suspensivos solo en el rótulo
+ * cerrado (abierto, entero; y siempre en su `title`). Biblioteca: sus dos párrafos de introducción, más
+ * juntos; `LibraryPanel` no es de esta unidad y no se pliegan.
+ */
+
+/* El mosaico: todo centrado, sin la raya bajo el nombre. */
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div {
+  justify-items: center;
+  gap: 0.25rem;
+  padding: 0.55rem 0.55rem 0.5rem;
+  text-align: center;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dt {
+  justify-self: stretch;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dt > .mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dt > .mark > .pictogram {
+  width: 2.2rem;
+  height: 2.2rem;
+  margin: 0;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 40%, transparent));
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dt > .mark:not([class*="c-"]) > .pictogram {
+  color: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 80%, var(--c-text));
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div > dd {
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] .environment-aspect-state {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* El «Ver detalle» del mosaico, al pie; su rótulo puede ir a dos renglones. Letra al suelo del
+   proyecto (0,875 rem; antes 0,8): el mosaico crece un renglón donde el rótulo ya iba en dos. */
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects .board-detail {
+  width: 100%;
+  margin-top: 0.1rem;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects .board-detail > .board-detail-toggle {
+  justify-content: center;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Abierto, el mosaico ocupa la fila entera y lo leído vuelve a la izquierda. */
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects > div:has(.board-detail-body:not([hidden])) {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="environment-profile"] dl.environment-aspects .board-detail-body {
+  text-align: left;
+}
+
+/* Guías: una fila de una línea, el dibujo de su indicador y la píldora de los pasos a la derecha. */
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"] > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"] > summary > .pictogram {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-right: 0;
+  color: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 80%, var(--c-text));
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"] > summary > .guide-title {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"][open] > summary > .guide-title {
+  white-space: normal;
+}
+
+:where(.app[data-look="reference"]) .panel[data-ui="guides"] details[data-ui="guide"] > summary > .guide-steps {
+  flex: none;
+  padding: 0.05em 0.6em;
+  border: 1px solid color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 55%, var(--ref-edge));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 14%, transparent);
+  color: var(--c-text-secondary);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* Biblioteca: los dos párrafos de introducción (la nota y los efectos), más juntos; y el alcance
+   de las guías, que no se pliega porque dice que no dicen qué hacer con el resultado. Letra al suelo
+   del proyecto (0,875 rem; antes 0,85). */
+:where(.app[data-look="reference"]) .panel:is([data-ui="countermeasure-library"], [data-ui="guides"]) > p.secondary {
+  font-size: 0.875rem;
+  line-height: 1.35;
+}

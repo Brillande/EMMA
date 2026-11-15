@@ -1,0 +1,15 @@
+{"target": "app/api/systems.py",
+ "test": [
+  "tests/test_earth_link.py::test_the_systems_overview_carries_the_link_at_ground_cut"
+ ],
+ "mutations": [
+  {"label": "/habitat/systems no dice lo declarado del enlace (Tierra sin lecturas no lo ve)",
+   "old": "    return {**systems.overview(declarations), \"declared_link\": systems.earth_link(declarations)}\n",
+   "new": "    return systems.overview(declarations)\n"},
+  {"label": "el enlace de /habitat/systems ignora el corte de Tierra",
+   "old": "\"declared_link\": systems.earth_link(declarations)}",
+   "new": "\"declared_link\": systems.earth_link(system_declarations(store, None))}"},
+  {"label": "el enlace de /habitat/systems cuenta lo que no firmo la consola",
+   "old": "\"declared_link\": systems.earth_link(declarations)}",
+   "new": "\"declared_link\": systems.earth_link(store.system_statuses())}"}
+ ]}

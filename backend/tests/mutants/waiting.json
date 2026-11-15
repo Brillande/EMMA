@@ -1,0 +1,101 @@
+{
+  "target": "app/waiting.py",
+  "test": ["tests/test_waiting.py"],
+  "mutations": [
+    {
+      "label": "los dos relojes se mezclan",
+      "old": "        *tool.esperan_por_titular(data_clock, data_today),",
+      "new": "        *tool.esperan_por_titular(data_clock, record_today),"
+    },
+    {
+      "label": "una alerta reconocida sigue esperando",
+      "old": "        if not alert.get(\"acknowledged\"):",
+      "new": "        if True:"
+    },
+    {
+      "label": "un borrador firmado sigue esperando",
+      "old": "            if draft.get(\"status\") == \"unvalidated\" and not _known(draft.get(\"signoff\"), until):",
+      "new": "            if draft.get(\"status\") == \"unvalidated\":"
+    },
+    {
+      "label": "lo más nuevo sale primero",
+      "old": "    found.sort(key=lambda pair: -pair[1])",
+      "new": "    found.sort(key=lambda pair: pair[1])"
+    },
+    {
+      "label": "las cifras confirmadas cuentan como pendientes",
+      "old": "        pending = len(readings) - len(done)",
+      "new": "        pending = len(readings)"
+    },
+    {
+      "label": "una cifra sale en plural",
+      "old": "{'cifra' if pending == 1 else 'cifras'}",
+      "new": "cifras"
+    },
+    {
+      "label": "Tierra ve lo firmado después de su corte",
+      "old": "    return until is None or _instant(str(item[\"recorded\"])) <= until",
+      "new": "    return True"
+    },
+    {
+      "label": "lo firmado justo en el corte no ha llegado",
+      "old": "    return until is None or _instant(str(item[\"recorded\"])) <= until",
+      "new": "    return until is None or _instant(str(item[\"recorded\"])) < until"
+    },
+    {
+      "label": "un borrador sin firma cuenta como firmado",
+      "old": "    if item is None:\n        return False",
+      "new": "    if item is None:\n        return True"
+    },
+    {
+      "label": "un «resuelto» posterior al corte ya cierra el arreglo para Tierra",
+      "old": "        if action_counts(item, until):\n            latest",
+      "new": "        if True:\n            latest"
+    },
+    {
+      "label": "una confirmación posterior al corte ya cuenta para Tierra",
+      "old": "            if _known(item, until)\n        }",
+      "new": "        }"
+    },
+    {
+      "label": "un estudio posterior al corte ya tiene borradores para Tierra",
+      "old": "        if not _known(study, until):\n            continue",
+      "new": "        if False:\n            continue"
+    },
+    {
+      "label": "un borrador posterior al corte ya espera para Tierra",
+      "old": "            if not _known(draft, until):\n                continue",
+      "new": "            if False:\n                continue"
+    },
+    {
+      "label": "un informe posterior al corte ya ha llegado a Tierra",
+      "old": "store.scanned_reports(subject) if _known(report, until)]",
+      "new": "store.scanned_reports(subject)]"
+    },
+    {
+      "label": "el reloj del registro de Tierra no se para en el corte",
+      "old": "        record_today = min(record_today, until.astimezone(dt.UTC).date())",
+      "new": "        pass"
+    },
+    {
+      "label": "el reloj del registro de Tierra pasa del reloj real",
+      "old": "        record_today = min(record_today, until.astimezone(dt.UTC).date())",
+      "new": "        record_today = until.astimezone(dt.UTC).date()"
+    },
+    {
+      "label": "el estado de una alerta lo firma cualquiera, no solo la consola",
+      "old": "        if action_counts(item, until):",
+      "new": "        if _known(item, until):"
+    },
+    {
+      "label": "los informes se vuelven a cortar aunque quien llama ya los cortó",
+      "old": "    if reports is None:\n        reports = reports_known(store, subject, until)",
+      "new": "    reports = reports_known(store, subject, until)"
+    },
+    {
+      "label": "lo que espera no pasa los informes ya cortados a los hilos",
+      "old": "    data_clock, record_clock = threads(status, store, routines, subject, until, reports)",
+      "new": "    data_clock, record_clock = threads(status, store, routines, subject, until)"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "_nota": "Contramedidas EN INVESTIGACIÓN: se enseñan para saber que existen y en qué estado las deja su fuente, no para ofrecerlas. Fichero aparte de countermeasures.json a propósito: no entra en la huella de reglas (core/versioning.py resume solo aquel), no lleva familia, no lo lee el asesor ni el análisis, y sus ids no se pueden adoptar ni declinar. Cada `quote` es la frase exacta de la fuente, copiada con la fuente delante el día `read_on` (o el de su fuente, si esta lleva el suyo: se leyó después), en su idioma; `where` dice la página y la sección; `ref` es la ficha del registro (data/evidence_refs.json). `status` y `flight_note` los escribe EMMA con las frases delante y no dicen más que ellas: lo que la fuente no dice (si es equipo de vuelo, qué tripulaciones lo usan, cuánto cuesta en tiempo o recursos) se declara en `flight_note` o en `not_found`, no se rellena. Cargador y defensa: app/evidence/research_countermeasures.py.",
+  "read_on": "2026-10-23",
+  "sources": {
+    "nasa-body-in-space-2022": {
+      "extent": "partial",
+      "what": "El PDF de 12 páginas en nasa.gov, recorrido entero en texto buscando «virtual», «cuff», «negative pressure», «artificial gravity» y «centrifug»; leídos los párrafos de las páginas 6 (aislamiento y confinamiento), 9 y 10 (campos gravitatorios)."
+    },
+    "hrp-sans-evidence-report": {
+      "extent": "partial",
+      "what": "El PDF de 109 páginas, recorrido entero en texto buscando «negative pressure», «LBNP», «thigh cuff», «Braslet», «artificial gravity» y «centrifug»; leídos el párrafo de la página 24 (§V) y las conclusiones de las páginas 84 y 85 (§VII, «Conclusions and Forward Work»)."
+    },
+    "nasa-bed-rest-agbresa": {
+      "extent": "partial",
+      "what": "La página de divulgación de AGBRESA en nasa.gov: los párrafos sobre la centrifugación y su fin."
+    },
+    "kramer-2021-agbresa": {
+      "extent": "full",
+      "what": "El artículo de resultados de AGBRESA sobre la capacidad física, leído entero en el texto completo de Europe PMC: resumen, métodos, resultados, discusión y conclusión.",
+      "read_on": "2026-10-26"
+    }
+  },
+  "entries": [
+    {
+      "id": "research-vr-relaxing-environments",
+      "name": "Realidad virtual que simula entornos relajantes",
+      "ridge": "isolation",
+      "targets": "El estado de ánimo de una tripulación aislada.",
+      "status": "En investigación.",
+      "flight_note": "La fuente dice que se está estudiando; no dice que se use en vuelo ni con qué equipo.",
+      "quotes": [
+        {
+          "ref": "nasa-body-in-space-2022",
+          "where": "p. 6, «2. Isolation and Confinement»",
+          "quote": "Researchers are also looking into using virtual reality to simulate relaxing environments to help improve the mood of crews in isolation."
+        }
+      ]
+    },
+    {
+      "id": "research-thigh-cuffs",
+      "name": "Brazaletes de compresión en los muslos",
+      "ridge": "gravity",
+      "targets": "El desplazamiento de fluidos hacia la cabeza, que el informe del SANS relaciona con los cambios oculares del vuelo.",
+      "status": "NASA (2022) los describe en presente, sin nombrar un modelo; el informe de evidencia de 2017 cuenta los Braslet entre los dispositivos en estudio como contramedida del SANS.",
+      "flight_note": "Ninguna de las fuentes leídas dice qué tripulaciones los llevan hoy ni si alguna prueba los ha validado contra el SANS.",
+      "quotes": [
+        {
+          "ref": "nasa-body-in-space-2022",
+          "where": "p. 9, «4. Gravity Fields»",
+          "quote": "Compression cuffs worn on the thighs help keep the blood in the lower extremities to counteract those fluid shifts."
+        },
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 85, §VII «Conclusions and Forward Work»",
+          "quote": "Studies are currently underway to investigate the use of devices that redistribute fluids distally, including Braslet thigh cuffs, a modified version of the Kaatsu system, an impedance threshold device, artificial gravity, and a lower body negative pressure device."
+        }
+      ]
+    },
+    {
+      "id": "research-lbnp",
+      "name": "Presión negativa en la parte inferior del cuerpo (LBNP)",
+      "ridge": "gravity",
+      "targets": "El desplazamiento de fluidos hacia la cabeza: llevarlos de la cabeza a las piernas.",
+      "status": "En estudio como contramedida del SANS según el informe de evidencia de 2017.",
+      "flight_note": "El informe cita un editorial (Bogomolov et al. 2015) que cuenta el dispositivo ruso Chibis entre las contramedidas de los cosmonautas y apunta a que podría protegerlos; es lo que plantea ese editorial, no un resultado. NASA (2022) dice que «could help».",
+      "quotes": [
+        {
+          "ref": "nasa-body-in-space-2022",
+          "where": "p. 9, «4. Gravity Fields»",
+          "quote": "A lower-body negative pressure device could help draw fluids from the head into the legs as well."
+        },
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 24, §V «Spaceflight and Analog Evidence»",
+          "quote": "A recent editorial (Bogomolov et al. 2015) suggested that Russian countermeasures including lower-body negative pressure (Chibis device) may provide them protection that astronauts from other agencies do not have."
+        },
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 85, §VII «Conclusions and Forward Work»",
+          "quote": "Studies are currently underway to investigate the use of devices that redistribute fluids distally, including Braslet thigh cuffs, a modified version of the Kaatsu system, an impedance threshold device, artificial gravity, and a lower body negative pressure device."
+        }
+      ]
+    },
+    {
+      "id": "research-centrifuge-artificial-gravity",
+      "name": "Gravedad artificial por centrifugación",
+      "ridge": "gravity",
+      "targets": "Los cambios fisiológicos de la ingravidez; para el informe del SANS, también el desplazamiento de fluidos hacia la cabeza.",
+      "status": "Estudiada en Tierra, en reposo en cama (AGBRESA): en su artículo de resultados, 30 minutos al día no mantuvieron la capacidad aeróbica y atenuaron parte de la pérdida de función muscular. NASA la presenta como posible contramedida futura.",
+      "flight_note": "La página de AGBRESA dice «may one day be a countermeasure»: no es una contramedida de vuelo hoy según esa fuente. El artículo de resultados sobre la capacidad física (Kramer et al. 2021) concluye que, sola, no basta: tendría que combinarse con ejercicio antes de poder considerarse una contramedida integral. Del resultado en las otras áreas del estudio no se leyó nada.",
+      "quotes": [
+        {
+          "ref": "nasa-body-in-space-2022",
+          "where": "p. 10, «4. Gravity Fields»",
+          "quote": "NASA has even completed a joint Earth-based bed rest study to determine whether centrifuge artificial gravity may be an effective way to counter the physiological effects of weightlessness."
+        },
+        {
+          "ref": "nasa-bed-rest-agbresa",
+          "where": "página de AGBRESA (2019), párrafos sobre la centrifugación",
+          "quote": "The spinning of the centrifuge produces an artificial gravity effect, via centrifugal force, to see if this will counter some of the physiological changes induced by microgravity."
+        },
+        {
+          "ref": "nasa-bed-rest-agbresa",
+          "where": "página de AGBRESA (2019), párrafos sobre la centrifugación",
+          "quote": "Artificial gravity may one day be a countermeasure to help astronauts traveling to Mars."
+        },
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 84, §VII «Conclusions and Forward Work»",
+          "quote": "However, future planned bed rest studies include additional spaceflight-stressors such as elevated ambient CO2, as well as possible relief of a headward fluid shift using artificial gravity during prolonged bed rest."
+        },
+        {
+          "ref": "kramer-2021-agbresa",
+          "where": "Eur J Appl Physiol 2021, resumen, «Results»",
+          "quote": "AG had no significant effect on aerobic exercise capacity, flexor muscle function and isometric knee extension strength or rate of force development (RFD)."
+        },
+        {
+          "ref": "kramer-2021-agbresa",
+          "where": "Eur J Appl Physiol 2021, «Discussion», primer párrafo",
+          "quote": "However, AG mitigated some of the losses observed for calf muscle function, dynamic knee extension strength and jumping power."
+        },
+        {
+          "ref": "kramer-2021-agbresa",
+          "where": "Eur J Appl Physiol 2021, «Conclusion»",
+          "quote": "AG would have to be combined with adequate exercise protocols before potentially being considered as an integral countermeasure for the deleterious effects of microgravity on physical performance losses."
+        }
+      ]
+    },
+    {
+      "id": "research-kaatsu-modified",
+      "name": "Versión modificada del sistema Kaatsu",
+      "ridge": "gravity",
+      "targets": "Redistribuir los fluidos en sentido distal («distally», en la frase del informe del SANS).",
+      "status": "En estudio como contramedida del SANS según el informe de evidencia de 2017.",
+      "flight_note": "El informe solo lo nombra en esa lista: no dice cómo es la modificación, ni quién lo usa, ni con qué resultado. EMMA no tiene más de él.",
+      "quotes": [
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 85, §VII «Conclusions and Forward Work»",
+          "quote": "Studies are currently underway to investigate the use of devices that redistribute fluids distally, including Braslet thigh cuffs, a modified version of the Kaatsu system, an impedance threshold device, artificial gravity, and a lower body negative pressure device."
+        }
+      ]
+    },
+    {
+      "id": "research-impedance-threshold-device",
+      "name": "Dispositivo de umbral de impedancia",
+      "ridge": "gravity",
+      "targets": "Redistribuir los fluidos en sentido distal («distally», en la frase del informe del SANS).",
+      "status": "En estudio como contramedida del SANS según el informe de evidencia de 2017.",
+      "flight_note": "El informe solo lo nombra en esa lista: no dice cómo se usaría ni con qué resultado. EMMA no tiene más de él.",
+      "quotes": [
+        {
+          "ref": "hrp-sans-evidence-report",
+          "where": "p. 85, §VII «Conclusions and Forward Work»",
+          "quote": "Studies are currently underway to investigate the use of devices that redistribute fluids distally, including Braslet thigh cuffs, a modified version of the Kaatsu system, an impedance threshold device, artificial gravity, and a lower body negative pressure device."
+        }
+      ]
+    }
+  ],
+  "not_found": [
+    "Ninguna de las fuentes leídas da, para estas contramedidas, tiempo de tripulación, recursos, contraindicaciones, efectos adversos ni una ventana de seguimiento: por eso no tienen esos campos, que la biblioteca exige a sus entradas.",
+    "El informe del SANS es de 2017 y dice «currently underway»: lo que se sepa después de esa fecha no está en lo leído, y el estado de hoy puede ser otro.",
+    "Del resultado publicado de AGBRESA se leyó el artículo de la capacidad física (Kramer et al. 2021). Dos búsquedas web (2026-10-26) dieron además el de la demanda cardiorrespiratoria y neuromuscular de la centrifugación (Kramer et al. 2020, Front Physiol), que no se leyó, y ningún artículo con el resultado del estudio entero; los de las otras áreas (tolerancia ortostática, SANS, hueso) no se buscaron uno por uno."
+  ],
+  "read_not_included": [
+    "«Software-generated workout partners» (NASA 2022, p. 10): motivan el ejercicio, que la biblioteca ya tiene como contramedida; no son una contramedida aparte.",
+    "«Virtual assistants» (NASA 2022, p. 8): ayudan a reconocer y responder a anomalías; son una herramienta de apoyo a la decisión, no una contramedida sobre la persona."
+  ]
+}

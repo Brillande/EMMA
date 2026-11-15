@@ -1,0 +1,42 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_device_in_reading.py::test_the_ble_route_signs_the_device_it_was_given_normalized",
+  "tests/test_device_in_reading.py::test_the_two_imports_sign_the_device_on_every_reading",
+  "tests/test_device_in_reading.py::test_the_routes_still_accept_and_still_answer_with_the_notice",
+  "tests/test_device_in_reading.py::test_ground_compares_with_the_bindings_that_existed_at_its_cut",
+  "tests/test_device_in_reading.py::test_a_broken_binding_record_does_not_break_the_status"
+ ],
+ "mutations": [
+  {
+   "label": "la trama BLE se firma sin el identificador que traia",
+   "old": "    # La trama se firma con el identificador que puso quien la envia, si puso alguno.\n    observations = from_device(observations, device)\n",
+   "new": ""
+  },
+  {
+   "label": "la importacion se firma sin el identificador que traia",
+   "old": "    # La importacion se firma con el identificador que puso quien la envia, si puso alguno.\n    observations = from_device(observations, device)\n",
+   "new": ""
+  },
+  {
+   "label": "la trama BLE se firma con el identificador sin normalizar",
+   "old": "    # La trama se firma con el identificador que puso quien la envia, si puso alguno.\n    observations = from_device(observations, device)\n",
+   "new": "    observations = from_device(observations, payload.device)\n"
+  },
+  {
+   "label": "el estado no compara sus lecturas con los vinculos",
+   "old": "                _bindings_for_status(store, until),\n",
+   "new": ""
+  },
+  {
+   "label": "Tierra compara con vinculos firmados despues de su corte",
+   "old": "        return binding_declarations(store, until)\n    except TamperedRecordError:\n        return None\n",
+   "new": "        return binding_declarations(store, None)\n    except TamperedRecordError:\n        return None\n"
+  },
+  {
+   "label": "un registro de vinculos danado convierte el estado en un error",
+   "old": "        return binding_declarations(store, until)\n    except TamperedRecordError:\n        return None\n",
+   "new": "        return binding_declarations(store, until)\n    except TamperedRecordError:\n        raise\n"
+  }
+ ]
+}

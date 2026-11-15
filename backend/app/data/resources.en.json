@@ -1,0 +1,32 @@
+{
+  "_nota": "El inglés de `resources.json`: nombre castellano exacto → inglés. Lo aplica `app/core/resources.py` al servir (`shown`), también al texto con que cada contramedida nombra el recurso, que es el mismo; el fichero castellano no se toca y las claves no se traducen.",
+  "strings": {
+    "cinta o cicloergómetro": "treadmill or cycle ergometer",
+    "ARED (ejercicio resistivo)": "ARED (resistive exercise)",
+    "registro de ingesta": "intake log",
+    "el mismo sensor": "the same sensor",
+    "planificación del turno": "shift planning",
+    "iluminación regulable del módulo": "adjustable module lighting",
+    "test PVT de a bordo": "onboard PVT test",
+    "ventana de comunicaciones": "communications window",
+    "zona blindada": "shielded area",
+    "bolsas de estiba, agua y víveres como masa de blindaje": "stowage bags, water and food as shielding mass",
+    "módulo con más masa entre la tripulación y el exterior": "module with more mass between the crew and the outside",
+    "replanificación de la actividad": "activity replanning",
+    "dosímetro personal": "personal dosimeter",
+    "acelerómetro": "accelerometer",
+    "diario clínico": "clinical diary",
+    "material de limpieza": "cleaning supplies",
+    "kit de muestra de saliva": "saliva sample kit",
+    "ecógrafo": "ultrasound scanner",
+    "operador entrenado": "trained operator",
+    "médico de a bordo": "onboard physician",
+    "mapa corporal de dolor": "pain body map",
+    "agua potable de a bordo": "onboard drinking water",
+    "recogida de orina de 24 h": "24 h urine collection",
+    "inventario de alimentos de a bordo": "onboard food inventory",
+    "segundo sensor o analizador portátil de CO2": "second CO2 sensor or portable analyser",
+    "sistema de control ambiental del módulo": "module environmental control system",
+    "segundo sensor o instrumento de medida manual": "second sensor or manual measuring instrument"
+  }
+}

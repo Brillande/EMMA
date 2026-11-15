@@ -1,0 +1,568 @@
+/*
+ * La sección «Aislamiento» (`IsolationBoard.tsx`, maqueta «Panel de Aislamiento y Salud Psicosocial
+ * ISS» de 2026-11-14) con el estilo de «Inicio»: el cuerpo lleva `ref-home iso-home`, así que hereda
+ * la rejilla de 12 columnas, las variables `--ref-*`/`--acc-*` y las tarjetas de
+ * `referenceDashboard.css`. Aquí solo el reparto y lo propio de sus piezas.
+ *
+ * COLORES DE ADORNO (§2.5 de `compliance/hmi-state-of-the-art.md`): el acento azul del aislamiento
+ * (`--acc-isolation`, el de la letra I de RIDGE en «Inicio») no significa nada. Lo que es dato
+ * (`--lvl`, `data-tone`, las marcas) conserva el color de su tabla; las curvas van en el color del
+ * texto y se distinguen por trazo.
+ */
+
+.iso-home { --acc: var(--acc-isolation); }
+
+/* Reparto, como la maqueta: la cabecera y el estado global arriba, este alto a la derecha. */
+
+.iso-home .iso-header { grid-column: span 9; }
+.iso-home .iso-global { grid-column: span 3; grid-row: span 2; }
+.iso-home .iso-indicators { grid-column: span 3; }
+.iso-home .iso-trend { grid-column: span 3; }
+.iso-home .iso-factors { grid-column: span 3; }
+.iso-home .iso-mood { grid-column: span 3; }
+.iso-home .iso-interactions { grid-column: span 3; }
+.iso-home .iso-sleep { grid-column: span 3; }
+.iso-home .iso-light { grid-column: span 3; }
+.iso-home .iso-nutrition { grid-column: span 3; }
+.iso-home .iso-tests { grid-column: span 6; }
+.iso-home .iso-progress { grid-column: span 3; }
+.iso-home .iso-correlations { grid-column: span 4; }
+.iso-home .iso-risk { grid-column: span 2; }
+.iso-home .iso-recommendations { grid-column: span 3; }
+.iso-home .iso-alerts { grid-column: span 3; }
+
+
+
+@media (max-width: 1400px) {
+  .iso-home > :not(.ref-places) { grid-column: span 6; grid-row: auto; }
+  .iso-home .iso-header,
+  .iso-home .iso-tests { grid-column: span 12; }
+}
+
+@media (max-width: 900px) {
+  .iso-home > * { grid-column: span 12 !important; }
+}
+
+.iso-home small { font-size: 0.74rem; font-weight: 400; }
+
+.iso-home .ref-card { border-top: 2px solid var(--acc); }
+
+.iso-note { margin-top: auto; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.iso-home section.ref-card { display: flex; flex-direction: column; }
+
+/* Cabecera. */
+
+.iso-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.2rem;
+}
+
+.iso-home section.iso-header.ref-card { flex-direction: row; align-self: start; height: auto; }
+
+.iso-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  flex: 1 1 22rem;
+}
+
+.iso-title svg { width: 1.4rem; height: 1.4rem; color: var(--acc); }
+
+.iso-updated,
+.iso-subject {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.iso-subject svg { width: 1.1rem; height: 1.1rem; }
+
+/* Indicadores: anillo y lista. */
+
+.iso-index {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.2rem 0.7rem;
+}
+
+.iso-index .ref-ring { width: 7.5rem; }
+.iso-index .ref-ring strong { font-size: 2.1rem; line-height: 1; }
+.iso-index .ref-ring .ref-ring-fill { stroke-width: 9; }
+.iso-index .ref-ring .ref-ring-track { stroke-width: 9; }
+.iso-ring-caption { grid-column: 1; text-align: center; }
+
+.iso-latest {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.iso-latest li,
+.iso-corr li,
+.iso-bars li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.iso-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.iso-bars li { grid-template-columns: minmax(0, 1.3fr) minmax(2.5rem, 1fr) 3.2rem; }
+.iso-bars li > .num { text-align: right; }
+.iso-bars li > :nth-child(2):last-child { grid-column: 2 / -1; }
+
+.iso-corr { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+
+/* Estado global y riesgo. */
+
+.iso-hero { margin-bottom: 0.35rem; }
+
+.iso-drivers {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+}
+
+.iso-risk-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--lvl);
+  border-radius: 999px;
+  width: fit-content;
+  font-size: 1.05rem;
+}
+
+.iso-risk-pill svg { width: 1.2rem; height: 1.2rem; color: var(--lvl); }
+
+/* Pares cifra-rótulo. */
+
+.iso-pairs {
+  margin: 0 0 0.3rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.iso-pairs > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.4rem;
+}
+
+.iso-pairs dt { color: var(--c-text-secondary); }
+.iso-pairs dd { margin: 0; font-weight: 600; text-align: right; }
+
+/* Barras diarias. */
+
+.iso-days { margin: 0; }
+.iso-days figcaption { font-size: 0.74rem; }
+
+.iso-days ol {
+  list-style: none;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 2.6rem;
+  border-bottom: 1px solid var(--ref-edge);
+}
+
+.iso-days li {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.iso-days li span {
+  display: block;
+  width: 100%;
+  background: color-mix(in srgb, var(--acc) 70%, var(--c-text));
+  border-radius: 2px 2px 0 0;
+}
+
+.iso-days li[data-empty] { border-bottom: 2px dotted var(--c-cyan); }
+
+/* Pruebas de la batería. */
+
+.iso-test-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.iso-test-grid li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+  font-size: 0.8rem;
+}
+
+.iso-test-sigla { font-weight: 700; color: var(--c-text); }
+
+@media (max-width: 1100px) {
+  .iso-test-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Recomendaciones y alertas. */
+
+.iso-checks,
+.iso-alert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.iso-checks li,
+.iso-alert-list li {
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.4rem;
+  align-items: start;
+}
+
+.iso-checks svg { color: var(--c-text); width: 1rem; height: 1rem; }
+.iso-alert-list svg { color: var(--lvl); width: 1rem; height: 1rem; }
+
+.iso-alerts.ref-card { border-color: var(--lvl); }
+
+/* Radar y tendencia (piezas de `HomeCharts.tsx`). */
+
+.ref-radar { width: 100%; max-height: 11rem; }
+.ref-radar-ring { fill: none; stroke: var(--ref-edge); stroke-width: 0.6; }
+.ref-radar-spoke { stroke: var(--ref-edge); stroke-width: 0.6; }
+.ref-radar-shape {
+  fill: color-mix(in srgb, var(--acc) 35%, transparent);
+  stroke: var(--c-text);
+  stroke-width: 1.2;
+}
+.ref-radar-label { fill: var(--c-text); font-size: 8.5px; }
+
+.ref-multitrend { margin: 0; }
+.ref-multitrend > svg { width: 100%; height: auto; max-height: 8rem; }
+.ref-multitrend-grid { stroke: var(--ref-edge); stroke-width: 0.5; }
+.ref-multitrend-line { fill: none; stroke: var(--c-text); stroke-width: 1.6; }
+.ref-multitrend-tick { fill: var(--c-text-secondary); font-size: 9px; }
+
+.ref-multitrend-legend {
+  list-style: none;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.7rem;
+  font-size: 0.76rem;
+}
+
+.ref-multitrend-legend li { display: flex; align-items: center; gap: 0.3rem; }
+.ref-multitrend-legend svg { width: 1.5rem; height: 0.4rem; stroke: var(--c-text); stroke-width: 2; }
+
+/* Estado global: alto, con el nivel grande, como la maqueta. */
+
+.iso-global .iso-hero { padding: 0.6rem 0.7rem; }
+.iso-global .iso-hero strong { font-size: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase; }
+
+
+/* Cabecera como franja de la maqueta: el tripulante en su caja. */
+
+.iso-subject {
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* Interacciones y luz: el dibujo al lado o debajo (adorno). */
+
+.iso-side-art {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+}
+
+.iso-crew-art { width: 100%; }
+.iso-crew-link { fill: none; stroke: var(--acc); stroke-width: 2.4; }
+.iso-crew-node { fill: var(--ref-navy); stroke: var(--acc); stroke-width: 2.4; }
+.iso-crew-head { fill: var(--c-text); }
+
+.iso-light-art { width: 100%; height: 3rem; margin-top: auto; }
+
+/* Riesgo: la escala de niveles en barra, con el marcador encima. */
+
+.iso-risk-scale { position: relative; margin: 1.1rem 0 0.4rem; }
+
+.iso-risk-scale ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 0.7rem;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.iso-risk-scale li { flex: 1; background: var(--lvl); }
+
+.iso-risk-marker {
+  position: absolute;
+  top: -1.05rem;
+  transform: translateX(-50%);
+  color: var(--c-text);
+}
+
+.iso-risk-marker svg { width: 0.95rem; height: 0.95rem; }
+
+/* Constancia: la barra de la maqueta y la lista con casillas. */
+
+.iso-progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.iso-progress .board-bar { height: 0.6rem; margin: 0.2rem 0 0.4rem; }
+
+.iso-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; }
+.iso-checklist li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); gap: 0.4rem; align-items: center; }
+.iso-checklist svg { width: 1rem; height: 1rem; }
+
+.iso-global-facts {
+  list-style: none;
+  margin: 0.3rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.iso-global-facts li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 7px;
+}
+
+.iso-global-facts svg { width: 1.3rem; height: 1.3rem; color: var(--acc); }
+
+.iso-test-grid li { font-size: 0.76rem; align-content: start; }
+.iso-test-grid li > :last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* ---- Vuelta 3 (2026-11-15, «sigue estando muy lejos de la foto»): color y densidad de la maqueta. ---- */
+
+/*
+ * Acento por serie, como las vitales de «Inicio» (§2.5): adorno que solo dice «esta curva es esta fila».
+ * No es nivel: el nivel va en su insignia con su palabra.
+ */
+.iso-home [data-series="mood-valence"] { --ser: var(--c-green); }
+.iso-home [data-series="sleep-duration"] { --ser: var(--c-yellow); }
+.iso-home [data-series="sleep-efficiency"] { --ser: color-mix(in srgb, var(--c-cyan) 70%, var(--c-blue)); }
+.iso-home [data-series="circadian-shift"] { --ser: var(--c-blue); }
+.iso-home [data-series="pvt-mean-rt"] { --ser: var(--c-magenta); }
+.iso-home [data-series="pvt-lapses"] { --ser: color-mix(in srgb, var(--c-magenta) 55%, var(--c-red)); }
+
+.iso-home .ref-multitrend-line[data-series] {
+  stroke: var(--ser);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--ser) 60%, transparent));
+}
+.iso-home .ref-multitrend-legend li[data-series] svg { stroke: var(--ser); }
+
+.iso-latest li[data-series],
+.iso-bars li[data-series] { grid-template-columns: 1.1rem minmax(0, 1fr) auto; }
+.iso-bars li[data-series] { grid-template-columns: 1.1rem minmax(0, 1.25fr) minmax(2.5rem, 1fr) 3.4rem; }
+.iso-latest li[data-series] > svg,
+.iso-bars li[data-series] > svg { width: 1.05rem; height: 1.05rem; color: var(--ser); }
+.iso-latest strong { font-size: 1rem; }
+
+/* Barras de cambio: amarilla si va hacia el lado preocupante (dato); si no, verde de adorno. */
+.iso-bars .board-bar { height: 0.55rem; }
+.iso-bars .board-bar > span:not([data-tone]) { background: var(--c-green); }
+
+/* Anillo grande y verde, como el índice de la maqueta (verde de adorno: el recuento va escrito). */
+.iso-index { grid-template-columns: 6.8rem minmax(0, 1fr); }
+.iso-index .ref-ring { width: 6.8rem; }
+.iso-index .ref-ring strong { font-size: 2.4rem; }
+.iso-home .ref-ring-fill { stroke: var(--c-green); }
+.iso-latest li[data-series] > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.iso-home .iso-latest strong { font-size: 0.95rem; white-space: nowrap; }
+
+/* Estado global: bloque lleno con el color de su nivel, como «NORMAL» en la maqueta. */
+.iso-global .iso-hero {
+  padding: 0.75rem 0.8rem;
+  border-radius: 9px;
+  border: 2px solid var(--lvl);
+  background: color-mix(in srgb, var(--lvl) 28%, var(--ref-card));
+}
+.iso-global .iso-hero strong { font-size: 1.85rem; line-height: 1.1; }
+.iso-home .iso-global .iso-hero .ref-hero-icon { width: 3.2rem; height: 3.2rem; }
+.iso-home .iso-global .iso-hero .ref-hero-icon svg { width: 1.9rem; height: 1.9rem; }
+
+/* Radar relleno en verde, de adorno (la forma es el dato). */
+.iso-home .ref-radar { max-height: 11.5rem; }
+.iso-home .ref-radar-shape {
+  fill: color-mix(in srgb, var(--c-green) 45%, transparent);
+  stroke: var(--c-green);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-green) 60%, transparent));
+}
+.iso-home .ref-radar-ring { stroke: color-mix(in srgb, var(--c-green) 35%, var(--ref-edge)); }
+.iso-home .ref-radar-label { font-size: 9.5px; }
+.ref-radar-value { font-weight: 700; }
+
+/* Nutrición: anillo y cifras al lado. */
+.iso-nutri { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 0.6rem; align-items: center; }
+.iso-nutri .ref-ring { width: 6.5rem; }
+.iso-nutri .ref-ring strong { font-size: 2rem; }
+
+/* Pruebas: icono, nombre y marca, como las baldosas de la maqueta. */
+.iso-test-grid li {
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 0.35rem;
+}
+.iso-test-grid li > svg { grid-row: span 2; width: 1.35rem; height: 1.35rem; color: var(--acc); }
+.iso-test-name { display: grid; line-height: 1.15; }
+.iso-test-name small { font-size: 0.68rem; }
+.iso-test-mark { grid-column: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.74rem; }
+.iso-test-grid li[data-done] { border-color: color-mix(in srgb, var(--c-green) 60%, var(--ref-edge)); }
+
+/* Densidad: tarjetas más prietas y títulos como la maqueta. */
+.iso-home .ref-card { padding: 0.35rem 0.55rem 0.4rem; }
+.iso-home .ref-h { font-size: 1.02rem; margin-bottom: 0.25rem; }
+.iso-home .iso-days ol { height: 2rem; }
+.iso-sleep .iso-days li span { background: color-mix(in srgb, var(--c-blue) 75%, var(--c-cyan)); }
+.iso-light-art { height: 2.6rem; }
+
+/* Alto de fila como la maqueta (~165 px a 1672×941): lo que cabe en una pantalla sin desplazar. */
+.iso-home .ref-multitrend > svg { max-height: 5.6rem; }
+.iso-home .ref-multitrend-legend { gap: 0 0.6rem; font-size: 0.72rem; }
+.iso-home .iso-latest { gap: 0.12rem; }
+.iso-home .iso-bars { gap: 0.12rem; }
+.iso-home .iso-pairs { gap: 0.1rem; margin-bottom: 0.15rem; }
+.iso-home .ref-radar { max-height: 8.8rem; }
+.iso-home .iso-days ol { height: 1.7rem; }
+.iso-home .iso-crew-art { max-height: 5.5rem; }
+.iso-home .iso-side-art { grid-template-columns: minmax(0, 1fr) 5.5rem; }
+.iso-home .iso-test-grid { gap: 0.25rem; }
+.iso-home .iso-test-grid li { padding: 0.18rem 0.35rem; }
+.iso-home .iso-global-facts { gap: 0.25rem; }
+.iso-home .iso-global-facts li { padding: 0.2rem 0.4rem; }
+.iso-home .iso-corr { gap: 0.15rem; }
+.iso-home .iso-corr li > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.iso-home .iso-risk-scale { margin: 0.9rem 0 0.2rem; }
+
+/* El interruptor «Ajustar a pantalla» en la fila del título (está antes en el DOM), a su izquierda. */
+.iso-home .nodes-fit { grid-column: span 2; display: flex; justify-content: flex-end; align-items: center; }
+@media (max-width: 1400px) { .iso-home .nodes-fit { display: none; } }
+
+.iso-home .iso-crew-art { max-height: 4.4rem; }
+.iso-home .ref-radar { max-height: 8rem; }
+.iso-home .ref-multitrend > svg { max-height: 5rem; }
+.iso-home .iso-test-name small { display: none; }
+@media (max-width: 1400px) { .iso-home .iso-header { grid-column: span 12; } }
+
+.iso-home .ref-multitrend > svg { max-height: none; }
+.iso-home .ref-multitrend-tick { font-size: 10px; }
+.iso-home .ref-radar { max-height: 8.6rem; }
+.iso-home .ref-radar-label { font-size: 12px; }
+.iso-home .iso-title { font-size: 1.05rem; white-space: nowrap; }
+.iso-home .iso-title > span { overflow: hidden; text-overflow: ellipsis; }
+
+.iso-home .iso-mood .ref-radar { max-height: 9.6rem; margin: 0 auto; display: block; }
+
+/* ---- Vuelta 4 (2026-11-15, «le siguen faltando cosas»): piezas que faltaban de la maqueta. ---- */
+
+.iso-moves { list-style: none; margin: 0.3rem 0; padding: 0; display: grid; gap: 0.2rem; font-size: 0.8rem; }
+.iso-moves li { display: grid; grid-template-columns: 1.3rem minmax(0, 1fr); gap: 0.35rem; align-items: center; }
+.iso-moves svg { width: 1.15rem; height: 1.15rem; color: var(--ser, var(--c-text)); }
+
+.iso-arrow { width: 0.75rem; height: 0.75rem; vertical-align: -0.05rem; }
+
+.iso-rows li { grid-template-columns: 1.1rem minmax(0, 1fr) auto; }
+.iso-rows li > svg { width: 1rem; height: 1rem; color: var(--acc); }
+
+.iso-corr li[data-series] { grid-template-columns: 0.6rem minmax(0, 1fr) auto; }
+.iso-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--ser); box-shadow: 0 0 4px var(--ser); }
+
+.iso-light-curve { position: relative; height: 2.6rem; margin-top: auto; }
+.iso-light-curve .iso-light-art { position: absolute; inset: 0; height: 100%; opacity: 0.55; }
+.iso-light-curve .ref-spark { position: absolute; inset: 0; width: 100%; height: 100%; }
+.iso-light-curve .ref-spark path { stroke: var(--c-text); stroke-width: 1.6; fill: none; }
+
+.iso-go { margin-top: auto; display: flex; justify-content: flex-end; }
+.iso-home .iso-alerts.ref-card { justify-content: flex-start; }
+
+/* Una línea por fila, como la maqueta; el texto entero, en su `title`. */
+.iso-home .iso-header { flex-wrap: nowrap; }
+.iso-home .iso-header > * { min-width: 0; }
+.iso-home .iso-updated { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; }
+.iso-home .iso-subject { flex: none; white-space: nowrap; }
+.iso-home .iso-corr li > span:nth-child(2),
+.iso-home .iso-checks li > span,
+.iso-home .iso-moves li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.iso-home .iso-checks .ref-clamp { -webkit-line-clamp: 1; line-clamp: 1; }
+.iso-home .iso-moves { margin: 0.2rem 0; }
+.iso-home .iso-global .iso-hero { padding: 0.55rem 0.7rem; }
+
+/* ---- Correlaciones clave (IA), 2026-11-15: la lectura del modelo local va aparte y marcada. ---- */
+.iso-ai { margin-top: auto; }
+.iso-ai .command { padding: 0.15rem 0.5rem; font-size: 0.8rem; }
+.iso-ai-text {
+  margin: 0;
+  font-size: 0.78rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* El sello «IA · borrador»: que se vea de un vistazo que este texto es del modelo, no de EMMA. */
+.iso-ai-chip {
+  display: inline-block;
+  padding: 0 0.35rem;
+  border: 1px solid var(--c-magenta);
+  border-radius: 999px;
+  color: var(--c-magenta);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.iso-home .iso-corr li[data-series] { grid-template-columns: 0.6rem minmax(0, 1fr) auto; }
+
+/* El ajuste va sin botón: su hueco no ocupa sitio en la rejilla. */
+.iso-home .nodes-fit[hidden] { display: none; }

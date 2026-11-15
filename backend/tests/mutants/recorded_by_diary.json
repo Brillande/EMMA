@@ -1,0 +1,93 @@
+{
+ "target": "app/api/diary.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "el diario sigue firmando como alta manual",
+   "old": "            payload.key, payload.value, _received(), payload.subject, DIARY_SOURCE,\n",
+   "new": "            payload.key, payload.value, _received(), payload.subject, LEGACY_SOURCE,\n"
+  },
+  {
+   "label": "la anotación la firma la clave del alta manual",
+   "old": "store.record(recorded, identity_for(DIARY_SOURCE))",
+   "new": "store.record(recorded, identity_for(LEGACY_SOURCE))"
+  },
+  {
+   "label": "la anotación se firma sin quién la tecleó",
+   "old": "            recorded_by=payload.recorded_by,\n",
+   "new": ""
+  },
+  {
+   "label": "quién anota deja de ser obligatorio",
+   "old": "    recorded_by: OperatorName\n",
+   "new": "    recorded_by: OperatorName | None = None\n"
+  },
+  {
+   "label": "un nombre sin una sola letra ni cifra vale",
+   "old": "    if not any(character.isalnum() for character in value):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un nombre en blanco o larguísimo vale",
+   "old": "    StringConstraints(strip_whitespace=True, min_length=1, max_length=64),\n",
+   "new": "    StringConstraints(strip_whitespace=True),\n"
+  },
+  {
+   "label": "el nombre se firma con los espacios de alrededor",
+   "old": "    StringConstraints(strip_whitespace=True, min_length=1, max_length=64),\n",
+   "new": "    StringConstraints(min_length=1, max_length=64),\n"
+  },
+  {
+   "label": "una fuente o una hora enviadas por el cliente se ignoran en vez de rechazarse",
+   "old": "    model_config = ConfigDict(extra=\"forbid\")\n\n    key: str = Field(min_length=1)\n",
+   "new": "    model_config = ConfigDict(extra=\"ignore\")\n\n    key: str = Field(min_length=1)\n"
+  },
+  {
+   "label": "la fuente del diario firma cualquier indicador",
+   "old": "    if payload.key not in diary_keys():",
+   "new": "    if False:"
+  },
+  {
+   "label": "una anotación sin tripulante entra",
+   "old": "    subject: str = Field(min_length=1, max_length=64)\n",
+   "new": "    subject: str = \"crew-01\"\n"
+  },
+  {
+   "label": "el entorno deja de ser el del despliegue",
+   "old": "            evidence_context=settings.deployment_context,\n",
+   "new": ""
+  },
+  {
+   "label": "las anotaciones firmadas como alta manual desaparecen del diario",
+   "old": "DIARY_SOURCES = frozenset({DIARY_SOURCE, LEGACY_SOURCE})",
+   "new": "DIARY_SOURCES = frozenset({DIARY_SOURCE})"
+  },
+  {
+   "label": "a quien no consta se le pone el tripulante del dato",
+   "old": "    return reading.recorded_by if reading.recorded_by is not None else NOT_RECORDED",
+   "new": "    return reading.recorded_by if reading.recorded_by is not None else reading.subject"
+  },
+  {
+   "label": "la lista calla quién anotó",
+   "old": "                \"recorded_by\": item.recorded_by,\n",
+   "new": "                \"recorded_by\": None,\n"
+  },
+  {
+   "label": "la lista dice de todas que no consta",
+   "old": "                \"recorded_by_display\": recorded_by_display(item),\n",
+   "new": "                \"recorded_by_display\": NOT_RECORDED,\n"
+  },
+  {
+   "label": "el diario deja de decir que el nombre es obligatorio",
+   "old": "            \"required\": True,\n",
+   "new": "            \"required\": False,\n"
+  },
+  {
+   "label": "el diario sigue mandando al panel a la ingesta genérica",
+   "old": "        \"submit_to\": \"/api/diary/entries\",",
+   "new": "        \"submit_to\": \"/api/observations\","
+  }
+ ]
+}

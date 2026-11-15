@@ -1,0 +1,523 @@
+{
+ "target": "app/evidence/human_datasets.py",
+ "test": [
+  "tests/test_human_datasets.py"
+ ],
+ "mutations": [
+  {
+   "label": "una frase de un sitio que no es la fuente pasa",
+   "old": "    if urlsplit(url or \"\").hostname not in hosts:",
+   "new": "    if False:"
+  },
+  {
+   "label": "la población de un conjunto puede no ser la de su ficha (OSD-288 humano)",
+   "old": "    if ref.population is None or item[\"population\"] != ref.population:",
+   "new": "    if False:"
+  },
+  {
+   "label": "los ficheros abiertos pueden medir una población que el estudio no tiene",
+   "old": "        if opened not in _covered(item[\"population\"]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "los ficheros de ratón de OSD-343 pasan sin decirlo",
+   "old": "        if opened != item[\"population\"] and not _text(item, \"open_population_note\"):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un día de otra fase pasa (R+ antes del vuelo)",
+   "old": "            if label_key(phase, label) is None:",
+   "new": "            if False:"
+  },
+  {
+   "label": "un día que no está escrito en ninguna frase pasa",
+   "old": "            if not written_in(label, quotes):",
+   "new": "            if False:"
+  },
+  {
+   "label": "«R+1» cuenta como escrito dentro de «R+194», y «L-1» dentro de «L-1d»",
+   "old": "    pattern = re.compile(r\"(?<![A-Za-z0-9])\" + re.escape(_compact(label)) + r\"(?![A-Za-z0-9])\")",
+   "new": "    pattern = re.compile(r\"(?<![A-Za-z0-9])\" + re.escape(_compact(label)))"
+  },
+  {
+   "label": "el signo menos tipográfico de PMC deja de leerse como guion",
+   "old": "    dashes = text.replace(\"\\u2212\", \"-\").replace(\"\\u2013\", \"-\")",
+   "new": "    dashes = text.replace(\"\\u2013\", \"-\")"
+  },
+  {
+   "label": "el guion largo con que PMC escribe el Twins Study («L–162») deja de leerse como guion",
+   "old": "    dashes = text.replace(\"\\u2212\", \"-\").replace(\"\\u2013\", \"-\")",
+   "new": "    dashes = text.replace(\"\\u2212\", \"-\")"
+  },
+  {
+   "label": "tomas con día sin ningún día pasan",
+   "old": "        if not labels:",
+   "new": "        if False:"
+  },
+  {
+   "label": "días con un estado que no es de tomas con día pasan sin comprobar",
+   "old": "    elif labels:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "lo que dice de sus tomas puede ir sin frase",
+   "old": "    if status in {\"labels\", \"stated\"} and not cited:",
+   "new": "    if False:"
+  },
+  {
+   "label": "no procede sin motivo pasa (tomas y controles)",
+   "old": "    if status == \"not_applicable\" and not _text(item, \"why\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "buscado y no encontrado sin dónde pasa (tomas y controles)",
+   "old": "    if status == \"not_found\" and not _text(item, \"searched\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un conjunto sin vuelo (Tierra o reposo en cama) puede tener tomas de vuelo",
+   "old": "    if context in _NO_FLIGHT and status != \"not_applicable\":",
+   "new": "    if False:"
+  },
+  {
+   "label": "un acceso que dice la fuente pasa sin su frase",
+   "old": "    if basis == \"source\" and not item[\"cited\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el fichero que EMMA dice tener puede no nombrarse",
+   "old": "    if basis == \"emma\" and not (_repo_path(item[\"path\"]) and _text(item, \"why\")):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un acceso deducido sin motivo pasa",
+   "old": "    if basis == \"deduced\" and not _text(item, \"why\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un acceso no encontrado en el nivel y no en su origen pasa",
+   "old": "    if (basis == \"not_found\") != (item[\"level\"] == \"not_found\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un uso en EMMA sin fichero pasa",
+   "old": "        if not _repo_path(item[\"where\"]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "sin uso en EMMA, pero con fichero o ficha, pasa",
+   "old": "    elif item[\"where\"] is not None or item[\"cites\"] is not None:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "el uso en EMMA puede reclamar de más",
+   "old": "    if claimed := [found.group(0) for found in CLAIM.finditer(item[\"text\"])]:",
+   "new": "    if claimed := [found.group(0) for found in CLAIM.finditer(\"\")]:"
+  },
+  {
+   "label": "el uso en EMMA puede copiar una cifra de la validación",
+   "old": "    if COPIED_FIGURE.search(item[\"text\"]):",
+   "new": "    if False:"
+  },
+  {
+   "label": "CIPHER puede citar un estudio que no tiene",
+   "old": "    if raw[\"emma_study\"] not in raw[\"studies\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "los hitos pueden no ser los del texto de la conversación",
+   "old": "    if \" → \".join(points) != milestones[\"text\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "los hitos pueden ir fuera del orden del vuelo",
+   "old": "    if keys != sorted(set(keys)):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un conjunto sin una de sus tres fases pasa",
+   "old": "    if sorted(phases) != sorted(PHASES):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un campo mal escrito pasa",
+   "old": "    if extra := sorted(item.keys() - expected):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "un día L- se ordena como si fuera posterior al vuelo y cae en otro tramo",
+   "old": "    return (_RANK[phase], -day if phase == \"pre\" else day)",
+   "new": "    return (_RANK[phase], day)"
+  },
+  {
+   "label": "lo servido comparte el diccionario de la caché",
+   "old": "        \"task\": dict(raw[\"task\"]),",
+   "new": "        \"task\": raw[\"task\"],"
+  },
+  {
+   "label": "tener un fichero justifica cualquier nivel de acceso",
+   "old": "    if (basis == \"emma\") != (item[\"level\"] == \"file_open\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un uso en EMMA pasa sin la ficha que cita",
+   "old": "        if not _text(item, \"cites\"):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un campo mal escrito en CIPHER pasa",
+   "old": "    _fields(\"cipher\", raw, CIPHER_FIELDS)",
+   "new": "    pass"
+  },
+  {
+   "label": "el reposo en cama cuenta como vuelo: su R+ pasa por regreso",
+   "old": "_NO_FLIGHT = frozenset({EvidenceContext.GROUND}) | _ANALOG",
+   "new": "_NO_FLIGHT = frozenset({EvidenceContext.GROUND})"
+  },
+  {
+   "label": "un control de tipo desconocido pasa",
+   "old": "        if kind not in CONTROL_KINDS:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un control repetido pasa",
+   "old": "        if kind in kinds:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un control que su frase no nombra pasa",
+   "old": "        if not CONTROL_WORDS[kind].search(control[\"quote\"]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un control de otra población pasa (los de OSD-288 humanos)",
+   "old": "        if control.get(\"population\") not in _covered(population):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un control a 1 g en vuelo pasa en un conjunto sin vuelo",
+   "old": "        if kind == \"inflight_1g\" and context not in _FLIGHT:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un grupo de control de análogo pasa fuera de un análogo",
+   "old": "        if kind == \"analog_control\" and context not in _ANALOG:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un gemelo de control puede no ser una persona",
+   "old": "        if kind == \"twin\" and control[\"population\"] != \"human\":",
+   "new": "        if False:"
+  },
+  {
+   "label": "controles listados sin ninguno pasan",
+   "old": "    if (status == \"listed\") != bool(items):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un estado de controles desconocido pasa",
+   "old": "    if status not in CONTROL_STATUS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "sin tomas o sin controles, sin frase ni motivo, pasa",
+   "old": "    if status == \"none\" and not (said or _text(item, \"why\")):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un análogo pasa sin su calendario",
+   "old": "    if not schedule:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un calendario de análogo pasa en un conjunto que no lo es",
+   "old": "        if schedule is not None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una etapa fuera de la pauta del análogo pasa",
+   "old": "        if not stages or any(stage not in pattern for stage in stages):",
+   "new": "        if False:"
+  },
+  {
+   "label": "etapas de un paso fuera del orden de la pauta pasan",
+   "old": "        if ranks != sorted(set(ranks)):",
+   "new": "        if False:"
+  },
+  {
+   "label": "la pauta del análogo puede no ser la del texto",
+   "old": "    if \" → \".join(_points(\"analog_pattern\", pattern)) != pattern[\"text\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "los puntos de Biolab pueden faltar",
+   "old": "    if not isinstance(points, list) or not points or not all(",
+   "new": "    if not isinstance(points, list) or not all("
+  },
+  {
+   "label": "un área sin nombre pasa",
+   "old": "        if not (_text(area, \"name\") and _text(area, \"what\")):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un catálogo puede tener población en su ficha",
+   "old": "    if ref.population is not None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un catálogo pasa sin frase de lo que es",
+   "old": "    if not item[\"what\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un campo mal escrito en un catálogo pasa",
+   "old": "    _fields(key, item, CATALOG_FIELDS)",
+   "new": "    pass"
+  },
+  {
+   "label": "un catálogo repetido pasa",
+   "old": "    for item in raw[\"catalogs\"]:\n        _validate_catalog(item)\n        if item[\"id\"] in seen:",
+   "new": "    for item in raw[\"catalogs\"]:\n        _validate_catalog(item)\n        if False:"
+  },
+  {
+   "label": "una fila de la base de conocimiento pasa sin su apartado",
+   "old": "    if not _text(item, \"kb_row\") or not _text(item, \"kb_where\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un apartado sin fila pasa",
+   "old": "        if item[\"kb_where\"] is not None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una fecha de lectura que no es fecha pasa",
+   "old": "    if read_on is not None and not (isinstance(read_on, str) and _DATE.fullmatch(read_on)):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase leída antes que el fichero pasa",
+   "old": "        if quote.get(\"read_on\") is not None and quote[\"read_on\"] < raw[\"read_on\"]:",
+   "new": "        if False:"
+  },
+  {
+   "label": "lo servido pierde el día de lectura de cada frase",
+   "old": "        \"read_on\": item.get(\"read_on\") or read_on,",
+   "new": "        \"read_on\": read_on,"
+  },
+  {
+   "label": "una lista (estudios de CIPHER, áreas del Twins) con uno de más o de menos pasa",
+   "old": "        and len(names) == count\n",
+   "new": "        and True\n"
+  },
+  {
+   "label": "una lista con un nombre repetido pasa",
+   "old": "        and len(set(names)) == count\n",
+   "new": "        and True\n"
+  },
+  {
+   "label": "una lista con un número que su fuente no escribe pasa",
+   "old": "        and re.search(rf\"\\b{count}\\b\", quote) is not None\n",
+   "new": "        and True\n"
+  },
+  {
+   "label": "un número que no es un número (True) pasa como cuenta",
+   "old": "        not isinstance(count, bool)\n",
+   "new": "        True\n"
+  },
+  {
+   "label": "los pasos de un calendario de análogo pueden ir fuera de orden entre sí",
+   "old": "    if starts != sorted(starts):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una pieza con frase (control, paso, área) con un campo de más pasa",
+   "old": "    _fields(key, {name: value for name, value in item.items() if name != \"read_on\"}, expected)",
+   "new": "    pass"
+  },
+  {
+   "label": "lo que la fuente dice que no hay pasa con controles no encontrados",
+   "old": "    if item[\"absent\"] and status not in {\"listed\", \"none\"}:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un «only» cualquiera vale por un grupo de control de análogo",
+   "old": "r\"\\bcontrol\\s+(?:\\([^)]*\\)\\s+)?groups?\\b|\\b(?:BR|bed rest) only\\b\"",
+   "new": "r\"\\bcontrol\\s+(?:\\([^)]*\\)\\s+)?groups?\\b|\\bonly\\b\""
+  },
+  {
+   "label": "una fecha del fichero sin forma AAAA-MM-DD pasa",
+   "old": "    if not (_text(raw, \"read_on\") and _DATE.fullmatch(raw[\"read_on\"])):",
+   "new": "    if not _text(raw, \"read_on\"):"
+  },
+  {
+   "label": "una frase que niega el control, o que nombra un periodo, vale por un control",
+   "old": "        if _NOT_A_CONTROL.search(control[\"quote\"]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un periodo de control («control period») vale por un grupo de control",
+   "old": "|\\bcontrols?\\s+(?:period|phase)s?\\b\",",
+   "new": "\","
+  },
+  {
+   "label": "la fase basal de un reposo en cama pasa por un control antes del vuelo",
+   "old": "        if kind == \"own_baseline\" and context not in _FLIGHT:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un control en Tierra pasa en un conjunto que ya está en Tierra o en un análogo",
+   "old": "        if kind in {\"ground\", \"twin\"} and context in _NO_FLIGHT:",
+   "new": "        if kind == \"twin\" and context in _NO_FLIGHT:"
+  },
+  {
+   "label": "un conjunto simulado pasa por un conjunto de datos humanos",
+   "old": "    if context in _REJECTED:",
+   "new": "    if False:"
+  },
+  {
+   "label": "a un conjunto en Tierra se le propone el calendario de un análogo",
+   "old": "            \"sus tomas van en el calendario del análogo\" if context in _ANALOG",
+   "new": "            \"sus tomas van en el calendario del análogo\" if True"
+  },
+  {
+   "label": "una frase de lo que no hay, del recuento o de un catálogo admite campos de más",
+   "old": "        _piece(f\"{key}/absent/{index}\", quote, _QUOTE_KEYS)",
+   "new": "        _quoted(f\"{key}/absent/{index}\", quote, SOURCE_HOSTS)"
+  },
+  {
+   "label": "la frase que cuenta las áreas admite un campo de más",
+   "old": "    _piece(f\"{key}/cited\", areas[\"cited\"], _QUOTE_KEYS)",
+   "new": "    _quoted(f\"{key}/cited\", areas[\"cited\"], SOURCE_HOSTS)"
+  },
+  {
+   "label": "una frase de catálogo admite un campo de más",
+   "old": "        _piece(f\"{key}/what/{index}\", quote, _QUOTE_KEYS, CATALOG_HOSTS)",
+   "new": "        _quoted(f\"{key}/what/{index}\", quote, CATALOG_HOSTS)"
+  },
+  {
+   "label": "una frase de las tomas admite un campo de más",
+   "old": "        _piece(f\"{key}/cited/{index}\", quote, _QUOTE_KEYS)\n    if status == \"labels\":",
+   "new": "        _quoted(f\"{key}/cited/{index}\", quote, SOURCE_HOSTS)\n    if status == \"labels\":"
+  },
+  {
+   "label": "una fila de un apartado que no es de la base de conocimiento pasa",
+   "old": "    if item[\"kb_where\"] not in KB_SECTIONS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un bloque de cabecera que falta acaba en un error cualquiera",
+   "old": "    if not isinstance(value, dict) or not all(_text(value, field) for field in fields):",
+   "new": "    if not all(_text(value, field) for field in fields):"
+  },
+  {
+   "label": "una lista de cabecera que falta acaba en un error cualquiera",
+   "old": "        if not isinstance(raw.get(block), list):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un gemelo de control pasa en un conjunto que ya está en Tierra o en un análogo",
+   "old": "        if kind in {\"ground\", \"twin\"} and context in _NO_FLIGHT:",
+   "new": "        if kind == \"ground\" and context in _NO_FLIGHT:"
+  },
+  {
+   "label": "una frase de un conjunto puede citar un catálogo (data.nasa.gov)",
+   "old": "    \"osdr.nasa.gov\", \"www.nasa.gov\", \"pmc.ncbi.nlm.nih.gov\", \"physionet.org\", \"ntrs.nasa.gov\",\n",
+   "new": "    \"osdr.nasa.gov\", \"www.nasa.gov\", \"pmc.ncbi.nlm.nih.gov\", \"physionet.org\", \"ntrs.nasa.gov\", \"data.nasa.gov\",\n"
+  },
+  {
+   "label": "las frases de un catálogo no pueden citar su propio sitio",
+   "old": "        _piece(f\"{key}/what/{index}\", quote, _QUOTE_KEYS, CATALOG_HOSTS)",
+   "new": "        _piece(f\"{key}/what/{index}\", quote, _QUOTE_KEYS)"
+  },
+  {
+   "label": "un «control» suelto («Ground Control») vale por el grupo del análogo",
+   "old": "r\"\\bcontrol\\s+(?:\\([^)]*\\)\\s+)?groups?\\b|\\b(?:BR|bed rest) only\\b\"",
+   "new": "r\"\\bcontrols?\\b|\\b(?:BR|bed rest) only\\b\""
+  },
+  {
+   "label": "una negación tras el control («controls were not flown») vale por un control",
+   "old": "    r\"|\\bcontrols?\\s+(?:groups?\\s+)?(?:were|was|are|is)\\s+(?:not|never)\\b\"\n",
+   "new": ""
+  },
+  {
+   "label": "un grupo descrito por lo que no recibe («no-exercise control group») se rechaza",
+   "old": "    r\"|\\b(?:no|without)\\s+(?:[\\w-]+\\s+){0,3}?controls?\\b\"",
+   "new": "    r\"|\\b(?:no|without)\\b[^.;]{0,60}\\bcontrols?\\b\""
+  },
+  {
+   "label": "una etapa del calendario que su frase no nombra pasa (R+ como POST)",
+   "old": "            if words is None or not words.search(step[\"quote\"]):",
+   "new": "            if False:"
+  },
+  {
+   "label": "una pauta con un punto repetido pasa y su orden deja de ser uno",
+   "old": "    if len(set(points)) != len(points):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un conjunto como señal de misión (INPUT) o como contexto (CONTEXT) pasa",
+   "old": "    if level in ROLE_REJECTED:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un papel que no es de los tres pasa",
+   "old": "    if not isinstance(level, str) or level not in ROLE_LEVELS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "entrenar con un conjunto pasa, y EMMA no entrena ningún modelo",
+   "old": "    if fitness in FITNESS_REJECTED:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una aptitud que no es de las tres pasa",
+   "old": "    if not isinstance(fitness, str) or fitness not in FITNESS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "validar con un conjunto que EMMA no usa pasa",
+   "old": "    if fitness == \"validate\" and not used:",
+   "new": "    if False:"
+  },
+  {
+   "label": "validar el motor con ficheros que no miden personas pasa",
+   "old": "    if fitness == \"validate\" and opened != \"human\":",
+   "new": "    if False:"
+  },
+  {
+   "label": "una deducción del papel sin su motivo pasa",
+   "old": "        if not _text(role, field):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un motivo del papel puede reclamar de más",
+   "old": "        if overclaimed := [found.group(0) for found in CLAIM.finditer(role[field])]:",
+   "new": "        if overclaimed := [found.group(0) for found in CLAIM.finditer(\"\")]:"
+  },
+  {
+   "label": "un motivo del papel puede copiar una cifra de la validación",
+   "old": "        if COPIED_FIGURE.search(role[field]):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un acceso que no es de EMMA puede nombrar una ruta fuera del repositorio",
+   "old": "    if item[\"path\"] is not None and not _repo_path(item[\"path\"]):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un papel que no es texto rompe el cargador sin decir qué conjunto",
+   "old": "    if not isinstance(level, str) or level not in ROLE_LEVELS:",
+   "new": "    if level not in ROLE_LEVELS:"
+  },
+  {
+   "label": "una aptitud que no es texto rompe el cargador sin decir qué conjunto",
+   "old": "    if not isinstance(fitness, str) or fitness not in FITNESS:",
+   "new": "    if fitness not in FITNESS:"
+  },
+  {
+   "label": "la regla de la aptitud puede faltar",
+   "old": "    for block in (\"task\", \"rule\", \"fitness_rule\"):",
+   "new": "    for block in (\"task\", \"rule\"):"
+  }
+ ]
+}

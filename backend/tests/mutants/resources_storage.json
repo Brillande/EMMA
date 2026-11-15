@@ -1,0 +1,57 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_resources.py::test_a_declaration_is_one_signed_entry_in_the_ledger",
+  "tests/test_resources.py::test_the_store_refuses_what_cannot_be_signed",
+  "tests/test_resources.py::test_a_malformed_entry_is_not_delivered",
+  "tests/test_resources.py::test_what_was_already_signed_still_verifies_and_reads",
+  "tests/test_resources.py::test_declaring_writes_one_console_entry_and_the_latest_holds"
+ ],
+ "mutations": [
+  {
+   "label": "la declaracion se encadena en memoria y no se escribe en disco",
+   "old": "        return self._record_action(RESOURCE_ENTRY_TYPE, payload, identity)",
+   "new": "        return self.ledger.append(RESOURCE_ENTRY_TYPE, payload, identity)"
+  },
+  {
+   "label": "se persiste sin ledger: la declaracion se guarda aparte y aun asi se da por vigente",
+   "old": "        return self._record_action(RESOURCE_ENTRY_TYPE, payload, identity)\n\n    def resource_declarations(self) -> list[dict[str, Any]]:\n        \"\"\"Las declaraciones de disponibilidad de recursos, tal y como estan firmadas.\"\"\"\n        return self._actions(",
+   "new": "        self.__dict__.setdefault(\"_off_ledger\", []).append(dict(payload))\n        return self.ledger.entries[-1]\n\n    def resource_declarations(self) -> list[dict[str, Any]]:\n        \"\"\"Las declaraciones de disponibilidad de recursos, tal y como estan firmadas.\"\"\"\n        if self.__dict__.get(\"_off_ledger\"):\n            return [{**item, \"ledger_index\": 0, \"recorded\": \"2026-01-01T00:00:00+00:00\", \"signer\": \"crew-console\"} for item in self._off_ledger]\n        return self._actions("
+  },
+  {
+   "label": "el almacen firma lo que la regla no deja firmar",
+   "old": "        resource_rules.check(resource, state)\n",
+   "new": ""
+  },
+  {
+   "label": "una declaracion sin el nombre de quien la hace",
+   "old": "        if not any(char.isalpha() for char in declared_by):\n            raise ValueError(\"la disponibilidad de un recurso la declara una persona con nombre\")\n",
+   "new": ""
+  },
+  {
+   "label": "un `since` sin zona horaria se firma",
+   "old": "            \"subject\": RESOURCE_SUBJECT, \"resource\": resource, \"state\": state,\n            \"since\": _utc_text(since),",
+   "new": "            \"subject\": RESOURCE_SUBJECT, \"resource\": resource, \"state\": state,\n            \"since\": since.isoformat(),"
+  },
+  {
+   "label": "la declaracion se archiva bajo la tripulacion y no bajo la mision",
+   "old": "            \"subject\": RESOURCE_SUBJECT, \"resource\": resource, \"state\": state,",
+   "new": "            \"subject\": CREW_SUBJECT, \"resource\": resource, \"state\": state,"
+  },
+  {
+   "label": "un asiento sin nota se entrega como bien formado",
+   "old": "_RESOURCE_FIELDS = (\"subject\", \"resource\", \"state\", \"since\", \"note\", \"declared_by\")",
+   "new": "_RESOURCE_FIELDS = (\"subject\", \"resource\", \"state\", \"since\", \"declared_by\")"
+  },
+  {
+   "label": "la lectura de declaraciones entrega asientos de otro tipo",
+   "old": "        return self._actions(RESOURCE_SUBJECT, RESOURCE_ENTRY_TYPE, _RESOURCE_FIELDS)",
+   "new": "        return self._actions(RESOURCE_SUBJECT, SYSTEM_STATUS_ENTRY_TYPE, _RESOURCE_FIELDS)"
+  },
+  {
+   "label": "la nota se firma con los espacios de alrededor",
+   "old": "            \"subject\": RESOURCE_SUBJECT, \"resource\": resource, \"state\": state,\n            \"since\": _utc_text(since), \"note\": note.strip(),",
+   "new": "            \"subject\": RESOURCE_SUBJECT, \"resource\": resource, \"state\": state,\n            \"since\": _utc_text(since), \"note\": note,"
+  }
+ ]
+}

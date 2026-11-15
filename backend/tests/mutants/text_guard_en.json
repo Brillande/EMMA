@@ -1,0 +1,118 @@
+{
+  "target": "app/text_guard.py",
+  "test": [
+    "tests/test_text_guard_en.py"
+  ],
+  "mutations": [
+    {
+      "label": "sin dosis ni fármacos en inglés",
+      "old": "    \"dosing\": _EN_DOSING,",
+      "new": "    \"dosing\": (),"
+    },
+    {
+      "label": "sin diagnósticos en inglés",
+      "old": "    \"diagnosis\": _EN_DIAGNOSIS,",
+      "new": "    \"diagnosis\": (),"
+    },
+    {
+      "label": "sin certezas en inglés",
+      "old": "    \"certainty\": _EN_CERTAINTY,",
+      "new": "    \"certainty\": (),"
+    },
+    {
+      "label": "sin obligación clínica en inglés («must be treated»)",
+      "old": "    \"order\": (*_EN_ORDER, *_EN_ACTION),",
+      "new": "    \"order\": _EN_ACTION,"
+    },
+    {
+      "label": "sin acciones terapéuticas en inglés",
+      "old": "    \"order\": (*_EN_ORDER, *_EN_ACTION),",
+      "new": "    \"order\": _EN_ORDER,"
+    },
+    {
+      "label": "sin afirmaciones absolutas en inglés",
+      "old": "    \"overclaim\": _EN_OVERCLAIM,",
+      "new": "    \"overclaim\": (),"
+    },
+    {
+      "label": "sin deliberación afirmada en inglés",
+      "old": "for compiled in _EN_DELIBERATE_COMPILED",
+      "new": "for compiled in ()"
+    },
+    {
+      "label": "la deliberación inglesa bloquea también como pregunta",
+      "old": "_found(\"order\", compiled, said)",
+      "new": "_found(\"order\", compiled, plain)"
+    },
+    {
+      "label": "sin veredicto afirmado en inglés («confirms that»)",
+      "old": "for compiled in _EN_STATED_DIAGNOSIS",
+      "new": "for compiled in ()"
+    },
+    {
+      "label": "un «?» al final vuelve pregunta un veredicto inglés",
+      "old": "_found(\"diagnosis\", compiled, unopened)",
+      "new": "_found(\"diagnosis\", compiled, said)"
+    },
+    {
+      "label": "la pregunta inglesa abierta por auxiliar deja de eximir",
+      "old": "        plain = _blanked(_EN_OPENED_QUESTION, plain)",
+      "new": "        pass"
+    },
+    {
+      "label": "con la consola en inglés el castellano deja de bloquear",
+      "old": "        return _merged(_english(plain, said, unopened), findings)",
+      "new": "        return _english(plain, said, unopened)"
+    },
+    {
+      "label": "con la consola en inglés no se aplica el inglés",
+      "old": "        return _merged(_english(plain, said, unopened), findings)",
+      "new": "        return findings"
+    },
+    {
+      "label": "«radiation dose» se lee como una pauta",
+      "old": "r\"(?<!radiation )(?<!absorbed )(?<!effective )(?<!equivalent )\\bdoses?\\b\"",
+      "new": "r\"\\bdoses?\\b\""
+    },
+    {
+      "label": "«shouldn't» no se lee como deliberación",
+      "old": "r\"\\bshould(?:n['’]t)?\\b\"",
+      "new": "r\"\\bshould\\b\""
+    },
+    {
+      "label": "el adjetivo delante del nombre tapa el diagnóstico («a deep vein thrombosis»)",
+      "old": "    r\"\\bhas\\s+(?:an?\\s+)?\" + _EN_MODIFIERS",
+      "new": "    r\"\\bhas\\s+(?:an?\\s+)?\""
+    },
+    {
+      "label": "un interrogativo vuelve a abrir pregunta («When…, …?»)",
+      "old": "r\"should|would|will|shall|may|might|must)\\b[^?¿.!\\n]*\\?\"",
+      "new": "r\"should|would|will|shall|may|might|must|when)\\b[^?¿.!\\n]*\\?\""
+    },
+    {
+      "label": "un tramo cazado por los dos idiomas se repite",
+      "old": "unique.setdefault((finding.category, finding.start, finding.end), finding)",
+      "new": "unique.setdefault((finding.category, finding.start, finding.end, len(unique)), finding)"
+    },
+    {
+      "label": "el idioma pedido a mano no se respeta",
+      "old": "            return check(text)",
+      "new": "            pass"
+    },
+    {
+      "label": "la inyección translunar se lee como una inyección",
+      "old": "r\"(?<!lunar )(?<!mars )(?<!earth )(?<!orbit )(?<!orbital )(?<!fault )\\binjections?\\b\",",
+      "new": "r\"\\binjections?\\b\","
+    },
+    {
+      "label": "un absoluto sobre el dato («never arrived») bloquea",
+      "old": "r\"\\b(?:never|always)\\b(?!\\s+(?:arrived?|",
+      "new": "r\"\\b(?:never|always)\\b(?!\\s+(?:xx|"
+    },
+    {
+      "label": "«consistent with your baseline» se lee como diagnóstico",
+      "old": "r\"(?:baseline|previous|earlier|prior|protocol|standard|expected|reference))\",",
+      "new": "r\"(?:previous|earlier|prior|protocol|standard|expected|reference))\","
+    }
+  ]
+}

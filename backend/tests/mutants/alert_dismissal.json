@@ -1,0 +1,104 @@
+{
+  "target": "app/api/routes.py",
+  "test": [
+    "tests/test_waiting.py",
+    "tests/test_alert_dismissal.py"
+  ],
+  "mutations": [
+    {
+      "label": "un descarte cubre otro nivel de la misma alerta",
+      "old": "            for item in dismissals\n            if item[\"domain\"] == str(domain)\n            and item[\"level\"] == str(risk.level)\n",
+      "new": "            for item in dismissals\n            if item[\"domain\"] == str(domain)\n"
+    },
+    {
+      "label": "un descarte vale pasada la ventana de cálculo",
+      "old": "            for item in dismissals\n            if item[\"domain\"] == str(domain)\n            and item[\"level\"] == str(risk.level)\n            and latest - CURRENT_WINDOW\n",
+      "new": "            for item in dismissals\n            if item[\"domain\"] == str(domain)\n            and item[\"level\"] == str(risk.level)\n            and latest - 1000 * CURRENT_WINDOW\n"
+    },
+    {
+      "label": "un estado declarado después no deja atrás el descarte",
+      "old": "            state[\"ledger_index\"] > dismissal[\"ledger_index\"]",
+      "new": "            state[\"ledger_index\"] < dismissal[\"ledger_index\"]"
+    },
+    {
+      "label": "lo firmado por fuera de la API se enseña aunque la API no lo habría aceptado",
+      "old": "    return dismissal_problem(item[\"reason\"], item[\"note\"], item[\"declared_by\"]) is None",
+      "new": "    return True"
+    },
+    {
+      "label": "un descarte firmado con la clave de un wearable cuenta",
+      "old": "            if _counts(item, until) and _acceptable_dismissal(item)",
+      "new": "            if _acceptable_dismissal(item)"
+    },
+    {
+      "label": "la alerta descartada no dice que lo está",
+      "old": "                \"dismissal\": _dismissal_view(dismissal) if dismissal else None,",
+      "new": "                \"dismissal\": None,"
+    },
+    {
+      "label": "se puede descartar una alerta que no existe",
+      "old": "    (`record_alert_dismissal`): un 422.\n    \"\"\"\n    _require_alert(",
+      "new": "    (`record_alert_dismissal`): un 422.\n    \"\"\"\n    (lambda *a: None)("
+    },
+    {
+      "label": "un motivo fuera del vocabulario vale",
+      "target": "app/core/storage.py",
+      "old": "    if reason not in DISMISSAL_REASONS:\n        return f\"motivo de descarte desconocido",
+      "new": "    if False:\n        return f\"motivo de descarte desconocido"
+    },
+    {
+      "label": "«otro» sin nota vale",
+      "target": "app/core/storage.py",
+      "old": "    if reason in DISMISSAL_NOTE_REQUIRED and not note.strip():\n        return",
+      "new": "    if False:\n        return"
+    },
+    {
+      "label": "un descarte sin persona con nombre vale",
+      "target": "app/core/storage.py",
+      "old": "    if not any(char.isalpha() for char in declared_by):\n        return \"una alerta la descarta",
+      "new": "    if False:\n        return \"una alerta la descarta"
+    },
+    {
+      "label": "el almacén firma lo que la regla rechaza",
+      "target": "app/core/storage.py",
+      "old": "        problem = dismissal_problem(reason, note, declared_by)\n        if problem is not None:",
+      "new": "        problem = dismissal_problem(reason, note, declared_by)\n        if False:"
+    },
+    {
+      "label": "la historia de alertas no lista los descartes",
+      "target": "app/api/alert_history.py",
+      "old": "    for item in store.alert_dismissals(subject):\n        if routes._counts(item, until) and routes._acceptable_dismissal(item):",
+      "new": "    for item in store.alert_dismissals(subject):\n        if False:"
+    },
+    {
+      "label": "la crónica no cuenta los descartes",
+      "target": "app/timeline.py",
+      "old": "            mission, until, item, \"reference_time\", \"alerta\", \"alert-dismissed\",",
+      "new": "            mission, until, item, \"reference_time\", \"alerta\", \"alert-resolved\","
+    },
+    {
+      "label": "la crónica corta la nota sin decirlo",
+      "target": "app/timeline.py",
+      "old": "            note = note[: max(room - 1, 0)] + \"…\"",
+      "new": "            note = note[: max(room - 1, 0)]"
+    },
+    {
+      "label": "el flujo de la alerta no cuenta el descarte como decisión humana",
+      "target": "app/analysis/alert_flow.py",
+      "old": "    dismissal = alert.get(\"dismissal\")\n    if dismissal:",
+      "new": "    dismissal = alert.get(\"dismissal\")\n    if False:"
+    },
+    {
+      "label": "el PDF del estado no dice que la alerta está descartada",
+      "target": "app/export.py",
+      "old": "        dismissal = alert.get(\"dismissal\")\n        if dismissal:",
+      "new": "        dismissal = alert.get(\"dismissal\")\n        if False:"
+    },
+    {
+      "label": "lo que espera a una persona ignora el descarte posterior a «en arreglo»",
+      "target": "app/waiting.py",
+      "old": "            item[\"ledger_index\"] > latest[key][\"ledger_index\"]",
+      "new": "            False"
+    }
+  ]
+}

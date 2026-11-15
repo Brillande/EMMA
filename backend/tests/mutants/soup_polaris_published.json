@@ -1,0 +1,18 @@
+{
+  "target": "../polaris/CHANGELOG.md",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "Polaris publica una entrega nueva y la ficha sigue dando por leído su registro de cambios",
+      "old": "## v2026.09.17 — ",
+      "new": "## v2026.10.09 — una corrección que aquí nadie ha leído\n- `deid` dejaba pasar un nombre\n\n## v2026.09.17 — "
+    },
+    {
+      "label": "Polaris cambia una línea de una entrega ya leída",
+      "old": "- seguimiento.json deja de perder escrituras concurrentes (12 de 12 sobreviven, antes 9)",
+      "new": "- seguimiento.json sigue perdiendo escrituras concurrentes"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+ "target": "app/evidence/nasa_framework.py",
+ "test": [
+  "tests/test_nasa_framework.py::test_every_request_of_the_cdss_has_its_row",
+  "tests/test_nasa_framework.py::test_a_coverage_row_that_says_more_than_there_is_is_rejected",
+  "tests/test_nasa_framework.py::test_an_outside_row_may_name_no_file",
+  "tests/test_nasa_framework.py::test_the_same_request_cannot_have_two_rows",
+  "tests/test_nasa_framework.py::test_a_coverage_table_without_its_meaning_or_its_rows_is_rejected"
+ ],
+ "mutations": [
+  {
+   "label": "la tabla de cobertura no se comprueba",
+   "old": "        _validate_coverage(block)\n",
+   "new": ""
+  },
+  {
+   "label": "una tabla sin decir qué es «cubre» pasa",
+   "old": "    if not isinstance(table, dict) or not _text(table, \"about\"):",
+   "new": "    if not isinstance(table, dict):"
+  },
+  {
+   "label": "una tabla sin filas pasa",
+   "old": "    if not isinstance(rows, list) or not rows:",
+   "new": "    if not isinstance(rows, list):"
+  },
+  {
+   "label": "una fila sin qué hace EMMA pasa",
+   "old": "_text(row, name) for name in (\"statement\", \"asks\", \"emma\")",
+   "new": "_text(row, name) for name in (\"statement\", \"asks\")"
+  },
+  {
+   "label": "lo que pide una fila no tiene que estar en su frase",
+   "old": "        if row[\"asks\"] not in quotes[row[\"statement\"]]:",
+   "new": "        if False:"
+  },
+  {
+   "label": "la misma petición puede tener dos filas",
+   "old": "        if (row[\"statement\"], row[\"asks\"]) in asked:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una cobertura desconocida pasa",
+   "old": "        if not isinstance(row.get(\"coverage\"), str) or row[\"coverage\"] not in COVERAGES:",
+   "new": "        if False:"
+  },
+  {
+   "label": "cualquier texto vale como ruta",
+   "old": "not all(_repo_path(path) for path in files)",
+   "new": "not all(isinstance(path, str) for path in files)"
+  },
+  {
+   "label": "una ruta que sube de nivel pasa",
+   "old": "    return bool(parts) and not PurePosixPath(path).is_absolute() and \"..\" not in parts",
+   "new": "    return bool(parts) and not PurePosixPath(path).is_absolute()"
+  },
+  {
+   "label": "una ruta absoluta pasa",
+   "old": "    return bool(parts) and not PurePosixPath(path).is_absolute() and \"..\" not in parts",
+   "new": "    return bool(parts) and \"..\" not in parts"
+  },
+  {
+   "label": "una ruta con barras invertidas pasa",
+   "old": "    if not isinstance(path, str) or not path.strip() or \"\\\\\" in path or \":\" in path:",
+   "new": "    if not isinstance(path, str) or not path.strip() or \":\" in path:"
+  },
+  {
+   "label": "un «cubre» o un «en parte» sin fichero pasa",
+   "old": "        if row[\"coverage\"] != \"outside\" and not files:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un «no» también tiene que nombrar fichero",
+   "old": "        if row[\"coverage\"] != \"outside\" and not files:",
+   "new": "        if not files:"
+  },
+  {
+   "label": "el texto de una fila puede reclamar conformidad",
+   "old": "        if said := _claims(row[\"emma\"]):",
+   "new": "        if said := []:"
+  },
+  {
+   "label": "los recuentos no cuentan",
+   "old": "            counts[row[\"coverage\"]] += 1",
+   "new": "            counts[row[\"coverage\"]] = 1"
+  },
+  {
+   "label": "una ruta con unidad de Windows pasa",
+   "old": "    if not isinstance(path, str) or not path.strip() or \"\\\\\" in path or \":\" in path:",
+   "new": "    if not isinstance(path, str) or not path.strip() or \"\\\\\" in path:"
+  },
+  {
+   "label": "una carpeta con barra final pasa",
+   "old": "    if path.endswith(\"/\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "«.» pasa como fichero",
+   "old": "    return bool(parts) and not PurePosixPath(path).is_absolute() and \"..\" not in parts",
+   "new": "    return not PurePosixPath(path).is_absolute() and \"..\" not in parts"
+  },
+  {
+   "label": "una cobertura que no es texto revienta con TypeError en vez de rechazarse",
+   "old": "        if not isinstance(row.get(\"coverage\"), str) or row[\"coverage\"] not in COVERAGES:",
+   "new": "        if row.get(\"coverage\") not in COVERAGES:"
+  },
+  {
+   "label": "el about de la tabla puede reclamar conformidad",
+   "old": "    if said := _claims(table[\"about\"]):",
+   "new": "    if said := []:"
+  }
+ ]
+}

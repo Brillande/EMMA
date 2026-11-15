@@ -1,0 +1,21 @@
+{
+  "target": "app/committee_bench.py",
+  "test": ["tests/test_committee_bench.py"],
+  "mutations": [
+    {
+      "label": "un caso sin respuesta no cuenta en contra",
+      "old": "                    if chosen in (None, \"A\"):",
+      "new": "                    if chosen == \"A\":"
+    },
+    {
+      "label": "el freno de memoria no se consulta",
+      "old": "                tool.comprobar_memoria(model)",
+      "new": "                pass"
+    },
+    {
+      "label": "la copia queda con la URL de EMMA",
+      "old": "            tool.URL, tool._memoria_libre_gb = saved",
+      "new": "            pass"
+    }
+  ]
+}

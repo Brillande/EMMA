@@ -1,0 +1,81 @@
+{
+ "target": "app/environment/habitat.py",
+ "test": [
+  "tests/test_habitat_radiation.py"
+ ],
+ "mutations": [
+  {
+   "label": "la lectura del dosimetro cae en el modulo por defecto, como si se supiera donde esta",
+   "old": "        # Sin modulo (ver la cabecera): no se deduce de la ubicacion declarada del tripulante.\n        \"module\": None,",
+   "new": "        # Sin modulo (ver la cabecera): no se deduce de la ubicacion declarada del tripulante.\n        \"module\": DEFAULT_MODULE,"
+  },
+  {
+   "label": "la cifra del dosimetro se corrige con un factor de blindaje inventado",
+   "old": "        \"value\": item.value,",
+   "new": "        \"value\": item.value * 0.5,"
+  },
+  {
+   "label": "la interfaz recibe otros decimales que los de la frase",
+   "old": "        \"decimals\": display.decimals_for(item.key),",
+   "new": "        \"decimals\": 2,"
+  },
+  {
+   "label": "sin DONKI se dice que no hay evento en vez de que no se sabe",
+   "old": "        state = SOLAR_UNKNOWN",
+   "new": "        state = SOLAR_NONE"
+  },
+  {
+   "label": "la frase del evento pierde su fecha",
+   "old": "        f\"{event.event_type} {event.event_id}, del \"\n        f\"{event.time.astimezone(dt.UTC):%Y-%m-%d %H:%M} UTC, según NASA DONKI.\"",
+   "new": "        f\"{event.event_type} {event.event_id}, según NASA DONKI.\""
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "se ensena la primera lectura de cada tripulante y no la ultima",
+   "old": "            latest.append(doses[-1])",
+   "new": "            latest.append(doses[0])"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "Tierra ve lecturas que todavia no le han llegado",
+   "old": "        stored = store.query(subject, until=until)\n",
+   "new": "        stored = store.query(subject)\n"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "el ahora de cada tripulante sale solo de sus lecturas de dosis, no de todas como en su estado",
+   "old": "        stored = store.query(subject, until=until)\n",
+   "new": "        stored = store.query(subject, key=DOSE_RATE_KEY, until=until)\n"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "el evento vigente se elige con otra regla que la del estado (el mas reciente de cualquier severidad)",
+   "old": "    return RiskEngine._active_solar_event(events), age",
+   "new": "    return (max(events, key=lambda event: event.time) if events else None), age"
+  },
+  {
+   "target": "app/api/habitat.py",
+   "label": "sin respuesta de DONKI se da el dato por conocido",
+   "old": "        solar_known=age is not None or active is not None,",
+   "new": "        solar_known=True,"
+  },
+  {
+   "target": "app/twins.py",
+   "label": "el gemelo del habitat deja de llevar la radiacion",
+   "old": "    notes += radiation_notes",
+   "new": "    notes += []"
+  },
+  {
+   "target": "app/api/twins.py",
+   "label": "las preguntas de Tierra llevan la radiacion de a bordo, sin cortar",
+   "old": "    radiation = habitat_radiation(store, settings, until, solar)",
+   "new": "    radiation = habitat_radiation(store, settings, None, solar)"
+  },
+  {
+   "target": "app/api/twins.py",
+   "label": "el gemelo vuelve a pedir el evento a DONKI y puede nombrar otro que su estado",
+   "old": "    radiation = habitat_radiation(store, settings, until, solar)",
+   "new": "    radiation = habitat_radiation(store, settings, until)"
+  }
+ ]
+}

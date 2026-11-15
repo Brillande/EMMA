@@ -1,0 +1,83 @@
+{
+  "target": "app/core/log_privacy.py",
+  "test": [
+    "tests/test_logs_privacy.py"
+  ],
+  "mutations": [
+    {
+      "label": "la traza vuelve a llevar el mensaje de la excepción",
+      "old": "        lines.append(_kind(current))",
+      "new": "        lines.append(f\"{_kind(current)}: {current}\")"
+    },
+    {
+      "label": "la excepción sigue viajando en el registro y el formateador saca la traza entera",
+      "old": "            record.exc_text = safe_trace(exc)\n        record.exc_info = None",
+      "new": "            pass"
+    },
+    {
+      "label": "la traza reducida se calcula pero la excepción no se suelta del registro",
+      "old": "        record.exc_info = None",
+      "new": "        pass"
+    },
+    {
+      "label": "cada marco lleva la ruta completa, con la carpeta del usuario",
+      "old": "    return \"/\".join(PurePath(filename).parts[-2:])",
+      "new": "    return filename"
+    },
+    {
+      "label": "las causas encadenadas no se siguen: se pierde el tipo de la causa",
+      "old": "        current = _cause(current)",
+      "new": "        current = None"
+    },
+    {
+      "label": "una causa suprimida se sigue igual",
+      "old": "    return None if exc.__suppress_context__ else exc.__context__",
+      "new": "    return exc.__context__"
+    },
+    {
+      "label": "un ciclo de causas no se corta al volver a la primera",
+      "old": "        if current is None or id(current) in seen:",
+      "new": "        if current is None:"
+    },
+    {
+      "label": "de un error de E/S no queda el número",
+      "old": "    if isinstance(exc, OSError) and isinstance(errno, int):",
+      "new": "    if False:"
+    },
+    {
+      "label": "una excepción pasada como argumento se escribe con su mensaje",
+      "old": "    return type(value).__name__ if isinstance(value, BaseException) else value",
+      "new": "    return value"
+    },
+    {
+      "label": "los argumentos por nombre no se miran",
+      "old": "    elif isinstance(args, dict):",
+      "new": "    elif False:"
+    },
+    {
+      "label": "la línea de acceso conserva su cadena de consulta",
+      "old": "            cleaned[ACCESS_PATH_ARG] = strip_query(cleaned[ACCESS_PATH_ARG])",
+      "new": "            pass"
+    },
+    {
+      "label": "la consulta se quita sin decir que la había",
+      "old": "    return head + QUERY_OMITTED if mark else head",
+      "new": "    return head"
+    },
+    {
+      "label": "se recorta el tercer argumento de cualquier registro, no solo el de acceso",
+      "old": "            record.name == ACCESS_LOGGER\n            and len(cleaned)",
+      "new": "            len(cleaned)"
+    },
+    {
+      "label": "instalar no instala nada",
+      "old": "    logging.setLogRecordFactory(factory)",
+      "new": "    pass"
+    },
+    {
+      "label": "instalar dos veces anida la fábrica",
+      "old": "    if installed():\n        return\n    previous",
+      "new": "    previous"
+    }
+  ]
+}

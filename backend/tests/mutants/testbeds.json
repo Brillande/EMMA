@@ -1,0 +1,318 @@
+{
+ "target": "app/evidence/testbeds.py",
+ "test": [
+  "tests/test_testbeds.py"
+ ],
+ "mutations": [
+  {
+   "label": "una celda RIDGE de fuente puede citar la página de otro banco",
+   "old": "            if others:",
+   "new": "            if False:"
+  },
+  {
+   "label": "una frase de una página que no es la del banco pasa",
+   "old": "    if urlsplit(url or \"\").hostname not in OFFICIAL_HOSTS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un entorno fuera del enumerado de las observaciones pasa",
+   "old": "    elif context not in _CONTEXTS:",
+   "new": "    elif False:"
+  },
+  {
+   "label": "un banco sin entorno no dice por qué ningún valor lo cubre",
+   "old": "        if NO_CONTEXT_REASON not in bank[\"context_basis\"].lower():",
+   "new": "        if False:"
+  },
+  {
+   "label": "un banco sin lo que deja fuera pasa",
+   "old": "    if not bank.get(\"leaves_out\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una deducción sin motivo pasa",
+   "old": "            if not _text(item, \"why\"):",
+   "new": "            if False:"
+  },
+  {
+   "label": "el texto de un banco sobre EMMA puede reclamar de más",
+   "old": "        if claimed := _claims(bank[field]):",
+   "new": "        if claimed := _claims(\"\"):"
+  },
+  {
+   "label": "el texto de una validación puede reclamar de más",
+   "old": "            if claimed := _claims(validation[field]):",
+   "new": "            if claimed := _claims(\"\"):"
+  },
+  {
+   "label": "«valida» deja de contar como reclamo",
+   "old": "r\"\\b(certific\\w*|validad[oa]s?|valida|validan|validó|conforme|cumple|aprobad[oa]s?\"",
+   "new": "r\"\\b(certific\\w*|validad[oa]s?|validan|validó|conforme|cumple|aprobad[oa]s?\""
+  },
+  {
+   "label": "la validación de EMMA lleva un entorno distinto del de su ficha",
+   "old": "    if ref.evidence_context is None or str(ref.evidence_context) != item[\"context\"]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "un conjunto de datos cuenta como validación operacional",
+   "old": "    if validation == \"operational\" and (bank is None or banks[bank][\"validation\"] != validation):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una cifra de la validación externa se copia",
+   "old": "COPIED_FIGURE = re.compile(r\"%|\\b\\d+\\s+de\\s+\\d+\\b|\\b\\d+\\s*/\\s*\\d+\\b|\\b\\d+[.,]\\d+\\b\")",
+   "new": "COPIED_FIGURE = re.compile(r\"(?!x)x\")"
+  },
+  {
+   "label": "un decimal copiado pasa",
+   "old": "COPIED_FIGURE = re.compile(r\"%|\\b\\d+\\s+de\\s+\\d+\\b|\\b\\d+\\s*/\\s*\\d+\\b|\\b\\d+[.,]\\d+\\b\")",
+   "new": "COPIED_FIGURE = re.compile(r\"%|\\b\\d+\\s+de\\s+\\d+\\b|\\b\\d+\\s*/\\s*\\d+\\b\")"
+  },
+  {
+   "label": "las cifras se remiten a cualquier sitio",
+   "old": "    if not item[\"figures_in\"].startswith(FIGURES_HOME):",
+   "new": "    if False:"
+  },
+  {
+   "label": "lo que EMMA tiene de una validación se escribe a mano",
+   "old": "    status = EMMA_PART if validation[\"emma\"] else EMMA_NONE",
+   "new": "    status = EMMA_PART"
+  },
+  {
+   "label": "falta una de las dos validaciones",
+   "old": "    if sorted(seen) != sorted(VALIDATIONS):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una lectura sin fecha pasa (la de un banco o la de una columna)",
+   "old": "    if not isinstance(value, str) or not ISO_DATE.fullmatch(value):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un campo que falta pasa y revienta al servir",
+   "old": "    if missing := sorted(expected - item.keys()):",
+   "new": "    if missing := []:"
+  },
+  {
+   "label": "un campo mal escrito pasa",
+   "old": "    if extra := sorted(item.keys() - expected):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "la regla o el principio sin su origen pasan",
+   "old": "        if not isinstance(raw.get(block), dict) or not all(",
+   "new": "        if False and not all("
+  },
+  {
+   "label": "lo servido comparte el diccionario de la caché",
+   "old": "        \"rule\": dict(raw[\"rule\"]),",
+   "new": "        \"rule\": raw[\"rule\"],"
+  },
+  {
+   "label": "una fecha de lectura que no es ISO pasa",
+   "old": "ISO_DATE = re.compile(r\"\\d{4}-\\d{2}-\\d{2}\")",
+   "new": "ISO_DATE = re.compile(r\".+\")"
+  },
+  {
+   "label": "un banco no comprueba sus columnas",
+   "old": "        _validate_column(f\"{key}/{column}\", bank[column])",
+   "new": "        pass"
+  },
+  {
+   "label": "una columna con frase y con «no encontrado» pasa",
+   "old": "    if quotes and found is not None:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una columna sin frase ni búsqueda pasa",
+   "old": "    if not quotes and not _text(column, \"not_found\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "la frase de una columna no se comprueba",
+   "old": "        _quoted(f\"{key}/{index}\", item)",
+   "new": "        pass"
+  },
+  {
+   "label": "una columna que no es un objeto revienta en vez de rechazarse",
+   "old": "    if not isinstance(column, dict):",
+   "new": "    if False:"
+  },
+  {
+   "label": "las frases de una columna que no son lista revientan",
+   "old": "    if not isinstance(quotes, list):",
+   "new": "    if False:"
+  },
+  {
+   "label": "el «no encontrado» de una columna puede reclamar de más",
+   "old": "    if found is not None and (claimed := _claims(found)):",
+   "new": "    if found is not None and (claimed := _claims(\"\")):"
+  },
+  {
+   "label": "una columna admite campos desconocidos",
+   "old": "    _fields(key, column, COLUMN_FIELDS)",
+   "new": "    pass"
+  },
+  {
+   "label": "las fichas de las columnas no cuentan como citadas",
+   "old": "        for item in bank[column][\"quotes\"]\n    }",
+   "new": "        for item in bank[column][\"quotes\"] if False\n    }"
+  },
+  {
+   "label": "una frase de columna se sirve con el día del banco",
+   "old": "        \"quotes\": [_cited(item, column[\"read_on\"]) for item in column[\"quotes\"]],",
+   "new": "        \"quotes\": [_cited(item, \"2026-10-21\") for item in column[\"quotes\"]],"
+  },
+  {
+   "label": "la matriz RIDGE de un banco no se comprueba",
+   "old": "    _validate_ridge(f\"{key}/ridge\", bank[\"ridge\"], context)",
+   "new": "    pass"
+  },
+  {
+   "label": "una matriz que no es un objeto revienta en vez de rechazarse",
+   "old": "    if not isinstance(ridge, dict):",
+   "new": "    if False:"
+  },
+  {
+   "label": "la matriz admite campos desconocidos",
+   "old": "    _fields(key, ridge, RIDGE_FIELDS)",
+   "new": "    pass"
+  },
+  {
+   "label": "la matriz sin fecha de lectura pasa",
+   "old": "    _read_on(key, ridge)",
+   "new": "    pass"
+  },
+  {
+   "label": "unas celdas que no son lista pasan con otro motivo",
+   "old": "    if not isinstance(cells, list) or not all(isinstance(cell, dict) for cell in cells):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un peligro que falta, sobra, se repite o cambia de orden pasa",
+   "old": "    if hazards != [str(hazard) for hazard in Ridge]:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una celda con un campo desconocido pasa",
+   "old": "        if extra := sorted(cell.keys() - RIDGE_CELL_FIELDS):",
+   "new": "        if extra := []:"
+  },
+  {
+   "label": "un estado que no es texto rompe con TypeError en vez de rechazarse",
+   "old": "        if not isinstance(status, str) or status not in RIDGE_STATUS:",
+   "new": "        if status not in RIDGE_STATUS:"
+  },
+  {
+   "label": "un estado que la matriz no tiene pasa",
+   "old": "        if not isinstance(status, str) or status not in RIDGE_STATUS:",
+   "new": "        if False:"
+  },
+  {
+   "label": "la frase de fuente de una celda no se comprueba",
+   "old": "            _quoted(where, cell)",
+   "new": "            pass"
+  },
+  {
+   "label": "una ficha que «dice» que el banco deja fuera un peligro pasa",
+   "old": "            if status not in SOURCE_STATUSES:",
+   "new": "            if False:"
+  },
+  {
+   "label": "una celda deducida sin motivo pasa",
+   "old": "            if not _text(cell, \"why\"):",
+   "new": "            if False:"
+  },
+  {
+   "label": "una deducción con ficha pasa",
+   "old": "            if found := sorted(cell.keys() & {\"quote\", \"ref\", \"where\"}):",
+   "new": "            if found := []:"
+  },
+  {
+   "label": "una base que no es fuente ni deducción pasa",
+   "old": "        elif kind == \"deduced\":",
+   "new": "        elif kind in (\"deduced\", \"obvio\"):"
+  },
+  {
+   "label": "un motivo vacío pasa",
+   "old": "        if cell.get(\"why\") is not None and not _text(cell, \"why\"):",
+   "new": "        if False:"
+  },
+  {
+   "label": "el motivo de una celda puede reclamar de más",
+   "old": "        if claimed := _claims(cell.get(\"why\") or \"\"):",
+   "new": "        if claimed := _claims(\"\"):"
+  },
+  {
+   "label": "un banco que no deja fuera ningún peligro pasa",
+   "old": "    if not any(cell[\"status\"] == \"leaves_out\" for cell in cells):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una celda que contradice el entorno del banco pasa",
+   "old": "        if cell[\"status\"] not in CONTEXT_STATUSES:",
+   "new": "        if False:"
+  },
+  {
+   "label": "un análogo de aislamiento puede dejar fuera el aislamiento",
+   "old": "    EvidenceContext.ANALOG_ISOLATION: Ridge.ISOLATION,\n",
+   "new": ""
+  },
+  {
+   "label": "un reposo en cama puede dejar fuera la gravedad",
+   "old": "    EvidenceContext.ANALOG_BEDREST: Ridge.GRAVITY,\n",
+   "new": ""
+  },
+  {
+   "label": "la ISS puede dejar fuera la gravedad",
+   "old": "    EvidenceContext.ISS: Ridge.GRAVITY,\n",
+   "new": ""
+  },
+  {
+   "label": "una ficha puede nombrar lo que el banco deja fuera",
+   "old": "SOURCE_STATUSES = frozenset({\"reproduces\", \"partial\"})",
+   "new": "SOURCE_STATUSES = frozenset({\"reproduces\", \"partial\", \"leaves_out\", \"unknown\"})"
+  },
+  {
+   "label": "las fichas de la matriz no cuentan como citadas",
+   "old": "        if cell[\"basis\"] == \"source\"\n    }",
+   "new": "        if False\n    }"
+  },
+  {
+   "label": "una frase de la matriz se sirve con el día del banco",
+   "old": "                    _ridge_cell(cell, bank[\"ridge\"][\"read_on\"]) for cell in bank[\"ridge\"][\"cells\"]",
+   "new": "                    _ridge_cell(cell, bank[\"read_on\"]) for cell in bank[\"ridge\"][\"cells\"]"
+  },
+  {
+   "label": "la duración deja de ser una columna",
+   "old": "    \"duration\": \"Duración\",\n",
+   "new": ""
+  },
+  {
+   "label": "un banco que solo no sabe de un peligro cuenta como si dejara uno fuera",
+   "old": "    if not any(cell[\"status\"] == \"leaves_out\" for cell in cells):",
+   "new": "    if all(cell[\"status\"] == \"reproduces\" for cell in cells):"
+  },
+  {
+   "label": "un vuelo espacial puede dejar fuera la gravedad",
+   "old": "    EvidenceContext.SPACEFLIGHT: Ridge.GRAVITY,\n",
+   "new": ""
+  },
+  {
+   "label": "el entorno del banco admite que deje fuera su propio peligro",
+   "old": "CONTEXT_STATUSES = frozenset({\"reproduces\", \"partial\"})",
+   "new": "CONTEXT_STATUSES = frozenset({\"reproduces\", \"partial\", \"leaves_out\", \"unknown\"})"
+  },
+  {
+   "label": "una columna nueva deja de servirse",
+   "old": "    \"experiments\": \"Experimentos\",\n",
+   "new": ""
+  },
+  {
+   "label": "la cartera de patentes deja de contar como página de NASA",
+   "old": "\"technology.nasa.gov\", ",
+   "new": ""
+  }
+ ]
+}

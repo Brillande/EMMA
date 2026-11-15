@@ -1,0 +1,6 @@
+{"target": "app/ingest/simulator.py", "test": ["tests/test_hydration_nutrition.py"],
+ "mutations": [
+  {"label": "un total diario se emite cada hora",
+   "old": "                if key in DAILY_KEYS and moment.hour != DAILY_REPORT_HOUR:\n                    continue",
+   "new": ""}
+ ]}

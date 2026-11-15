@@ -1,0 +1,33 @@
+{
+  "target": "scripts/polaris_estado.py",
+  "test": [
+    "tests/test_polaris_texts.py::test_estado_lists_the_compat_folder_as_its_script_writes_it_today"
+  ],
+  "mutations": [
+    {
+      "label": "ESTADO.md vuelve a nombrar solo el fcntl de compat/",
+      "old": "    for path in sorted(COMPAT.glob(\"*.py\")):",
+      "new": "    for path in sorted(COMPAT.glob(\"f*.py\")):"
+    },
+    {
+      "label": "el guion deja de escribir la lista de compat/",
+      "old": "        *compat_lines(),",
+      "new": "        \"\","
+    },
+    {
+      "label": "cada módulo de compat/ sale con una frase fija en vez de lo que dice su docstring",
+      "old": "        lines.append(f\"- `{COMPAT_NAME}/{path.name}`: {said}\")",
+      "new": "        lines.append(f\"- `{COMPAT_NAME}/{path.name}`: pegamento de EMMA para Windows.\")"
+    },
+    {
+      "label": "la tabla calla el motivo de la herramienta que no carga",
+      "old": "        *[f\"| `{status.name}` | {status.reason} |\" for status in fails],",
+      "new": "        *[f\"| `{status.name}` | |\" for status in fails],"
+    },
+    {
+      "label": "el recuento dice que cargan todas",
+      "old": "        f\"**{len(loads)} de {len(statuses)} herramientas cargan.**",
+      "new": "        f\"**{len(statuses)} de {len(statuses)} herramientas cargan.**"
+    }
+  ]
+}

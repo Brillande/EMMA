@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, candidata B a 16 px, dibujada píxel a píxel: Tierra y nave en 2×2, el latido y el
+       arco del retardo de luz en 1 px. Sin borde. -->
+  <title>EMMA</title>
+  <rect width="16" height="16" rx="3" fill="#0A0D12" shape-rendering="geometricPrecision"/>
+  <path fill="#EEF2F6" d="M2 12H5V14H2Z M11 2H14V4H11Z"/>
+  <path fill="#EEF2F6" d="M3 9H4V12H3Z M4 7H5V9H4Z M5 6H6V7H5Z M6 7H7V11H6Z M7 9H8V10H7Z
+                          M8 7H9V9H8Z M9 5H10V7H9Z M10 4H11V5H10Z"/>
+</svg>

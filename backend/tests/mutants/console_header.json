@@ -1,0 +1,90 @@
+{
+ "target": "app/api/console_header.py",
+ "test": [
+  "tests/test_console_header.py"
+ ],
+ "mutations": [
+  {
+   "label": "la cabecera vale con cualquier valor",
+   "old": "    if request.headers.get(CONSOLE_HEADER) != CONSOLE_HEADER_VALUE:",
+   "new": "    if request.headers.get(CONSOLE_HEADER) is None:"
+  },
+  {
+   "label": "la orden pasa sin cabecera",
+   "old": "    if request.headers.get(CONSOLE_HEADER) != CONSOLE_HEADER_VALUE:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el 403 sale sin su motivo",
+   "old": "        raise HTTPException(status_code=403, detail=MISSING_DETAIL)",
+   "new": "        raise HTTPException(status_code=403, detail=\"prohibido\")"
+  },
+  {
+   "label": "la falta de cabecera sale como 401, como si fuera autenticación",
+   "old": "        raise HTTPException(status_code=403, detail=MISSING_DETAIL)",
+   "new": "        raise HTTPException(status_code=401, detail=MISSING_DETAIL)"
+  },
+  {
+   "label": "OpenAPI enseña la cabecera como opcional",
+   "old": "                \"required\": True,",
+   "new": "                \"required\": False,"
+  },
+  {
+   "label": "OpenAPI no dice el 403",
+   "old": "        \"responses\": {\n            \"403\": {\"description\": f\"Sin la cabecera {CONSOLE_HEADER}: {CONSOLE_HEADER_VALUE}.\"}\n        },",
+   "new": "        \"responses\": {},"
+  },
+  {
+   "label": "las rutas cubiertas pierden la dependencia pero OpenAPI sigue enseñando la cabecera",
+   "old": "        \"dependencies\": CONSOLE_HEADER_DEPENDENCIES,",
+   "new": "        \"dependencies\": [],"
+  },
+  {
+   "label": "las rutas cubiertas exigen la cabecera pero OpenAPI no la enseña",
+   "old": "        \"openapi_extra\": {**console_header_openapi(), **openapi_extra},",
+   "new": "        \"openapi_extra\": dict(openapi_extra),"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la simulación se sirve sin la cabecera",
+   "old": "    # (`api/console_header.py`).\n    **console_post(),\n",
+   "new": "    # (`api/console_header.py`).\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la precarga se sirve sin la cabecera",
+   "old": "    # Sin cuerpo: una petición simple de otra página lo dispararía (`api/console_header.py`).\n    **console_post(),\n",
+   "new": "    # Sin cuerpo: una petición simple de otra página lo dispararía (`api/console_header.py`).\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la importación de Apple Health se sirve sin la cabecera",
+   "old": "    **console_post(\n        requestBody={\n            \"required\": True,\n            \"content\": {\"application/xml\": {\"schema\": {\"type\": \"string\"}}},\n        }\n    ),\n",
+   "new": "    openapi_extra={\n        \"requestBody\": {\n            \"required\": True,\n            \"content\": {\"application/xml\": {\"schema\": {\"type\": \"string\"}}},\n        }\n    },\n"
+  },
+  {
+   "target": "app/api/routes.py",
+   "label": "la importación de Google Fit se sirve sin la cabecera",
+   "old": "    **console_post(\n        requestBody={\n            \"required\": True,\n            \"content\": {\"application/json\": {\"schema\": {\"type\": \"object\"}}},\n        }\n    ),\n",
+   "new": "    openapi_extra={\n        \"requestBody\": {\n            \"required\": True,\n            \"content\": {\"application/json\": {\"schema\": {\"type\": \"object\"}}},\n        }\n    },\n"
+  },
+  {
+   "target": "app/main.py",
+   "label": "el CORS deja de reflejar la cabecera en la comprobación previa",
+   "old": "    allow_headers=[\"*\"],",
+   "new": "    allow_headers=[],"
+  },
+  {
+   "target": "app/main.py",
+   "label": "el CORS admite POST entre orígenes: la cabecera deja de ser barrera",
+   "old": "    allow_methods=[\"GET\"],",
+   "new": "    allow_methods=[\"GET\", \"POST\"],"
+  },
+  {
+   "target": "tests/conftest.py",
+   "label": "el cliente de la suite nace sin la cabecera",
+   "old": "TestClient.__init__ = _init_with_console_header  # type: ignore[method-assign]",
+   "new": "pass"
+  }
+ ]
+}

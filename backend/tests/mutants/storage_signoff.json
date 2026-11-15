@@ -1,0 +1,24 @@
+{
+  "target": "app/core/storage.py",
+  "test": [
+    "tests/test_interpret.py",
+    "tests/test_decision_risk.py"
+  ],
+  "mutations": [
+    {
+      "label": "la firma no cita el texto leído (salida.py)",
+      "old": "raise ValueError(\"solo se firma un borrador que se pudo leer\")\n            if text_sha256 != _text_sha256(draft):",
+      "new": "raise ValueError(\"solo se firma un borrador que se pudo leer\")\n            if False:"
+    },
+    {
+      "label": "la segunda firma puede ser de la misma persona",
+      "old": "if _same_person(str(first[0].get(\"signed_by\", \"\")), signed_by):",
+      "new": "if False:"
+    },
+    {
+      "label": "segunda firma sin decisión de alto riesgo",
+      "old": "if not dict(first[0].get(\"high_risk\") or {}).get(\"applies\"):",
+      "new": "if False:"
+    }
+  ]
+}

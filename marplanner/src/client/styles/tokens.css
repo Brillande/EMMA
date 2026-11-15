@@ -1,0 +1,61 @@
+/* Semantic palette + comfortable density defaults.
+ * Single source for the SPA (`globals.css` imports this) and the server
+ * access-gate HTML (inlined at serve time). No Tailwind — plain custom
+ * properties only so Node can embed it without the client bundle.
+ * Kiosk ships light-only; `.dark` stays in globals.css for tooling only.
+ */
+:root {
+  color-scheme: light;
+  --radius: 1rem;
+  --member-mix-ground: #fff;
+  --member-avatar-foreground: #fff;
+  --destructive-foreground: #fff;
+  --overlay: #000;
+  --background: #f5f2ed;
+  --foreground: oklch(0.21 0.006 60);
+  --card: #fdfbf8;
+  --card-foreground: oklch(0.21 0.006 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.006 60);
+  /* Form field surface: lighter than the page and at least as light as a card. */
+  --field: #fefdfb;
+  --primary: #5a5a40;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.008 60);
+  --secondary-foreground: oklch(0.37 0.01 60);
+  --muted: oklch(0.95 0.008 60);
+  --muted-foreground: oklch(0.55 0.015 60);
+  --accent: oklch(0.78 0.17 85);
+  --accent-foreground: oklch(0.28 0.17 85);
+  --destructive: oklch(0.58 0.22 25);
+  --success: oklch(0.5 0.11 150);
+  --border: oklch(0.91 0.01 60);
+  --input: oklch(0.91 0.01 60);
+  --ring: #5a5a40;
+  /* Surface of an all-day calendar event that belongs to no member. */
+  --event-all-day: #ffd578;
+  --event-all-day-border: oklch(0.78 0.18 55);
+  /* Weather icon tints: graphics and their rain figures on card/muted surfaces. */
+  --weather-sun: oklch(0.66 0.14 75);
+  --weather-rain: oklch(0.5 0.11 245);
+  --weather-frost: oklch(0.58 0.08 220);
+  --weather-storm: oklch(0.5 0.12 295);
+  --weather-cloud: oklch(0.55 0.015 60);
+  /* Meal slots: one hue each, dark enough to read as text on its own light tint. */
+  --meal-breakfast: oklch(0.55 0.13 75);
+  --meal-lunch: oklch(0.5 0.11 150);
+  --meal-snack: oklch(0.55 0.17 25);
+  --meal-dinner: oklch(0.48 0.12 275);
+  /* Meal origins: one muted hue per meal plan (assigned by creation order) and a warm grey for
+     one-off meals, kept apart from the high-chroma member colours and the amber "today" accent. */
+  --meal-origin-oneoff: oklch(0.62 0.01 60);
+  --meal-origin-plan-1: oklch(0.52 0.09 150); /* sage */
+  --meal-origin-plan-2: oklch(0.52 0.11 30); /* clay */
+  --meal-origin-plan-3: oklch(0.5 0.08 250); /* slate */
+  --meal-origin-plan-4: oklch(0.5 0.09 330); /* plum */
+  --meal-origin-plan-5: oklch(0.52 0.08 200); /* lagoon */
+  --meal-origin-plan-6: oklch(0.5 0.07 60); /* umber */
+  /* Comfortable density — kiosk overrides live in globals.css. */
+  --control-height: 36px;
+  --control-font-size: 14px;
+}

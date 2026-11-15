@@ -1,0 +1,73 @@
+{
+ "target": "app/api/pvt_console.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "la prueba hecha en pantalla sigue firmando como cualquier PVT",
+   "old": "to_observations(result, payload.subject, _received(), CONSOLE_SOURCE),",
+   "new": "to_observations(result, payload.subject, _received(), PVT_SOURCE),"
+  },
+  {
+   "label": "la prueba la firma la clave de la ruta de siempre",
+   "old": "store.record_many(observations, identity_for(CONSOLE_SOURCE))",
+   "new": "store.record_many(observations, identity_for(PVT_SOURCE))"
+  },
+  {
+   "label": "la prueba se firma sin quién estaba en la consola",
+   "old": "            payload.recorded_by,\n        )\n",
+   "new": "            None,  # type: ignore[arg-type]\n        )\n"
+  },
+  {
+   "label": "quién teclea deja de ser obligatorio",
+   "old": "    recorded_by: OperatorName\n",
+   "new": "    recorded_by: OperatorName = \"consola\"\n"
+  },
+  {
+   "label": "una fuente o una hora enviadas por el cliente se ignoran en vez de rechazarse",
+   "old": "    model_config = ConfigDict(extra=\"forbid\")\n",
+   "new": "    model_config = ConfigDict(extra=\"ignore\")\n"
+  },
+  {
+   "label": "una prueba sin tripulante entra",
+   "old": "    subject: str = Field(min_length=1, max_length=64)\n",
+   "new": "    subject: str = \"crew-01\"\n"
+  },
+  {
+   "label": "el entorno deja de ser el del despliegue",
+   "old": "            deployed(\n                to_observations(result, payload.subject, _received(), CONSOLE_SOURCE),\n                settings.deployment_context,\n            ),\n",
+   "new": "            to_observations(result, payload.subject, _received(), CONSOLE_SOURCE),\n"
+  },
+  {
+   "label": "las pruebas firmadas por la ruta de siempre desaparecen de la lista",
+   "old": "SESSION_SOURCES = frozenset({CONSOLE_SOURCE, PVT_SOURCE})",
+   "new": "SESSION_SOURCES = frozenset({CONSOLE_SOURCE})"
+  },
+  {
+   "label": "dos pruebas del mismo instante y fuentes distintas se funden en una",
+   "old": "            key = (item.effective, item.source, str(item.observation_type))\n",
+   "new": "            key = (item.effective, CONSOLE_SOURCE, str(item.observation_type))\n"
+  },
+  {
+   "label": "la lista calla quién tecleó",
+   "old": "                \"recorded_by\": items[0].recorded_by,\n",
+   "new": "                \"recorded_by\": None,\n"
+  },
+  {
+   "label": "la lista dice de todas que no consta",
+   "old": "                \"recorded_by_display\": recorded_by_display(items[0]),\n",
+   "new": "                \"recorded_by_display\": NOT_RECORDED,\n"
+  },
+  {
+   "label": "el protocolo sigue mandando al panel a la ruta de siempre",
+   "old": "        \"submit_to\": \"/api/pvt/console\",",
+   "new": "        \"submit_to\": \"/api/pvt\","
+  },
+  {
+   "label": "el protocolo anuncia la fuente de la ruta de siempre",
+   "old": "            \"source\": CONSOLE_SOURCE,\n            \"source_display\": source_label(CONSOLE_SOURCE),\n            \"observation_type\"",
+   "new": "            \"source\": PVT_SOURCE,\n            \"source_display\": source_label(PVT_SOURCE),\n            \"observation_type\""
+  }
+ ]
+}

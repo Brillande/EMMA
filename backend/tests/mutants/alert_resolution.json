@@ -1,0 +1,18 @@
+{
+  "target": "app/api/routes.py",
+  "test": [
+    "tests/test_alert_resolution.py"
+  ],
+  "mutations": [
+    {
+      "label": "el estado declarado de una alerta no se ve",
+      "old": "                    if state else {\"state\": \"detectado\"}",
+      "new": "                    if False else {\"state\": \"detectado\"}"
+    },
+    {
+      "label": "se puede declarar el estado de una alerta que no existe",
+      "old": "    \"\"\"Quién se ocupa de una alerta y cuándo la da por resuelta (estados de Polaris `salud.py`).\n\n    No toca el cálculo: una alerta \"resuelta\" cuyos datos siguen fuera de rango sigue en la\n    lista. Exige que la alerta exista en ese estado, como reconocer.\n    \"\"\"\n    _require_alert(",
+      "new": "    \"\"\"Mutante.\"\"\"\n    (lambda *a: None)("
+    }
+  ]
+}

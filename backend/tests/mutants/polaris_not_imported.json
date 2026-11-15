@@ -1,0 +1,43 @@
+{
+  "target": "app/polaris/__init__.py",
+  "test": [
+    "tests/test_polaris_bridge.py"
+  ],
+  "mutations": [
+    {
+      "label": "el inventario vuelve a importar lo que hace algo al importarse",
+      "old": "        skipped = NOT_IMPORTED.get(path.stem)\n",
+      "new": "        skipped = None\n"
+    },
+    {
+      "label": "lo que no se importa sale como si cargara",
+      "old": "            statuses.append(ToolStatus(path.stem, False, skipped, imported=False))",
+      "new": "            statuses.append(ToolStatus(path.stem, True, None, imported=False))"
+    },
+    {
+      "label": "lo que no se importa sale como un fallo de carga",
+      "old": "            statuses.append(ToolStatus(path.stem, False, skipped, imported=False))",
+      "new": "            statuses.append(ToolStatus(path.stem, False, skipped))"
+    },
+    {
+      "label": "lo que no se importa sale sin su motivo",
+      "old": "            statuses.append(ToolStatus(path.stem, False, skipped, imported=False))",
+      "new": "            statuses.append(ToolStatus(path.stem, False, None, imported=False))"
+    },
+    {
+      "label": "la lista nombra una herramienta que ya no está en la copia",
+      "old": "NOT_IMPORTED: dict[str, str] = {\n",
+      "new": "NOT_IMPORTED: dict[str, str] = {\n    \"herramienta_retirada\": \"se retiró de la copia y nadie la quitó de esta lista\",\n"
+    },
+    {
+      "label": "la lista excluye del inventario una herramienta que EMMA llama por su nombre",
+      "old": "NOT_IMPORTED: dict[str, str] = {\n",
+      "new": "NOT_IMPORTED: dict[str, str] = {\n    \"borde\": \"excluida por error: EMMA la carga en cada salida a internet\",\n"
+    },
+    {
+      "label": "el guion de transcripción deja de estar excluido del inventario",
+      "old": "    \"transcribe_audios\": (\n        \"es un guion sin función de entrada: importarlo es ejecutarlo entero; \"\n        \"EMMA lo lanza como programa aparte\"\n    ),\n",
+      "new": ""
+    }
+  ]
+}

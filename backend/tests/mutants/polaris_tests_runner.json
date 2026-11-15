@@ -1,0 +1,73 @@
+{
+  "target": "scripts/polaris_tests.py",
+  "test": [
+    "tests/test_polaris_tests_runner.py"
+  ],
+  "mutations": [
+    {
+      "label": "las pruebas corren sobre la copia versionada, no sobre una temporal",
+      "old": "copy = sandbox(root, scratch / \"pruebas\")\n        places",
+      "new": "copy = root\n        places"
+    },
+    {
+      "label": "la copia temporal arrastra node_modules",
+      "old": "ignore=shutil.ignore_patterns(\"node_modules\", \"__pycache__\")",
+      "new": "ignore=shutil.ignore_patterns(\"__pycache__\")"
+    },
+    {
+      "label": "el intérprete de EMMA va al final del PATH y gana el Python del sistema",
+      "old": "[str(interpreter), env.get(\"PATH\", \"\")]",
+      "new": "[env.get(\"PATH\", \"\"), str(interpreter)]"
+    },
+    {
+      "label": "no se monta python3.exe y `python3` vuelve a ser el del sistema",
+      "old": "for name in (\"python.exe\", \"python3.exe\"):",
+      "new": "for name in (\"python.exe\",):"
+    },
+    {
+      "label": "el python3 montado no ve las dependencias del venv de EMMA",
+      "old": "f\"import site; site.addsitedir(",
+      "new": "f\"import site; str("
+    },
+    {
+      "label": "las pruebas vuelven a dejar sus mkdtemp en el temporal del sistema",
+      "old": "env.update({\"TMP\": str(temporary), \"TEMP\": str(temporary), \"TMPDIR\": str(temporary)})",
+      "new": "pass"
+    },
+    {
+      "label": "el temporal de las pruebas sale al informe como una ruta de la pasada",
+      "old": "(temporary, \"<tmp>\"), ",
+      "new": ""
+    },
+    {
+      "label": "lo que se resiste al borrado de la pasada se calla",
+      "old": "        if scratch.exists():\n",
+      "new": "        if False:\n"
+    },
+    {
+      "label": "las rutas temporales salen tal cual al informe",
+      "old": "line = line.replace(spelling, name)",
+      "new": "line = line.replace(spelling, spelling)"
+    },
+    {
+      "label": "una causa escrita para una prueba que no existe pasa inadvertida",
+      "old": "if not (tests_dir / f\"{name}.py\").is_file()",
+      "new": "if not (tests_dir / f\"{name}.py\").parent.is_dir()"
+    },
+    {
+      "label": "una roja sin causa ya no se marca como sin explicar",
+      "old": "CAUSES.get(_stem(result.name), (\"**sin explicar**\", \"\"))",
+      "new": "CAUSES.get(_stem(result.name), (\"\", \"\"))"
+    },
+    {
+      "label": "una causa caducada (la prueba ya no está roja) no se avisa",
+      "old": "    if stale:\n",
+      "new": "    if stale and False:\n"
+    },
+    {
+      "label": "la causa de una campaña que no puede correr no sale al informe",
+      "old": "_cell(CAMPAIGN_CAUSES.get(r.name, '')) if r.outcome == 'rojo' else ''",
+      "new": "''"
+    }
+  ]
+}

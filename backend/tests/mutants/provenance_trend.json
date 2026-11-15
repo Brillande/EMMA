@@ -1,0 +1,9 @@
+{"target": "app/analysis/trend.py", "test": ["tests/test_observation_provenance.py"],
+ "mutations": [
+  {"label": "se proyecta una deriva que no se distingue del ruido",
+   "old": "    fisiologia no tiene por que seguir la recta.\n    \"\"\"\n    if not trend.significant or trend.direction is Direction.STABLE:\n        return None\n",
+   "new": "    fisiologia no tiene por que seguir la recta.\n    \"\"\"\n"},
+  {"label": "la proyeccion sale sin margen",
+   "old": "    margin = T_SIGNIFICANCE * trend.standard_error * horizon_days",
+   "new": "    margin = 0.0"}
+ ]}

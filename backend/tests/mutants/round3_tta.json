@@ -1,0 +1,9 @@
+{"target": "app/analysis/time_to_action.py", "test": ["tests/test_context_round3.py"],
+ "mutations": [
+  {"label": "una accion anterior al inicio cuenta",
+   "old": "        and dt.datetime.fromisoformat(item[\"reference_time\"]) >= onset",
+   "new": ""},
+  {"label": "se cuenta la accion de otro dominio",
+   "old": "        if item.get(\"domain\") == domain\n",
+   "new": "        if True\n"}
+ ]}

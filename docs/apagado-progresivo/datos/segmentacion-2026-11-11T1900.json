@@ -1,0 +1,84 @@
+{
+ "equipo": {
+  "fecha": "2026-11-11T19:00:57",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 617.42",
+  "hilos_cpu": 32,
+  "nota": "Portátil de desarrollo, no hardware de vuelo. GPU en W según nvidia-smi; CPU en % sin W."
+ },
+ "fases": [
+  {
+   "fase": "reposo",
+   "inicio": 1794419601.551,
+   "fin": 1794419616.551,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 28,
+   "gpu_w_media": 3.98,
+   "gpu_w_max": 4.17,
+   "gpu_uso_pct_media": 0.46,
+   "vram_mb_media": 1218.0,
+   "cpu_sistema_pct_media": 1.48,
+   "gpu_julios": 59.7
+  },
+  {
+   "fase": "segmentar_higado_gpu",
+   "inicio": 1794419616.551,
+   "fin": 1794419829.664,
+   "duracion_s": 213.11,
+   "resultado": {
+    "mascaras": 15
+   },
+   "muestras": 393,
+   "gpu_w_media": 12.29,
+   "gpu_w_max": 38.76,
+   "gpu_uso_pct_media": 20.32,
+   "vram_mb_media": 2645.37,
+   "cpu_sistema_pct_media": 11.16,
+   "gpu_julios": 2619.1
+  },
+  {
+   "fase": "reposo_tras_gpu",
+   "inicio": 1794419829.664,
+   "fin": 1794419844.665,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 28,
+   "gpu_w_media": 4.49,
+   "gpu_w_max": 4.78,
+   "gpu_uso_pct_media": 0.29,
+   "vram_mb_media": 1137.0,
+   "cpu_sistema_pct_media": 2.12,
+   "gpu_julios": 67.4
+  },
+  {
+   "fase": "segmentar_higado_cpu",
+   "inicio": 1794419844.665,
+   "fin": 1794420042.379,
+   "duracion_s": 197.71,
+   "resultado": {
+    "mascaras": 15
+   },
+   "muestras": 364,
+   "gpu_w_media": 4.54,
+   "gpu_w_max": 6.11,
+   "gpu_uso_pct_media": 0.7,
+   "vram_mb_media": 1141.02,
+   "cpu_sistema_pct_media": 19.62,
+   "gpu_julios": 897.6
+  },
+  {
+   "fase": "reposo_tras_cpu",
+   "inicio": 1794420042.379,
+   "fin": 1794420057.38,
+   "duracion_s": 15.0,
+   "resultado": null,
+   "muestras": 27,
+   "gpu_w_media": 4.82,
+   "gpu_w_max": 5.12,
+   "gpu_uso_pct_media": 1.22,
+   "vram_mb_media": 1137.0,
+   "cpu_sistema_pct_media": 1.58,
+   "gpu_julios": 72.3
+  }
+ ]
+}

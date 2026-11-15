@@ -1,0 +1,168 @@
+{
+  "target": "app/volumes/privacy.py",
+  "test": [
+    "tests/test_volumes.py"
+  ],
+  "mutations": [
+    {
+      "label": "se guarda aunque haya datos personales (el aborto de Polaris se ignora)",
+      "old": "                raise PersonalDataFound(_reason(stop.code, searched)) from None",
+      "new": "                clean = True"
+    },
+    {
+      "label": "si la comprobación falla, se guarda igual",
+      "old": "        log.warning(\"comprobación de datos personales fallida: %s\", type(exc).__name__)",
+      "new": "        return"
+    },
+    {
+      "label": "no se busca la identidad declarada del tripulante",
+      "old": "    if declared is None:",
+      "new": "    if True:"
+    },
+    {
+      "label": "una comprobación que no dice limpio se da por buena",
+      "old": "        if clean is not True:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el motivo repite el dato personal si Polaris lo nombrara",
+      "old": "    if not text or any(value.lower() in lowered for value in searched):",
+      "new": "    if not text:"
+    },
+    {
+      "label": "no se mira el hueco entre la cabecera y los vóxeles",
+      "old": "    if region[HEADER_BYTES:].strip(b\"\\x00\"):",
+      "new": "    if False:"
+    },
+    {
+      "label": "el nombre de fichero que guarda gzip no se mira",
+      "old": "        if kept:",
+      "new": "        if False:"
+    },
+    {
+      "label": "el nombre solo se busca como lo busca Polaris (sin mayúsculas con eñe ni Latin-1)",
+      "old": "    if any(needle in lowered for chunk in searched for needle in _spellings(chunk)):",
+      "new": "    if False:"
+    },
+    {
+      "label": "no se busca el nombre sin tildes",
+      "old": "    for form in (chunk.lower(), chunk.upper(), plain.lower()):",
+      "new": "    for form in (chunk.lower(), chunk.upper()):"
+    },
+    {
+      "label": "no se busca el nombre en mayúsculas",
+      "old": "    for form in (chunk.lower(), chunk.upper(), plain.lower()):",
+      "new": "    for form in (chunk.lower(), plain.lower()):"
+    },
+    {
+      "label": "no se busca el nombre en Latin-1",
+      "old": "        for encoding in (\"utf-8\", \"latin-1\"):",
+      "new": "        for encoding in (\"utf-8\",):"
+    },
+    {
+      "label": "no se busca la fecha de nacimiento en la forma de DICOM (sin separador)",
+      "old": "_DATE_SEPARATORS = (\"\", \"-\", \"/\", \".\")",
+      "new": "_DATE_SEPARATORS = (\"-\", \"/\", \".\")"
+    },
+    {
+      "label": "la fecha de nacimiento solo se busca con el año delante",
+      "old": "_DATE_ORDERS = (\"%Y{0}%m{0}%d\", \"%d{0}%m{0}%Y\", \"%m{0}%d{0}%Y\")",
+      "new": "_DATE_ORDERS = (\"%Y{0}%m{0}%d\",)"
+    },
+    {
+      "label": "un .nii sin comprimir se escribe como .gz y la comprobación revienta",
+      "old": "        suffix = \".nii.gz\" if raw[:2] == GZIP_MAGIC else \".nii\"",
+      "new": "        suffix = \".nii.gz\""
+    },
+    {
+      "label": "lo limpio no vuelve a pasar la puerta",
+      "old": "    ensure_clean(cleaned.data, declared)\n    return cleaned",
+      "new": "    return cleaned"
+    },
+    {
+      "label": "lo limpio vuelve a la puerta sin la identidad del tripulante",
+      "old": "    ensure_clean(cleaned.data, declared)",
+      "new": "    ensure_clean(cleaned.data, None)"
+    },
+    {
+      "label": "de lo vaciado se declara el contenido, no solo el nombre del campo",
+      "old": "        name for name in received.structarr.dtype.names\n",
+      "new": "        f\"{name}={bytes(received[name].tobytes())!r}\" for name in received.structarr.dtype.names\n"
+    },
+    {
+      "label": "el error de una limpieza fallida sale con su texto, que puede arrastrar la cabecera",
+      "old": "        raise CheckUnavailable(f\"la cabecera no se pudo limpiar ({type(exc).__name__})\") from None",
+      "new": "        raise CheckUnavailable(f\"la cabecera no se pudo limpiar ({exc})\") from None"
+    },
+    {
+      "label": "la limpieza pierde la escala del original (scl_slope, scl_inter): las HU cambian",
+      "old": "\"xyzt_units\", \"scl_slope\", \"scl_inter\",",
+      "new": "\"xyzt_units\","
+    },
+    {
+      "label": "la limpieza pierde pixdim y las unidades del original",
+      "old": "\"bitpix\", \"pixdim\", \"xyzt_units\",",
+      "new": "\"bitpix\","
+    },
+    {
+      "label": "la limpieza deja sform y qform como los pone nifti_limpio, no como venían",
+      "old": "    \"qoffset_x\", \"qoffset_y\", \"qoffset_z\", \"srow_x\", \"srow_y\", \"srow_z\",\n",
+      "new": ""
+    },
+    {
+      "label": "la limpieza pone los códigos de sform y qform de nifti_limpio",
+      "old": "    \"qform_code\", \"sform_code\", \"quatern_b\",",
+      "new": "    \"quatern_b\","
+    },
+    {
+      "label": "los vóxeles se guardan en otro orden",
+      "old": "    body = stored.tobytes(order=\"F\")",
+      "new": "    body = stored.tobytes(order=\"C\")"
+    },
+    {
+      "label": "no se comprueba que los vóxeles limpios sean los recibidos",
+      "old": "    if was != body or not all(",
+      "new": "    if not all("
+    },
+    {
+      "label": "no se comprueba que la geometría quede como en el fichero recibido",
+      "old": "    if was != body or not all(_same(header[name], received[name]) for name in CONSERVED):",
+      "new": "    if was != body:"
+    },
+    {
+      "label": "un fichero big-endian se compara byte a byte y nunca se puede limpiar",
+      "old": "    if received.endianness != header.endianness:",
+      "new": "    if False:"
+    },
+    {
+      "label": "no se declara que se quitaron las extensiones",
+      "old": "    if len(extensions):",
+      "new": "    if False:"
+    },
+    {
+      "label": "no se declara que se quitó el hueco tras la cabecera",
+      "old": "    if plain[declared_end:start].strip(b\"\\x00\"):",
+      "new": "    if False:"
+    },
+    {
+      "label": "no se declara que había datos detrás de los vóxeles",
+      "old": "    if len(plain) > start + len(body):",
+      "new": "    if False:"
+    },
+    {
+      "label": "no se declara que el envoltorio gzip guardaba texto",
+      "old": "    if zipped and any(raw[3] & flag for flag in _GZIP_KEEPS):",
+      "new": "    if False:"
+    },
+    {
+      "label": "el gzip limpio guarda la hora de la limpieza",
+      "old": "gzip.compress(clean, mtime=0) if zipped",
+      "new": "gzip.compress(clean) if zipped"
+    },
+    {
+      "label": "lo que llegó sin comprimir se guarda comprimido",
+      "old": "gzip.compress(clean, mtime=0) if zipped else clean",
+      "new": "gzip.compress(clean, mtime=0)"
+    }
+  ]
+}

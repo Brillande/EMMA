@@ -1,0 +1,181 @@
+{
+ "target": "app/ingest/simulator.py",
+ "test": [
+  "tests/test_simulator_evidence.py::test_the_report_is_only_for_this_simulator",
+  "tests/test_simulator_evidence.py::test_the_resting_heart_rate_drift_is_contested_with_both_sides_and_is_now_zero",
+  "tests/test_simulator_evidence.py::test_the_salivary_cortisol_drift_is_contested_with_what_was_read_and_is_now_zero",
+  "tests/test_simulator_evidence.py::test_every_declaration_is_sound_against_the_registry",
+  "tests/test_simulator_evidence.py::test_an_unsound_declaration_is_named",
+  "tests/test_simulator_evidence.py::test_each_contested_drift_names_both_sides_and_keeps_its_value",
+  "tests/test_simulator_evidence.py::test_no_contested_drift_is_left_without_its_cards",
+  "tests/test_simulator_evidence.py::test_the_menu_fatigue_drift_is_unsupported_with_its_old_value_and_what_was_searched",
+  "tests/test_simulator_evidence.py::test_the_four_drifts_the_reading_already_judged_took_their_class_with_their_value",
+  "tests/test_simulator_evidence.py::test_the_blood_pressure_drifts_are_contested_as_the_flight_direction_reads_them",
+  "tests/test_simulator_evidence.py::test_the_rmssd_drift_is_contested_as_the_flight_direction_reads_it",
+  "tests/test_simulator_evidence.py::test_the_ntx_drift_has_its_direction_documented_with_its_old_value",
+  "tests/test_simulator_evidence.py::test_design_is_a_class_and_says_it_has_no_backing",
+  "tests/test_simulator.py::test_contested_parameters_use_a_small_drift"
+ ],
+ "mutations": [
+  {
+   "label": "una clase desconocida pasa",
+   "old": "        if param.evidence not in EVIDENCE_CLASSES:\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "una cita a una ficha que no existe pasa",
+   "old": "        if missing := sorted(set(param.refs) - known):\n",
+   "new": "        if missing := sorted(set()):\n"
+  },
+  {
+   "label": "una ficha citada dos veces pasa",
+   "old": "        if len(set(param.refs)) != len(param.refs):\n",
+   "new": "        if len(set(param.refs)) != len(set(param.refs)):\n"
+  },
+  {
+   "label": "sin respaldo con `searched` en blanco pasa",
+   "old": "            if not param.searched.strip():\n",
+   "new": "            if not param.searched:\n"
+  },
+  {
+   "label": "sin respaldo sin la ficha de lo leído pasa",
+   "old": "            if not param.refs:\n",
+   "new": "            if not param.refs and False:\n"
+  },
+  {
+   "label": "sin respaldo con la fuente de diseño pasa",
+   "old": "            if param.source == NO_SOURCE:\n",
+   "new": "            if param.source == NO_SOURCE and False:\n"
+  },
+  {
+   "label": "`searched` en otra clase pasa",
+   "old": "        elif param.searched:\n",
+   "new": "        elif False:\n"
+  },
+  {
+   "label": "contestado con un solo lado pasa",
+   "old": "and len(param.refs) < 2:\n",
+   "new": "and len(param.refs) < 1:\n"
+  },
+  {
+   "label": "diseño que cita fichas pasa",
+   "old": "        if param.evidence == \"design\" and param.refs:\n",
+   "new": "        if param.evidence == \"design\" and param.refs and False:\n"
+  },
+  {
+   "label": "la FC en reposo vuelve a «sentido documentado»",
+   "old": "    \"resting_hr_drift_bpm_per_week\": _p(\n        0.0, \"contested\",\n",
+   "new": "    \"resting_hr_drift_bpm_per_week\": _p(\n        0.0, \"direction_only\",\n"
+  },
+  {
+   "label": "la FC en reposo recupera la deriva de antes (0,4 lpm/semana)",
+   "old": "    \"resting_hr_drift_bpm_per_week\": _p(\n        0.0, \"contested\",\n",
+   "new": "    \"resting_hr_drift_bpm_per_week\": _p(\n        0.4, \"contested\",\n"
+  },
+  {
+   "label": "el cortisol vuelve a «sentido documentado»",
+   "old": "    \"cortisol_rise_per_week\": _p(\n        0.0, \"contested\",\n",
+   "new": "    \"cortisol_rise_per_week\": _p(\n        0.0, \"direction_only\",\n"
+  },
+  {
+   "label": "el cortisol recupera la subida de antes (0,0145 ug/dL por semana)",
+   "old": "    \"cortisol_rise_per_week\": _p(\n        0.0, \"contested\",\n",
+   "new": "    \"cortisol_rise_per_week\": _p(\n        0.0145, \"contested\",\n"
+  },
+  {
+   "label": "la RMSSD vuelve a «sentido documentado», que la lectura del sentido en vuelo no sostiene",
+   "old": "    \"hrv_rmssd_decline_ms_per_week\": _p(\n        0.8, \"contested\",\n",
+   "new": "    \"hrv_rmssd_decline_ms_per_week\": _p(\n        0.8, \"direction_only\",\n"
+  },
+  {
+   "label": "la RMSSD pierde el lado de «sin cambio» (Baevsky 2007)",
+   "old": "            \"xu-2013-hrv-sleep-iss\", \"hughson-2012-cardiovascular-iss\",\n            \"baevsky-2007-autonomic-iss\",\n",
+   "new": "            \"xu-2013-hrv-sleep-iss\", \"hughson-2012-cardiovascular-iss\",\n"
+  },
+  {
+   "label": "la presión sistólica vuelve a «diseño» con sus fichas puestas",
+   "old": "    \"systolic_bp_decline_mmhg_per_week\": _p(\n        0.3, \"contested\",\n",
+   "new": "    \"systolic_bp_decline_mmhg_per_week\": _p(\n        0.3, \"design\",\n"
+  },
+  {
+   "label": "la presión sistólica pierde el lado de «sin cambio» (Hughson 2012)",
+   "old": "        \"sale de él. Cambiarlo es decisión del usuario\",\n        \"Norsk 2015 y Baevsky 2007 (baja en vuelo) frente a Hughson 2012 (sin cambio)\",\n        refs=(\n            \"norsk-2015-ambulatory-bp-iss\", \"baevsky-2007-autonomic-iss\",\n            \"hughson-2012-cardiovascular-iss\",\n",
+   "new": "        \"sale de él. Cambiarlo es decisión del usuario\",\n        \"Norsk 2015 y Baevsky 2007 (baja en vuelo) frente a Hughson 2012 (sin cambio)\",\n        refs=(\n            \"norsk-2015-ambulatory-bp-iss\", \"baevsky-2007-autonomic-iss\",\n"
+  },
+  {
+   "label": "la presión diastólica vuelve a «sentido documentado»",
+   "old": "    \"diastolic_bp_decline_mmhg_per_week\": _p(\n        0.2, \"contested\",\n",
+   "new": "    \"diastolic_bp_decline_mmhg_per_week\": _p(\n        0.2, \"direction_only\",\n"
+  },
+  {
+   "label": "la presión diastólica cambia de valor al reclasificarse",
+   "old": "    \"diastolic_bp_decline_mmhg_per_week\": _p(\n        0.2, \"contested\",\n",
+   "new": "    \"diastolic_bp_decline_mmhg_per_week\": _p(\n        0.1, \"contested\",\n"
+  },
+  {
+   "label": "el telopéptido N vuelve a «diseño» con sus fichas puestas",
+   "old": "    \"ntx_rise_per_week\": _p(\n        1.1, \"direction_only\",\n",
+   "new": "    \"ntx_rise_per_week\": _p(\n        1.1, \"design\",\n"
+  },
+  {
+   "label": "el telopéptido N pierde la ficha de la ISS (Smith 2012)",
+   "old": "            \"smith-2005-bone-markers-mir\", \"smith-2012-bone-resistance-iss\",\n            \"zwart-2018-dietary-acid-load\",\n",
+   "new": "            \"smith-2005-bone-markers-mir\",\n            \"zwart-2018-dietary-acid-load\",\n"
+  },
+  {
+   "label": "la FC contestada pierde el lado que la ve subir",
+   "old": "            \"baevsky-1997-holter-mir\", \"otsuka-2022-one-year-hrv\",\n",
+   "new": "            \"otsuka-2022-one-year-hrv\",\n"
+  },
+  {
+   "label": "el estado no dice las fichas de cada deriva",
+   "old": "                \"refs\": list(param.refs), \"searched\": param.searched,\n",
+   "new": "                \"refs\": [], \"searched\": param.searched,\n"
+  },
+  {
+   "label": "las fichas citadas no se ven desde fuera",
+   "old": "    return {ref for param in LITERATURE.values() for ref in param.refs}\n",
+   "new": "    return set()\n"
+  },
+  {
+   "label": "la PVT con CO2 pierde el lado de «sin efecto» (Scully 2019)",
+   "old": "            \"scully-2019\", \"satish-2012-co2-decision-making\", \"manzey-1998-co2-performance\",\n",
+   "new": "            \"satish-2012-co2-decision-making\", \"manzey-1998-co2-performance\",\n"
+  },
+  {
+   "label": "la SDNN pierde el lado que ve subir la potencia total (Otsuka 2016)",
+   "old": "            \"xu-2013-hrv-sleep-iss\", \"otsuka-2016-hrv-time-structure\",\n",
+   "new": "            \"xu-2013-hrv-sleep-iss\",\n"
+  },
+  {
+   "label": "la fatiga de menú pierde el lado de la ISS (Douglas 2025)",
+   "old": "            \"meiselman-2000-variety-monotony\", \"douglas-2025-iss-food-acceptability\",\n",
+   "new": "            \"meiselman-2000-variety-monotony\",\n"
+  },
+  {
+   "label": "el sueño con CO2 se queda sin fichas",
+   "old": "            \"van-hoy-2026-co2-sleep-analog\", \"gundel-1998-co2-sleep\",\n            \"christian-2024-hdtbr-co2-sleep\", \"law-2014\",\n",
+   "new": ""
+  },
+  {
+   "label": "un contestado sin ninguna ficha vuelve a pasar",
+   "old": "        if param.evidence == \"contested\" and len(param.refs) < 2:\n",
+   "new": "        if param.evidence == \"contested\" and param.refs and len(param.refs) < 2:\n"
+  },
+  {
+   "label": "la fatiga de menú vuelve a «contestado»",
+   "old": "        0.4, \"unsupported\",\n",
+   "new": "        0.4, \"contested\",\n"
+  },
+  {
+   "label": "la fatiga de menú sin respaldo cambia de valor",
+   "old": "        0.4, \"unsupported\",\n",
+   "new": "        0.3, \"unsupported\",\n"
+  },
+  {
+   "label": "la fatiga de menú no dice dónde se buscó lo que la ISS no ve",
+   "old": "            \"completo en Europe PMC): «acceptability scores did not decrease over the \"\n",
+   "new": "            \"completo en Europe PMC): «acceptability scores over the \"\n"
+  }
+ ]
+}

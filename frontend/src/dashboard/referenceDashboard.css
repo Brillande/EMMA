@@ -1,0 +1,2502 @@
+/*
+ * Las piezas del tablero «Inicio» (`HomeBoard.tsx`, la maqueta «Panel EMMA: Rutas Espaciales y Salud»
+ * de 2026-11-06, consola real por decisión del usuario del 2026-11-07). La concha (fondo, franja,
+ * carril) vive en `consoleShell.css`; aquí, las tarjetas y sus dibujos. Todo color sale de los tokens
+ * de la paleta (`--c-*`), mezclados con `color-mix`; las variables `--ref-*` y `--acc-*` las pone el
+ * cuerpo de la sección (`.section-body.ref-home`) o la concha (`.app[data-look="reference"]`).
+ *
+ * COLORES DE ADORNO (decisión del usuario, 2026-11-07): los acentos por letra RIDGE (`--acc-*`), las
+ * curvas vitales, los planetas y el cuerpo imitan la maqueta y NO significan nada; se declaran como
+ * desviación de la tabla F.5-1 en `compliance/hmi-state-of-the-art.md`. `--lvl` es el color del nivel
+ * real de una tarjeta (lo pone `levelTint`), y los segmentos `data-tone` son datos.
+ */
+
+.ref-home [data-acc="radiation"] {
+  --acc: var(--acc-radiation);
+}
+
+.ref-home [data-acc="isolation"] {
+  --acc: var(--acc-isolation);
+}
+
+.ref-home [data-acc="distance"] {
+  --acc: var(--acc-distance);
+}
+
+.ref-home [data-acc="gravity"] {
+  --acc: var(--acc-gravity);
+}
+
+.ref-home [data-acc="environment"] {
+  --acc: var(--acc-environment);
+}
+
+.ref-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Paradas de los degradados. */
+
+.ref-s-earth-hi {
+  stop-color: color-mix(in srgb, var(--c-blue) 70%, var(--c-text));
+}
+
+.ref-s-land {
+  stop-color: color-mix(in srgb, var(--c-green) 45%, var(--c-blue));
+}
+
+.ref-s-earth {
+  stop-color: color-mix(in srgb, var(--c-blue) 60%, var(--c-bg));
+}
+
+.ref-s-deep {
+  stop-color: color-mix(in srgb, var(--c-blue) 18%, var(--c-bg));
+}
+
+.ref-s-black {
+  stop-color: var(--c-bg);
+}
+
+.ref-s-moon-hi {
+  stop-color: var(--c-text);
+}
+
+.ref-s-moon {
+  stop-color: color-mix(in srgb, var(--c-gray) 60%, var(--c-bg));
+}
+
+.ref-s-mars-hi {
+  stop-color: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red));
+}
+
+.ref-s-mars {
+  stop-color: color-mix(in srgb, var(--c-red) 65%, var(--c-bg));
+}
+
+.ref-s-ring-a {
+  stop-color: var(--c-green);
+}
+
+.ref-s-ring-b {
+  stop-color: color-mix(in srgb, var(--c-green) 50%, var(--c-cyan));
+}
+
+.ref-s-clear {
+  stop-color: transparent;
+}
+
+.ref-s-snow {
+  stop-color: color-mix(in srgb, var(--c-blue) 30%, var(--c-surface));
+}
+
+.ref-planet {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-blue) 45%, transparent));
+}
+
+/* Luces de ciudad de la Tierra de noche (carril) y de los dibujos de sección. */
+
+.ref-light {
+  fill: color-mix(in srgb, var(--c-yellow) 55%, var(--c-text));
+}
+
+.ref-light.warm {
+  fill: color-mix(in srgb, var(--c-yellow) 70%, var(--c-red));
+  filter: drop-shadow(0 0 2px var(--c-yellow));
+}
+
+/* Cabecera. */
+
+.ref-logo {
+  width: 3rem;
+  height: 3rem;
+  filter: drop-shadow(0 0 6px var(--ref-glow));
+}
+
+.ref-logo ellipse,
+.ref-logo path {
+  fill: none;
+  stroke: var(--ref-teal);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* Cuerpo: barra lateral y rejilla. */
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+.ref-card,
+.ref-frame {
+  margin: 0;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow: 0 0 14px var(--ref-glow) inset, 0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+  min-width: 0;
+}
+
+.ref-frame {
+  padding: 0.3rem 0.45rem 0.45rem;
+}
+
+.ref-card p {
+  margin: 0.15rem 0;
+}
+
+.ref-card ul,
+.ref-frame ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ref-h {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.3rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.ref-h > .pictogram {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--ref-teal);
+}
+
+.ref-frame-h {
+  font-size: 1.08rem;
+}
+
+.ref-h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ref-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.ref-col > .ref-card:last-child {
+  flex: 1;
+}
+
+/* Reparto, como la maqueta. */
+
+.ref-places {
+  grid-column: span 9;
+}
+
+.ref-subplace {
+  grid-column: span 3;
+}
+
+.ref-global {
+  grid-column: span 7;
+}
+
+.ref-crew-col {
+  grid-column: span 3;
+}
+
+.ref-risk-col {
+  grid-column: span 2;
+}
+
+.ref-quick {
+  grid-column: span 12;
+}
+
+.ref-route {
+  grid-column: span 12;
+}
+
+.ref-foot {
+  grid-column: span 4;
+}
+
+/* Ubicación. */
+
+.ref-place-row {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.ref-place {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.15rem 0.55rem 0.15rem 0.3rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--c-raised) 80%, transparent);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 0.98rem;
+  line-height: 1.1;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ref-place[aria-pressed="true"] {
+  border: 2px solid var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, var(--c-raised));
+  box-shadow: 0 0 14px var(--ref-glow);
+}
+
+.ref-thumb {
+  flex: none;
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.ref-crater {
+  fill: color-mix(in srgb, var(--c-bg) 40%, transparent);
+}
+
+.ref-orbit {
+  fill: none; stroke: color-mix(in srgb, var(--c-yellow) 70%, var(--c-text)); stroke-width: 1.3; stroke-dasharray: 3 2;
+}
+
+.ref-flag {
+  fill: none; stroke: var(--c-text); stroke-width: 1.5;
+}
+
+.ref-station rect {
+  fill: color-mix(in srgb, var(--c-blue) 40%, var(--c-surface)); stroke: var(--c-text); stroke-width: 0.8;
+}
+
+.ref-select-like {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.ref-select-like > .pictogram {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* Marco global. */
+
+.ref-updated {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
+.ref-live {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 6px var(--c-green);
+}
+
+.ref-global {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-global-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 0.95fr 0.55fr 1.15fr 0.75fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+  "mission ridge ridge body"
+  "vitals vitals trend body";
+  gap: 0.4rem;
+}
+
+.ref-mission {
+  grid-area: mission;
+}
+
+.ref-ridge {
+  grid-area: ridge;
+}
+
+.ref-vitals {
+  grid-area: vitals;
+}
+
+.ref-trend {
+  grid-area: trend;
+}
+
+.ref-body-figure {
+  grid-area: body;
+}
+
+.ref-hero {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.1rem 0 0.2rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--lvl) 50%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lvl) 28%, transparent), color-mix(in srgb, var(--lvl) 8%, transparent));
+}
+
+.ref-hero-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--lvl);
+  color: var(--lvl);
+  font-size: 1.35rem;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--lvl) 45%, transparent);
+}
+
+.ref-hero-word {
+  font-size: 1.4rem;
+  color: var(--lvl);
+}
+
+.ref-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.78rem;
+}
+
+.ref-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ref-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Peligros RIDGE (global). */
+
+.ref-ridge-body {
+  display: grid;
+  grid-template-columns: 6.6rem 1fr;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.ref-ring-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ref-ring {
+  position: relative;
+  width: 5.6rem;
+  height: 5.6rem;
+}
+
+.ref-ring svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ref-ring-track {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-line) 80%, transparent);
+  stroke-width: 10;
+}
+
+.ref-ring-fill {
+  fill: none;
+  stroke: url(#ref-g-ring);
+  stroke-width: 10;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-green) 50%, transparent));
+}
+
+.ref-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ref-ring-value {
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ref-ring-caption {
+  margin: 0.1rem 0 0 !important;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.ref-hazard-bars li {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr) 4.5rem 1rem;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.08rem 0;
+  font-size: 0.82rem;
+}
+
+.ref-chip-letter {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--acc);
+  color: var(--c-bg);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ref-segments {
+  display: flex;
+  gap: 2px;
+  height: 0.5rem;
+  min-width: 2rem;
+}
+
+.ref-segments > span {
+  flex: 1;
+  border-radius: 3px;
+  background: var(--c-text);
+}
+
+.ref-home [data-tone="text"] {
+  background: var(--c-text) !important;
+}
+
+.ref-home [data-tone="blue"] {
+  background: var(--c-blue) !important;
+}
+
+.ref-home [data-tone="yellow"] {
+  background: var(--c-yellow) !important;
+}
+
+.ref-home [data-tone="red"] {
+  background: var(--c-red) !important;
+}
+
+.ref-home [data-tone="gray"] {
+  background: var(--c-gray) !important;
+}
+
+/* Signos vitales y tendencia, con un color de adorno por constante. */
+
+.ref-vitals li {
+  --vital: var(--c-blue);
+  display: grid;
+  grid-template-columns: 4rem 4.4rem 1fr;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.12rem 0;
+}
+
+.ref-vitals li[data-vital="heart-rate"] {
+  --vital: var(--c-red);
+}
+
+.ref-vitals li[data-vital="respiratory-rate"] {
+  --vital: color-mix(in srgb, var(--c-cyan) 70%, var(--c-blue));
+}
+
+.ref-vitals li[data-vital="oxygen-saturation"] {
+  --vital: var(--c-yellow);
+}
+
+.ref-vitals li[data-vital="body-temperature"] {
+  --vital: var(--c-green);
+}
+
+.ref-vitals abbr {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ref-vitals abbr .pictogram {
+  color: var(--vital);
+}
+
+.ref-vital-value {
+  font-size: 0.98rem;
+  white-space: nowrap;
+}
+
+.ref-vital-value small {
+  color: var(--c-text-secondary);
+  font-size: 0.7rem;
+}
+
+.ref-spark {
+  width: 100%;
+  height: 1.35rem;
+}
+
+.ref-spark path {
+  fill: none;
+  stroke: var(--vital);
+  stroke-width: 1.7;
+  filter: drop-shadow(0 0 2px color-mix(in srgb, var(--vital) 60%, transparent));
+}
+
+.ref-trend {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-trend-svg {
+  flex: 1;
+  width: 100%;
+  min-height: 5.5rem;
+  max-height: 7.2rem;
+}
+
+.ref-trend-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--c-cyan) 75%, var(--c-blue));
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 3px var(--ref-glow));
+}
+
+.ref-trend-area {
+  fill: color-mix(in srgb, var(--c-cyan) 14%, transparent);
+  stroke: none;
+}
+
+.ref-grid-line {
+  stroke: color-mix(in srgb, var(--c-line) 80%, transparent);
+  stroke-width: 0.8;
+}
+
+.ref-limit {
+  stroke: var(--c-yellow);
+  stroke-dasharray: 4 4;
+  opacity: 0.8;
+}
+
+.ref-axis {
+  fill: var(--c-text-secondary);
+  font-size: 11px;
+}
+
+/* Silueta de calor. */
+
+.ref-body-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.3rem;
+  background:
+  radial-gradient(ellipse 60% 50% at 50% 45%, color-mix(in srgb, var(--c-cyan) 18%, transparent), transparent 75%),
+  var(--ref-card);
+}
+
+/* Tripulante. */
+
+.ref-crew-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.ref-avatar {
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--ref-teal);
+  background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--c-blue) 40%, var(--c-surface)), var(--c-surface));
+  box-shadow: 0 0 12px var(--ref-glow);
+}
+
+.ref-avatar svg {
+  width: 2.3rem;
+  height: 2.3rem;
+}
+
+.ref-kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.5rem;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.ref-kv dt {
+  color: var(--c-text-secondary);
+}
+
+.ref-kv dd {
+  margin: 0;
+}
+
+.ref-pill {
+  display: inline-block;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--lvl);
+  background: color-mix(in srgb, var(--lvl) 22%, transparent);
+}
+
+.ref-letter-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.ref-letter-row li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.25rem 0.25rem 0.2rem;
+  border: 1px solid var(--acc);
+  border-radius: 6px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acc) 55%, var(--c-surface)), color-mix(in srgb, var(--acc) 22%, var(--c-surface)));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--acc) 30%, transparent);
+}
+
+.ref-letter-row .ref-segments {
+  width: 100%;
+  min-width: 0;
+  height: 0.35rem;
+}
+
+.ref-tile-letter {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ref-plus {
+  margin-left: auto;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: var(--c-text) !important;
+}
+
+.ref-notes li,
+.ref-next li {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+  font-size: 0.8rem;
+}
+
+.ref-box {
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: 0.15rem;
+  border: 1.5px solid var(--c-text-secondary);
+  border-radius: 3px;
+}
+
+/* Riesgo. */
+
+.ref-level-now {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  padding: 0.45rem;
+  border: 2px solid var(--lvl);
+  border-radius: 8px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lvl) 32%, transparent), color-mix(in srgb, var(--lvl) 10%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--lvl) 30%, transparent);
+}
+
+.ref-level-now strong {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--lvl);
+  text-transform: uppercase;
+}
+
+.ref-level-now small {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--c-text-secondary);
+}
+
+.ref-levels li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+  padding: 0.2rem 0.4rem 0.2rem 0.2rem;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--lvl) 45%, transparent);
+  background: color-mix(in srgb, var(--lvl) 10%, transparent);
+  font-weight: 600;
+}
+
+.ref-levels li .level > .pictogram {
+  display: none;
+}
+
+.ref-level-box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 5px;
+  background: var(--lvl);
+  color: var(--c-bg);
+  font-size: 1rem;
+}
+
+/* Acceso rápido, con el acento de cada letra. */
+
+.ref-quick-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.25fr);
+  gap: 0.45rem;
+}
+
+.ref-hazard {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 8px;
+  min-width: 0;
+}
+
+/* El velo propio, salvo donde manda el mosaico común `tile-acc` (concha nueva, R5-2). */
+.ref-hazard:not(:where(.app[data-look="reference"]) .tile-acc) {
+  border: 1px solid var(--acc);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--acc) 50%, var(--c-surface)), color-mix(in srgb, var(--acc) 15%, var(--c-surface)));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--acc) 28%, transparent);
+}
+
+.ref-hazard > .pictogram {
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+}
+
+.ref-hazard-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.ref-letter {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ref-hazard-name {
+  font-size: 0.8rem;
+  line-height: 1.15;
+}
+
+.ref-hazard-domains {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+}
+
+.ref-hazard-domains .ref-segments {
+  flex: 1;
+  height: 0.35rem;
+}
+
+.ref-quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.ref-quick-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  color: var(--c-text);
+  text-decoration: none;
+}
+
+.ref-quick-links a > span {
+  flex: 1;
+}
+
+.ref-quick-links .pictogram {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--ref-teal);
+}
+
+.ref-chevron {
+  flex: none;
+  width: 0.6rem;
+  height: 1rem;
+}
+
+.ref-chevron path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Rutas. */
+
+.ref-route-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.7fr 1.3fr 1.3fr;
+  gap: 0.4rem;
+}
+
+.ref-route-list li + li {
+  margin-top: 0.12rem;
+}
+
+.ref-route-list button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.02rem 0.45rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-text);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ref-route-list button[aria-pressed="true"] {
+  border: 2px solid var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 20%, transparent);
+}
+
+.ref-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.9rem;
+  margin: 0;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 6px;
+}
+
+.ref-stats dt {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  color: var(--c-text-secondary);
+}
+
+.ref-stats dt .pictogram {
+  color: var(--c-yellow);
+}
+
+.ref-stats dd {
+  margin: 0;
+  font-size: 0.84rem;
+}
+
+.ref-route-art {
+  display: block;
+  width: 100%;
+  max-height: 3.6rem;
+}
+
+.ref-path {
+  fill: none;
+  stroke: var(--c-yellow);
+  stroke-width: 2;
+  stroke-dasharray: 3 5;
+}
+
+.ref-node {
+  fill: var(--c-yellow);
+  filter: drop-shadow(0 0 3px var(--c-yellow));
+}
+
+.ref-ship {
+  fill: var(--c-text);
+  filter: drop-shadow(0 0 4px var(--ref-glow));
+}
+
+.ref-impact li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem auto;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.08rem 0;
+  font-size: 0.78rem;
+}
+
+.ref-impact-bar {
+  display: flex;
+  height: 0.5rem;
+  background: color-mix(in srgb, var(--c-line) 80%, transparent);
+  border-radius: 3px;
+}
+
+.ref-impact-bar > span {
+  border-radius: 3px;
+  background: var(--c-green);
+}
+
+/* Barras de adorno por fila; la que el backend marca como preocupante, en amarillo (dato). */
+
+.ref-impact-bar > [data-bar="0"] {
+  background: var(--acc-gravity);
+}
+
+.ref-impact-bar > [data-bar="1"] {
+  background: var(--acc-isolation);
+}
+
+.ref-impact-bar > [data-bar="2"] {
+  background: var(--acc-distance);
+}
+
+.ref-impact-bar > [data-bar="3"] {
+  background: var(--acc-radiation);
+}
+
+.ref-impact-bar > [data-bar="4"] {
+  background: var(--acc-environment);
+}
+
+.ref-impact-bar > [data-bar="concern"] {
+  background: var(--c-yellow);
+}
+
+.ref-aspects li {
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-start;
+  padding: 0.1rem 0;
+  font-size: 0.76rem;
+}
+
+.ref-aspects .pictogram {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--c-green);
+}
+
+/* Pie. */
+
+.ref-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  overflow: hidden;
+  min-height: 3.9rem;
+}
+
+.ref-foot-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.ref-foot-text p,
+.ref-foot-text > span {
+  margin: 0;
+  font-size: 0.8rem;
+  max-width: 64%;
+}
+
+.ref-foot-art {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 36%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.ref-play {
+  fill: var(--c-blue);
+}
+
+.ref-play-tri {
+  fill: var(--c-bg);
+}
+
+.ref-snow {
+  fill: color-mix(in srgb, var(--c-text) 85%, var(--c-blue));
+}
+
+.ref-tent {
+  fill: color-mix(in srgb, var(--c-text) 75%, var(--c-blue)); stroke: var(--c-text-secondary); stroke-width: 1;
+}
+
+.ref-tent-door {
+  fill: color-mix(in srgb, var(--c-yellow) 50%, var(--c-surface));
+}
+
+.ref-emergency {
+  color: var(--c-text) !important;
+  text-decoration: none;
+  border: 2px solid var(--c-red);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c-red) 32%, var(--ref-card)), color-mix(in srgb, var(--c-red) 12%, var(--ref-card)));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--c-red) 35%, transparent);
+}
+
+.ref-emergency .ref-foot-text > span {
+  max-width: none;
+}
+
+.ref-emergency .ref-chevron {
+  width: 0.9rem;
+  height: 1.6rem;
+  color: var(--c-red);
+}
+
+.ref-alarm {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  color: var(--c-red);
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 6px var(--c-red));
+}
+
+/* Pantallas más estrechas: se apilan las columnas laterales. */
+
+@media (max-width: 1400px) {
+  .ref-places { grid-column: span 8; }
+  .ref-subplace { grid-column: span 4; }
+  .ref-global { grid-column: span 12; }
+  .ref-crew-col { grid-column: span 7; }
+  .ref-risk-col { grid-column: span 5; }
+  .ref-quick-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ref-route-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ref-place > span { font-size: 0.85rem; }
+}
+
+@media (max-width: 1000px) {
+  .ref-body { grid-template-columns: 1fr; }
+  .ref-side ul { display: flex; flex-wrap: wrap; }
+  .ref-side li + li { border-top: 0; }
+  .ref-place-row { flex-wrap: wrap; }
+  .ref-place { flex: 1 1 10rem; }
+  .ref-global-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "mission body" "ridge ridge" "vitals vitals" "trend trend";
+  }
+}
+
+@media (max-width: 760px) {
+  .ref-grid > * { grid-column: span 12 !important; }
+  .ref-global-grid { grid-template-columns: 1fr; grid-template-areas: "mission" "body" "ridge" "vitals" "trend"; }
+  .ref-quick-row,
+  .ref-route-grid { grid-template-columns: 1fr; }
+  .ref-motto { display: none; }
+}
+
+/* Ajuste para caber en una pantalla de 941 px: acciones en una línea y niveles más bajos. */
+
+.ref-next .ref-clamp-2 {
+  -webkit-line-clamp: 1;
+}
+
+.ref-next li {
+  padding: 0.12rem 0;
+}
+
+.ref-levels li {
+  margin-top: 0.18rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+.ref-level-box {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.ref-level-now {
+  padding: 0.3rem 0.45rem;
+}
+
+.ref-notes {
+  min-height: 0;
+}
+
+.ref-mission .ref-clamp {
+  -webkit-line-clamp: 2;
+}
+
+.ref-ring {
+  width: 5.2rem;
+  height: 5.2rem;
+}
+
+.ref-ring-value {
+  font-size: 2rem;
+}
+
+.ref-vitals li {
+  padding: 0.05rem 0;
+}
+
+.ref-trend-svg {
+  min-height: 5rem;
+  max-height: 6.4rem;
+}
+
+.ref-foot {
+  min-height: 3.4rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.ref-foot .ref-h {
+  margin-bottom: 0.1rem;
+}
+
+.ref-foot-text p,
+.ref-foot-text > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.76rem;
+}
+
+.ref-route-art {
+  max-height: 3.2rem;
+}
+
+/* Tercera pasada (2026-11-06): estrellas, bordes luminosos, dibujos con más detalle. */
+
+.ref-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ref-stars circle {
+  fill: color-mix(in srgb, var(--c-text) 55%, transparent);
+}
+
+.ref-card,
+.ref-frame {
+  box-shadow:
+  0 0 14px var(--ref-glow) inset,
+  0 0 10px color-mix(in srgb, var(--c-cyan) 16%, transparent);
+}
+
+.ref-frame {
+  border-radius: 12px;
+}
+
+.ref-home [data-tone="green"] {
+  background: var(--c-green) !important;
+}
+
+.ref-segments > span {
+  box-shadow: 0 0 4px color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.ref-hazard-bars .ref-segments {
+  height: 0.45rem;
+}
+
+.ref-halo {
+  fill: color-mix(in srgb, var(--c-cyan) 22%, transparent);
+  filter: blur(4px);
+}
+
+/* Casco del avatar. */
+
+.ref-avatar .ref-helmet {
+  width: 3.4rem;
+  height: 3.4rem;
+}
+
+/* Rutas. */
+
+.ref-stats {
+  flex-wrap: nowrap;
+  gap: 0.8rem;
+}
+
+.ref-stats > div {
+  min-width: 0;
+}
+
+.ref-stats dt .pictogram {
+  box-sizing: content-box;
+  padding: 0.15rem;
+  border-radius: 50%;
+  background: var(--acc);
+  color: var(--c-bg);
+}
+
+.ref-stats dd {
+  white-space: nowrap;
+}
+
+.ref-route-art {
+  max-height: 4.2rem;
+  margin-top: 0.1rem;
+}
+
+.ref-ship-panel {
+  fill: color-mix(in srgb, var(--c-blue) 50%, var(--c-surface)); stroke: var(--c-text); stroke-width: 0.6;
+}
+
+.ref-ship-flame {
+  fill: color-mix(in srgb, var(--c-yellow) 70%, var(--c-red));
+}
+
+.ref-global-risk {
+  align-items: center !important;
+}
+
+.ref-global-risk .ref-pill {
+  margin-left: 0.3rem;
+}
+
+.ref-impact-bar {
+  height: 0.6rem;
+}
+
+.ref-impact-bar > span {
+  box-shadow: 0 0 6px color-mix(in srgb, currentColor 25%, transparent);
+}
+
+/* Pie. */
+
+.ref-foot-art {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 35%);
+  mask-image: linear-gradient(to right, transparent, black 35%);
+  opacity: 1;
+}
+
+.ref-solar {
+  fill: color-mix(in srgb, var(--c-blue) 55%, var(--c-bg)); stroke: color-mix(in srgb, var(--c-yellow) 50%, var(--c-text)); stroke-width: 0.5;
+}
+
+.ref-mountain {
+  fill: color-mix(in srgb, var(--c-text) 60%, var(--c-blue));
+}
+
+.ref-tent-rib {
+  fill: none; stroke: color-mix(in srgb, var(--c-blue) 40%, var(--c-text-secondary)); stroke-width: 0.8;
+}
+
+/* Ubicación. */
+
+.ref-thumb {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.ref-place[aria-pressed="true"] .ref-thumb {
+  filter: drop-shadow(0 0 6px var(--ref-teal));
+}
+
+/* La tira de la ruta en cinco columnas iguales: nada se monta sobre lo de al lado. */
+
+.ref-stats {
+  display: grid;
+  grid-template-columns: 0.9fr 1.3fr 0.9fr 1fr 1.1fr;
+  gap: 0.5rem;
+}
+
+.ref-stats dd {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+}
+
+.ref-stats dt {
+  white-space: nowrap;
+}
+
+.ref-stats {
+  grid-template-columns: 0.75fr 1.55fr 0.75fr 0.95fr 1fr;
+  gap: 0.35rem;
+}
+
+/* Las cifras nunca se recortan; solo la palabra de gravedad, que lleva el texto entero en `title`. */
+
+.ref-stats {
+  grid-template-columns: auto auto auto auto minmax(0, 1fr);
+  gap: 0.6rem;
+}
+
+.ref-stats > div:last-child dt {
+  overflow: hidden;
+}
+
+/* Cuarta pasada (2026-11-06): cuerpo de calor = contorno real de la silueta con el degradado (adorno);
+   los órganos, encima, con el color del nivel real de su dominio (dato). */
+
+.ref-body-figure .site,
+.ref-body-figure .body-silhouette-foot {
+  display: none;
+}
+
+.ref-body-figure .body-silhouette,
+.ref-body-figure .body-silhouette-figure {
+  --silhouette-height: 17.5rem;
+  width: 100%;
+  height: 17.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.ref-body-figure .body-silhouette .silhouette {
+  width: auto !important;
+  height: 100% !important;
+  max-width: 100%;
+}
+
+.ref-body-figure .silhouette .outline path {
+  fill: url(#ref-g-body);
+  fill-opacity: 0.8;
+  stroke: color-mix(in srgb, var(--c-cyan) 70%, var(--c-text));
+  stroke-width: 1.6;
+  filter:
+  drop-shadow(0 0 3px color-mix(in srgb, var(--c-cyan) 80%, transparent))
+  drop-shadow(0 0 10px color-mix(in srgb, var(--c-cyan) 45%, transparent));
+}
+
+.ref-body-figure .silhouette .zone {
+  stroke-width: 2.6;
+  paint-order: stroke;
+  filter: drop-shadow(0 0 1.5px var(--c-bg)) drop-shadow(0 0 1.5px var(--c-bg));
+}
+
+.ref-body-figure .silhouette .zone path,
+.ref-body-figure .silhouette .zone ellipse,
+.ref-body-figure .silhouette .zone circle {
+  fill: color-mix(in srgb, currentColor 30%, transparent);
+}
+
+.ref-body-figure .silhouette .zone .fine,
+.ref-body-figure .silhouette .zone .trace {
+  fill: none;
+}
+
+/* Astronauta ilustrado del avatar (adorno, 2026-11-06). */
+
+.ref-avatar {
+  width: 4.6rem;
+  height: 4.6rem;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--c-blue) 55%, var(--c-surface)), color-mix(in srgb, var(--c-blue) 15%, var(--c-bg)));
+}
+
+.ref-avatar .ref-astronaut {
+  width: 100%;
+  height: 100%;
+}
+
+/* Quinta pasada (2026-11-06): cuerpo de calor anatómico DETRÁS de la silueta real (adorno). */
+
+.ref-body-figure {
+  position: relative;
+}
+
+.ref-body-figure .body-silhouette {
+  position: relative;
+  z-index: 1;
+}
+
+.ref-body-figure .body-silhouette,
+.ref-body-figure .body-silhouette-figure {
+  --silhouette-height: 18rem;
+  height: 18rem;
+}
+
+.ref-body-figure .silhouette .outline path {
+  fill: none;
+  stroke-width: 1.8;
+}
+
+.ref-body-figure .silhouette .zone {
+  stroke-width: 1.8;
+}
+
+.ref-body-figure .silhouette .zone path,
+.ref-body-figure .silhouette .zone ellipse,
+.ref-body-figure .silhouette .zone circle {
+  fill: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* Astronauta con casco y visor cerrado, sin rostro (adorno, 2026-11-06). */
+
+.ref-avatar {
+  width: 5rem;
+  height: 5rem;
+  border: 2px solid color-mix(in srgb, var(--c-cyan) 70%, var(--c-blue));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--c-cyan) 40%, transparent);
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--c-blue) 45%, var(--c-surface)), color-mix(in srgb, var(--c-blue) 12%, var(--c-bg)) 75%);
+}
+
+.ref-s-suit-hi {
+  stop-color: var(--c-text);
+}
+
+.ref-s-suit-lo {
+  stop-color: color-mix(in srgb, var(--c-gray) 55%, var(--c-text));
+}
+
+.ref-s-ring-mid {
+  stop-color: color-mix(in srgb, var(--c-gray) 70%, var(--c-text));
+}
+
+.ref-s-ring-lo {
+  stop-color: color-mix(in srgb, var(--c-gray) 60%, var(--c-bg));
+}
+
+.ref-a-seam {
+  fill: none; stroke: color-mix(in srgb, var(--c-gray) 60%, var(--c-text)); stroke-width: 0.7;
+}
+
+.ref-a-patch {
+  fill: var(--c-blue); stroke: var(--c-text); stroke-width: 0.8;
+}
+
+.ref-a-patch-in {
+  fill: none; stroke: var(--c-text); stroke-width: 0.6;
+}
+
+.ref-a-flag {
+  fill: var(--c-text); stroke: color-mix(in srgb, var(--c-gray) 60%, var(--c-bg)); stroke-width: 0.4;
+}
+
+.ref-a-flag-band {
+  fill: var(--c-red);
+}
+
+/* Sexta pasada (2026-11-06): cuerpo de la foto (adorno) y, encima, solo los órganos con alerta
+   (decisión del usuario): azul, amarillo o rojo son niveles por encima del más bajo. */
+
+.ref-body-figure .silhouette .outline path {
+  stroke: none;
+  filter: none;
+}
+
+.ref-body-figure .silhouette .zone {
+  opacity: 0;
+}
+
+.ref-body-figure .silhouette .zone.c-blue,
+.ref-body-figure .silhouette .zone.c-yellow,
+.ref-body-figure .silhouette .zone.c-red {
+  opacity: 1;
+  stroke-width: 2.8;
+  filter: drop-shadow(0 0 2px var(--c-bg)) drop-shadow(0 0 6px currentColor);
+}
+
+.ref-body-figure .silhouette .zone.c-blue path,
+.ref-body-figure .silhouette .zone.c-yellow path,
+.ref-body-figure .silhouette .zone.c-red path {
+  fill: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.ref-s-visor-hi {
+  stop-color: color-mix(in srgb, var(--c-blue) 55%, var(--c-text));
+}
+
+.ref-s-visor {
+  stop-color: color-mix(in srgb, var(--c-blue) 30%, var(--c-bg));
+}
+
+.ref-s-visor-edge {
+  stop-color: color-mix(in srgb, var(--c-yellow) 55%, var(--c-red));
+}
+
+.ref-a-helmet {
+  stroke: color-mix(in srgb, var(--c-gray) 60%, var(--c-bg)); stroke-width: 0.6;
+}
+
+.ref-a-rim {
+  fill: color-mix(in srgb, var(--c-gray) 45%, var(--c-bg));
+}
+
+.ref-a-visor {
+  stroke: color-mix(in srgb, var(--c-yellow) 70%, var(--c-red)); stroke-width: 0.9;
+}
+
+.ref-a-cam {
+  fill: color-mix(in srgb, var(--c-gray) 50%, var(--c-bg));
+}
+
+.ref-a-lamp {
+  fill: color-mix(in srgb, var(--c-yellow) 60%, var(--c-text)); filter: drop-shadow(0 0 2px var(--c-yellow));
+}
+
+.ref-a-reflect-earth {
+  opacity: 0.75;
+}
+
+.ref-a-shine {
+  fill: none; stroke: color-mix(in srgb, var(--c-text) 80%, transparent); stroke-width: 1.8; stroke-linecap: round;
+}
+
+.ref-a-shine-soft {
+  fill: none; stroke: color-mix(in srgb, var(--c-text) 45%, transparent); stroke-width: 1.2; stroke-linecap: round;
+}
+
+.ref-a-glint {
+  fill: color-mix(in srgb, var(--c-text) 85%, transparent);
+}
+
+/* Retrato como el de la maqueta, con casco (adorno, 2026-11-06). */
+
+.ref-avatar {
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--c-blue) 22%, var(--c-bg)), var(--c-bg) 80%);
+}
+
+.ref-a-star {
+  fill: var(--c-text); opacity: 0.8;
+}
+
+.ref-a-atmo {
+  fill: none; stroke: color-mix(in srgb, var(--c-cyan) 60%, var(--c-blue)); stroke-width: 3; filter: blur(1.5px);
+}
+
+.ref-s-ringb-hi {
+  stop-color: color-mix(in srgb, var(--c-blue) 55%, var(--c-bg));
+}
+
+.ref-s-ringb-lo {
+  stop-color: color-mix(in srgb, var(--c-blue) 25%, var(--c-bg));
+}
+
+.ref-a-ring-blue {
+  stroke: var(--c-text); stroke-width: 1.2;
+}
+
+.ref-a-reflect-atmo {
+  fill: color-mix(in srgb, var(--c-cyan) 50%, transparent); filter: blur(1.5px);
+}
+
+.ref-a-reflect-earth {
+  opacity: 0.85;
+}
+
+.ref-crew-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.ref-crew-id {
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+/* Retrato: casco que llena el círculo, brillo del casco y pestillos del anillo (adorno, 2026-11-06). */
+
+.ref-a-helmet-hi {
+  fill: var(--c-text); opacity: 0.55; filter: blur(1.6px);
+}
+
+.ref-a-latch {
+  fill: var(--c-text); opacity: 0.9;
+}
+
+.ref-avatar {
+  width: 5.4rem; height: 5.4rem;
+}
+
+.ref-a-atmo {
+  stroke-width: 3.5;
+}
+
+/*
+ * Calco del cuerpo (petición del usuario, 2026-11-06), generado por `referenceBodyMosaic.py`: a 100 % el lienzo
+ * píxel a píxel; con zoom o en HiDPI el vectorial (capas de color apiladas), nítido a cualquier zoom (petición
+ * del usuario, 2026-11-07: «como svg de resolución»). Misma caja para los dos; los colores van en el TSX.
+ */
+
+.ref-body-canvas,
+.ref-body-vector {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 152px;
+  height: 310px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ref-body-vector {
+  display: none;
+}
+
+@media (min-resolution: 1.05dppx) {
+  .ref-body-canvas {
+    display: none;
+  }
+
+  .ref-body-vector {
+    display: block;
+  }
+}
+
+.ref-body-figure .body-silhouette,
+.ref-body-figure .body-silhouette-figure {
+  --silhouette-height: 19.2rem;
+  height: 19.2rem;
+}
+
+.ref-body-figure .body-silhouette-figure {
+  margin-top: -0.95rem;
+}
+
+/* La edad de la última lectura (A3, 2026-11-07): en su propia línea bajo el valor, sin ensanchar la celda. */
+
+.ref-vital-age {
+  display: block;
+  font-size: 0.62rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/*
+ * Los accesos del tablero son mandos de la consola (`Command`, 2026-11-07, el tablero como paneles):
+ * el mismo aspecto que tenían los enlaces de la maqueta. Solo se enseñan dentro de la consola.
+ */
+
+.ref-quick-links .command {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--c-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ref-quick-links .command > span {
+  flex: 1;
+}
+
+/*
+ * La raya entre lo principal y lo secundario de «Inicio» (`HomeDivider`, 2026-11-14): de RIDGE para
+ * arriba, lo principal; debajo, rutas y pie, plegables. Adorno de la concha (§2.5): las dos rayas
+ * se encienden hacia el centro con el verde azulado y el brillo de los marcos, y el mando es la caja
+ * de los accesos de la maqueta (filete `--ref-edge`, radio de 8 px), en píldora y con fondo de
+ * tarjeta para que la raya no lo atraviese. La punta mira abajo si lo secundario está plegado y
+ * arriba si está a la vista; el texto queda en `--c-text`, como el resto de mandos.
+ */
+.ref-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  margin: 0.05rem 0;
+}
+
+.ref-divider-line {
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, transparent, var(--ref-edge) 70%, var(--ref-teal));
+  box-shadow: 0 0 6px var(--ref-glow);
+}
+
+.ref-divider-line:last-child {
+  background: linear-gradient(270deg, transparent, var(--ref-edge) 70%, var(--ref-teal));
+}
+
+.ref-divider .command.ref-divider-go {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: none;
+  max-width: 70%;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid var(--ref-edge);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--ref-card), var(--ref-navy));
+  box-shadow: 0 0 10px var(--ref-glow) inset, 0 0 8px var(--ref-glow);
+  color: var(--c-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ref-divider .command.ref-divider-go:hover {
+  background: color-mix(in srgb, var(--ref-teal) 14%, var(--ref-card));
+}
+
+/* F.5.4 c: al pulsar, el filete pasa al color del texto, como el resto de mandos. */
+.ref-divider .command.ref-divider-go:active {
+  border-color: var(--c-text);
+}
+
+.ref-divider .command.ref-divider-go:focus-visible {
+  outline: 2px solid var(--c-text);
+  outline-offset: 2px;
+}
+
+.ref-divider-go .pictogram {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--ref-teal);
+}
+
+.ref-divider-word {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ref-divider-what {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ref-divider-go .ref-chevron {
+  color: var(--ref-teal);
+  transform: rotate(90deg);
+  transition: transform 0.15s ease;
+}
+
+.ref-divider[data-open="true"] .ref-divider-go .ref-chevron {
+  transform: rotate(-90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ref-divider-go .ref-chevron {
+    transition: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .ref-divider-what {
+    display: none;
+  }
+}
+
+/*
+ * Lo principal llena la ventana con lo secundario plegado (2026-11-14). `HomeDivider` mide el alto
+ * libre en `--home-fill`; aquí la fila del marco global (misión, peligros, vitales, tendencia, cuerpo,
+ * tripulante y riesgo) se queda con todo lo que sobra, y dentro crecen la tendencia, las líneas de
+ * los vitales, la bitácora, las próximas acciones y el cuerpo. Desplegado, todo vuelve a su tamaño.
+ * Solo con la rejilla ancha (> 1400 px): por debajo las columnas se apilan en otras filas y la
+ * página se desplaza igualmente. Nada cambia de color ni de texto: solo de tamaño.
+ */
+@media (min-width: 1401px) {
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) {
+    min-height: var(--home-fill, auto);
+    /* Ubicación, marco global, RIDGE, la raya y el modo esencial a lo ancho. */
+    grid-template-rows: auto 1fr auto auto auto;
+  }
+
+  /* Los vitales: la lista ocupa la tarjeta y cada línea, con su trazo, se reparte el alto. */
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals > ul {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-vitals li {
+    align-items: center;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-spark {
+    height: clamp(1.2rem, 4.5vh, 2.6rem);
+  }
+
+  /* El cuerpo: el alto de su tarjeta, sin pasarse de su ancho (152 × 307 de la figura). El
+     contenedor no empuja la fila (`size`): la fila ya crece por `1fr`, y la figura se ajusta a ella.
+     Sigue el lienzo de siempre: la columna limita el ancho y apenas se amplía, y el vectorial
+     cambiaba los colores del calco (visto el 2026-11-14). */
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure {
+    container-type: size;
+    --silhouette-height: min(94cqh, 190cqw);
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure .body-silhouette,
+  :where(.app[data-look="reference"]) .section-body.ref-home:has(.ref-divider[data-open="false"]) .ref-body-figure .body-silhouette-figure {
+    --silhouette-height: min(94cqh, 190cqw);
+  }
+}
+
+.ref-plus.command {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--c-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.ref-essential-go {
+  margin-left: auto;
+  flex: none;
+}
+
+/*
+ * «Inicio» dentro de la consola (2026-11-07): el cuerpo de la sección lleva esta clase (`ConsoleSection.className`)
+ * y reproduce la rejilla de la maqueta con sus variables, sin el fondo ni el alto de la página. Un panel
+ * tapado por privacidad (`.privacy-cover` deja de ser `display: contents`) ocupa la fila entera.
+ */
+
+.section-body.ref-home {
+  --ref-navy: color-mix(in srgb, var(--c-blue) 10%, var(--c-bg));
+  --ref-card: color-mix(in srgb, var(--c-blue) 13%, var(--c-surface));
+  --ref-edge: color-mix(in srgb, var(--c-cyan) 45%, color-mix(in srgb, var(--c-blue) 40%, var(--c-line)));
+  --ref-glow: color-mix(in srgb, var(--c-cyan) 22%, transparent);
+  --ref-teal: color-mix(in srgb, var(--c-cyan) 45%, var(--c-blue));
+  --acc-radiation: color-mix(in srgb, var(--c-magenta) 55%, var(--c-blue));
+  --acc-isolation: var(--c-blue);
+  --acc-distance: color-mix(in srgb, var(--c-cyan) 60%, var(--c-green));
+  --acc-gravity: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red));
+  --acc-environment: var(--c-green);
+  --acc: var(--ref-teal);
+  --lvl: var(--c-gray);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0.45rem;
+  align-items: stretch;
+  align-content: start;
+  color: var(--c-text);
+  font-size: 0.84rem;
+}
+
+.section-body.ref-home .privacy-cover {
+  grid-column: 1 / -1;
+}
+
+/* Cerrada, «Inicio» se esconde como cualquier sección: su `display: grid` no debe pisar al `[hidden]`
+   de `styles.css` (misma especificidad y esta hoja carga después; visto el 2026-11-07 al capturar
+   las pestañas: el tablero seguía a la vista debajo de la sección abierta). */
+.section-body.ref-home[hidden] {
+  display: none;
+}
+
+/*
+ * «Inicio» en una pantalla (R4-5, 2026-11-08). A 1672×941 la fila de abajo (divulgación, extensión,
+ * modo esencial) quedaba cortada: el tablero acababa en 987 px. Se aprieta lo que era hueco o dibujo
+ * (miniaturas, silueta, anillo, retrato, separaciones, interlineado) sin quitar ni plegar nada, sin
+ * recortar más texto del que ya se recortaba y sin cambiar ningún tamaño de letra ni de marca. Todo
+ * va bajo `.section-body.ref-home` de la concha nueva: `Ring`, `Sparkline` y el calco del cuerpo
+ * también se pintan en otras secciones, y `#clasica` no cambia.
+ */
+
+/* Ubicación: miniaturas algo menores; la fila pasa de 93 a ~85 px. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-place .ref-thumb {
+  width: 2.3rem;
+  height: 2.3rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home :is(.ref-places, .ref-subplace) .ref-h {
+  margin-bottom: 0.2rem;
+}
+
+/* Marco global: el anillo (no su cifra) y la silueta, menores; vitales y peligros, más juntos. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-ring {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-ring-caption {
+  line-height: 1.15;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission .ref-hero {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-hazard-bars li {
+  padding: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-chip-letter {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-vitals li {
+  padding: 0;
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-spark {
+  height: 1.2rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-trend-svg {
+  min-height: 4.2rem;
+  max-height: 5.4rem;
+}
+
+/* El cuerpo: la silueta real baja de 19,2 a 16 rem y el calco de adorno con ella, en la misma
+   proporción que tenía (310 px para 307: `shell/body.css` usa la misma cuenta en «Cuerpo»), medida
+   en `--silhouette-height` para que siga encima a cualquier tamaño de letra. Sigue el lienzo a 1x y
+   el vectorial en HiDPI: reducido, el lienzo se ve como antes y el vectorial se tiñe de verde. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-body-figure {
+  --silhouette-height: 16rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-body-figure .body-silhouette,
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-body-figure .body-silhouette-figure {
+  --silhouette-height: 16rem;
+  height: var(--silhouette-height);
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-body-figure .body-silhouette-figure {
+  margin-top: calc(var(--silhouette-height) * -0.05);
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-body-figure > :is(.ref-body-canvas, .ref-body-vector) {
+  height: calc(var(--silhouette-height) * 310 / 307);
+  width: calc(var(--silhouette-height) * 152 / 307);
+}
+
+/* Tripulante: retrato menor y la ficha más prieta. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-avatar {
+  width: 4.6rem;
+  height: 4.6rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-kv {
+  gap: 0 0.5rem;
+  line-height: 1.3;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-crew-id {
+  line-height: 1.05;
+}
+
+/* Peligros por letra: la cuenta al lado de los segmentos, no debajo (una línea menos por tarjeta). */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-letter-row li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+  "letter letter"
+  "segments count";
+  align-items: center;
+  justify-items: center;
+  gap: 0.15rem 0.3rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-letter-row .ref-tile-letter {
+  grid-area: letter;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-letter-row .ref-segments {
+  grid-area: segments;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-letter-row li > .num {
+  grid-area: count;
+}
+
+/* Riesgo: las cajas de los niveles, algo menores; la marca de dentro conserva su tamaño. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now .ref-hero-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-levels li {
+  margin-top: 0.12rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-box {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* Rutas: la lista de perfiles, más junta. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list li + li {
+  margin-top: 0.06rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list button {
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route .ref-h3 {
+  margin-bottom: 0.15rem;
+}
+
+/* Acceso rápido a todo el ancho: los dos accesos (de alto táctil, 44 px cada uno) suben a la altura
+   del título del marco, como en la maqueta, y las tarjetas de peligro ya no se estiran a su alto.
+   `width > 1400px` y no `min-width: 1401px`: con escala de pantalla el ancho puede tener decimales. */
+@media (width > 1400px) {
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.25fr);
+    grid-template-rows: auto 1fr;
+    gap: 0 0.45rem;
+  }
+
+  /* El título arriba; el aviso de carga o de fallo, en la fila de las tarjetas (no llegan a la vez). */
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick > * {
+    grid-column: 1 / 6;
+    grid-row: 2;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick > .ref-frame-h {
+    grid-row: 1;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick > .ref-quick-row {
+    display: contents;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick .ref-hazard {
+    grid-column: auto;
+    grid-row: 2;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-quick .ref-quick-links {
+    grid-column: 6;
+    grid-row: 1 / span 2;
+  }
+}
+
+/*
+ * Acabado fino de «Inicio» (R5-2, 2026-11-09), frente a la maqueta: nada que sea dato o rótulo de
+ * dato acaba en puntos suspensivos (si no cabe, dos líneas), la letra no baja de 0,875 rem fuera de
+ * los SVG, la lista de rutas son píldoras holgadas con su icono, la tira de la ruta pasa a otra línea
+ * en vez de cortar, el estado de la misión llena su tarjeta, el acceso rápido usa el mosaico común
+ * `tile-acc` y «Activar» del modo esencial sube junto a su título, lejos de la esquina inferior
+ * derecha (donde flota «Hablar con EMMA»). Sigue cabiendo en una pantalla a 1672×941.
+ */
+
+:where(.app[data-look="reference"]) .section-body.ref-home {
+  font-size: 0.875rem;
+}
+
+/* Suelo de letra: todo lo que estaba entre 0,62 y 0,84 rem sube a 0,875. */
+:where(.app[data-look="reference"]) .section-body.ref-home :is(
+  .ref-updated,
+  .ref-clamp,
+  .ref-ring-caption,
+  .ref-hazard-bars li,
+  .ref-chip-letter,
+  .ref-vital-value small,
+  .ref-vital-age,
+  .ref-kv,
+  .ref-notes li,
+  .ref-next li,
+  .ref-level-now small,
+  .ref-hazard-name,
+  .ref-hazard-domains,
+  .ref-route-list button,
+  .ref-stats dt,
+  .ref-stats dd,
+  .ref-impact li,
+  .ref-aspects li,
+  .ref-foot-text p,
+  .ref-foot-text > span
+) {
+  font-size: 0.875rem;
+}
+
+/* Rótulos de dato (peligros RIDGE y nombres de las proyecciones): en dos líneas si no caben, en vez
+   de cortarse en una con puntos suspensivos; el nombre entero sigue en el `title`. */
+:where(.app[data-look="reference"]) .section-body.ref-home :is(.ref-hazard-bars, .ref-impact) .ref-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+/* Los nombres de las ubicaciones, que a menos de 1400 px bajaban a 0,85 rem. */
+@media (max-width: 1400px) {
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-place > span {
+    font-size: 0.875rem;
+  }
+}
+
+/* El estado de la misión llena su tarjeta (había un hueco bajo el resumen): la caja del nivel crece,
+   como el «Estable» de la maqueta, y el resumen del backend se lee entero hasta en cuatro líneas. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission .ref-hero {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission .ref-clamp {
+  -webkit-line-clamp: 3;
+}
+
+/* Peligros RIDGE (global): el anillo cede ancho a los rótulos y los segmentos son más cortos; un
+   rótulo largo («Aislamiento y confinamiento») pasa a dos líneas. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-ridge-body {
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-hazard-bars li {
+  grid-template-columns: 1.25rem minmax(0, 1fr) 3rem auto;
+  gap: 0.35rem;
+  padding: 0.05rem 0;
+  line-height: 1.12;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-chip-letter {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Signos vitales: la cifra con su unidad, ya a 0,875, cabe en su columna. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-vitals li {
+  grid-template-columns: 4rem 5.2rem 1fr;
+}
+
+/* Tendencia: el SVG copia su caja en píxeles (`TrendSvg`), así que las cifras del eje van a 12 px de
+   verdad; la curva toma el alto que deja la tarjeta (base 0: no empuja la fila). */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-trend-svg {
+  flex: 1 1 0;
+  min-height: 5rem;
+  max-height: none;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-axis {
+  font-size: 12px;
+}
+
+/* Riesgo: cajas algo más bajas para que «Próximas acciones» lea cada acción en dos líneas. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now {
+  margin-bottom: 0.2rem;
+  padding: 0.2rem 0.45rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now strong {
+  font-size: 1.1rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-levels li {
+  margin-top: 0.1rem;
+  padding: 0.04rem 0.4rem 0.04rem 0.2rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-box {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-next .ref-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-next li {
+  padding: 0.04rem 0;
+  line-height: 1.15;
+}
+
+/* Acceso rápido: el mosaico común `tile-acc` (velo del acento ≤ 30 %, texto a ≥ 6:1, liso con alto
+   contraste) sustituye al velo propio de 50 %: la regla `.ref-hazard` de arriba ya no se aplica a
+   un mosaico `tile-acc` de la concha nueva. */
+
+/* Rutas: más ancho para la tira y las proyecciones (solo a cuatro columnas; más estrecho, las
+   consultas de arriba las apilan). */
+@media (width > 1400px) {
+  :where(.app[data-look="reference"]) .section-body.ref-home .ref-route-grid {
+    grid-template-columns: 0.85fr 1.75fr 1.45fr 1.2fr;
+  }
+}
+
+/* La lista de rutas: píldoras holgadas con icono, repartidas en el alto de la tarjeta. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list ul {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.2rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list li + li {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list button {
+  gap: 0.5rem;
+  min-height: 1.5rem;
+  padding: 0.08rem 0.6rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--c-raised) 70%, transparent);
+  line-height: 1.2;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list button .pictogram {
+  color: var(--ref-teal);
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-list button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--ref-teal) 20%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* La tira Día · Distancia · Retardo · Dosis · Gravedad: lo que no cabe pasa a otra línea, nada se corta. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-mid {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-stats dd,
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-stats > div:last-child dt {
+  overflow: visible;
+}
+
+/* La gravedad es una frase del backend: ocupa lo que queda y, si es larga, parte en líneas. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-stats > div:last-child {
+  flex: 1 1 6rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-stats > div:last-child dd {
+  white-space: normal;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-route-art {
+  flex: 1 1 0;
+  min-height: 2.6rem;
+  max-height: 4.2rem;
+}
+
+/* Proyecciones: el nombre del indicador, en dos líneas si hace falta; la barra, más corta. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-impact li {
+  grid-template-columns: minmax(0, 1fr) 3.5rem auto;
+  padding: 0;
+  line-height: 1.05;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-impact li + li {
+  margin-top: 0.12rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-aspects li {
+  line-height: 1.2;
+}
+
+/* Pie: los textos enteros (eran dos líneas recortadas a 0,76 rem). */
+:where(.app[data-look="reference"]) .section-body.ref-home :is(.ref-foot-text p, .ref-foot-text > span) {
+  display: block;
+  max-width: 66%;
+  line-height: 1.2;
+}
+
+/* Modo esencial: «Activar» entre la campana y el texto, a la izquierda; lejos de la esquina inferior
+   derecha, donde flota «Hablar con EMMA», y sin una fila más de alto (su alto táctil cabe junto al
+   título y las dos líneas del texto). */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-areas:
+  "alarm go head"
+  "alarm go text";
+  align-items: center;
+  gap: 0.1rem 0.6rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency .ref-foot-text {
+  display: contents;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency .ref-alarm {
+  grid-area: alarm;
+  justify-self: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.9rem;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency .ref-foot-text > strong {
+  grid-area: head;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency .ref-foot-text > span {
+  grid-area: text;
+  max-width: none;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-essential-go {
+  grid-area: go;
+  justify-self: start;
+  margin-left: 0;
+}
+
+/* Modo esencial a lo ancho, con lo secundario plegado (2026-11-14): abajo del todo, en una sola
+   línea —campana, «Activar», título y texto—; «Activar» sigue a la izquierda, lejos de «Hablar con
+   EMMA». Mismos colores que en el pie: solo cambia el reparto. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency.ref-emergency-wide {
+  grid-column: 1 / -1;
+  grid-template-columns: auto auto auto minmax(0, 1fr);
+  grid-template-areas: "alarm go head text";
+  gap: 0 0.8rem;
+  min-height: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency.ref-emergency-wide .ref-foot-text > span {
+  display: block;
+  -webkit-line-clamp: unset;
+}
+
+/* Accesos de «Inicio» a las secciones (lote de arreglos, 2026-11-09): un botón transparente tendido
+   encima de la tarjeta o de la fila (`GoTo` en `HomeBoard.tsx`), para que la tarjeta no cambie de
+   aspecto. Fuera de la rejilla y del flujo (absoluto), sin el alto táctil mínimo de los mandos: se
+   ciñe a su caja y no tapa la de al lado. Al pasar por encima, solo un filete fino del color del
+   texto en el borde, sin velo: debajo hay superficies teñidas por el nivel real (`--lvl`) y un velo
+   les cambiaría el color y el contraste del texto (revisión de la unidad 2). Con el foco, el marco
+   verde de siempre (F.5-2), hacia dentro para que no lo recorte la tarjeta. Todo de la paleta. */
+.ref-linked {
+  position: relative;
+}
+
+.ref-go {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ref-go:hover {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c-text) 70%, transparent);
+}
+
+.ref-go:focus-visible {
+  outline: 2px solid var(--c-green);
+  outline-offset: -2px;
+}
+
+.app[data-low-vision="on"] .ref-go:focus-visible,
+.app[data-high-contrast="on"] .ref-go:focus-visible {
+  outline-width: 4px;
+  outline-offset: -4px;
+}
+
+/* La palabra del nivel cabe en su caja (visto por el usuario, 2026-11-12: con la letra grande de
+   «Pantalla», «Precaución» se salía del marco en «Estado de la misión» y en «Estado de riesgo»).
+   La caja mide su propio ancho (`container-type`) y la palabra baja de tamaño con él, hasta su
+   tamaño de siempre como máximo; nunca se corta ni se parte. */
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission .ref-hero,
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now > span:last-child {
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-mission .ref-hero-word {
+  font-size: clamp(0.8rem, calc(17cqi - 0.5rem), 1.4rem);
+  white-space: nowrap;
+}
+
+:where(.app[data-look="reference"]) .section-body.ref-home .ref-level-now strong {
+  font-size: clamp(0.75rem, calc(15cqi - 0.45rem), 1.1rem);
+  white-space: nowrap;
+}

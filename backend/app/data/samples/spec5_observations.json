@@ -1,0 +1,37 @@
+[
+  {
+    "timestamp": "2026-03-14T08:00:00Z",
+    "subject_id": "crew-01",
+    "variable_id": "heart-rate",
+    "value": 61.0,
+    "unit": "/min",
+    "source": "demo-file",
+    "quality": 0.94,
+    "evidence_context": "simulated",
+    "observation_type": "measured",
+    "model_version": null
+  },
+  {
+    "timestamp": "2026-03-14T08:00:00Z",
+    "subject_id": "crew-01",
+    "variable_id": "hrv-rmssd",
+    "value": 42.1,
+    "source": "demo-file",
+    "quality": 0.94,
+    "evidence_context": "simulated",
+    "observation_type": "measured",
+    "model_version": null
+  },
+  {
+    "timestamp": "2026-03-13T07:30:00Z",
+    "subject_id": "crew-01",
+    "variable_id": "vitamin-d-25oh",
+    "value": 31.4,
+    "unit": "ng/mL",
+    "source": "demo-file",
+    "quality": 1.0,
+    "evidence_context": "simulated",
+    "observation_type": "measured",
+    "model_version": null
+  }
+]

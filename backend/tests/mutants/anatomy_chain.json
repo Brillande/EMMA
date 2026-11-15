@@ -1,0 +1,79 @@
+{
+ "target": "app/anatomy.py",
+ "test": [
+  "tests/test_anatomy.py::test_every_domain_carries_the_risk_step_of_the_risk_entity",
+  "tests/test_anatomy.py::test_an_alerting_region_has_the_same_context_as_its_alert",
+  "tests/test_anatomy.py::test_without_the_builder_there_is_no_context_rather_than_an_empty_one",
+  "tests/test_anatomy.py::test_moments_are_the_phase_changes_the_landing_and_each_postflight_day",
+  "tests/test_anatomy.py::test_a_replayed_flight_lands_when_it_landed_and_skips_the_configured_phases",
+  "tests/test_anatomy.py::test_a_moment_needs_readings_before_and_after_it",
+  "tests/test_anatomy.py::test_the_state_at_a_moment_is_recomputed_and_signs_nothing"
+ ],
+ "mutations": [
+  {
+   "label": "el riesgo de la region deja de ser el de /risks",
+   "old": "                \"risk\": risk_entity.summary(domain),",
+   "new": "                \"risk\": {**risk_entity.summary(domain), \"hrp_risk\": None},"
+  },
+  {
+   "label": "el contexto de una region con alerta no se ancla en su inicio",
+   "old": "    return min(onsets, default=None), bool(alerted)",
+   "new": "    return None, bool(alerted)"
+  },
+  {
+   "label": "toda region se da por alertada",
+   "old": "    return min(onsets, default=None), bool(alerted)",
+   "new": "    return min(onsets, default=None), True"
+  },
+  {
+   "label": "una region con alerta se da por sin alerta",
+   "old": "        and risk.level is not RiskLevel.NOMINAL",
+   "new": "        and False"
+  },
+  {
+   "label": "sin constructor se pide un contexto igualmente",
+   "old": "        if context_around is None:",
+   "new": "        if False:"
+  },
+  {
+   "label": "se ofrece un momento sin lecturas antes",
+   "old": "            if first <= instant < last",
+   "new": "            if instant < last"
+  },
+  {
+   "label": "el momento de ahora se ofrece como pasado",
+   "old": "            if first <= instant < last",
+   "new": "            if first <= instant <= last"
+  },
+  {
+   "label": "el estado al acabar una fase lleva las lecturas de la siguiente",
+   "old": "_BEFORE = dt.timedelta(seconds=1)",
+   "new": "_BEFORE = dt.timedelta(0)"
+  },
+  {
+   "label": "el R+ no es el de la recuperacion",
+   "old": "                day = days_after_landing(item.effective, landing)",
+   "new": "                day = (item.effective - landing).days"
+  },
+  {
+   "label": "un dia posvuelo no toma su ultima lectura",
+   "old": "                postflight[day] = max(postflight.get(day, item.effective), item.effective)",
+   "new": "                postflight[day] = min(postflight.get(day, item.effective), item.effective)"
+  },
+  {
+   "label": "un cambio de fase despues del regreso se ofrece",
+   "old": "            if before is not after and boundary < landing:",
+   "new": "            if before is not after:"
+  },
+  {
+   "label": "un estado pasado no dice que es un recalculo sin asiento",
+   "old": "        \"label\": MOMENT_LABEL,",
+   "new": "        \"label\": alert_history.LABEL,"
+  },
+  {
+   "label": "un estado pasado no dice que su contexto externo es el de hoy",
+   "old": "            alert_history.RECOMPUTED_BASIS, MOMENT_EXTERNAL_BASIS, alert_history.NOT_STORED,",
+   "new": "            alert_history.RECOMPUTED_BASIS, alert_history.NOT_STORED,"
+  }
+ ]
+}

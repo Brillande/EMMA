@@ -1,0 +1,300 @@
+1
+00:00:00,000 --> 00:00:05,348
+On November 14, 2026, Mars is
+1.324 astronomical units away.
+
+2
+00:00:05,388 --> 00:00:10,270
+A question to the flight surgeon
+takes eleven minutes to arrive
+
+3
+00:00:10,310 --> 00:00:14,882
+and eleven more to come back.
+There's no live consultation.
+
+4
+00:00:14,922 --> 00:00:19,960
+Whatever the crew needs to know,
+they have to know on board.
+
+5
+00:00:20,000 --> 00:00:24,064
+EMMA gathers readings from a
+wearable, a vigilance test,
+
+6
+00:00:24,104 --> 00:00:27,902
+a diary, an ultrasound
+or a scanned report.
+
+7
+00:00:27,942 --> 00:00:32,340
+Each reading goes into a standard
+clinical format and gets signed.
+
+8
+00:00:32,380 --> 00:00:35,712
+It's compared with that
+person's own baseline,
+
+9
+00:00:35,752 --> 00:00:38,017
+not just with a population range.
+
+10
+00:00:38,057 --> 00:00:42,721
+Every part of the body can be tapped:
+what measures it, how it's doing
+
+11
+00:00:42,761 --> 00:00:44,960
+and what evidence lies behind it.
+
+12
+00:00:45,000 --> 00:00:47,515
+The console is a tablet with tabs.
+
+13
+00:00:47,555 --> 00:00:52,004
+First come the five spaceflight
+hazards NASA defines.
+
+14
+00:00:52,044 --> 00:00:54,171
+The setting changes what matters:
+
+15
+00:00:54,211 --> 00:00:57,435
+low orbit is not the Moon or Mars.
+
+16
+00:00:57,475 --> 00:01:00,054
+In microgravity there is no up or down.
+
+17
+00:01:00,094 --> 00:01:04,414
+Following the gyroscope, or
+the viewer's face as a demo,
+
+18
+00:01:04,454 --> 00:01:06,582
+an arrow points to the real up.
+
+19
+00:01:06,622 --> 00:01:10,104
+There's large text, high
+contrast and a privacy mode.
+
+20
+00:01:10,144 --> 00:01:13,174
+The console works with a screen reader.
+
+21
+00:01:13,214 --> 00:01:17,212
+And if someone can't look, Escape
+three times or three fingers
+
+22
+00:01:17,252 --> 00:01:19,960
+turn on the voice and read out the status.
+
+23
+00:01:20,000 --> 00:01:25,969
+And you can talk to it. Just say
+"EMMA", without touching the screen:
+
+24
+00:01:26,009 --> 00:01:27,999
+"EMMA, how am I doing?"
+
+25
+00:01:28,039 --> 00:01:34,441
+The wake word, the transcription and
+the language model run on the device,
+
+26
+00:01:34,481 --> 00:01:39,931
+offline. Whatever the model
+writes is labelled as unvalidated.
+
+27
+00:01:39,971 --> 00:01:44,297
+It can log a diary entry
+or acknowledge an alert,
+
+28
+00:01:44,337 --> 00:01:49,960
+but it signs nothing until the
+person says "confirmo", I confirm.
+
+29
+00:01:50,000 --> 00:01:54,675
+A solar particle event arrives,
+and the spacecraft is offline.
+
+30
+00:01:54,715 --> 00:01:59,692
+The onboard dosimeter is enough:
+while the dose is over its limit,
+
+31
+00:01:59,732 --> 00:02:04,407
+EMMA shortens the measurements
+that matter most, and says why.
+
+32
+00:02:04,447 --> 00:02:10,329
+When something changes, it explains what
+changed, since when and against what,
+
+33
+00:02:10,369 --> 00:02:14,365
+what is worth checking and
+what evidence supports it.
+
+34
+00:02:14,405 --> 00:02:19,985
+It recommends; it doesn't diagnose
+or prescribe. The crew decides.
+
+35
+00:02:20,025 --> 00:02:24,700
+The demo also shows the way back:
+the dose falls, the routines
+
+36
+00:02:24,740 --> 00:02:29,491
+return to their pace and,
+days later, no alert remains.
+
+37
+00:02:29,531 --> 00:02:34,960
+On the ground they see it later, with
+the delay, and the screen says so.
+
+38
+00:02:35,000 --> 00:02:41,103
+On a spacecraft everything is
+scarce: power, time, hands.
+
+39
+00:02:41,143 --> 00:02:48,102
+The crew can declare a reduced
+or minimal mode, signed,
+
+40
+00:02:48,142 --> 00:02:54,031
+and EMMA stops asking for
+what is costliest to measure.
+
+41
+00:02:54,071 --> 00:02:59,960
+What never switches off is
+the analysis and the alerts.
+
+42
+00:03:00,000 --> 00:03:05,510
+What leaves the spacecraft?
+One view says it, item by item:
+
+43
+00:03:05,550 --> 00:03:12,647
+what the ground sees, what stays on
+board and what never leaves the console.
+
+44
+00:03:12,687 --> 00:03:17,729
+And where the code doesn't
+enforce it, it says so too.
+
+45
+00:03:17,769 --> 00:03:24,960
+Every data point goes into a record that
+can't be altered without it showing.
+
+46
+00:03:25,000 --> 00:03:28,756
+We tested it on real human physiology:
+
+47
+00:03:28,796 --> 00:03:33,708
+of 22 healthy people,
+21 get no alert at all.
+
+48
+00:03:33,748 --> 00:03:38,852
+On that same physiology,
+with injected deterioration,
+
+49
+00:03:38,892 --> 00:03:43,419
+it detects 95% of sustained tachycardias.
+
+50
+00:03:43,459 --> 00:03:50,490
+It misses slow drifts, and with
+weeks of data it alerts too often.
+
+51
+00:03:50,530 --> 00:03:54,960
+That's on Earth, not in
+flight, and we say so.
+
+52
+00:03:55,000 --> 00:04:00,831
+In 1970, Ernst Stuhlinger
+answered a nun who asked
+
+53
+00:04:00,871 --> 00:04:06,514
+why spend on going to Mars while
+children were going hungry:
+
+54
+00:04:06,554 --> 00:04:11,351
+the extreme challenges
+of space force solutions
+
+55
+00:04:11,391 --> 00:04:14,401
+that later come back to Earth.
+
+56
+00:04:14,441 --> 00:04:21,495
+What works 22 minutes from Earth
+works wherever help can't reach:
+
+57
+00:04:21,535 --> 00:04:27,178
+a mountain hut, a village
+cut off by a flood.
+
+58
+00:04:27,218 --> 00:04:34,178
+It isn't the same medicine: it's the
+same architecture, offline and local.
+
+59
+00:04:34,218 --> 00:04:41,272
+Taking it there, and into schools, is
+product vision: it isn't built today.
+
+60
+00:04:41,312 --> 00:04:45,920
+EMMA works without internet
+and it's open source.
+
+61
+00:04:45,960 --> 00:04:51,697
+Developed in accordance with
+the IEC 62304 standard, Class B;
+
+62
+00:04:51,737 --> 00:04:54,841
+it claims no certification.
+
+63
+00:04:54,881 --> 00:04:59,960
+EMMA: decision support
+when Earth is far away.

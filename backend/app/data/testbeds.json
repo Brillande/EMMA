@@ -1,0 +1,2192 @@
+{
+  "_nota": "Bancos de prueba y las dos validaciones (base de conocimiento §3 y §3.1; docs/contexto/bancos-de-prueba.md). Cada frase de `reproduces` es literal de la página citada por su ficha del registro, releída el día que dice el `read_on` de cada banco (los siete primeros el 2026-10-21, la de MMEA también el 2026-10-14; NEEMO, ARGOS y los vuelos parabólicos el 2026-10-22; el Kraken, el NBL y las cámaras de altitud el 2026-10-23; Loma Linda el 2026-10-31). Las columnas `duration`, `participants`, `data`, `providers` y, desde la decimonovena ronda (U4, 2026-10-31), `parameters`, `equipment`, `investigators` y `experiments` (las de la conversación de ideación) llevan su propio `read_on`: frase literal donde la fuente la da, y `not_found` con dónde se buscó donde no. La relectura del 2026-10-31 pasó por las fichas de misión de NASA y por las páginas que NASA enlaza como la del banco o la del operador (la ficha de :envihab, la página «Antarctic Stations» del enlace «NSF», la cartera de patentes para ARGOS). `ridge` es la fila del banco en la matriz banco × peligro RIDGE (decimosexta ronda, 2026-10-23; la de la Antártida y la de la ISS, rehechas el 2026-10-31): deducción de EMMA celda a celda, con su motivo, salvo donde la ficha de NASA del banco nombra el peligro que estudia. `variables_kb` y la escalera son texto literal de la base de conocimiento del equipo, no de NASA. Lo que una página no dice y EMMA deduce va en `leaves_out` con `basis: deduced` y su motivo. Las cifras de la validación de EMMA no se copian aquí: viven en compliance/external-validation.md y en las pruebas `-m external`. Lo carga y lo valida evidence/testbeds.py.",
+  "rule": {
+    "text": "Cada dato debe conservar el contexto experimental y las variables manipuladas o ausentes; no se deben mezclar observaciones de bed rest, HERA, Antártida, NSRL e ISS como si fueran equivalentes.",
+    "where": "docs/contexto/knowledge-base-v1.md §3.1"
+  },
+  "principle": {
+    "text": "Scientific validation ≠ Operational validation.",
+    "where": "docs/contexto/conversacion-ideacion-v1.md (mapa de bancos de prueba)"
+  },
+  "ladder": {
+    "title": "Escalera de evidencia y validación: Tierra → ISS → Luna → Marte",
+    "where": "docs/contexto/knowledge-base-v1.md §3",
+    "rungs": [
+      {
+        "id": "ground",
+        "environment": "Análogos terrestres",
+        "strength": "control experimental, más sujetos, instrumentación, menor coste",
+        "limitation": "no reproducen todo el entorno espacial",
+        "use": "descubrir relaciones, contramedidas, modelos e inferencias"
+      },
+      {
+        "id": "iss",
+        "environment": "ISS",
+        "strength": "microgravedad real, humanos, operaciones prolongadas",
+        "limitation": "LEO, soporte Tierra, resupply/evacuación relativa",
+        "use": "validar señales y comportamiento operacional real"
+      },
+      {
+        "id": "moon",
+        "environment": "Artemis/Luna",
+        "strength": "fuera de LEO, radiación/operaciones profundas, gravedad parcial",
+        "limitation": "misiones más cortas y Tierra relativamente próxima",
+        "use": "validar autonomía y transición a exploración"
+      },
+      {
+        "id": "mars",
+        "environment": "Marte",
+        "strength": "caso objetivo integrado",
+        "limitation": "no existe banco de prueba completo",
+        "use": "requisitos finales: autonomía, resiliencia, recursos y latencia"
+      }
+    ]
+  },
+  "banks": [
+    {
+      "id": "hera",
+      "name": "HERA",
+      "full_name": "Human Exploration Research Analog",
+      "where": "Johnson Space Center, Houston",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "operational",
+      "evidence_context": "analog_isolation",
+      "context_basis": "Aislamiento y confinamiento en un hábitat en Tierra, sin reposo en cama.",
+      "reproduces": [
+        {
+          "quote": "Missions through HERA test how humans withstand prolonged isolation and confinement in preparation for missions to space.",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «Human Exploration Research Analog»"
+        },
+        {
+          "quote": "a simulated exploration habitat for studying behavioral health, crew communication, medical capabilities, and how astronauts use equipment and technologies",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «Human Exploration Research Analog»"
+        },
+        {
+          "quote": "the crew members would experience communication delays due to the distance from Earth and would need to work together, with only sporadic input from Mission Control",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «Human Exploration Research Analog»"
+        },
+        {
+          "quote": "the crew experiences communication delays of up to five minutes each way",
+          "ref": "nasa-hera-comm-delays",
+          "where": "cuerpo del artículo (una misión de 45 días)"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Es un hábitat en Tierra; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "Up to 45 Days",
+            "ref": "nasa-hera-mission",
+            "where": "ficha de la misión, «Mission Duration»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "Four dedicated explorers",
+            "ref": "nasa-hera-45-day-2024",
+            "where": "primera frase, de una misión de 45 días de 2024 (siguen los cuatro nombres, que no se copian)"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La nota de 2024 dice que la tripulación ayuda a NASA a recoger datos, pero ni ella ni las otras dos páginas leídas de HERA dicen dónde quedan ni si se publican; la ficha de la misión, releída el 2026-10-31, tampoco."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ninguna página leída de HERA nombra fabricante, integrador u operador del hábitat; la ficha de la misión (releída el 2026-10-31) no tiene campo «Partners». La nota de 2024 nombra socios de la campaña (el Mohammed Bin Rashid Space Centre y la ESA), que no lo son."
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La ficha de la misión y las dos notas leídas de HERA no dicen qué parámetros se miden en una misión; la nota de 2024 habla de «collect data» sin decir cuáles."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La ficha de la misión solo da el tamaño del hábitat («650-square-foot habitat»); ninguna página leída de HERA nombra instrumentos ni equipos."
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ninguna de las tres páginas leídas de HERA nombra investigadores (la nota de 2024 nombra a los cuatro voluntarios, que EMMA no copia)."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La ficha de la misión enlaza noticias de misiones, no estudios; las notas leídas describen la misión (retardo de comunicaciones, 45 días) sin nombrar experimentos."
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un hábitat en Tierra, bajo la atmósfera y el campo magnético."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "source",
+            "quote": "Isolation and Confinement",
+            "ref": "nasa-hera-mission",
+            "where": "ficha de la misión, «HAZARDS»"
+          },
+          {
+            "hazard": "distance",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Reproduce el retardo de comunicaciones («communication delays of up to five minutes each way») y el trabajo con poca ayuda de Mission Control; no la distancia: es un hábitat en Johnson."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra; ninguna página leída de HERA la cambia."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Es un hábitat cerrado (su ficha: «Environment» «Closed Environment»), pero la ficha no lo cuenta entre los peligros que estudia y ninguna página dice que se altere el aire, la presión o la temperatura."
+          }
+        ]
+      },
+      "variables_kb": "aislamiento, confinamiento, comunicación, autonomía, uso de equipos, capacidades médicas",
+      "emma_use": "Un análogo como HERA serviría para la validación operacional: si una tripulación usa EMMA sin Tierra en tiempo real. EMMA no ha pasado por HERA, y el catálogo de NASA la pone entre los análogos pasados («Past Analogs»): su hábitat es ahora la nave de MMEA («Using the HERA habitat as a spacecraft»)."
+    },
+    {
+      "id": "envihab",
+      "name": ":envihab",
+      "full_name": null,
+      "where": "Colonia (Alemania), en el DLR",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": "analog_bedrest",
+      "context_basis": "Reposo en cama con la cabeza inclinada hacia abajo. Un estudio de CO2 o de centrifugación en la misma instalación sigue siendo un análogo en Tierra; el enumerado no tiene un valor propio para él y no se amplía: se dice aquí.",
+      "reproduces": [
+        {
+          "quote": "Volunteers are placed on strict bed rest in a position in which the head is tilted down at a slight angle for one to two months, to induce the effects of weightlessness on the body.",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «:envihab»"
+        },
+        {
+          "quote": "The facility is also used to examine how elevated carbon dioxide exposure and artificial gravity, through centrifuge spinning, affect crews.",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «:envihab»"
+        },
+        {
+          "quote": "Bed rest unloads muscles and bones from their normal work supporting the body when standing or sitting",
+          "ref": "nasa-bed-rest-agbresa",
+          "where": "cuerpo del artículo"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad real",
+          "basis": "source",
+          "quote": "Microgravity cannot be reproduced on Earth for more than a few seconds",
+          "ref": "nasa-bed-rest-agbresa",
+          "where": "cuerpo del artículo"
+        },
+        {
+          "what": "radiación espacial y aislamiento de misión",
+          "basis": "deduced",
+          "why": "Es una instalación en Tierra con estancias de uno a dos meses; las páginas no lo enumeran."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "for one to two months",
+            "ref": "nasa-hrp-step1-analogs",
+            "where": "lista de análogos, «:envihab»: el reposo en cama, no la instalación"
+          },
+          {
+            "quote": "The length of bedrest studies varies, typically lasting between 30 to 60 days.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Duration»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "NASA is partnering with the DLR and the European Space Agency to conduct this two-part study with 24 participants divided into three groups.",
+            "ref": "nasa-bed-rest-agbresa",
+            "where": "cuerpo del artículo: es el estudio AGBRESA, no la instalación entera"
+          },
+          {
+            "quote": "Scientists typically recruit four groups of 12 research volunteers for each series of bedrest studies.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Specifications»: por serie de estudios"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La ficha de la misión dice cuándo se recogen datos de referencia («Scientists collect baseline data from research volunteers directly before and after the 30-to-60-day bedrest phase of testing.»), no dónde quedan; la página de AGBRESA solo dice «We all wanted good data.»."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "this study is conducted at the German Aerospace Center, or DLR, in the :envihab facility in Cologne, Germany",
+            "ref": "nasa-bed-rest-agbresa",
+            "where": "cuerpo del artículo: quién aloja la instalación (la página escribe «:envihab» entre comillas)"
+          },
+          {
+            "quote": "Operated by the German Space Agency (DLR) Institute of Aerospace Medicine, :envihab (a combination of the words ‘environment’ and ‘habitat’) is a medical research facility designed to examine how people adapt to extreme environments.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Purpose»: quién lo opera"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "These bedrest studies allow researchers to monitor how living in a microgravity-like environment affects the bones, muscles, balance, and coordination of participants.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Description»"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The :envihab facility is divided into multiple modules on a single floor, housing a human centrifuge, pressure chamber, living area, special MRI scanner, psychological unit, and biological laboratory.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Specifications»"
+          },
+          {
+            "quote": "The beds themselves are standard-sized hospital beds and during studies are tilted down at a six-degree head-down tilt.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Specifications»"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la ficha de la misión ni las dos páginas de divulgación leídas nombran investigadores de los estudios de reposo en cama."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Bedrest studies can also be used to study and test interventions for a group of brain and vision changes that occur in microgravity, collectively called Spaceflight Associated Neuro-Ocular Syndrome, or SANS.",
+            "ref": "nasa-envihab-mission",
+            "where": "ficha de la misión, «Description»"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es una instalación en Tierra; ninguna página leída lo nombra."
+          },
+          {
+            "hazard": "isolation",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Uno a dos meses en cama dentro de la instalación es confinamiento; el aislamiento de una misión, no: el equipo está al lado y ninguna página leída lo trata como un estudio de aislamiento (lo que «Qué deja fuera» llama «aislamiento de misión»)."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es una instalación de investigación con su equipo al lado; ninguna página leída menciona retardo ni autonomía."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "El reposo con la cabeza inclinada hacia abajo induce efectos de la ingravidez sobre el cuerpo; no es microgravedad («Microgravity cannot be reproduced on Earth for more than a few seconds»)."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "CO2 elevado en algunos estudios («elevated carbon dioxide exposure»); no el resto del entorno cerrado de una nave."
+          }
+        ]
+      },
+      "variables_kb": "-6° head-down tilt, duración, fluid shift, descarga musculoesquelética, CO2, centrifugación",
+      "emma_use": "Fisiología controlada (cardiovascular, hueso, músculo, fluidos) y CO2, que EMMA solo ejercita con el escenario simulado «co2-fatigue». EMMA no tiene datos de reposo en cama."
+    },
+    {
+      "id": "antarctica",
+      "name": "Estaciones antárticas",
+      "full_name": "Antarctic Stations",
+      "where": "Antártida, en invierno",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": "analog_isolation",
+      "context_basis": "Aislamiento y confinamiento prolongados en un ambiente extremo.",
+      "reproduces": [
+        {
+          "quote": "Scientists study how isolation and confinement affect cognition, as well as the teamwork and social relationships of individuals working at research stations in the extreme environment of Antarctica over the winter.",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «Antarctic Stations»"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Son estaciones en Tierra; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "working at research stations in the extreme environment of Antarctica over the winter",
+            "ref": "nasa-hrp-step1-analogs",
+            "where": "lista de análogos, «Antarctic Stations»"
+          },
+          {
+            "quote": "Winter-over in Antarctica is roughly March through October.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Two New Immunology Studies Accepted for Antarctica Winter-Over 2020»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The final sample consisted of a total of 24 subjects, with 4 subjects at South Pole station and 20 subjects at McMurdo station, participating in the period from April to October 2019.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Team Dynamics Research»: dos estudios del HRP de la invernada de 2019, no cuántas personas invernan"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página «Antarctic Stations» del enlace «NSF» dice que los dos estudios de 2019 «completed their final data collection sessions», no dónde quedan los datos; la página «Step 1, Earth» y la ficha de la misión no mencionan datos."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The United States’ Antarctic Program (USAP) maintains McMurdo.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Antarctic Stations», «McMurdo Station»: quién mantiene la estación"
+          },
+          {
+            "quote": "On October 25, 2019, two Human Research Program funded studies completed their final data collection sessions for the 2019 winter-over period at the National Science Foundation’s (NSF) McMurdo and Amundsen-Scott (South Pole) stations.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Team Dynamics Research»: de quién son las estaciones"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "One study, Shared Cognitive Architectures for Long-term Exploration (SCALE), explored how social relations and team cognition are affected by isolation and confinement.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Team Dynamics Research»: lo que midió un estudio de 2019"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ninguna de las tres páginas leídas (ficha de la misión, «Step 1, Earth», «Antarctic Stations» del enlace «NSF») nombra instrumentos ni equipos de los estudios."
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The first, led by Dr. Brian Crucian, will examine immunological response of subjects at the Palmer coastal station, focusing on similarities to responses seen in astronauts onboard the International Space Station (ISS).",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Two New Immunology Studies Accepted for Antarctica Winter-Over 2020»: la página lo nombra sin darle cargo"
+          },
+          {
+            "quote": "The second, led Dr. Satish Mehta, will study the effectiveness of preventative measures to suppress viral reactivation in subjects at McMurdo and Amundsen-Scott (South Pole) stations.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Two New Immunology Studies Accepted for Antarctica Winter-Over 2020»: la página lo nombra sin darle cargo"
+          }
+        ],
+        "not_found": null
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "These two studies were integrated into a single study protocol with procedures and measures shared between the two investigations.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Team Dynamics Research»: SCALE y su estudio compañero"
+          },
+          {
+            "quote": "A companion study to SCALE is titled Crew Recommender for Effective Work in Space (CREWS). This study uses the research data for developing a computer model that can help select the best crew team.",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Team Dynamics Research»"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-31",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Son estaciones en Tierra; ninguna página leída lo nombra."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "source",
+            "quote": "Isolation and Confinement",
+            "ref": "nasa-antarctic-stations-mission",
+            "where": "ficha de la misión, «Hazards»"
+          },
+          {
+            "hazard": "distance",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "La página «Antarctic Stations» del enlace «NSF» dice que, de las tres estaciones de EE. UU., solo Palmer tiene acceso rutinario en invierno («Of the three U.S. Antarctic stations, Palmer is the only one that is accessed routinely during the winter.»): en McMurdo y el Polo Sur la invernada deja fuera el reabastecimiento y la evacuación, aunque no haya la distancia de una misión; ninguna página leída dice si hay retardo de comunicaciones."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra."
+          },
+          {
+            "hazard": "environment",
+            "status": "reproduces",
+            "basis": "source",
+            "quote": "Hostile environment, isolation",
+            "ref": "nasa-antarctic-stations-nsf",
+            "where": "«Mission Overview», «Hazards Tested»",
+            "why": "La página «Antarctic Stations» del enlace «NSF» lo cuenta entre los peligros que estudia; la ficha de misión (que da «Closed Habitat» como entorno) no."
+          }
+        ]
+      },
+      "variables_kb": "aislamiento prolongado, ambiente extremo, cognición, relaciones y equipos",
+      "emma_use": "Dominio conductual: sueño, cognición y equipo. EMMA no tiene datos antárticos."
+    },
+    {
+      "id": "nsrl",
+      "name": "NSRL",
+      "full_name": "NASA Space Radiation Laboratory",
+      "where": "Brookhaven National Laboratory, Nueva York",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Haces de iones sobre muestras biológicas y equipos: un análogo de radiación sin personas. Ningún valor del enumerado lo cubre («ground» es una persona en Tierra fuera de un análogo) y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "The lab uses beams of ions to simulate cosmic rays and assess the effects on biological samples and equipment.",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «National Space Radiation Laboratory»"
+        },
+        {
+          "quote": "NASA and Brookhaven National Lab have established a joint lab",
+          "ref": "bnl-nsrl",
+          "where": "cuerpo de la página"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "personas",
+          "basis": "source",
+          "quote": "assess the effects on biological samples and equipment",
+          "ref": "nasa-hrp-step1-analogs",
+          "where": "lista de análogos, «National Space Radiation Laboratory»"
+        },
+        {
+          "what": "microgravedad",
+          "basis": "deduced",
+          "why": "Es un acelerador en Tierra; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la ficha de la misión (releída el 2026-10-31, sin campo de duración) ni las dos páginas de Brookhaven dicen cuánto dura una exposición. La página «About» de Brookhaven da las horas de funcionamiento del laboratorio («NSRL operates 1,000–1,200 hours per year in three running cycles»), que no son la duración de un experimento."
+      },
+      "participants": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "Users from NASA, national laboratories, and more than 50 institutes and universities in the U.S., Europe, and Japan tested medical, biological, and physical samples using the ion beam line at NSRL.",
+            "ref": "bnl-nsrl-about",
+            "where": "«The Facility»: instituciones usuarias, no personas irradiadas"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Information on both the available and existing study samples is posted on the NASA Life Sciences Data Archive (LSDA) website.",
+            "ref": "nasa-tissue-sharing-forum",
+            "where": "foro de tejidos del HRP: el catálogo de las muestras de animales irradiados (la colección de biospecímenes alrededor del NSRL), no datos de personas; el LSDA exige solicitud"
+          },
+          {
+            "quote": "Investigators interested in available samples should visit the LSDA searchable database.",
+            "ref": "nasa-tissue-sharing-forum",
+            "where": "foro de tejidos del HRP, «Available Tissue Samples»"
+          },
+          {
+            "quote": "Results of these studies are used to understand the biological effects of space radiation, guide future studies, and validate the output of the computational models.",
+            "ref": "nasa-jsc-space-radiation",
+            "where": "artículo de radiación de JSC: adónde van los resultados de las muestras irradiadas en el NSRL"
+          },
+          {
+            "quote": "Computational tools to assess and project crew risk of cancer and acute radiation syndrome from space radiation",
+            "ref": "nasa-jsc-space-radiation",
+            "where": "artículo de radiación de JSC, lista «Technology and Hardware»: los modelos de riesgo de JSC que esas muestras alimentan; el artículo no da su nombre ni sus cifras"
+          }
+        ],
+        "not_found": null
+      },
+      "providers": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "Commissioned in 2003, NSRL is funded by NASA and managed by Brookhaven Lab for DOE.",
+            "ref": "bnl-nsrl-about",
+            "where": "«The Facility»"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Biological samples are irradiated at these facilities and transported back to the laboratory for analysis at the molecular and cellular level.",
+            "ref": "nasa-jsc-space-radiation",
+            "where": "artículo de radiación de JSC: lo que se mide de las muestras irradiadas en el NSRL (y en las fuentes de JSC), sin más detalle"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Brookhaven National Laboratory in Upton, New York has a Heavy Ion Collider.",
+            "ref": "nasa-nsrl-mission",
+            "where": "ficha de la misión: lo dice del laboratorio que aloja el NSRL, no dice que sea la máquina que da los haces del NSRL"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la ficha de la misión (sus apartados «NASA-Funded Experiments» y «Other Experiments» están vacíos) ni las páginas de Brookhaven, del foro de tejidos o de radiación de JSC nombran a los investigadores de los experimentos del NSRL."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Most of the animals are exposed to charged particles at the NASA Space Radiation Laboratory (NSRL), and some are exposed to neutrons or low-LET radiation at other facilities.",
+            "ref": "nasa-tissue-sharing-forum",
+            "where": "foro de tejidos del HRP: lo que se irradia"
+          },
+          {
+            "quote": "Scientists also use the laboratory to study the effects of low and high linear energy transfer (LET) radiation in cultured cells or animals, including humanized mice, using radiation sources at JSC or an accelerator at the NASA Space Radiation Laboratory facilities at Brookhaven, NY.",
+            "ref": "nasa-jsc-space-radiation",
+            "where": "artículo de radiación de JSC: el laboratorio de biofísica de Johnson usa el acelerador del NSRL"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "partial",
+            "basis": "source",
+            "quote": "Space radiation",
+            "ref": "nasa-nsrl-mission",
+            "where": "ficha de la misión, «Hazards Tested»",
+            "why": "Haces de iones que simulan rayos cósmicos, en exposiciones de laboratorio sobre muestras biológicas y equipos: no la exposición larga de una tripulación (lo dice «Qué deja fuera»). Por eso «en parte» aunque la ficha lo nombre."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un acelerador con muestras, sin tripulación."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un acelerador con muestras, sin tripulación."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra; la página no lo enumera."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un acelerador con muestras, sin tripulación ni hábitat."
+          }
+        ]
+      },
+      "variables_kb": "partícula, energía, LET, dosis, tasa, secuencia, material/blindaje",
+      "emma_use": "Respaldo mecanístico del dominio de radiación; no da datos humanos, y EMMA no usa datos de NSRL."
+    },
+    {
+      "id": "loma-linda",
+      "name": "Loma Linda",
+      "full_name": "Loma Linda University Proton Treatment Center",
+      "where": "Centro de protones de la Loma Linda University; la página del Space Radiation Element no da la ciudad ni el estado",
+      "read_on": "2026-10-31",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Un centro de protones en Tierra donde el Space Radiation Element irradia experimentos que imitan la radiación espacial: la página no dice qué se irradia (muestras, animales), y en ningún caso una tripulación. Ningún valor del enumerado lo cubre («ground» es una persona en Tierra fuera de un análogo) y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "To accomplish this goal, SRE scientists and partners conduct research at ground-based facilities, including the NASA Space Radiation Laboratory at the Brookhaven National Laboratory and the Loma Linda University Proton Treatment Center.",
+          "ref": "nasa-space-radiation-element",
+          "where": "cuerpo de la página: los dos centros en Tierra del elemento de radiación del HRP"
+        },
+        {
+          "quote": "Experiments performed at these facilities mimic conditions of space’s radiation environment.",
+          "ref": "nasa-space-radiation-element",
+          "where": "cuerpo de la página"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "una tripulación expuesta: irradia experimentos",
+          "basis": "deduced",
+          "why": "La página del Space Radiation Element habla de «Experiments performed at these facilities» y no de personas; lo que NASA irradia allí (muestras, animales) no lo dice."
+        },
+        {
+          "what": "microgravedad, aislamiento y distancia",
+          "basis": "deduced",
+          "why": "Es un centro en Tierra; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element no dice cuánto dura una exposición en Loma Linda. La del centro (protons.com), que NASA enlaza, es la de un hospital, no una página de NASA: se miró el 2026-10-31 y habla de pacientes, no de los experimentos de NASA; no se cita."
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element no dice qué se irradia en Loma Linda ni cuántos experimentos."
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element dice adónde van los resultados («Results from tests help scientists build risk models, investigate the genetic consequences of radiation to biological systems, and develop better methods to shield spacecraft.»), no dónde quedan los datos."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element nombra el centro por su universidad (Loma Linda University) y lo enlaza a protons.com (Loma Linda University Health), sin decir quién lo opera para NASA ni con qué acuerdo."
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element no dice qué se mide en los experimentos de Loma Linda."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element no describe el haz de protones ni los equipos del centro."
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element habla de «SRE scientists and partners» sin nombrar a nadie."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del Space Radiation Element dice que los experimentos imitan la radiación espacial, sin nombrar ninguno."
+      },
+      "ridge": {
+        "read_on": "2026-10-31",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Protones que imitan la radiación espacial en exposiciones de laboratorio («Experiments performed at these facilities mimic conditions of space’s radiation environment.»): no la exposición larga de una tripulación. La página del Space Radiation Element no tiene campo «Hazards»."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un centro de protones en Tierra con experimentos, sin tripulación."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un centro de protones en Tierra con experimentos, sin tripulación."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra; la página no lo enumera."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Un centro en Tierra; la página no lo enumera."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Respaldo mecanístico del dominio de radiación, como el NSRL: no da datos humanos y EMMA no usa datos de Loma Linda."
+    },
+    {
+      "id": "chapea",
+      "name": "CHAPEA",
+      "full_name": "Crew Health and Performance Exploration Analog",
+      "where": "Mars Dune Alpha, Johnson Space Center, Houston",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "operational",
+      "evidence_context": "analog_isolation",
+      "context_basis": "Misión simulada de un año en un hábitat cerrado en Tierra.",
+      "reproduces": [
+        {
+          "quote": "the 1,700-square-foot Mars Dune Alpha habitat",
+          "ref": "nasa-chapea-crew-2",
+          "where": "cuerpo de la nota"
+        },
+        {
+          "quote": "The crew will undergo realistic resource limitations, equipment failures, communication delays",
+          "ref": "nasa-chapea-crew-2",
+          "where": "cuerpo de la nota"
+        },
+        {
+          "quote": "including simulated Mars walks, growing a vegetable garden, robotic operations, and more",
+          "ref": "nasa-chapea-crew-2",
+          "where": "cuerpo de la nota"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Es un hábitat en Tierra; la nota no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "Different crews will be selected to live in the CHAPEA habitat for one-year missions.",
+            "ref": "nasa-chapea-habitat",
+            "where": "«Crew Missions»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "Four research volunteers will soon participate in NASA’s year-long simulation of a Mars mission",
+            "ref": "nasa-chapea-crew-2",
+            "where": "primera frase (segunda misión)"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La investigadora principal dice que se recogerán datos de rendimiento cognitivo y físico, y la página del programa (leída el 2026-10-31) que la tripulación «provide data on a variety of factors»; ninguna dice dónde quedan ni si se publican."
+      },
+      "providers": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "ICON’s next generation Vulcan construction system",
+            "ref": "nasa-chapea-habitat",
+            "where": "«Habitat Print Stats», «Tech»: quien imprimió el hábitat; la página no nombra a BIG"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "During the missions, crew conduct simulated spacewalks and provide data on a variety of factors, including physical and behavioral health and performance.",
+            "ref": "nasa-chapea-program",
+            "where": "página del programa, visión general"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del programa y la del hábitat describen el hábitat (1 700 pies cuadrados, impreso en 3D), no instrumentos ni equipos."
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "CHAPEA 2 crew shares their final reflections from inside their simulated Mars mission, and principal investigator Grace Douglas discusses the study as its conclusion approaches.",
+            "ref": "nasa-chapea-program",
+            "where": "página del programa, resumen del episodio 5 del pódcast: la investigadora principal"
+          }
+        ],
+        "not_found": null
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The crew discusses navigating a simulated two-week communication blackout.",
+            "ref": "nasa-chapea-program",
+            "where": "página del programa, resumen del episodio 4 del pódcast (segunda misión)"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un hábitat en Tierra, bajo la atmósfera y el campo magnético."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "deduced",
+            "why": "Un año de una tripulación de cuatro en un hábitat cerrado; ninguna página leída de CHAPEA tiene el campo «Hazards»."
+          },
+          {
+            "hazard": "distance",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Retardo de comunicaciones y recursos limitados («realistic resource limitations, equipment failures, communication delays»); no la distancia: es un hábitat en Johnson."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra; los paseos marcianos son simulados."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Un hábitat cerrado impreso en 3D; ninguna página leída dice que se altere el aire, la presión o la temperatura."
+          }
+        ]
+      },
+      "variables_kb": "misión integrada, recursos, operaciones, hábitat",
+      "emma_use": "Misión integrada: la interacción de sueño, trabajo, nutrición y aislamiento que EMMA intenta correlacionar. Serviría para la validación operacional; EMMA no ha pasado por CHAPEA."
+    },
+    {
+      "id": "mmea",
+      "name": "MMEA",
+      "full_name": "Moon and Mars Exploration Analog",
+      "where": "Johnson Space Center, Houston: el hábitat de HERA como nave y el de CHAPEA como base",
+      "read_on": "2026-10-21",
+      "rung": "ground",
+      "validation": "operational",
+      "evidence_context": "analog_isolation",
+      "context_basis": "Un año de aislamiento y confinamiento en dos hábitats en Tierra.",
+      "reproduces": [
+        {
+          "quote": "This mission is the first in a ground-based environment that will simulate multiple parts of a Moon or Mars mission, combining elements of NASA’s HERA (Human Exploration Research Analog) and the CHAPEA (Crew Health and Performance Exploration Analog) missions into a single, integrated campaign.",
+          "ref": "nasa-mmea-program",
+          "where": "descripción del programa"
+        },
+        {
+          "quote": "Four crew members",
+          "ref": "nasa-mmea-program",
+          "where": "ficha del estudio, «Subjects per Mission»"
+        },
+        {
+          "quote": "Using the HERA habitat as a spacecraft and the CHAPEA habitat as a base",
+          "ref": "nasa-mmea-announcement",
+          "where": "cuerpo de la noticia"
+        },
+        {
+          "quote": "Beginning no earlier than August 2027, research volunteers will spend one year living and working in interplanetary environments at the agency’s Johnson Space Center in Houston",
+          "ref": "nasa-mmea-announcement",
+          "where": "primer párrafo"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Es en Tierra («all without leaving Earth», página del programa); ninguna de las dos páginas nombra la microgravedad ni la radiación."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "research volunteers will spend one year living and working in interplanetary environments",
+            "ref": "nasa-mmea-announcement",
+            "where": "primer párrafo"
+          },
+          {
+            "quote": "Willing to consent to an approximately 14-month long mission, including 12 months in two different confined habitats and two months of pre- and- post-mission training and data collection.",
+            "ref": "nasa-mmea-program",
+            "where": "página del programa, requisitos de los voluntarios"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-21",
+        "quotes": [
+          {
+            "quote": "Four crew members",
+            "ref": "nasa-mmea-program",
+            "where": "ficha del estudio, «Subjects per Mission»"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del programa dice a quién van los datos («This effort will provide valuable data for NASA’s Human Research Program, which innovates ways to keep astronauts healthy and mission-ready.»), no dónde quedan ni si se publican; la primera misión no empieza antes de agosto de 2027."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página del programa (releída el 2026-10-31) ni el anuncio nombran fabricante ni integrador de los hábitats; el de superficie es el de CHAPEA (ICON, en su banco)."
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del programa dice que los voluntarios ayudarán a evaluar «hardware, technologies, protocols, requirements, and other systems designed to support crew health and performance», sin decir qué parámetros se medirán."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "It includes private crew quarters, a communal workspace, recreation room, crop cultivation area, medical room, food preparation area, airlock, two bathrooms, and a sandbox for simulated walks on a planetary surface.",
+            "ref": "nasa-mmea-program",
+            "where": "página del programa: el hábitat de superficie, con «medical room»"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página del programa ni el anuncio nombran investigadores."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Mission volunteers will help NASA assess and validate hardware, technologies, protocols, requirements, and other systems designed to support crew health and performance on long-duration deep space missions, all without leaving Earth.",
+            "ref": "nasa-mmea-program",
+            "where": "página del programa"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es en Tierra («all without leaving Earth», página del programa)."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "deduced",
+            "why": "Un año en dos hábitats cerrados en Tierra."
+          },
+          {
+            "hazard": "distance",
+            "status": "unknown",
+            "basis": "deduced",
+            "why": "Ni la página del programa ni el anuncio mencionan el retardo de comunicaciones, y la primera misión no empieza antes de agosto de 2027."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es en Tierra («all without leaving Earth»)."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Dos hábitats cerrados; ninguna de las dos páginas dice que se altere el aire, la presión o la temperatura."
+          }
+        ]
+      },
+      "variables_kb": "misión integrada, recursos, operaciones, hábitat",
+      "emma_use": "Validación operacional de misión entera (tránsito y superficie) con recursos limitados: la que EMMA no tiene. La primera misión no empieza antes de agosto de 2027."
+    },
+    {
+      "id": "neemo",
+      "name": "NEEMO",
+      "full_name": "NASA Extreme Environment Mission Operations",
+      "where": "Aquarius, hábitat submarino frente a la costa de Florida",
+      "read_on": "2026-10-22",
+      "rung": "ground",
+      "validation": "operational",
+      "evidence_context": "analog_isolation",
+      "context_basis": "Aislamiento y confinamiento en un hábitat submarino en Tierra, con inmersiones como salidas extravehiculares simuladas.",
+      "reproduces": [
+        {
+          "quote": "Most experiments conducted at the Aquarius facility focus on isolation, confinement, communications, telemedicine, and remote collaboration.",
+          "ref": "nasa-neemo-studies",
+          "where": "cuerpo de la página"
+        },
+        {
+          "quote": "Situated sixty feet below the ocean’s surface",
+          "ref": "nasa-neemo-studies",
+          "where": "cuerpo de la página"
+        },
+        {
+          "quote": "A NEEMO mission typically lasts 7 to 14 days.",
+          "ref": "nasa-neemo-studies",
+          "where": "cuerpo de la página"
+        },
+        {
+          "quote": "Crewmembers also use weighted dive belts and tethering lines to simulate the challenges of performing tasks such as sample collection at multiple gravity levels and anchoring to an asteroid surface.",
+          "ref": "nasa-neemo-studies",
+          "where": "cuerpo de la página"
+        },
+        {
+          "quote": "Here we are, with 5 minutes delay in all our communications with Mission Control.",
+          "ref": "nasa-neemo-19",
+          "where": "diario de un tripulante, de una misión (NEEMO 19)"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Es un hábitat bajo el mar: el lastre simula otros niveles de gravedad en una tarea, no la microgravedad sobre el organismo. Las páginas no lo enumeran."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "A NEEMO mission typically lasts 7 to 14 days.",
+            "ref": "nasa-neemo-studies",
+            "where": "cuerpo de la página"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "An American, a Dane, a Frenchman and a Canadian comprised the crew for NEEMO 19",
+            "ref": "nasa-neemo-19",
+            "where": "diario del comandante, de una misión (NEEMO 19)"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-22",
+        "quotes": [],
+        "not_found": "Ninguna de las dos páginas leídas de NEEMO dice dónde quedan los datos ni si se publican."
+      },
+      "providers": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "the army of dedicated personnel from NASA, FIU Aquarius Reef Base, and Industry as well as Academic partners",
+            "ref": "nasa-neemo-19",
+            "where": "diario del comandante, de una misión (NEEMO 19)"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ninguna de las dos páginas leídas de NEEMO dice qué parámetros se miden."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Crewmembers also use weighted dive belts and tethering lines to simulate the challenges of performing tasks such as sample collection at multiple gravity levels and anchoring to an asteroid surface.",
+            "ref": "nasa-neemo-studies",
+            "where": "cuerpo de la página: el lastre y las amarras"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ninguna de las dos páginas leídas de NEEMO nombra investigadores; el diario de NEEMO 19 lo firma el comandante."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Most experiments conducted at the Aquarius facility focus on isolation, confinement, communications, telemedicine, and remote collaboration.",
+            "ref": "nasa-neemo-studies",
+            "where": "cuerpo de la página"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un hábitat bajo el mar, en Tierra."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "source",
+            "quote": "Most experiments conducted at the Aquarius facility focus on isolation, confinement, communications, telemedicine, and remote collaboration.",
+            "ref": "nasa-neemo-studies",
+            "where": "cuerpo de la página: lo primero que estudia"
+          },
+          {
+            "hazard": "distance",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Retardo con Mission Control en una misión («with 5 minutes delay in all our communications with Mission Control», NEEMO 19); no la distancia: el hábitat está frente a la costa de Florida."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "El lastre y la flotabilidad simulan otros niveles de gravedad en una tarea, no sobre el organismo."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Un hábitat cerrado con el mar como entorno hostil fuera; las páginas no lo cuentan entre lo que estudian."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Serviría para la validación operacional: telemedicina y retardo con Mission Control en un hábitat aislado. EMMA no ha pasado por NEEMO."
+    },
+    {
+      "id": "argos",
+      "name": "ARGOS",
+      "full_name": "Active Response Gravity Offload System",
+      "where": "Johnson Space Center, Houston (un pie de foto de la página lo sitúa en «Building 9E»)",
+      "read_on": "2026-10-22",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Una persona en Tierra a la que una grúa robótica descarga parte del peso: ni reposo en cama ni aislamiento, y «ground» es una persona en Tierra fuera de un análogo. Ningún valor del enumerado lo cubre y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "Active Response Gravity Offload System (ARGOS) is designed to simulate reduced gravity environments from earth gravity to microgravity.",
+          "ref": "nasa-jsc-space-suits-argos",
+          "where": "apartado de ARGOS"
+        },
+        {
+          "quote": "ARGOS is capable of offloading humans (both in shirtsleeves and space suits), small rovers, and robots for testing, training, process development, and human research in simulated reduced gravity environments.",
+          "ref": "nasa-jsc-space-suits-argos",
+          "where": "apartado de ARGOS"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "el efecto de la microgravedad sobre fluidos y órganos",
+          "basis": "deduced",
+          "why": "Descarga el peso desde fuera del cuerpo y la gravedad sigue actuando dentro de él; la página no lo enumera."
+        },
+        {
+          "what": "radiación espacial y aislamiento",
+          "basis": "deduced",
+          "why": "Es una instalación de ensayo en Tierra; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página de trajes espaciales de Johnson ni la ficha de la patente de ARGOS dicen cuánto dura una sesión."
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página de trajes habla de «a subject’s weight» y la ficha de la patente de «a human subject», sin decir cuántos."
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página de trajes ni la ficha de la patente mencionan datos."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Engineers at the NASA Johnson Space Center (JSC) have developed a new system called the Active Response Gravity Offload System (ARGOS) that provides a simulated reduced gravity environment within a confined interior volume for astronauts to move about and/or equipment to be moved about as if they were in a different gravity field.",
+            "ref": "nasa-argos-patent",
+            "where": "ficha de la patente (cartera de NASA, a la que remiten la página de trajes y el catálogo de análogos), «Overview»: quién lo desarrolló"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página de trajes ni la ficha de la patente dicen qué se mide de la persona descargada."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The system utilizes input/feedback sensors, fast-response motor controllers, and custom-developed software algorithms to provide a constant force offload that simulates reduced gravity.",
+            "ref": "nasa-argos-patent",
+            "where": "ficha de la patente, «The Technology»"
+          },
+          {
+            "quote": "The ARGOS system attaches to a human subject in a gimbal and/or harness through a cable.",
+            "ref": "nasa-argos-patent",
+            "where": "ficha de la patente, «The Technology»"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la página de trajes ni la ficha de la patente nombran investigadores."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página de trajes dice para qué sirve («testing, training, process development, and human research»); ninguna de las dos nombra un experimento."
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es una instalación de ensayo en Johnson; la página no lo enumera."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Sesiones de ensayo y entrenamiento, no estancias; la página no lo enumera."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Sesiones de ensayo en Johnson con su equipo al lado; la página no lo enumera."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Simula gravedad reducida para moverse y trabajar descargando el peso desde fuera; dentro del cuerpo la gravedad sigue actuando."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "La página de ARGOS no habla de aire, presión ni temperatura."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Biomecánica y trabajo con traje en gravedad reducida: EMMA no mide ninguna de las dos y no usa datos de ARGOS."
+    },
+    {
+      "id": "parabolic",
+      "name": "Vuelos parabólicos",
+      "full_name": "Parabolic Flight",
+      "where": "Aviones que vuelan parábolas, con contrato de NASA",
+      "read_on": "2026-10-22",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Ingravidez real pero de segundos, en un avión dentro de la atmósfera: no es la ISS ni un vuelo espacial («spaceflight» es el estudio de un vuelo real fuera de la ISS). Ningún valor del enumerado lo cubre y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "Parabolic flights simulate space travel by providing short-term weightlessness and partial gravity.",
+          "ref": "nasa-parabolic-flight",
+          "where": "primera frase"
+        },
+        {
+          "quote": "Partial gravity replicates lunar or Mars conditions",
+          "ref": "nasa-parabolic-flight",
+          "where": "cuerpo de la página"
+        },
+        {
+          "quote": "while in other cases volunteers participate in the flights as research subjects",
+          "ref": "nasa-parabolic-flight",
+          "where": "cuerpo de la página"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "ingravidez sostenida: dura segundos por parábola",
+          "basis": "source",
+          "quote": "The reduced-gravity phase of each parabola lasts for around 20 seconds",
+          "ref": "nasa-parabolic-flight",
+          "where": "cuerpo de la página"
+        },
+        {
+          "what": "radiación espacial, aislamiento y adaptación de días o meses",
+          "basis": "deduced",
+          "why": "Son vuelos de unas horas dentro de la atmósfera; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "The reduced-gravity phase of each parabola lasts for around 20 seconds, with typical flight missions including 15-30 parabolas.",
+            "ref": "nasa-parabolic-flight",
+            "where": "«Duration»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página dice que a veces vuelan voluntarios como sujetos de investigación («volunteers participate in the flights as research subjects»), sin decir cuántos (releída el 2026-10-31)."
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página no menciona datos ni dónde quedan (releída el 2026-10-31)."
+      },
+      "providers": {
+        "read_on": "2026-10-22",
+        "quotes": [
+          {
+            "quote": "NASA conducts experiments and tests technologies and instruments in these conditions by working with various companies, including Zero Gravity Corporation, a Florida-based company piloting a specially modified B-727 under contract with NASA’s Flight Opportunities program.",
+            "ref": "nasa-parabolic-flight",
+            "where": "cuerpo de la página"
+          },
+          {
+            "quote": "NASA also occasionally works with Novespace, a Bordeaux-Mérignac, France-based company flying parabolas with A310s.",
+            "ref": "nasa-parabolic-flight",
+            "where": "cuerpo de la página"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página no dice qué se mide en los sujetos."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página nombra los aviones (un B-727 modificado y A310) junto a las compañías que los vuelan, en la columna de proveedores; no instrumentos."
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página dice que a veces vuelan los investigadores con su experimento («researchers fly aboard the aircraft with their experiment»), sin nombrar a ninguno."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Parabolic flights test interventions, protocols, space equipment, technologies, instruments, and experiments in weightless or partial-gravity conditions that are achieved when a specialized plane flies up-and-down maneuvers in a u-shaped curve called a parabolic path.",
+            "ref": "nasa-parabolic-flight",
+            "where": "«Purpose»"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Son vuelos dentro de la atmósfera."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Son vuelos de unas horas."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Son vuelos de unas horas sobre la Tierra."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Ingravidez y gravedad parcial reales, pero de unos 20 segundos por parábola («The reduced-gravity phase of each parabola lasts for around 20 seconds»)."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "La cabina de un avión; la página no lo enumera."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Respuesta aguda a segundos de ingravidez o de gravedad parcial, no la deriva de una misión que vigila EMMA. EMMA no usa datos de vuelos parabólicos."
+    },
+    {
+      "id": "kraken",
+      "name": "Kraken",
+      "full_name": null,
+      "where": "Wright-Patterson Air Force Base, cerca de Dayton (Ohio), de la Armada de EE. UU.",
+      "read_on": "2026-10-23",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Una persona en Tierra a la que una plataforma hace girar para provocar la desorientación de un cambio de gravedad: ni reposo en cama ni aislamiento, y «ground» es una persona en Tierra fuera de un análogo. Ningún valor del enumerado lo cubre y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "NASA uses the Kraken, a 50-foot-long, 100-ton U.S. Navy research device that spins on multiple axes, to simulate space motion sickness and test possible recovery strategies.",
+          "ref": "nasa-analog-missions",
+          "where": "lista de análogos activos, «Kraken»"
+        },
+        {
+          "quote": "The Kraken will then spin them at accelerations reaching three times the force of gravity to simulate what astronauts experience when they first return to Earth.",
+          "ref": "nasa-kraken-2023",
+          "where": "cuerpo de la nota (un estudio anunciado)"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "la ingravidez y la gravedad parcial",
+          "basis": "deduced",
+          "why": "Hace girar a la persona en Tierra para provocar la desorientación de un cambio de gravedad; la nota no lo enumera."
+        },
+        {
+          "what": "radiación espacial, aislamiento y adaptación de días o meses",
+          "basis": "deduced",
+          "why": "Son sesiones de unos 60 minutos en una base aérea; la nota no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "ride in the Kraken for 60 minutes",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota, de un estudio anunciado"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "NASA and Navy scientists will recruit 24 active duty service members",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota, de un estudio anunciado (siguen 24 pacientes civiles que no suben al Kraken)"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La nota dice qué medirá el estudio (parpadeo, frecuencia cardiaca, movimientos de cabeza y ojos; columna de parámetros), no dónde quedarán los datos; el catálogo de análogos de NASA remite el Kraken a un vídeo."
+      },
+      "providers": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "the Naval Aerospace Medical Research Laboratory in Dayton, Ohio, the organization that operates the Kraken",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota: quién lo opera"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The technology will capture measurements associated with motion sickness, including how much participants blink as well as changes to heart rate.",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota, de un estudio anunciado"
+          },
+          {
+            "quote": "All volunteers will then complete four tasks – they’ll test their balance standing on foam with eyes open and closed, their speed on a nearly 33-foot (10-meter) walk, their endurance on a two-minute walk, and the length of time they take to finish a standing and walking test that includes stepping over an obstacle.",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota, de un estudio anunciado"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Upon exiting the machine, 12 volunteers will perform prescribed head turns and tilts while wearing video goggles that track their head and eye movements.",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota: las gafas de vídeo, además del propio Kraken"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La nota nombra al director del laboratorio que opera el Kraken (Richard Arnold, en 2023), no a los investigadores del estudio."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "A spaceflight setting on the Kraken will allow NASA scientists to study whether a specific technology, coupled with head movements, may help soothe the motion sickness experienced by some astronauts.",
+            "ref": "nasa-kraken-2023",
+            "where": "cuerpo de la nota, de un estudio anunciado"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es un dispositivo en una base aérea, en Tierra; la nota no lo enumera."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Sesiones de unos 60 minutos; la nota no lo enumera."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Sesiones de unos 60 minutos en una base aérea; la nota no lo enumera."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Reproduce la desorientación de un cambio de gravedad («to simulate what astronauts experience when they first return to Earth»), no la ingravidez ni la gravedad parcial."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Una cabina giratoria en Tierra; la nota no lo enumera."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Mareo y desorientación en los cambios de gravedad: EMMA no los mide y no usa datos del Kraken."
+    },
+    {
+      "id": "nbl",
+      "name": "NBL",
+      "full_name": "Neutral Buoyancy Laboratory",
+      "where": "Sonny Carter Training Facility, Johnson Space Center, Houston",
+      "read_on": "2026-10-23",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Personas bajo el agua, con o sin traje, en una piscina de entrenamiento en Tierra: ni reposo en cama ni aislamiento, y «ground» es una persona en Tierra fuera de un análogo. Ningún valor del enumerado lo cubre y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "The NBL has extensive experience manipulating buoyancy to simulate full or partial gravity and to make mass handling in the water more manageable.",
+          "ref": "nasa-jsc-nbl",
+          "where": "«Buoyancy»"
+        },
+        {
+          "quote": "The NBL is utilized for mission planning, procedure development, hardware verification, astronaut training, and refinement of time-critical operations necessary to ensure mission success during spacewalks.",
+          "ref": "nasa-jsc-nbl",
+          "where": "primer párrafo"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "el efecto de la microgravedad a largo plazo",
+          "basis": "source",
+          "quote": "Buoyancy pools, such as NASA’s Neutral Buoyancy Laboratory, and parabolic flights aboard airplanes can simulate the feeling of weightlessness for crews. However, it can be difficult to gather data about the long-term effects of microgravity",
+          "ref": "nasa-hrp-step2-station",
+          "where": "«A Harsh Environment»"
+        },
+        {
+          "what": "radiación espacial y aislamiento",
+          "basis": "deduced",
+          "why": "Es una piscina de entrenamiento en Johnson; la página no lo enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del NBL no dice cuánto dura una sesión en la piscina. Releída el 2026-10-31: sigue sin decirlo."
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del NBL no dice cuántas personas entrenan en él ni si hay sujetos de investigación. Releída el 2026-10-31: sigue sin decirlo."
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del NBL ofrece «Extensive video, audio and instrumentation capabilities», sin decir qué datos quedan ni dónde (releída el 2026-10-31)."
+      },
+      "providers": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "The Neutral Buoyancy Laboratory (NBL), part of the Sonny Carter Training Facility at NASA’s Johnson Space Center in Houston",
+            "ref": "nasa-jsc-nbl",
+            "where": "primer párrafo: quién lo aloja"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del NBL no dice qué se mide de quien entrena en la piscina."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Length: 202 feet (61.5 meters)",
+            "ref": "nasa-jsc-nbl",
+            "where": "especificaciones de la piscina (la longitud; siguen anchura, profundidad y volumen)"
+          },
+          {
+            "quote": "The NBL utilizes SCUBA and surface supplied dive systems, with nitrox and air and has an on-site hyperbaric chamber.",
+            "ref": "nasa-jsc-nbl",
+            "where": "«Diver Support»"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La página del NBL no nombra investigadores."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "The NBL is utilized for mission planning, procedure development, hardware verification, astronaut training, and refinement of time-critical operations necessary to ensure mission success during spacewalks.",
+            "ref": "nasa-jsc-nbl",
+            "where": "primer párrafo: para qué se usa; no nombra estudios"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es una piscina en Johnson; la página no lo enumera."
+          },
+          {
+            "hazard": "isolation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Es una piscina de entrenamiento, no un hábitat: la página no habla de estancias."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Equipo de apoyo y buzos de seguridad al lado («an experienced and certified professional diving staff»)."
+          },
+          {
+            "hazard": "gravity",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "La flotabilidad simula gravedad total o parcial para moverse y manejar masas («to simulate full or partial gravity»), no sobre el organismo; «Step 2» dice de estas piscinas que no dan el efecto a largo plazo de la microgravedad."
+          },
+          {
+            "hazard": "environment",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "La página no trata el agua ni el traje como el entorno cerrado de una nave."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Entrenamiento y procedimientos de salidas extravehiculares: EMMA no los cubre y no usa datos del NBL."
+    },
+    {
+      "id": "altitude",
+      "name": "Cámaras de altitud",
+      "full_name": "Altitude Chambers",
+      "where": "Johnson Space Center, Houston (la cámara de 20 pies)",
+      "read_on": "2026-10-23",
+      "rung": "ground",
+      "validation": "scientific",
+      "evidence_context": null,
+      "context_basis": "Lo que estudian sobre todo es la presión de antes y durante una salida extravehicular (cámaras hipobáricas): ni reposo en cama ni un estudio de aislamiento, aunque los voluntarios vivan confinados unas dos semanas. Ningún valor del enumerado lo cubre y el enumerado no se amplía.",
+      "reproduces": [
+        {
+          "quote": "Altitude chambers (more technically known as hypobaric chambers) allow scientists to test different protocols and interventions designed to keep humans safe, primarily by mitigating decompression sickness during spacewalks.",
+          "ref": "nasa-altitude-chambers",
+          "where": "«Purpose»"
+        },
+        {
+          "quote": "volunteers experience different atmospheric compositions and protocols to replace nitrogen in the body, and test out research designed to help astronauts avoid hypoxia and decompression sickness",
+          "ref": "nasa-altitude-chambers",
+          "where": "«Description»"
+        },
+        {
+          "quote": "they are also used to simulate confinement and other unique challenges associated with long-duration space flight",
+          "ref": "nasa-altitude-chamber-complex",
+          "where": "primer párrafo"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "microgravedad y radiación espacial",
+          "basis": "deduced",
+          "why": "Son cámaras en Tierra con la presión por debajo de la atmosférica; las páginas no lo enumeran."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "Analog missions inside Johnson’s 20-Foot Chamber typically run for about two weeks.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Duration»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "with accommodations for up to eight crew members",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Specifications»: la capacidad de la cámara de 20 pies, no el número de un estudio"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la ficha de las cámaras (releída el 2026-10-31) ni la página de 2015 dicen qué datos quedan ni dónde."
+      },
+      "providers": {
+        "read_on": "2026-10-23",
+        "quotes": [
+          {
+            "quote": "NASA’s Johnson Space Center in Houston is the major site for this work.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Location»"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "La ficha de las cámaras dice qué protocolos se prueban (reemplazo de nitrógeno, composiciones del aire), no qué parámetros se miden en los voluntarios."
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Johnson’s 20-Foot Chamber is a three-story cylindrical altitude chamber with a diameter of 20 feet and a total height of about 28 feet, with accommodations for up to eight crew members.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Specifications»"
+          },
+          {
+            "quote": "The first floor houses equipment to simulate the motions and physical workloads associated with conducting spacewalks.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Specifications»"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni la ficha ni la página de 2015 nombran investigadores."
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "During testing, volunteers first spend around two days adjusting to the new pressure environment, then complete tasks in simulated spacewalk conditions with even further depressurization.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Specifications», tras las plantas de la cámara"
+          },
+          {
+            "quote": "In new research designed to resemble future deep space missions, volunteers conduct daily six-hour spacewalk simulations for five days in this environment to simulate the conditions of back-to-back spacewalks.",
+            "ref": "nasa-altitude-chambers",
+            "where": "«Specifications», tras las plantas de la cámara"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-23",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Son cámaras en Tierra; las páginas no lo enumeran."
+          },
+          {
+            "hazard": "isolation",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Los voluntarios viven y trabajan dentro de la cámara unas dos semanas («volunteers live and work inside a three-story, 20-foot diameter chamber»), y la página de 2015 dice que las cámaras también simulan el confinamiento."
+          },
+          {
+            "hazard": "distance",
+            "status": "unknown",
+            "basis": "deduced",
+            "why": "La página de 2015 dice que en las simulaciones largas de antes (56 y 91 días) se limitaba el reabastecimiento y el trato cara a cara («limit supply replenishment and face-to-face contact with the crew»); la ficha de ahora no dice nada de eso de las misiones de dos semanas."
+          },
+          {
+            "hazard": "gravity",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "Gravedad de la Tierra: la planta baja simula los movimientos y la carga de trabajo de una salida extravehicular, no la gravedad."
+          },
+          {
+            "hazard": "environment",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Presión por debajo de la atmosférica y otras composiciones del aire («different atmospheric compositions»), el ambiente de antes y durante una salida extravehicular; no el resto del entorno cerrado de una nave."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Enfermedad descompresiva y protocolos de salidas extravehiculares: EMMA no los vigila y no usa datos de las cámaras de altitud."
+    },
+    {
+      "id": "iss",
+      "name": "ISS",
+      "full_name": "International Space Station",
+      "where": "Órbita terrestre",
+      "read_on": "2026-10-21",
+      "rung": "iss",
+      "validation": "scientific",
+      "evidence_context": "iss",
+      "context_basis": "Microgravedad real y tripulación real.",
+      "reproduces": [
+        {
+          "quote": "By using the space station and ground analogs as a testbed for the Moon and Mars",
+          "ref": "nasa-hrp-step2-station",
+          "where": "cuerpo del artículo"
+        },
+        {
+          "quote": "Aboard the space station, which orbits about 250 miles above Earth at 17,500 miles per hour",
+          "ref": "nasa-hrp-step2-station",
+          "where": "cuerpo del artículo"
+        }
+      ],
+      "leaves_out": [
+        {
+          "what": "la distancia, el retardo y la autonomía de una misión a Marte",
+          "basis": "deduced",
+          "why": "La base de conocimiento (§3) da como limitación «LEO, soporte Tierra, resupply/evacuación relativa»; la página «Step 2» no la enumera."
+        }
+      ],
+      "duration": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "A typical mission to the International Space Station lasts about six months, but can vary based on visiting spacecraft schedules, mission priorities, and other factors.",
+            "ref": "nasa-iss-health-care-faq",
+            "where": "FAQ de salud de Johnson, «How long is a typical stay aboard the International Space Station?»"
+          }
+        ],
+        "not_found": null
+      },
+      "participants": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "An international crew of seven people live and work while traveling at a speed of five miles per second, orbiting Earth about every 90 minutes.",
+            "ref": "nasa-iss-facts-figures",
+            "where": "cifras de la estación: la tripulación habitual"
+          }
+        ],
+        "not_found": null
+      },
+      "data": {
+        "read_on": "2026-10-31",
+        "quotes": [],
+        "not_found": "Ni «Step 2», ni las cifras de la estación ni la FAQ de salud dicen dónde quedan los datos. EMMA no tiene constantes vitales de la ISS: son datos médicos protegidos y no hay API pública."
+      },
+      "providers": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "An international partnership of five space agencies from 15 countries operates the International Space Station.",
+            "ref": "nasa-iss-facts-figures",
+            "where": "cifras de la estación: quién la opera"
+          },
+          {
+            "quote": "Work under the contract extension will include sustaining engineering of station hardware and software, and support of U.S. hardware and software provided to international partners and participants in the station program.",
+            "ref": "nasa-iss-sustaining-boeing-2010",
+            "where": "nota de NASA de 2010: Boeing, ingeniería de sostenimiento (contrato prorrogado hasta 2015; no dice quién lo hace hoy)"
+          },
+          {
+            "quote": "Under the contract, Teledyne Brown Engineering will be responsible for providing International Space Station payload operations and ground systems; test, launch, flight, and ground operations for NASA’s Space Launch System rocket; flight operations and ground systems for the Near-Earth Asteroid Scout CubeSat mission; and Delay Tolerant Network protocol variants definition, prototyping, and testing; as well as provide ground systems to support test, launch, and flight operations for other program and projects.",
+            "ref": "nasa-mossi-ii-teledyne-2022",
+            "where": "nota de contrato de NASA de 2022 (MOSSI II): operaciones de carga útil de la estación"
+          },
+          {
+            "quote": "NASA has extended its cooperative agreement with the Center for the Advancement of Science in Space (CASIS) through 2027 to help manage the U.S. segment of the International Space Station, which is designated as a national laboratory.",
+            "ref": "nasa-iss-national-lab-casis-2022",
+            "where": "noticia de NASA de 2022: quién gestiona el laboratorio nacional"
+          }
+        ],
+        "not_found": null
+      },
+      "parameters": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Before each mission, astronauts undergo a series of medical tests to establish a preflight baseline using key health parameters, including aerobic fitness, agility, strength, and endurance.",
+            "ref": "nasa-iss-health-care-faq",
+            "where": "FAQ de salud de Johnson: la línea base prevuelo"
+          },
+          {
+            "quote": "NASA understands many of the human system responses to the space environment, including adaptations to bone density, muscle, sensory-motor, and cardiovascular health, but there is still much to learn.",
+            "ref": "nasa-iss-health-care-faq",
+            "where": "FAQ de salud de Johnson: lo que se vigila en vuelo"
+          }
+        ],
+        "not_found": null
+      },
+      "equipment": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "NASA also maintains a robust pharmacy and a suite of medical equipment onboard the space station to treat various conditions and injuries.",
+            "ref": "nasa-iss-health-care-faq",
+            "where": "FAQ de salud de Johnson, «What happens if there is a medical emergency on the space station?»: sin nombrar equipos"
+          }
+        ],
+        "not_found": null
+      },
+      "investigators": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Because the effects of menu fatigue could likely worsen as mission durations increase, NASA turns to researchers like Dr. Grace Douglas, lead scientist for the Advanced Food Technology project at NASA’s Johnson Space Center in Houston.",
+            "ref": "nasa-food-appeal-2021",
+            "where": "artículo de NASA de 2021 sobre la investigación 7562 (comida): la investigadora que la dirige; de las casi 3 000 investigaciones de la estación, EMMA solo ha leído esta"
+          }
+        ],
+        "not_found": null
+      },
+      "experiments": {
+        "read_on": "2026-10-31",
+        "quotes": [
+          {
+            "quote": "Through Expedition 60, the microgravity laboratory has hosted nearly 3,000 research investigations from researchers in more than 108 countries.",
+            "ref": "nasa-iss-facts-figures",
+            "where": "cifras de la estación"
+          },
+          {
+            "quote": "For the investigation, selected astronauts aboard the International Space Station take a weekly survey in which they rate the acceptability of the food and beverage items consumed during mealtimes.",
+            "ref": "nasa-food-appeal-2021",
+            "where": "artículo de NASA de 2021: la investigación 7562 del ISS Research Explorer, la del estudio de comida"
+          },
+          {
+            "quote": "ISS crew members have noted in debriefs that they would prefer more food variety for the length of the missions and they tire of certain foods over six months.",
+            "ref": "ntrs-20200001311",
+            "where": "resumen del póster de 2020 (NTRS 20200001311) del mismo estudio"
+          }
+        ],
+        "not_found": null
+      },
+      "ridge": {
+        "read_on": "2026-10-31",
+        "cells": [
+          {
+            "hazard": "radiation",
+            "status": "partial",
+            "basis": "deduced",
+            "why": "Radiación espacial real, pero en órbita baja («about 250 miles above Earth»): la base de conocimiento (§3) da como limitación «LEO», no el espacio profundo."
+          },
+          {
+            "hazard": "isolation",
+            "status": "reproduces",
+            "basis": "deduced",
+            "why": "Una tripulación confinada en la estación en estancias largas («extended stays in space», «Step 2»)."
+          },
+          {
+            "hazard": "distance",
+            "status": "leaves_out",
+            "basis": "deduced",
+            "why": "La base de conocimiento (§3) da como limitación «LEO, soporte Tierra, resupply/evacuación relativa»; la página «Step 2» no la enumera, y la FAQ de salud de Johnson (2024) dice que ante una urgencia la tripulación vuelve a Tierra («If a medical emergency requires a return to Earth, the crew will return in the spacecraft they launched aboard to receive urgent medical care on the ground.»)."
+          },
+          {
+            "hazard": "gravity",
+            "status": "reproduces",
+            "basis": "deduced",
+            "why": "Microgravedad real («The microgravity environment on the space station affects the human body in a variety of ways», «Step 2»)."
+          },
+          {
+            "hazard": "environment",
+            "status": "reproduces",
+            "basis": "deduced",
+            "why": "Una nave cerrada; «Step 2» estudia, entre otras cosas, el CO2 de la estación («carbon dioxide levels on the space station»)."
+          }
+        ]
+      },
+      "variables_kb": null,
+      "emma_use": "Respuesta real en microgravedad. La base de conocimiento le da también uso operacional («comportamiento operacional real»), pero con Tierra en tiempo real: la validación operacional que pide la conversación de ideación, una tripulación sola con el sistema, es la de HERA, CHAPEA o MMEA. EMMA no tiene constantes vitales de la ISS: son datos médicos protegidos y no hay API pública; de la ISS cita OSD-288, que son ratones (respaldo inmunológico, no telemetría)."
+    }
+  ],
+  "validations": [
+    {
+      "id": "scientific",
+      "name": "Validación científica",
+      "what": "La relación fisiológica: en análogos controlados, en la ISS y en datos de vuelo.",
+      "emma": [
+        {
+          "id": "mmash",
+          "ref": "mmash",
+          "context": "ground",
+          "bank": null,
+          "what": "Motor de medida y tasa de falsa alarma sobre personas sanas en Tierra (MMASH), con la sensibilidad medida sobre deterioros inyectados en esa misma fisiología: las dos métricas juntas.",
+          "does_not_show": "No valida fisiología espacial ni la deriva de una misión: son personas sanas en Tierra durante un día.",
+          "figures_in": "compliance/external-validation.md, «El resultado» y «El contrapeso», y las pruebas marcadas external"
+        },
+        {
+          "id": "inspiration4",
+          "ref": "osd-569",
+          "context": "spaceflight",
+          "bank": null,
+          "what": "Hemograma real de los cuatro tripulantes civiles de Inspiration4 (OSDR), reproducido para ver la trayectoria posvuelo frente al rango prevuelo de cada uno.",
+          "does_not_show": "Sin muestras en vuelo y con un vuelo de tres días: no valida una misión larga, y EMMA no alerta sobre la bajada de linfocitos al volver porque no hay línea base personal.",
+          "figures_in": "compliance/external-validation.md, «Datos reales de tripulación: hemograma de Inspiration4»"
+        }
+      ],
+      "not_covered": "Ni reposo en cama, ni ISS, ni una misión larga: no existe API pública de constantes vitales de astronautas."
+    },
+    {
+      "id": "operational",
+      "name": "Validación operacional",
+      "what": "Que una tripulación use el sistema sola, sin Tierra en tiempo real.",
+      "emma": [],
+      "not_covered": "EMMA no ha pasado por HERA, CHAPEA, MMEA ni NEEMO."
+    }
+  ],
+  "not_found": [
+    "La página «Step 1, Earth» no dice que ningún sitio reproduzca Marte entero, como le atribuía la conversación de ideación; lo dice la base de conocimiento (§3: «no existe banco de prueba completo»).",
+    "La página «Step 1, Earth» llama al laboratorio de Brookhaven «National Space Radiation Laboratory»; Brookhaven lo llama «NASA Space Radiation Laboratory».",
+    "Ni la página del programa MMEA ni su anuncio mencionan el retardo de comunicaciones; la página del programa no da fecha de publicación (releída el 2026-10-31).",
+    "Tras la relectura del 2026-10-31 siguen sin número de participantes ARGOS, los vuelos parabólicos, el NBL y Loma Linda; sin fabricante, integrador u operador, HERA, MMEA y Loma Linda; y sin decir dónde quedan sus datos todos los bancos salvo el NSRL (el catálogo de las muestras de animales irradiados está en el LSDA, que exige solicitud); las páginas de Loma Linda y MMEA dicen a quién van los resultados, no dónde quedan. La Antártida gana participantes (24 sujetos de dos estudios de 2019), operador (la NSF y el USAP) e investigadores; la ISS, la duración de una estancia, la tripulación, quién la opera y tres contratistas; ninguna página da dónde quedan los datos médicos de la ISS.",
+    "Ni la página de ARGOS (la de trajes espaciales de Johnson), ni la ficha de su patente, ni la de vuelos parabólicos muestran fecha de publicación; ninguna de las dos de NEEMO menciona datos.",
+    "La página del hábitat de CHAPEA nombra a ICON («ICON’s next generation Vulcan construction system», y el crédito de la imagen) y no a BIG: ninguna página leída de NASA atribuye el hábitat a BIG.",
+    "Ninguna página leída dice cuánto dura una sesión en ARGOS o en el NBL ni una exposición en el NSRL o en Loma Linda; la de una estancia en la ISS la da la FAQ de salud de Johnson («about six months»).",
+    "Solo las fichas de misión de HERA, de las estaciones antárticas y del NSRL nombran el peligro que estudian («Hazards»), y la página «Antarctic Stations» del enlace «NSF» añade «Hazards Tested: Hostile environment, isolation»; la de las cámaras de altitud y la del Space Radiation Element no tienen ese campo. Fuera de esas fichas, solo la página de estudios de NEEMO dice qué peligro estudia («focus on isolation, confinement»); el resto de la matriz RIDGE es deducción de EMMA.",
+    "El catálogo de análogos de NASA remite el Kraken a un vídeo, no a una página de nasa.gov (lo leído es una nota de NASA de 2023), y pone HERA entre los «Past Analogs»; su ficha de misión dice «Occurred 2 years ago».",
+    "De las columnas que pedía la conversación de ideación, «Parámetros medidos», «Equipos», «Investigadores» y «Experimentos» entran el 2026-10-31 con frase donde la página la da; «Limitaciones» es «Qué deja fuera»; «Aplicación ISS / Luna / Marte» y «Oportunidad» no las da ninguna página y son juicio de EMMA (`emma_use` y la escalera).",
+    "Investigadores por su nombre solo los dan la página «Antarctic Stations» del enlace «NSF» (Brian Crucian y Satish Mehta, sin cargo), la del programa CHAPEA (Grace Douglas, «principal investigator») y el artículo de 2021 sobre la investigación 7562 de la ISS (Grace Douglas, con su cargo de 2021); las demás páginas de los bancos no nombran a ninguno.",
+    "La investigación 7562 del ISS Research Explorer no se pudo releer el 2026-10-31: la página sirve la plantilla sin la investigación y la API que la llena (api-g.iss.nasa.gov) responde 404 en las rutas probadas; la ficha #id=975 que daba la conversación de ideación sigue sin resolverse por lo mismo. Lo que EMMA cita del estudio sale del artículo de NASA de 2021 y del póster de 2020 (NTRS).",
+    "De los proveedores de la ISS que nombraba la conversación de ideación, Boeing (2010), Teledyne Brown (2022) y CASIS (2022) tienen documento de NASA leído; de COLSA no se encontró el 2026-10-31 ninguna página viva de nasa.gov (la nota de 2012 del contrato del HOSC devuelve 404; las hojas de datos del POIC y de Marshall y el Marshall Star de agosto de 2012 no la nombran).",
+    "El centro de protones de Loma Linda entra solo por la página del Space Radiation Element, que lo nombra y enlaza protons.com: esa página es de un hospital, no de NASA, y no se cita; qué irradia NASA allí, cuánto dura y quién lo opera siguen sin fuente leída."
+  ]
+}

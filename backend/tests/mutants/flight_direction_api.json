@@ -1,0 +1,23 @@
+{
+ "target": "app/api/baseline_profile.py",
+ "test": [
+  "tests/test_baseline_profile.py::test_the_route_gives_what_other_flights_showed_for_each_analyzed_indicator"
+ ],
+ "mutations": [
+  {
+   "label": "el sentido en vuelo se da de todo el catálogo y no de lo analizado",
+   "old": "            item[\"key\"] for item in body[\"indicators\"]\n",
+   "new": "            item for item in __import__(\"app.ingest.codes\").ingest.codes.CATALOG\n"
+  },
+  {
+   "label": "el sentido en vuelo no sigue el orden de los indicadores del perfil",
+   "old": "            item[\"key\"] for item in body[\"indicators\"]\n",
+   "new": "            item[\"key\"] for item in reversed(body[\"indicators\"])\n"
+  },
+  {
+   "label": "el perfil se da sin el sentido en vuelo",
+   "old": "        \"flight_direction\": flight_direction.for_profile(",
+   "new": "        \"flight_direction_\": flight_direction.for_profile("
+  }
+ ]
+}

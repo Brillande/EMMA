@@ -1,0 +1,1487 @@
+{
+  "_nota": "Mapa de conjuntos de datos humanos (base de conocimiento §8 y tarea P0 de §15; conversación de ideación, «Astronaut Longitudinal Health Dataset Map»). Cada frase de `quote` es literal de la fuente citada por su ficha del registro, leída el 2026-10-22 con WebFetch (o el día de su `read_on`, si lo lleva: la decimosexta ronda añadió el 2026-10-23 el reposo en cama, los catálogos, los controles y las diez áreas del Twins Study, y la decimoséptima, el 2026-10-26, los otros seis reposos en cama humanos de OSDR, leídos en su API; y la decimoctava, el 2026-10-26, lo que mide el artículo de resultados de AGBRESA y la disponibilidad de datos del artículo de Inspiration4; y la decimonovena, el 2026-10-31, el acceso de cada conjunto de OSDR leído en su API de ficheros (la bandera «restricted» de cada fichero), los días que el artículo del Twins Study nombra en resultados concretos, los calendarios de dos estudios de CIPHER en sus pósteres de NTRS, el archivo de las medidas estándar de AGBRESA, las tomas de OSD-353 en su artículo y el diseño cruzado de OSD-198 en el suyo) (páginas de OSDR en osd/meta, que da en JSON lo que la página pinta con JavaScript; artículos en PMC; páginas de NASA; PhysioNet). Cada día de toma (`labels`) está escrito en alguna de las frases de su fase; lo que la fuente no dice se declara buscado y no encontrado, con dónde se buscó. `kb_row` y la escalera de hitos son texto literal del equipo (base de conocimiento §8 y conversación), no de NASA. Las cifras de la validación de EMMA no se copian aquí: viven en compliance/external-validation.md. `role` es el papel de cada conjunto en la estrategia de datos (base de conocimiento §8: INPUT, KNOWLEDGE, CONTEXT) y para qué sirve al modelo (conversación: entrenar, validar o solo contextualizar): deducción de EMMA sobre lo leído, con su motivo, como la matriz banco × RIDGE de testbeds.json; los catálogos no la llevan, porque no son una fuente de datos sino el índice de otras. Lo carga y lo valida evidence/human_datasets.py.",
+  "read_on": "2026-10-22",
+  "task": {
+    "text": "Twins Study + OSD-343 + datasets humanos | tabla de variables, timepoints, acceso y utilidad",
+    "where": "docs/contexto/knowledge-base-v1.md §15 (P0)"
+  },
+  "rule": {
+    "text": "La estrategia de datos debe separar INPUT (señales de misión), KNOWLEDGE (evidencia histórica/mecanística) y CONTEXT (entorno/misión), además de protocolos/contramedidas.",
+    "where": "docs/contexto/knowledge-base-v1.md §8"
+  },
+  "fitness_rule": {
+    "text": "y si sirven para entrenar, validar o simplemente contextualizar nuestro modelo.",
+    "where": "docs/contexto/conversacion-ideacion-v1.md («Astronaut Longitudinal Health Dataset Map»)"
+  },
+  "milestones": {
+    "text": "L-180 → L-30 → Flight → R+0 → R+7 → R+30 → R+90 → R+180 → R+365",
+    "where": "docs/contexto/conversacion-ideacion-v1.md (seguimiento post-vuelo: «cuando existan esos puntos temporales»)",
+    "points": ["L-180", "L-30", "Flight", "R+0", "R+7", "R+30", "R+90", "R+180", "R+365"]
+  },
+  "analog_pattern": {
+    "text": "PRE → EXPOSURE → COUNTERMEASURE → POST → RECOVERY",
+    "where": "docs/contexto/knowledge-base-v1.md §3.2 (bed rest como dataset longitudinal)",
+    "points": ["PRE", "EXPOSURE", "COUNTERMEASURE", "POST", "RECOVERY"]
+  },
+  "controls_rule": {
+    "points": ["Flight sample", "In-flight control", "Ground control", "Pre-flight", "Post-flight"],
+    "where": "docs/contexto/conversacion-ideacion-v1.md (Biolab: «Para nuestro futuro mapa de datos añadiría siempre», «cuando estén disponibles»)"
+  },
+  "datasets": [
+    {
+      "id": "osd-569",
+      "name": "OSD-569",
+      "ref": "osd-569",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": "Inspiration4 / OSDR | muestras humanas pre/durante/post | complemento humano multimodal",
+      "kb_where": "§8",
+      "subjects": [
+        {"quote": "The SpaceX Inspiration4 mission was a 3-day mission with four private astronauts", "ref": "osd-569", "where": "descripción del estudio (osd/meta/569)"}
+      ],
+      "variables": [
+        {"what": "Hemograma completo", "quote": "for a complete blood count at all ground timepoints (L-92, L-44, L-3, R+1, R+45, R+82, R+194).", "ref": "osd-569", "where": "descripción del estudio"},
+        {"what": "Expresión génica por secuenciación directa de ARN y sitios m6A", "quote": "Data was used to generate differential gene expression profiles and annotate sites of m6A modification.", "ref": "osd-569", "where": "descripción del estudio"},
+        {"what": "Genoma completo y panel de hematopoyesis clonal", "quote": "whole genome sequencing was performed on crew members at L-44 and R+45 and a clonal hematopoiesis panel", "ref": "osd-569", "where": "descripción del estudio"}
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {"status": "labels", "labels": ["L-92", "L-44", "L-3"], "cited": [
+          {"quote": "collected pre-flight (L-92, L-44, L-3) and post-flight (R+1, R+45, R+82, R+194).", "ref": "osd-569", "where": "descripción del estudio, sangre en tubos PaxGene"}
+        ], "why": null, "searched": null},
+        "inflight": {"status": "none", "labels": [], "cited": [
+          {"quote": "for a complete blood count at all ground timepoints (L-92, L-44, L-3, R+1, R+45, R+82, R+194).", "ref": "osd-569", "where": "descripción del estudio"}
+        ], "why": "La misión recogió muestras en vuelo («The crew collected biospecimen samples before, during, and after flight»), pero las de este conjunto son todas de Tierra.", "searched": null},
+        "post": {"status": "labels", "labels": ["R+1", "R+45", "R+82", "R+194"], "cited": [
+          {"quote": "collected pre-flight (L-92, L-44, L-3) and post-flight (R+1, R+45, R+82, R+194).", "ref": "osd-569", "where": "descripción del estudio, sangre en tubos PaxGene"}
+        ], "why": null, "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "listed", "items": [
+        {"kind": "own_baseline", "population": "human", "quote": "serve as their own controls (within-subjects design)", "ref": "jones-2024-inspiration4", "where": "Discussion del artículo de la misión Inspiration4, la de los cuatro tripulantes de OSD-569", "read_on": "2026-10-23"}
+      ], "absent": [
+        {"quote": "This study did not have age- and sex-matched controls on Earth", "ref": "jones-2024-inspiration4", "where": "Discussion del artículo de la misión Inspiration4", "read_on": "2026-10-23"}
+      ], "why": null, "searched": "La descripción y los factores de OSD-569 en la API de OSDR (2026-10-23) no nombran ningún control (los factores son «Time» y «Spaceflight»): el control sale del artículo de la misión."},
+      "access": {"level": "mixed", "basis": "source", "cited": [
+        {"quote": "\"restricted\": false", "ref": "osd-569", "where": "campo de cada uno de los 11 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/569)", "read_on": "2026-10-31"},
+        {"quote": "All crew members have consented for data and sample sharing.", "ref": "osd-569", "where": "descripción del protocolo (API de OSDR, dataset OSD-569)", "read_on": "2026-10-31"},
+        {"quote": "The restricted data files will have a lock icon next to them.", "ref": "nasa-osdr-controlled-access-tutorial", "where": "tutorial de OSDR sobre los conjuntos de acceso controlado, paso 1", "read_on": "2026-10-31"},
+        {"quote": "as well as controlled access to more sensitive data (for example, genetic sequence data) and physical specimens.", "ref": "overbey-2024-soma", "where": "disponibilidad de datos"}
+      ], "path": "backend/app/data/osdr/OSD-569_LSDS-7_Complete_Blood_Count_CBC_TRANSFORMED.csv", "why": "Los 11 ficheros depositados (hemograma, tablas procesadas, informes MultiQC y metadatos) llevan «restricted: false»; las lecturas en bruto de secuenciación no están entre ellos, y el artículo del paquete SOMA pone los datos sensibles, como la secuencia genética, en acceso controlado. EMMA descargó el hemograma transformado el 2026-09-24 y fija su huella (ingest/inspiration4.py).", "searched": null},
+      "emma_use": {"used": true, "text": "La consola de Tierra traza los linfocitos de los cuatro tripulantes, firmados como simulados porque no son lecturas de esta tripulación. Es la parte con datos humanos de vuelo de la validación científica, sin tomas en vuelo.", "where": "backend/app/ingest/inspiration4.py", "cites": "osd-569"},
+      "role": {"level": "KNOWLEDGE", "level_why": "Analíticas de una misión pasada, leídas en OSDR: evidencia histórica de una respuesta humana real al vuelo, no una señal que EMMA reciba durante una misión.", "fitness": "contextualize", "fitness_why": "El hemograma se reproduce en la línea de tiempo para enseñar una respuesta real (los linfocitos de los cuatro bajaron al volver); el motor no se mide contra él: con siete muestras no hay línea base personal y EMMA no alerta sobre esa bajada, como declara la validación externa. Ni entrena ni sirve de validación: contextualiza."},
+      "caveat": "Cuatro civiles y tres días en órbita baja: una respuesta real al vuelo, no la evolución de una misión larga. Sin tomas en vuelo en este conjunto."
+    },
+    {
+      "id": "inspiration4-soma",
+      "name": "Inspiration4 / SOMA",
+      "ref": "overbey-2024-soma",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": "Inspiration4 / OSDR | muestras humanas pre/durante/post | complemento humano multimodal",
+      "kb_where": "§8",
+      "subjects": [
+        {"quote": "Four adult non-professional astronauts were selected to participate in the Inspiration4 mission.", "ref": "jones-2024-inspiration4", "where": "Methods"},
+        {"quote": "which includes the 2,911 samples collected during the I4 mission", "ref": "overbey-2024-soma", "where": "cuerpo del artículo"}
+      ],
+      "variables": [
+        {"what": "Trece tipos de muestra biológica", "quote": "13 biospecimen sample types were collected and processed, including whole blood, serum, PBMCs, plasma", "ref": "overbey-2024-soma", "where": "cuerpo del artículo"},
+        {"what": "Ecografía portátil, reloj inteligente y perfil inmune", "quote": "handheld ultrasound imaging, smartwatch wearables and immune profiling", "ref": "jones-2024-inspiration4", "where": "resumen"},
+        {"what": "Cognición: batería Cognition de NASA", "quote": "Astronauts performed the ten cognitive tests of NASA’s Cognition battery", "ref": "jones-2024-inspiration4", "where": "Methods"},
+        {"what": "Reloj inteligente en vuelo", "quote": "which astronauts donned on FD2 and wore for an average of 1.3 ± 0.1 days in-flight", "ref": "jones-2024-inspiration4", "where": "Methods"}
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {"status": "labels", "labels": ["L-92", "L-44", "L-3"], "cited": [
+          {"quote": "Datasets were generated across ten timepoints: three pre-flight (L−92, L−44 and L−3)", "ref": "overbey-2024-soma", "where": "cuerpo del artículo"}
+        ], "why": null, "searched": null},
+        "inflight": {"status": "labels", "labels": ["FD1", "FD2", "FD3"], "cited": [
+          {"quote": "three in-flight (flight day 1 (FD1), FD2 and FD3)", "ref": "overbey-2024-soma", "where": "cuerpo del artículo"},
+          {"quote": "in-flight (flight days (FDs) FD1, FD2 and FD3)", "ref": "jones-2024-inspiration4", "where": "Methods"}
+        ], "why": null, "searched": null},
+        "post": {"status": "labels", "labels": ["R+1", "R+45", "R+82", "R+194"], "cited": [
+          {"quote": "post-flight following return (R) to Earth (R + 1, R + 45, R + 82 and R + 194).", "ref": "jones-2024-inspiration4", "where": "Methods"}
+        ], "why": null, "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "listed", "items": [{"kind": "own_baseline", "population": "human", "quote": "serve as their own controls (within-subjects design)", "ref": "jones-2024-inspiration4", "where": "Discussion", "read_on": "2026-10-23"}], "absent": [{"quote": "This study did not have age- and sex-matched controls on Earth", "ref": "jones-2024-inspiration4", "where": "Discussion", "read_on": "2026-10-23"}], "why": null, "searched": null},
+      "access": {"level": "mixed", "basis": "source", "cited": [
+        {"quote": "Data and samples generated in this study are available through SOMA", "ref": "overbey-2024-soma", "where": "disponibilidad de datos"},
+        {"quote": "as well as controlled access to more sensitive data (for example, genetic sequence data) and physical specimens.", "ref": "overbey-2024-soma", "where": "disponibilidad de datos"},
+        {"quote": "all data from this study are stored in multiple controlled-access repositories for easy access", "ref": "jones-2024-inspiration4", "where": "disponibilidad de datos"},
+        {"quote": "Datasets have been uploaded to four different data repositories", "ref": "jones-2024-inspiration4", "where": "disponibilidad de datos", "read_on": "2026-10-26"}
+      ], "path": null, "why": null, "searched": null},
+      "emma_use": {"used": false, "text": "Ninguno: de esta misión EMMA usa solo el hemograma de OSD-569.", "where": null, "cites": null},
+      "role": {"level": "KNOWLEDGE", "level_why": "Un atlas de muestras y datos de una misión pasada (Nature 2024): evidencia histórica, no una señal recibida en misión.", "fitness": "contextualize", "fitness_why": "Lo abierto se consulta en el portal SOMA y EMMA no ha descargado nada; lo sensible es de acceso controlado. Con cuatro personas y un reloj inteligente poco más de un día en vuelo, lo que podría contrastarse del motor no se ha hecho, y no se reclama."},
+      "caveat": "Cuatro civiles y tres días: las tomas en vuelo son de los tres días de la misión. Lo sensible, como la secuencia genética, es de acceso controlado."
+    },
+    {
+      "id": "twins-study",
+      "name": "NASA Twins Study",
+      "ref": "garrett-bakelman-2019",
+      "population": "human",
+      "open_population": null,
+      "open_population_note": null,
+      "kb_row": "Twins Study | humano longitudinal N=1 + gemelo control | parámetros pre/in/post y recuperación; evitar generalización",
+      "kb_where": "§8",
+      "subjects": [
+        {"quote": "one identical twin astronaut was monitored before, during, and after a 1-year mission onboard", "ref": "garrett-bakelman-2019", "where": "resumen"},
+        {"quote": "his twin served as a genetically matched ground control.", "ref": "garrett-bakelman-2019", "where": "resumen"},
+        {"quote": "spent 340 days aboard the ISS", "ref": "garrett-bakelman-2019", "where": "cuerpo del artículo"}
+      ],
+      "variables": [
+        {"what": "Diez modalidades biomédicas", "quote": "characterized across 10 generalized biomedical modalities", "ref": "garrett-bakelman-2019", "where": "cuerpo del artículo"},
+        {"what": "Once tipos de datos durante 25 meses: fisiológicos, teloméricos, transcriptómicos, epigenéticos, proteómicos, metabolómicos, inmunes, microbiómicos, cardiovasculares, visuales y cognitivos", "quote": "Physiological, telomeric, transcriptomic, epigenetic, proteomic, metabolomic, immune, microbiomic, cardiovascular, vision-related, and cognitive data were collected over 25 months.", "ref": "garrett-bakelman-2019", "where": "resumen, «RESULTS»", "read_on": "2026-10-23"},
+        {"what": "Diez equipos de investigación", "quote": "brought ten research teams around the country together", "ref": "nasa-twins-study", "where": "cuerpo de la página"}
+      ],
+      "areas": {"count": 10, "cited": {"quote": "The study focused on four categories of research split into 10 investigations", "ref": "nasa-twins-study-research", "where": "cuerpo de la página «The Research»", "read_on": "2026-10-23"}, "items": [{"name": "Metabolomics", "what": "Metabolómica: marcadores de aterosclerosis, estrés oxidativo e inflamación", "quote": "Metabolomic and Genomic Markers of Atherosclerosis as Related to Oxidative Stress, Inflammation", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Metabolomics»", "read_on": "2026-10-23"}, {"name": "Proteomics", "what": "Proteómica: desplazamiento de fluidos y alteración visual", "quote": "Proteomic Assessment of Fluid Shifts and Association with Visual Impairment", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Proteomics»", "read_on": "2026-10-23"}, {"name": "Cognition", "what": "Cognición", "quote": "Cognition on Monozygotic Twin on Earth", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Cognition»", "read_on": "2026-10-23"}, {"name": "Microbiome", "what": "Microbioma del tubo digestivo", "quote": "Metagenomic Sequencing of the Microbiome in GI Tract of Twin Astronauts", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Microbiome»", "read_on": "2026-10-23"}, {"name": "Telomeres", "what": "Telómeros y telomerasa", "quote": "Differential Effects on Telomeres and Telomerase in Twin Astronauts Associated With Spaceflight", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Telomeres»", "read_on": "2026-10-23"}, {"name": "Epigenomics", "what": "Epigenómica del genoma completo", "quote": "Comprehensive Whole Genome Analysis of Differential Epigenetic Effects of Space Travel", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Epigenomics»", "read_on": "2026-10-23"}, {"name": "Biochemical", "what": "Perfil bioquímico, con el gemelo de control", "quote": "Biochemical Profile: Homozygous Twin control for a 12 month Space Flight Exposure", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Biochemical»", "read_on": "2026-10-23"}, {"name": "Gene Expression", "what": "Expresión génica: metilación de ADN y ARN antes, durante y después", "quote": "The Landscape of DNA and RNA Methylation Before, During, and After Human Space Travel", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Gene Expression»", "read_on": "2026-10-23"}, {"name": "Integrative Omics", "what": "Ómica integrativa longitudinal", "quote": "Longitudinal Integrated Multi-Omics Analysis of the Biomolecular Effects of Space Travel", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Integrative Omics»", "read_on": "2026-10-23"}, {"name": "Immunome", "what": "Inmunoma: respuesta inmune basal y estimulada", "quote": "Characterizing Personalized Changes in Baseline Immune Abnormalities and Stimulated Immune Response", "ref": "nasa-twins-study-research", "where": "lista de investigaciones, «Immunome»", "read_on": "2026-10-23"}]},
+      "phases": {
+        "pre": {"status": "labels", "labels": ["L-162"], "cited": [
+          {"quote": "spanning time points before (preflight), during (inflight), and after (postflight) spaceflight", "ref": "garrett-bakelman-2019", "where": "cuerpo del artículo"},
+          {"quote": "there was a significant shift in TW’s inflight (FD259) telomere length distribution as compared to his preflight (L–162; L– days before launch) distribution", "ref": "garrett-bakelman-2019", "where": "resultados, telómeros (el guion de «L–162» es el largo, como lo escribe PMC)", "read_on": "2026-10-31"}
+        ], "why": "Días que el artículo nombra en resultados concretos (telómeros, metilación, inflamación, volumen sanguíneo); el calendario completo lo remite a su figura 1A y a la tabla S1, en el material suplementario, que no se pudo descargar.", "searched": null},
+        "inflight": {"status": "labels", "labels": ["FD76", "FD259", "FD334", "FD340"], "cited": [
+          {"quote": "spanning time points before (preflight), during (inflight), and after (postflight) spaceflight", "ref": "garrett-bakelman-2019", "where": "cuerpo del artículo"},
+          {"quote": "TW’s increased telomere length was observed at all inflight time points assessed [flight day (FD) 14 to FD334", "ref": "garrett-bakelman-2019", "where": "resultados, telómeros", "read_on": "2026-10-31"},
+          {"quote": "comparisons of preflight (L–162) samples to inflight (early, FD76; late, FD259) and postflight (R+104) samples in CD4 and CD8 cells", "ref": "garrett-bakelman-2019", "where": "leyenda de la figura 3, panel D", "read_on": "2026-10-31"},
+          {"quote": "telomere length shortened rapidly upon TW’s return to Earth, within ~48 hours [FD340 ambient return to R+0 (R+ days post return)", "ref": "garrett-bakelman-2019", "where": "resultados, telómeros", "read_on": "2026-10-31"}
+        ], "why": "Días que el artículo nombra en resultados concretos; «FD 14» se escribe separado y no se cuenta como día escrito. El calendario completo está en su figura 1A y en la tabla S1, en el material suplementario, que no se pudo descargar.", "searched": null},
+        "post": {"status": "labels", "labels": ["R+0", "R+4", "R+12", "R+36", "R+104", "R+190"], "cited": [
+          {"quote": "spanning time points before (preflight), during (inflight), and after (postflight) spaceflight", "ref": "garrett-bakelman-2019", "where": "cuerpo del artículo"},
+          {"quote": "returned to near preflight levels within 6 months after return to Earth", "ref": "garrett-bakelman-2019", "where": "resumen"},
+          {"quote": "The third signature of inflammation was seen immediately after landing (R+0 and R+4)", "ref": "garrett-bakelman-2019", "where": "resultados, inflamación", "read_on": "2026-10-31"},
+          {"quote": "All three measures returned to baseline levels by the R+36 collection.", "ref": "garrett-bakelman-2019", "where": "resultados, inflamación", "read_on": "2026-10-31"},
+          {"quote": "TW did not have blood volume measures until R+12", "ref": "garrett-bakelman-2019", "where": "resultados, sodio y volumen sanguíneo", "read_on": "2026-10-31"},
+          {"quote": "comparisons of preflight (L–162) samples to inflight (early, FD76; late, FD259) and postflight (R+104) samples in CD4 and CD8 cells", "ref": "garrett-bakelman-2019", "where": "leyenda de la figura 3, panel D", "read_on": "2026-10-31"},
+          {"quote": "After returning to Earth (R+190), TW’s telomere length distribution shifted back toward increased numbers of shorter telomeres, more closely resembling his preflight distribution.", "ref": "garrett-bakelman-2019", "where": "resultados, telómeros", "read_on": "2026-10-31"}
+        ], "why": "Días que el artículo nombra en resultados concretos (inflamación, volumen sanguíneo, metilación, telómeros); el calendario completo está en su figura 1A y en la tabla S1, en el material suplementario, que no se pudo descargar.", "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "listed", "items": [{"kind": "twin", "population": "human", "quote": "his twin served as a genetically matched ground control.", "ref": "garrett-bakelman-2019", "where": "resumen"}], "absent": [], "why": null, "searched": null},
+      "access": {"level": "request", "basis": "source", "cited": [
+        {"quote": "The NASA Life Sciences Data Archive (LSDA) is the repository for all human and animal research data", "ref": "garrett-bakelman-2019", "where": "«Data and materials availability»"},
+        {"quote": "via an approved request process for information and data from the LSDA", "ref": "garrett-bakelman-2019", "where": "«Data and materials availability»"}
+      ], "path": null, "why": null, "searched": null},
+      "emma_use": {"used": true, "text": "Se cita, por la página de NASA del estudio, como respaldo del dominio inmune: el cambio y la recuperación existen en una persona, sin generalizar su magnitud.", "where": "backend/app/evidence/links.py", "cites": "nasa-twins-study"},
+      "role": {"level": "KNOWLEDGE", "level_why": "Un año en la ISS medido en una persona y su gemelo (Science 2019): evidencia histórica, no una señal que EMMA reciba en misión.", "fitness": "contextualize", "fitness_why": "Dice que el cambio y la recuperación existen, no cuánto en otra persona; los datos individuales se piden al LSDA y EMMA no los tiene. Respalda el dominio inmune por su página de NASA; ni entrena ni contrasta el motor."},
+      "caveat": "Un astronauta y su gemelo en Tierra: dice que el cambio y la recuperación existen, no cuánto en otra persona. Los datos individuales se piden al LSDA. Los días de toma del mapa son los que el artículo nombra en resultados concretos, no su calendario entero."
+    },
+    {
+      "id": "osd-343",
+      "name": "OSD-343",
+      "ref": "osd-343",
+      "population": "human_and_animal",
+      "open_population": "animal",
+      "open_population_note": "El estudio analiza métricas de astronautas, pero los ficheros que deposita en OSDR son de ratón (músculo, Rodent Research-9).",
+      "kb_row": "OSD-343 | integración multi-ómica/humana según estudio | relaciones longitudinales y comparación de modalidades",
+      "kb_where": "§8",
+      "subjects": [
+        {"quote": "human metrics from 59 astronauts, and confirmatory data from NASA's Twin Study", "ref": "osd-343", "where": "descripción del estudio (osd/meta/343)"},
+        {"quote": "Rodent Research-9 (RR-9) mission tissues were utilized for metabolomic analysis of the medial head of the gastrocnemius", "ref": "osd-343", "where": "protocolo «mouse habitation»"}
+      ],
+      "variables": [
+        {"what": "Multi-ómica de los datos de GeneLab y perfiles biomédicos de astronautas", "quote": "a multi-omics, systems biology approach was used to investigate NASA's GeneLab data and astronaut biomedical profiles.", "ref": "osd-343", "where": "descripción del estudio"},
+        {"what": "Actividad mitocondrial e inmunidad innata", "quote": "Pathway analysis showed significant enrichment of mitochondrial activity and innate immunity.", "ref": "osd-343", "where": "descripción del estudio"}
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {"status": "not_found", "labels": [], "cited": [], "why": null, "searched": "descripción y protocolos de osd/meta/343 (2026-10-22) y de la API de OSDR (2026-10-31); los factores son «Ground Control» y «Space Flight», sin días; el «L-7d» del protocolo es el reparto de los ratones en grupos, no una toma, y de las métricas de los 59 astronautas no se da ningún día"},
+        "inflight": {"status": "not_found", "labels": [], "cited": [], "why": null, "searched": "descripción y protocolos de osd/meta/343 (2026-10-22) y de la API de OSDR (2026-10-31); los tejidos de RR-9 se tomaron tras el regreso y de las métricas de los 59 astronautas no se da ningún día"},
+        "post": {"status": "stated", "labels": [], "cited": [
+          {"quote": "Unberthing from ISS and splashdown of live mice occurred on L+34d, and the live mice were collected by the science teams on L+35d for behavioral and functional testing, as well as tissue harvest.", "ref": "osd-343", "where": "protocolo de RR-9 (API de OSDR, dataset OSD-343)", "read_on": "2026-10-31"}
+        ], "why": "Son los ratones de RR-9, los de los ficheros abiertos: la toma se escribe desde el lanzamiento (L+35d, el día después del amerizaje en L+34d), no desde el regreso, y la escalera no la traduce a R+. De las métricas de los 59 astronautas, ninguna fecha.", "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "listed", "items": [{"kind": "ground", "population": "animal", "quote": "ground-based habitat controls placed within in environmental chambers", "ref": "osd-343", "where": "protocolo (API de OSDR, dataset OSD-343)", "read_on": "2026-10-23"}], "absent": [], "why": null, "searched": null},
+      "access": {"level": "open", "basis": "source", "cited": [
+        {"quote": "\"restricted\": false", "ref": "osd-343", "where": "campo de cada uno de los 81 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/343)", "read_on": "2026-10-31"}
+      ], "path": null, "why": "Los 81 ficheros son la espectrometría de masas del músculo de ratón (modos NEG y POS) y los metadatos; EMMA no los ha descargado. Las métricas de los astronautas no están entre ellos.", "searched": null},
+      "emma_use": {"used": true, "text": "Respaldo de mecanismo para el dominio inmune (estrés mitocondrial e inmunidad innata); no aporta una medida de astronautas.", "where": "backend/app/evidence/links.py", "cites": "osd-343"},
+      "role": {"level": "KNOWLEDGE", "level_why": "Multi-ómica de datos ya recogidos (GeneLab, astronautas, Twins Study): evidencia mecanística, no una señal recibida en misión.", "fitness": "contextualize", "fitness_why": "Respaldo de mecanismo (estrés mitocondrial e inmunidad innata) para el dominio inmune; sus ficheros abiertos son de ratón y no hay medida de astronautas que contrastar con el motor."},
+      "caveat": "Los ficheros abiertos son de ratón: las métricas de astronautas se analizan en la publicación y no se depositan aquí."
+    },
+    {
+      "id": "osd-288",
+      "name": "OSD-288",
+      "ref": "osd-288",
+      "population": "animal",
+      "open_population": null,
+      "open_population_note": null,
+      "kb_row": "OSDR / OSD-288 | murino, RNA-seq, ambiente/radiación | mecanismos inmunes; no usar como equivalente clínico humano",
+      "kb_where": "§8",
+      "subjects": [
+        {"quote": "One day prior to launch (L-1d), 12 mice at 8 weeks of age were loaded into the TCU and made ready for launch.", "ref": "osd-288", "where": "protocolo «Animal Husbandry» (osd/meta/288)"},
+        {"quote": "of the International Space Station (ISS) on orbit for 35 days.", "ref": "osd-288", "where": "descripción del estudio"}
+      ],
+      "variables": [
+        {"what": "Transcriptoma de bazo", "quote": "transcriptome analysis by next-generation sequencing technology is performed about spleen", "ref": "osd-288", "where": "descripción del estudio"}
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {"status": "not_found", "labels": [], "cited": [], "why": null, "searched": "osd/meta/288 hasta el carácter 100 000 (2026-10-22) y la API de OSDR (2026-10-31): «L-1d» es la carga de los ratones y de L-21d a L-4d es la cría; ninguna es una toma"},
+        "inflight": {"status": "not_found", "labels": [], "cited": [], "why": null, "searched": "osd/meta/288 hasta el carácter 100 000 (2026-10-22) y la API de OSDR (2026-10-31): los tejidos se tomaron tras el regreso"},
+        "post": {"status": "stated", "labels": [], "cited": [
+          {"quote": "After recovered these mice on the ground", "ref": "osd-288", "where": "descripción del estudio"},
+          {"quote": "Returned mice were euthanized and dissected at the laboratory to collect tissues.", "ref": "osd-288", "where": "protocolo «Animal Husbandry» (API de OSDR, dataset OSD-288)", "read_on": "2026-10-31"}
+        ], "why": "Sin día: el protocolo da el amerizaje (26 de agosto de 2016) y la llegada del contenedor a Long Beach (28 de agosto), no el día de la disección.", "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "listed", "items": [{"kind": "ground", "population": "animal", "quote": "Ground Control", "ref": "osd-288", "where": "valor de factor de las muestras de control en Tierra (osd/meta/288)", "read_on": "2026-10-23"}, {"kind": "inflight_1g", "population": "animal", "quote": "1G by centrifugation", "ref": "osd-288", "where": "valor de factor de las muestras de vuelo a 1 g (osd/meta/288)", "read_on": "2026-10-23"}], "absent": [], "why": null, "searched": null},
+      "access": {"level": "open", "basis": "source", "cited": [
+        {"quote": "\"restricted\": false", "ref": "osd-288", "where": "campo de cada uno de los 178 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/288)", "read_on": "2026-10-31"},
+        {"quote": "A study with Controlled-Access data in OSDR will have a “Request Access to Restricted Files” button under the Files tab", "ref": "nasa-osdr-controlled-access-tutorial", "where": "tutorial de OSDR sobre los conjuntos de acceso controlado, paso 1", "read_on": "2026-10-31"}
+      ], "path": null, "why": "Los 178 ficheros (lecturas de ARN en bruto, recortadas y alineadas, tablas de recuentos y metadatos) llevan «restricted: false»; EMMA no los ha descargado: lo que cita es la ficha.", "searched": null},
+      "emma_use": {"used": true, "text": "Respaldo inmunológico en ratón, y la API lo dice con esas palabras. No es telemetría ni mide a una persona.", "where": "backend/app/evidence/links.py", "cites": "osd-288"},
+      "role": {"level": "KNOWLEDGE", "level_why": "Transcriptoma de bazo de ratones que volaron en 2016, publicado en OSDR: evidencia mecanística en un mamífero, no una señal recibida en misión.", "fitness": "contextualize", "fitness_why": "Respaldo inmunológico de mecanismo, y la API lo dice con esas palabras; no mide a una persona ni da nada con que contrastar el motor."},
+      "caveat": "Ratones, no astronautas: no mide signos vitales humanos."
+    },
+    {
+      "id": "mmash",
+      "name": "MMASH",
+      "ref": "mmash",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {"quote": "22 healthy young adult males were recruited.", "ref": "mmash", "where": "página del conjunto en PhysioNet"}
+      ],
+      "variables": [
+        {"what": "Latido a latido durante 24 h", "quote": "provides 24 hours of continuous beat-to-beat heart data", "ref": "mmash", "where": "página del conjunto"},
+        {"what": "Acelerometría, sueño, actividad y rasgos psicológicos", "quote": "triaxial accelerometer data, sleep quality, physical activity and psychological characteristics", "ref": "mmash", "where": "página del conjunto"},
+        {"what": "Cortisol y melatonina en saliva", "quote": "saliva bio-markers (i.e.cortisol and melatonin)", "ref": "mmash", "where": "página del conjunto"}
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {"status": "not_applicable", "labels": [], "cited": [], "why": "Sin vuelo: 24 h en Tierra, sin un antes ni un después de un vuelo.", "searched": null},
+        "inflight": {"status": "not_applicable", "labels": [], "cited": [], "why": "Sin vuelo: 24 h en Tierra.", "searched": null},
+        "post": {"status": "not_applicable", "labels": [], "cited": [], "why": "Sin vuelo: 24 h en Tierra, sin un antes ni un después de un vuelo.", "searched": null}
+      },
+      "analog_schedule": null,
+      "controls": {"status": "not_applicable", "items": [], "absent": [], "why": "Sin vuelo ni intervención: 22 personas sanas medidas un día en Tierra; no hay grupo con el que comparar.", "searched": null},
+      "access": {"level": "open", "basis": "source", "cited": [
+        {"quote": "Database Open Access", "ref": "mmash", "where": "página del conjunto"},
+        {"quote": "Open Data Commons Open Database License v1.0", "ref": "mmash", "where": "página del conjunto"}
+      ], "path": null, "why": null, "searched": null},
+      "emma_use": {"used": true, "text": "Sobre él se miden juntas la tasa de falsa alarma del motor y su sensibilidad a deterioros inyectados en esa misma fisiología; las cifras están en compliance/external-validation.md.", "where": "backend/app/validation/mmash.py", "cites": "mmash"},
+      "role": {"level": "KNOWLEDGE", "level_why": "Veintidós personas sanas medidas un día en Tierra y publicadas en PhysioNet: evidencia histórica con la que se mide el motor, no una señal recibida en misión.", "fitness": "validate", "fitness_why": "Sobre su fisiología real se miden juntas la tasa de falsa alarma del motor y su sensibilidad a deterioros inyectados; las cifras viven en compliance/external-validation.md. No entrena nada: EMMA no ajusta ningún modelo con estos datos."},
+      "caveat": "Personas sanas en Tierra durante 24 h: no es fisiología de vuelo ni de una misión larga."
+    },
+    {
+      "id": "agbresa",
+      "name": "AGBRESA (reposo en cama)",
+      "ref": "clement-2022-agbresa",
+      "population": "human",
+      "open_population": null,
+      "open_population_note": null,
+      "kb_row": ":envihab / bed rest | -6° head-down tilt, duración, fluid shift, descarga musculoesquelética, CO2, centrifugación | fisiología controlada y prueba de contramedidas",
+      "kb_where": "§3.1",
+      "subjects": [
+        {
+          "quote": "A total of 24 participants (16 males and eight females) completed the study.",
+          "ref": "clement-2022-agbresa",
+          "where": "Methods",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Más de veinte propuestas de investigación: cardiovascular, inmunología, genética, músculo y hueso, ojo",
+          "quote": "More than 20 research proposals in the fields of cardiovascular, immunology, genetics, muscle and bone, ocular,",
+          "ref": "clement-2022-agbresa",
+          "where": "Introduction",
+          "read_on": "2026-10-23"
+        },
+        {
+          "what": "Vestíbulo, psicología, sueño, cognición y rendimiento conductual",
+          "quote": "vestibular, psychology, sleep, cognition, and behavioral performance were integrated into a comprehensive assessment",
+          "ref": "clement-2022-agbresa",
+          "where": "Introduction, la misma frase",
+          "read_on": "2026-10-23"
+        },
+        {
+          "what": "Capacidad física antes y después del reposo: contracciones máximas, ergoespirometría en bicicleta y salto con contramovimiento (artículo de resultados)",
+          "quote": "Physical capacity was assessed before and after bed rest via maximal voluntary contractions, cycling spiroergometry, and countermovement jumps.",
+          "ref": "kramer-2021-agbresa",
+          "where": "resumen, «Methods»",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: su «R+» es la recuperación tras el reposo, no el regreso de un vuelo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE"
+          ],
+          "quote": "a 14-days baseline data collection (BDC) phase (BDC-14 through BDC-1)",
+          "ref": "clement-2022-agbresa",
+          "where": "Methods, fases del estudio",
+          "read_on": "2026-10-23"
+        },
+        {
+          "stages": [
+            "EXPOSURE"
+          ],
+          "quote": "60 days of 6° HDT bed rest phase (HDT1 through HDT60)",
+          "ref": "clement-2022-agbresa",
+          "where": "Methods, fases del estudio",
+          "read_on": "2026-10-23"
+        },
+        {
+          "stages": [
+            "COUNTERMEASURE"
+          ],
+          "quote": "continuously in one single bout (cAG)",
+          "ref": "clement-2022-agbresa",
+          "where": "las dos formas de centrifugación",
+          "read_on": "2026-10-23"
+        },
+        {
+          "stages": [
+            "COUNTERMEASURE"
+          ],
+          "quote": "intermittently in six bouts of 5 min (iAG)",
+          "ref": "clement-2022-agbresa",
+          "where": "las dos formas de centrifugación",
+          "read_on": "2026-10-23"
+        },
+        {
+          "stages": [
+            "RECOVERY"
+          ],
+          "quote": "a 14-days recovery (R+) phase (R+0 through R+13)",
+          "ref": "clement-2022-agbresa",
+          "where": "Methods, fases del estudio",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "controls": {
+        "status": "listed",
+        "items": [
+          {
+            "kind": "analog_control",
+            "population": "human",
+            "quote": "a passive control (Ctrl) group not exposed to centrifugation",
+            "ref": "clement-2022-agbresa",
+            "where": "Methods, grupos",
+            "read_on": "2026-10-23"
+          }
+        ],
+        "absent": [],
+        "why": null,
+        "searched": null
+      },
+      "access": {
+        "level": "request",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "The ISM data are stored in the NASA Life Science Data Archive (LSDA) and can be requested at the following website:",
+            "ref": "clement-2022-agbresa-ism",
+            "where": "«Data statement» del manuscrito aceptado en NTRS (texto extraído del PDF)",
+            "read_on": "2026-10-31"
+          },
+          {
+            "quote": "The raw data supporting the conclusion of this article will be made available by the authors, without undue reservation.",
+            "ref": "clement-2022-agbresa",
+            "where": "«Data availability statement»",
+            "read_on": "2026-10-23"
+          }
+        ],
+        "path": null,
+        "why": "Dos vías: las medidas estándar internacionales (ISM) están en el LSDA y se piden allí; los datos de las demás propuestas, según el artículo del protocolo, los dan sus autores. EMMA no tiene ninguno.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": true,
+        "text": "Los bancos de prueba citan la página de NASA del estudio para decir qué reproduce el reposo en cama y qué no. Ningún dato del estudio entra en EMMA.",
+        "where": "backend/app/data/testbeds.json",
+        "cites": "nasa-bed-rest-agbresa"
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Reposo en cama de 60 días en Tierra, ya terminado y publicado: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Dice qué reproduce el reposo en cama y qué no (bancos de prueba); sus datos están en el LSDA o los dan sus autores, y EMMA no tiene ninguno: nada que entrenar ni contrastar."
+      },
+      "caveat": "Veinticuatro voluntarios sanos en reposo en cama en Tierra: no es vuelo, y su «R+» es la recuperación tras el reposo. Las medidas estándar están en el LSDA y el resto lo dan sus autores; no hay ficheros abiertos leídos."
+    },
+    {
+      "id": "osd-51",
+      "name": "OSD-51 (WISE 2005, reposo en cama)",
+      "ref": "osd-51",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "Twenty-four healthy young European women voluntarily participated in the long-term bed rest (LTBR) study named WISE 2005",
+          "ref": "osd-51",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-51)",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Transcriptoma de músculo esquelético",
+          "quote": "Woman skeletal muscle transcriptome with bed rest and countermeasures.",
+          "ref": "osd-51",
+          "where": "título del estudio",
+          "read_on": "2026-10-23"
+        },
+        {
+          "what": "Biopsias de sóleo y vasto lateral antes y después del reposo",
+          "quote": "collected from Pre- and Post- bed rest (BR) soleus and vastus lateralis biopsies",
+          "ref": "osd-51",
+          "where": "descripción del estudio",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE",
+            "EXPOSURE",
+            "RECOVERY"
+          ],
+          "quote": "All subjects completed a period of BR for 60 days with a 20 day ambulatory control period before BR and a 20 day recovery period after BR.",
+          "ref": "osd-51",
+          "where": "descripción del estudio",
+          "read_on": "2026-10-23"
+        },
+        {
+          "stages": [
+            "COUNTERMEASURE"
+          ],
+          "quote": "(bed rest only: BRC; Exercise: BRE; Nutrition: BRN)",
+          "ref": "osd-51",
+          "where": "descripción del estudio, grupos",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "controls": {
+        "status": "listed",
+        "items": [
+          {
+            "kind": "analog_control",
+            "population": "human",
+            "quote": "those who performed BR only (BRC)",
+            "ref": "osd-51",
+            "where": "descripción del estudio",
+            "read_on": "2026-10-23"
+          }
+        ],
+        "absent": [],
+        "why": null,
+        "searched": null
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-51",
+            "where": "campo de cada uno de los 4 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/51)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los cuatro ficheros (los metadatos ISA y las micromatrices) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Transcriptoma de músculo de un reposo en cama de 2005, publicado en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Micromatrices de músculo de veinticuatro mujeres: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Veinticuatro mujeres en reposo en cama en Tierra: no es vuelo. Los ficheros abiertos son transcriptoma de músculo, no constantes vitales."
+    },
+    {
+      "id": "osd-195",
+      "name": "OSD-195 (PlanHab, reposo en cama de 21 días)",
+      "ref": "osd-195",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "14 male subjects participated in normoxic bedrest (NBR) with muscle unloading, for 21 days",
+          "ref": "osd-195",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-195)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Expresión génica del vasto lateral",
+          "quote": "Effects of 21 days of bedrest on human skeletal muscle gene expression",
+          "ref": "osd-195",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Biopsias del vasto lateral seis días antes del reposo y el día 21",
+          "quote": "Muscle samples were obtained from 14 subjects in the morning after a greater than 10 hrs fasting, six days prior bed rest commencement , and on day 21 of the intervention.",
+          "ref": "osd-195",
+          "where": "protocolo, toma de muestras",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "EXPOSURE"
+          ],
+          "quote": "Muscle samples were obtained from 14 subjects in the morning after a greater than 10 hrs fasting, six days prior bed rest commencement , and on day 21 of the intervention.",
+          "ref": "osd-195",
+          "where": "protocolo, toma de muestras",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "controls": {
+        "status": "not_found",
+        "items": [],
+        "absent": [],
+        "why": null,
+        "searched": "descripción, protocolos y factores de OSD-195 en la API de OSDR (2026-10-26): los 14 sujetos hacen el reposo normóxico y ninguna frase nombra un grupo de control; los factores son «Bed Rest» y «Time». Su artículo de expresión génica (Rullman et al. 2018, Am J Physiol Regul Integr Comp Physiol) no está en PMC y no se leyó (Europe PMC, 2026-10-31)"
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-195",
+            "where": "campo de cada uno de los 49 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/195)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los 49 ficheros (micromatrices en bruto y procesadas) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Expresión génica de músculo de un reposo en cama ya hecho (PlanHab), publicada en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Micromatrices de músculo de catorce hombres: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Catorce hombres en reposo en cama horizontal de 21 días en Tierra (PlanHab): no es vuelo. Su calendario solo tiene el reposo: la biopsia de antes es de seis días antes de empezarlo («six days prior»), y la frase no usa ninguna palabra de la etapa basal. Los ficheros son expresión génica de músculo, no constantes vitales."
+    },
+    {
+      "id": "osd-198",
+      "name": "OSD-198 (PlanHab, reposo en cama e hipoxia)",
+      "ref": "osd-198",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "14 male subjects participated in 3 experimental campaigns in a counterbalanced fashion",
+          "ref": "osd-198",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-198)",
+          "read_on": "2026-10-26"
+        },
+        {
+          "quote": "Each subject participated in three experimental campaigns in a counterbalanced fashion",
+          "ref": "rullman-2016-planhab-mirna",
+          "where": "Materials and Methods, diseño del estudio",
+          "read_on": "2026-10-31"
+        }
+      ],
+      "variables": [
+        {
+          "what": "MicroARN del vasto lateral con reposo en cama e hipoxia",
+          "quote": "Effects of bedrest and hypoxia on human skeletal muscle miRNA expression",
+          "ref": "osd-198",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Setenta y dos biopsias de 13 de los 14 sujetos",
+          "quote": "Biopsy amounts sufficient for RNA isolation was available in 72 samples obtained from 13 of the 14 subjects.",
+          "ref": "osd-198",
+          "where": "protocolo, muestras",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE"
+          ],
+          "quote": "the 7 days preceding (baseline days termed: D‐7 to D‐1)",
+          "ref": "osd-198",
+          "where": "protocolo, calendario de cada campaña",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "EXPOSURE"
+          ],
+          "quote": "PlanHab (Planetary Habitat Simulation): the combined and separate effects of 21 days bed rest and hypoxic confinement on human skeletal muscle miRNA expression",
+          "ref": "osd-198",
+          "where": "título de la publicación que nombra la ficha",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "RECOVERY"
+          ],
+          "quote": "the interventions were separated by a 4-month wash-out/recovery period",
+          "ref": "osd-198",
+          "where": "descripción del estudio, entre campañas",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "controls": {
+        "status": "not_found",
+        "items": [],
+        "absent": [],
+        "why": null,
+        "searched": "descripción, protocolos y factores de OSD-198 en la API de OSDR (2026-10-26): los mismos sujetos pasan por las tres campañas, cruzadas (reposo normóxico, reposo hipóxico y confinamiento hipóxico ambulatorio), y ninguna se nombra como grupo de control; los factores son «Experimental Campaign», «Bed Rest» y «Time». Su artículo (Rullman et al. 2016, leído el 2026-10-31 en PMC) describe las tres campañas cruzadas y tampoco nombra un grupo de control"
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-198",
+            "where": "campo de cada uno de los 70 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/198)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los 70 ficheros (micromatrices de microARN en bruto y la serie procesada) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "MicroARN de músculo de tres campañas de PlanHab ya hechas, publicado en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "MicroARN de músculo con reposo e hipoxia: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Catorce hombres en tres campañas de 21 días en Tierra: reposo en cama normóxico, reposo hipóxico y confinamiento hipóxico ambulatorio, a una altitud equivalente de unos 4000 m. No es vuelo, y la hipoxia no es la de una nave. Su «recovery» es el descanso de cuatro meses entre campañas. Los ficheros son microARN de músculo, no constantes vitales."
+    },
+    {
+      "id": "osd-353",
+      "name": "OSD-353 (proteoma del plasma: cosmonautas, reposo en cama e inmersión seca)",
+      "ref": "osd-353",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "Blood plasma samples were collected from 13 cosmonauts (male, age: 46 ± 6 years) before and after long-duration (169–199 days) missions on the ISS (International Space Station).",
+          "ref": "osd-353",
+          "where": "protocolo, sujetos",
+          "read_on": "2026-10-26"
+        },
+        {
+          "quote": "Five healthy men from 20 to 44 years of age were included in the head-down bedrest experiment (HDBR).",
+          "ref": "osd-353",
+          "where": "protocolo, sujetos",
+          "read_on": "2026-10-26"
+        },
+        {
+          "quote": "Samples from the dry immersion study were obtained from 5 volunteers participating in a 21-day-long experiment.",
+          "ref": "osd-353",
+          "where": "protocolo, sujetos",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Proteoma del plasma",
+          "quote": "The Effects of Spaceflight Factors on the Human Plasma Proteome, Including Both Real Space Missions and Ground-Based Experiments",
+          "ref": "osd-353",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Plasma de un reposo en cama de 21 días con la cabeza inclinada hacia abajo y de una inmersión seca de 21 días",
+          "quote": "Blood plasma samples were collected from 5 healthy men included in the 21 days head-down bed rest experiment (HDBR) and 5 volunteers participating in a 21 day long dry immersion experiment.",
+          "ref": "osd-353",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-353)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "stated",
+          "labels": [],
+          "cited": [
+            {
+              "quote": "Blood plasma samples were collected from 13 cosmonauts (male, age: 46 ± 6 years) before and after long-duration (169–199 days) missions on the ISS (International Space Station).",
+              "ref": "osd-353",
+              "where": "protocolo, sujetos",
+              "read_on": "2026-10-26"
+            },
+            {
+              "quote": "Plasma samples were collected at three different time periods: background (six months before flight), on the first (+1 day) and seventh (+7 days) days after landing.",
+              "ref": "brzhozovskiy-2019-plasma-proteome",
+              "where": "Results, apartado de los cosmonautas",
+              "read_on": "2026-10-31"
+            }
+          ],
+          "why": "El artículo escribe la basal como «six months before flight»: no es un día L- escrito, y la escalera no lo traduce.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_found",
+          "labels": [],
+          "cited": [],
+          "why": null,
+          "searched": "descripción y protocolos de OSD-353 en la API de OSDR (2026-10-26) y su artículo (Brzhozovskiy et al. 2019, PMC, 2026-10-31): las muestras de los cosmonautas son de antes y después de la misión; ninguna frase nombra tomas en vuelo"
+        },
+        "post": {
+          "status": "stated",
+          "labels": [],
+          "cited": [
+            {
+              "quote": "Blood plasma samples were collected from 13 cosmonauts (male, age: 46 ± 6 years) before and after long-duration (169–199 days) missions on the ISS (International Space Station).",
+              "ref": "osd-353",
+              "where": "protocolo, sujetos",
+              "read_on": "2026-10-26"
+            },
+            {
+              "quote": "Plasma samples were collected at three different time periods: background (six months before flight), on the first (+1 day) and seventh (+7 days) days after landing.",
+              "ref": "brzhozovskiy-2019-plasma-proteome",
+              "where": "Results, apartado de los cosmonautas",
+              "read_on": "2026-10-31"
+            }
+          ],
+          "why": "El artículo escribe los días como «+1 day» y «+7 days» tras el aterrizaje: no son días R+ escritos, y la escalera no los traduce.",
+          "searched": null
+        }
+      },
+      "analog_schedule": null,
+      "controls": {
+        "status": "not_found",
+        "items": [],
+        "absent": [],
+        "why": null,
+        "searched": "descripción, protocolos y factores de OSD-353 en la API de OSDR (2026-10-26): ni los cosmonautas ni los voluntarios del reposo o de la inmersión tienen un grupo de control nombrado; los factores son «Spaceflight», «Bed Rest», «Time» y «Dry Immersion». Su artículo (Brzhozovskiy et al. 2019, leído el 2026-10-31 en PMC) tampoco nombra uno; lo más cercano es «The examined group was not exposed to any additional stress»"
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-353",
+            "where": "campo de cada uno de los 4 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/353)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los cuatro ficheros (proteómica en bruto, la salida de MaxQuant y los metadatos ISA) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Proteoma del plasma de misiones ya voladas y de dos análogos, publicado en OSDR: evidencia histórica, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Proteómica del plasma, antes y después del vuelo: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Mezcla vuelo y análogos: 13 cosmonautas antes y después de misiones de 169 a 199 días en la ISS, 5 hombres en reposo en cama con la cabeza inclinada hacia abajo y 5 voluntarios en inmersión seca, 21 días cada análogo. Por eso su entorno queda fuera del enumerado y su reposo no lleva calendario de análogo. Los ficheros son proteómica del plasma, no constantes vitales."
+    },
+    {
+      "id": "osd-370",
+      "name": "OSD-370 (nueve días de reposo en cama e insulina)",
+      "ref": "osd-370",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "Ten young healthy Caucasian men (24-27 years) were recruited to the study.",
+          "ref": "osd-370",
+          "where": "protocolo, sujetos",
+          "read_on": "2026-10-26"
+        },
+        {
+          "quote": "in 20 healthy, young men",
+          "ref": "osd-370",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-370)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Expresión génica del vasto lateral y resistencia a la insulina",
+          "quote": "Insulin resistance induced by physical inactivity is associated with multiple transcriptional changes in skeletal muscle in young men",
+          "ref": "osd-370",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Biopsias del vasto lateral antes y después del reposo y tras cuatro semanas de reentrenamiento",
+          "quote": "Skeletal muscle samples were collected in all participants in both the basal and insulin stimulated state before and after bed rest, but only in the basal state after four weeks of retraining.",
+          "ref": "osd-370",
+          "where": "protocolo, toma de muestras",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE",
+            "EXPOSURE",
+            "POST"
+          ],
+          "quote": "Identical in vivo experiments were performed before and after the bed rest.",
+          "ref": "osd-370",
+          "where": "protocolo",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "POST"
+          ],
+          "quote": "all subjects completed a four-week retraining program after the 9 days of bed rest",
+          "ref": "osd-370",
+          "where": "protocolo",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "controls": {
+        "status": "not_found",
+        "items": [],
+        "absent": [],
+        "why": null,
+        "searched": "descripción, protocolos y factores de OSD-370 en la API de OSDR (2026-10-26): todos los sujetos hacen el reposo y se comparan antes y después; ninguna frase nombra un grupo de control; los factores son «Bed Rest», «Time» y «Treatment». Su artículo (Alibegovic et al. 2010, Am J Physiol Endocrinol Metab) no está en PMC y no se leyó (Europe PMC, 2026-10-31)"
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-370",
+            "where": "campo de cada uno de los 71 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/370)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los 71 ficheros de la API de ficheros (micromatrices en bruto y las tablas procesadas por GeneLab; la API v2 listaba 72 el 2026-10-26) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Expresión génica de músculo de un reposo en cama ya hecho, publicada en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Micromatrices de músculo y resistencia a la insulina: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Hombres jóvenes en nueve días de reposo en cama medio recostados («half-recumbent»), en Tierra, y después cuatro semanas de reentrenamiento: no es vuelo ni reposo con la cabeza inclinada hacia abajo. La descripción dice 20 hombres y el protocolo, diez: no se ha resuelto. Los ficheros son expresión génica de músculo, no constantes vitales."
+    },
+    {
+      "id": "osd-942",
+      "name": "OSD-942 (reposo en cama de 70 días de NASA, expresión génica)",
+      "ref": "osd-942",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "Twenty-two healthy young males were randomized into three groups",
+          "ref": "osd-942",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-942)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Expresión génica del vasto lateral",
+          "quote": "Exercise Training Attenuates the Muscle Mitochondria Genomic Response to Bed Rest (microarray data)",
+          "ref": "osd-942",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Respuesta genómica del vasto lateral el día 64 del reposo, con y sin ejercicio",
+          "quote": "We aimed to characterize the genomic response of the participants' vastus lateralis on day 64 of bed rest with and without exercise countermeasures.",
+          "ref": "osd-942",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-942)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE",
+            "EXPOSURE"
+          ],
+          "quote": "Muscle biopsies of the vastus lateralis were performed in the basal state in the morning one day before and on day 64 of the bed rest study.",
+          "ref": "osd-942",
+          "where": "protocolo, biopsias",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "PRE"
+          ],
+          "quote": "Baseline data collection was completed with subjects living at the research unit.",
+          "ref": "osd-942",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "EXPOSURE"
+          ],
+          "quote": "Subjects were confined to bed rest for 70 days in a 6-degree head-down tilt position and monitored 24 hours daily.",
+          "ref": "osd-942",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "COUNTERMEASURE"
+          ],
+          "quote": "Exercise was prescribed using the SPRINT protocol consisting of aerobic exercise 6 days per week, 15–35 min/session, and resistance exercise 3 days per week, 35–60 min/session",
+          "ref": "osd-942",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "POST"
+          ],
+          "quote": "Subjects remained at the research facility during the post bed rest data collection.",
+          "ref": "osd-942",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "controls": {
+        "status": "listed",
+        "items": [
+          {
+            "kind": "analog_control",
+            "population": "human",
+            "quote": "1) bed rest only (n equals 7)",
+            "ref": "osd-942",
+            "where": "descripción del estudio (API de OSDR, dataset OSD-942)",
+            "read_on": "2026-10-26"
+          }
+        ],
+        "absent": [],
+        "why": null,
+        "searched": null
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-942",
+            "where": "campo de cada uno de los 45 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/942)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los 45 ficheros (micromatrices de expresión génica) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "Expresión génica de músculo del reposo en cama de 70 días de NASA, publicada en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "Micromatrices de músculo con y sin ejercicio: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Veintidós hombres en reposo en cama de 70 días con la cabeza inclinada 6° hacia abajo, en Tierra (unidad de análogos de vuelo de NASA en UTMB): no es vuelo. Los ficheros son expresión génica de músculo de antes del reposo y del día 64, no constantes vitales; el microARN del mismo estudio está en OSD-946."
+    },
+    {
+      "id": "osd-946",
+      "name": "OSD-946 (reposo en cama de 70 días de NASA, microARN)",
+      "ref": "osd-946",
+      "population": "human",
+      "open_population": "human",
+      "open_population_note": null,
+      "kb_row": null,
+      "kb_where": null,
+      "subjects": [
+        {
+          "quote": "Twenty-two healthy young males were randomized into three groups",
+          "ref": "osd-946",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-946)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "variables": [
+        {
+          "what": "Microarn del vasto lateral",
+          "quote": "Exercise Training Attenuates the Muscle Mitochondria Genomic Response to Bed Rest (miRNA microarray data)",
+          "ref": "osd-946",
+          "where": "título del estudio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Respuesta genómica del vasto lateral el día 64 del reposo, con y sin ejercicio",
+          "quote": "We aimed to characterize the genomic response of the participants' vastus lateralis on day 64 of bed rest with and without exercise countermeasures.",
+          "ref": "osd-946",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-946)",
+          "read_on": "2026-10-26"
+        },
+        {
+          "what": "Solo el microARN; la expresión génica está en OSD-942",
+          "quote": "This study hosts the microRNA microarray dataset.",
+          "ref": "osd-946",
+          "where": "descripción del estudio (API de OSDR, dataset OSD-946)",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "areas": null,
+      "phases": {
+        "pre": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        },
+        "inflight": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra.",
+          "searched": null
+        },
+        "post": {
+          "status": "not_applicable",
+          "labels": [],
+          "cited": [],
+          "why": "Sin vuelo: reposo en cama en Tierra. Su antes y su después son del reposo, no de un vuelo, y van en el calendario del análogo.",
+          "searched": null
+        }
+      },
+      "analog_schedule": [
+        {
+          "stages": [
+            "PRE",
+            "EXPOSURE"
+          ],
+          "quote": "Muscle biopsies of the vastus lateralis were performed in the basal state in the morning one day before and on day 64 of the bed rest study.",
+          "ref": "osd-946",
+          "where": "protocolo, biopsias",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "PRE"
+          ],
+          "quote": "Baseline data collection was completed with subjects living at the research unit.",
+          "ref": "osd-946",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "EXPOSURE"
+          ],
+          "quote": "Subjects were confined to bed rest for 70 days in a 6-degree head-down tilt position and monitored 24 hours daily.",
+          "ref": "osd-946",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "COUNTERMEASURE"
+          ],
+          "quote": "Exercise was prescribed using the SPRINT protocol consisting of aerobic exercise 6 days per week, 15–35 min/session, and resistance exercise 3 days per week, 35–60 min/session",
+          "ref": "osd-946",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        },
+        {
+          "stages": [
+            "POST"
+          ],
+          "quote": "Subjects remained at the research facility during the post bed rest data collection.",
+          "ref": "osd-946",
+          "where": "protocolo, reposo y ejercicio",
+          "read_on": "2026-10-26"
+        }
+      ],
+      "controls": {
+        "status": "listed",
+        "items": [
+          {
+            "kind": "analog_control",
+            "population": "human",
+            "quote": "1) bed rest only (n equals 7)",
+            "ref": "osd-946",
+            "where": "descripción del estudio (API de OSDR, dataset OSD-946)",
+            "read_on": "2026-10-26"
+          }
+        ],
+        "absent": [],
+        "why": null,
+        "searched": null
+      },
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "\"restricted\": false",
+            "ref": "osd-946",
+            "where": "campo de cada uno de los 45 ficheros en la API de ficheros de OSDR (osdr/data/osd/files/946)",
+            "read_on": "2026-10-31"
+          }
+        ],
+        "path": null,
+        "why": "Los 45 ficheros (micromatrices de microARN) llevan «restricted: false»; EMMA no los ha descargado.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: entra en el mapa como reposo en cama con ficheros abiertos.",
+        "where": null,
+        "cites": null
+      },
+      "role": {
+        "level": "KNOWLEDGE",
+        "level_why": "MicroARN de músculo del reposo en cama de 70 días de NASA, publicado en OSDR: evidencia de análogo, no una señal recibida en misión.",
+        "fitness": "contextualize",
+        "fitness_why": "MicroARN de músculo con y sin ejercicio: no hay constantes con que contrastar el motor, y EMMA no ha descargado los ficheros."
+      },
+      "caveat": "Veintidós hombres en reposo en cama de 70 días con la cabeza inclinada 6° hacia abajo, en Tierra (unidad de análogos de vuelo de NASA en UTMB): no es vuelo. Los ficheros son microARN de músculo de antes del reposo y del día 64, no constantes vitales; el expresión génica del mismo estudio está en OSD-942."
+    }
+  ],
+  "catalogs": [
+    {
+      "id": "iss-research-explorer",
+      "name": "ISS Research Explorer",
+      "ref": "nasa-iss-research-explorer",
+      "kb_row": "ISS Research Explorer | experimentos, equipos, PI, instalaciones | reconstruir qué se mide, cómo y con qué coste operacional",
+      "kb_where": "§8",
+      "what": [
+        {
+          "quote": "Here, you can search the database of experiments to learn more about each experiment’s objectives, descriptions, results",
+          "ref": "nasa-iss-research-explorer",
+          "where": "cuerpo de la página",
+          "read_on": "2026-10-23"
+        },
+        {
+          "quote": "of facilities to learn more about the hardware and capabilities that accommodate the operation of these experiments",
+          "ref": "nasa-iss-research-explorer",
+          "where": "cuerpo de la página, la misma frase",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "access": {
+        "level": "open",
+        "basis": "deduced",
+        "cited": [],
+        "path": null,
+        "why": "La página enlaza tres informes para descargar en hoja de cálculo («All Experiments Report», «All Facilities Report» y «All Publications Report») sin pedir cuenta ni solicitud; no dice nada del acceso.",
+        "searched": null
+      },
+      "emma_use": {
+        "used": true,
+        "text": "Las instalaciones citan de sus informes el desarrollador de EPM y de Biolab y el investigador principal de dos estudios. No da medidas de nadie.",
+        "where": "backend/app/data/facilities_read.json",
+        "cites": "nasa-iss-research-explorer"
+      },
+      "caveat": "Un catálogo de experimentos, instalaciones y publicaciones: dice qué se mide y con qué, no da las medidas."
+    },
+    {
+      "id": "data-nasa-gov",
+      "name": "data.nasa.gov",
+      "ref": "nasa-open-data-portal",
+      "kb_row": "data.nasa.gov | catálogo de metadatos | descubrimiento sistemático",
+      "kb_where": "§8",
+      "what": [
+        {
+          "quote": "Data.nasa.gov describes NASA datasets rather than hosting the data itself.",
+          "ref": "nasa-open-data-portal",
+          "where": "portada",
+          "read_on": "2026-10-23"
+        },
+        {
+          "quote": "Most dataset pages summarize the available data and include links to where it is actually hosted",
+          "ref": "nasa-open-data-portal",
+          "where": "portada",
+          "read_on": "2026-10-23"
+        }
+      ],
+      "access": {
+        "level": "open",
+        "basis": "source",
+        "cited": [
+          {
+            "quote": "There are thousands of public datasets on Data.nasa.gov.",
+            "ref": "nasa-open-data-portal",
+            "where": "portada",
+            "read_on": "2026-10-23"
+          }
+        ],
+        "path": null,
+        "why": null,
+        "searched": null
+      },
+      "emma_use": {
+        "used": false,
+        "text": "Ninguno: los conjuntos del mapa se leyeron en su propia fuente, no en el catálogo.",
+        "where": null,
+        "cites": null
+      },
+      "caveat": "Un catálogo de metadatos: no aloja los datos, enlaza a donde están, cada uno con su acceso. Su portada no nombra OSDR ni la investigación humana."
+    }
+  ],
+  "cipher": {
+    "name": "CIPHER",
+    "full_name": "Complement of Integrated Protocols for Human Exploration Research",
+    "what": {"quote": "This suite of 14 studies is designed to provide a better understanding of how humans are affected by spaceflight", "ref": "nasa-cipher", "where": "cabecera de la página"},
+    "study_count": 14,
+    "studies": [
+      "Bone Health", "Bone Support", "Coronary Responses", "Data Integration", "Egress Fitness",
+      "Heart Health", "Investigating Structure and Function of the Eye (ISAFE)",
+      "Musculoskeletal Adaptations", "Routine Ultrasound Assessment", "Spaceflight Standard Measures",
+      "Space Physiology", "Spatial Cognition", "Telomere Health", "Vestibular Health"
+    ],
+    "studies_where": "lista de estudios de la página de CIPHER",
+    "cohort": {"quote": "study up to 30 astronauts, evenly divided over three mission-length categories", "ref": "nasa-cipher-experiments-2023", "where": "cuerpo del artículo"},
+    "ladder": [
+      {"id": "short", "quote": "Short (less than 3.5 months in space)", "ref": "nasa-cipher-experiments-2023", "where": "cuerpo del artículo"},
+      {"id": "standard", "quote": "Standard (between 3.5 and eight months in space)", "ref": "nasa-cipher-experiments-2023", "where": "cuerpo del artículo"},
+      {"id": "extended", "quote": "Extended (more than eight months in space)", "ref": "nasa-cipher-experiments-2023", "where": "cuerpo del artículo"}
+    ],
+    "phases": {
+      "pre": {"status": "stated", "labels": [], "cited": [
+        {"quote": "This information is gathered before, during, and after missions for comparative analyses.", "ref": "nasa-cipher", "where": "cuerpo de la página"},
+        {"quote": "VO2pk test (Figure 1C) MEDB L-180, L-60 FD14, FD75, R-14 R+5 (±2), R+30 (±4)", "ref": "ntrs-20230000776-cipher-space-physiology", "where": "tabla 1, fila «VO2pk test», columnas Pre-flight, In-flight y Post-flight (texto extraído del PDF); calendario del estudio Space Physiology, no de la suite", "read_on": "2026-10-31"},
+        {"quote": "Vestibular Evaluation: Launch-200 (60 min)", "ref": "ntrs-20240000955-cipher-vestibular", "where": "tabla «Testing Schedule for standard (6-month) flights», columna Preflight (texto extraído del PDF); calendario del estudio Vestibular Health, no de la suite", "read_on": "2026-10-31"}
+      ], "why": "La suite no publica un calendario: los días de las frases son de dos de sus catorce estudios, cada uno con el suyo, y por eso CIPHER no lleva días.", "searched": "la página de CIPHER, «About CIPHER» y el artículo de 2023: ninguna da días L- de las tomas; dos pósteres de NTRS (2026-10-31) dan el calendario de su propio estudio (Space Physiology: L-180, L-60; Vestibular Health: Launch-200, Launch-90), no el de los catorce"},
+      "inflight": {"status": "stated", "labels": [], "cited": [
+        {"quote": "This information is gathered before, during, and after missions for comparative analyses.", "ref": "nasa-cipher", "where": "cuerpo de la página"},
+        {"quote": "VO2pk test (Figure 1C) MEDB L-180, L-60 FD14, FD75, R-14 R+5 (±2), R+30 (±4)", "ref": "ntrs-20230000776-cipher-space-physiology", "where": "tabla 1, fila «VO2pk test», columnas Pre-flight, In-flight y Post-flight (texto extraído del PDF); calendario del estudio Space Physiology, no de la suite", "read_on": "2026-10-31"},
+        {"quote": "Flight Day 1 (45 min), Flight Day 30 (35 min), Return-30 (35 min)", "ref": "ntrs-20240000955-cipher-vestibular", "where": "tabla «Testing Schedule for standard (6-month) flights», columna Inflight (texto extraído del PDF; los saltos de línea de la celda, unidos con un espacio); calendario del estudio Vestibular Health, no de la suite", "read_on": "2026-10-31"}
+      ], "why": "La suite no publica un calendario: los días de las frases son de dos de sus catorce estudios, cada uno con el suyo, y por eso CIPHER no lleva días.", "searched": "la página de CIPHER, «About CIPHER» y el artículo de 2023: ninguna da días de vuelo de las tomas; dos pósteres de NTRS (2026-10-31) dan el calendario de su propio estudio (Space Physiology: FD14, FD75; Vestibular Health: Flight Day 1, Flight Day 30, Return-30), no el de los catorce"},
+      "post": {"status": "stated", "labels": [], "cited": [
+        {"quote": "This information is gathered before, during, and after missions for comparative analyses.", "ref": "nasa-cipher", "where": "cuerpo de la página"},
+        {"quote": "VO2pk test (Figure 1C) MEDB L-180, L-60 FD14, FD75, R-14 R+5 (±2), R+30 (±4)", "ref": "ntrs-20230000776-cipher-space-physiology", "where": "tabla 1, fila «VO2pk test», columnas Pre-flight, In-flight y Post-flight (texto extraído del PDF); calendario del estudio Space Physiology, no de la suite", "read_on": "2026-10-31"},
+        {"quote": "Return+0, Return+4, Return+9, Return+30 (35 min)", "ref": "ntrs-20240000955-cipher-vestibular", "where": "tabla «Testing Schedule for standard (6-month) flights», columna Postflight (texto extraído del PDF; los saltos de línea de la celda, unidos con un espacio); calendario del estudio Vestibular Health, no de la suite", "read_on": "2026-10-31"}
+      ], "why": "La suite no publica un calendario: los días de las frases son de dos de sus catorce estudios, cada uno con el suyo, y por eso CIPHER no lleva días.", "searched": "la página de CIPHER, «About CIPHER» y el artículo de 2023: ninguna da días R+ de las tomas; dos pósteres de NTRS (2026-10-31) dan el calendario de su propio estudio (Space Physiology: R+5, R+30; Vestibular Health: Return+0, Return+4, Return+9, Return+30), no el de los catorce"}
+    },
+    "access": {"level": "not_found", "basis": "not_found", "cited": [
+      {"quote": "HRP archives data in the NASA Life Sciences Portal (NLSP) that it considers to be unique and high value.", "ref": "ntrs-20230013774-hrp-data-management-plan", "where": "«1. Capabilities and services», «Data Repositories» (texto extraído del PDF; los espacios sobrantes de la extracción —dobles y uno antes del punto—, normalizados)", "read_on": "2026-10-31"}
+    ], "path": null, "why": null, "searched": "la página de CIPHER y el artículo de 2023: ninguna dice cómo se accede a los datos. El plan de gestión de datos del HRP (NTRS, 2026-10-31) dice que el HRP archiva en el NLSP los datos de sujetos humanos en vuelo que considera únicos y de alto valor, sin nombrar CIPHER: lo más cercano, y no basta para decir que los suyos están allí"},
+    "emma_study": "Spaceflight Standard Measures",
+    "emma_use": {"used": true, "text": "De sus catorce estudios, EMMA cita uno, Spaceflight Standard Measures, en el coste de medir: cómo se recogen en vuelo la sangre y la orina.", "where": "backend/app/data/measurement_cost.json", "cites": "hardy-2025-spaceflight-standard-measures"},
+    "role": {"level": "KNOWLEDGE", "level_why": "Una suite de catorce estudios del HRP sobre astronautas antes, durante y después de la misión: evidencia histórica cuando se publique, no una señal que EMMA reciba.", "fitness": "contextualize", "fitness_why": "Sin datos accesibles leídos, solo contextualiza: EMMA cita uno de sus estudios, Spaceflight Standard Measures, para el coste de medir."}
+  },
+  "not_found": [
+    "Días L- y R+ de las tomas de CIPHER como suite: buscados en la página del programa, en «About CIPHER» y en el artículo de 2023; ninguna los da. Dos pósteres de NTRS (2026-10-31) dan el calendario de su propio estudio (Space Physiology y Vestibular Health), no el de los catorce.",
+    "Calendario completo de tomas del Twins Study: el artículo de Science nombra días en resultados concretos (L-162; FD76, FD259, FD334, FD340; R+0, R+4, R+12, R+36, R+104, R+190; leído el 2026-10-31) y remite el calendario a su figura 1A y a la tabla S1. El material suplementario (11 MB) no se pudo descargar: PMC devuelve una página interstitial y Europe PMC responde que el artículo no es de acceso abierto.",
+    "Lecturas en bruto de secuenciación de OSD-569: no están entre los 11 ficheros depositados en OSDR (hemograma, tablas procesadas, informes MultiQC y metadatos, todos con «restricted: false», leído el 2026-10-31); el artículo de la misión sitúa sus datos en repositorios de acceso controlado.",
+    "Una API pública de constantes vitales de astronautas: no existe. LSAH es de acceso restringido (docs/contexto/repositorios-humanos.md).",
+    "Dónde quedan los datos de AGBRESA: las medidas estándar internacionales están en el LSDA y se piden allí (Clément et al., Acta Astronautica 2022, leído el 2026-10-31 en NTRS); el artículo del protocolo dice que el resto lo dan sus autores; el de resultados sobre la capacidad física (Kramer et al. 2021, leído entero el 2026-10-26) no tiene declaración de disponibilidad de datos.",
+    "Controles de OSD-195, OSD-198, OSD-353 y OSD-370: sus fichas de OSDR no nombran ninguno; los artículos de OSD-198 y OSD-353 (PMC, 2026-10-31) tampoco; los de OSD-195 y OSD-370 no están en PMC y no se leyeron.",
+    "Días de las tomas de las métricas de astronautas de OSD-343: la ficha solo data los ratones de RR-9 (L+35d, el día después del amerizaje; leído el 2026-10-31); de los 59 astronautas, nada.",
+    "Reposos en cama con datos abiertos fuera de OSDR: una búsqueda web (2026-10-23) no dio ninguno en PhysioNet ni en OpenNeuro. En OSDR, la búsqueda «bed rest» (2026-10-23) da ocho estudios, siete humanos y uno de ratón; los siete humanos están en el mapa (OSD-51 leído el 2026-10-23; OSD-195, OSD-198, OSD-353, OSD-370, OSD-942 y OSD-946, el 2026-10-26).",
+    "Controles en la ficha de OSD-569: su descripción y sus factores en OSDR no nombran ninguno; el mapa da el del artículo de la misión Inspiration4, la de sus cuatro tripulantes (cada uno, su propio control).",
+    "Los nombres de las diez áreas del Twins Study en el artículo de Science: dice «10 generalized biomedical modalities» sin nombrarlas, y su resumen enumera once tipos de datos; las diez son las investigaciones de la página de NASA. El artículo se leyó entero el 2026-10-26 y no las nombra en ningún otro sitio."
+  ]
+}

@@ -1,0 +1,1 @@
+{"key": "horizons:499:500@399:2026-10-21", "source": "JPL Horizons", "fetched_at": "2026-10-21T20:32:40.949522+00:00", "data": {"epoch": "2026-10-21", "distance_au": 1.51956141970801, "one_way_minutes": 12.63780696, "round_trip_minutes": 25.27561392, "autonomy_required": true, "target": "499", "description": "Sin consulta en vivo: la respuesta de Tierra tardaría 25 min"}}

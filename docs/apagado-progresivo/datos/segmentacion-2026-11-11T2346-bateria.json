@@ -1,0 +1,40 @@
+{
+ "fuente": "bateria-2026-11-11T2331.csv",
+ "fases": [
+  {
+   "fase": "reposo",
+   "duracion_s": 15.0,
+   "muestras": 14,
+   "equipo_w_media": 43.49,
+   "equipo_julios": 652.3
+  },
+  {
+   "fase": "segmentar_higado_gpu",
+   "duracion_s": 193.73,
+   "muestras": 188,
+   "equipo_w_media": 73.93,
+   "equipo_julios": 14321.6
+  },
+  {
+   "fase": "reposo_tras_gpu",
+   "duracion_s": 15.0,
+   "muestras": 14,
+   "equipo_w_media": 50.78,
+   "equipo_julios": 761.8
+  },
+  {
+   "fase": "segmentar_higado_cpu",
+   "duracion_s": 305.75,
+   "muestras": 295,
+   "equipo_w_media": 67.12,
+   "equipo_julios": 20522.1
+  },
+  {
+   "fase": "reposo_tras_cpu",
+   "duracion_s": 15.0,
+   "muestras": 15,
+   "equipo_w_media": 41.24,
+   "equipo_julios": 618.6
+  }
+ ]
+}

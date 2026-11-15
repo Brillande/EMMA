@@ -1,0 +1,12 @@
+{"target": "app/analysis/radiation.py", "test": ["tests/test_context_round2.py"],
+ "mutations": [
+  {"label": "la dosis de mision se integra con Q = 1",
+   "old": "        \"value_msv\": round(absorbed_ugy / 1000 * quality.value, 3),",
+   "new": "        \"value_msv\": round(absorbed_ugy / 1000, 3),"},
+  {"label": "sin dosis previa declarada se supone cero",
+   "old": "    if prior_career_msv is None:\n        career = {\n            \"value_msv\": None,\n            \"basis\": \"sin dosis previa",
+   "new": "    if False:\n        career = {\n            \"value_msv\": None,\n            \"basis\": \"sin dosis previa"},
+  {"label": "el refugio se da por montado a las 2 h y no a la hora de Orion",
+   "old": "SHELTER_BUILD = dt.timedelta(hours=1)",
+   "new": "SHELTER_BUILD = dt.timedelta(hours=2)"}
+ ]}

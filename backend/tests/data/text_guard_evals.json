@@ -1,0 +1,300 @@
+{
+  "_nota": "Casos fijos del linter de lenguaje, cada uno con su gemelo. Método de Polaris (evals/honestidad.json): si un caso bloquea y su gemelo también, el linter premia la forma y no el fondo; si ninguno bloquea, no caza nada. Deterministas, sin red.",
+  "casos": [
+    {
+      "id": "absoluto-nunca",
+      "texto": "Nunca ha habido líquido libre en esta ventana.",
+      "bloquea": [
+        "overclaim"
+      ],
+      "gemelo": "absoluto-nunca-gemelo"
+    },
+    {
+      "id": "absoluto-nunca-gemelo",
+      "texto": "No hay estudios previos de esta ventana.",
+      "bloquea": []
+    },
+    {
+      "id": "absoluto-siempre",
+      "texto": "El diámetro siempre ha estado por debajo de la media.",
+      "bloquea": [
+        "overclaim"
+      ],
+      "gemelo": "absoluto-siempre-gemelo"
+    },
+    {
+      "id": "absoluto-siempre-gemelo",
+      "texto": "El diámetro medido es menor que en el estudio previo.",
+      "bloquea": []
+    },
+    {
+      "id": "cero-riesgo",
+      "texto": "Con estas medidas hay cero riesgo para la misión.",
+      "bloquea": [
+        "overclaim"
+      ],
+      "gemelo": "cero-riesgo-gemelo"
+    },
+    {
+      "id": "cero-riesgo-gemelo",
+      "texto": "Los datos no permiten estimar el riesgo.",
+      "bloquea": []
+    },
+    {
+      "id": "demostrado",
+      "texto": "Queda demostrado que la vaina ha crecido.",
+      "bloquea": [
+        "overclaim"
+      ],
+      "gemelo": "demostrado-gemelo"
+    },
+    {
+      "id": "demostrado-gemelo",
+      "texto": "La vaina mide más que en la medición anterior.",
+      "bloquea": []
+    },
+    {
+      "id": "dosis-ajuste",
+      "texto": "Habría que ajustar la dosis tras esta medida.",
+      "bloquea": [
+        "order",
+        "dosing"
+      ],
+      "gemelo": "dosis-gemelo"
+    },
+    {
+      "id": "dosis-gemelo",
+      "texto": "La medida se repitió dos veces en el mismo corte.",
+      "bloquea": []
+    },
+    {
+      "id": "suspender-tratamiento",
+      "texto": "Suspender el tratamiento hasta repetir la ecografía.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "seguimiento-gemelo"
+    },
+    {
+      "id": "seguimiento-gemelo",
+      "texto": "El seguimiento del tratamiento no forma parte de este estudio.",
+      "bloquea": []
+    },
+    {
+      "id": "biopsia",
+      "texto": "Se plantea una biopsia de la lesión.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "procedimiento-gemelo"
+    },
+    {
+      "id": "procedimiento-gemelo",
+      "texto": "La lista de calidad del procedimiento está completa.",
+      "bloquea": []
+    },
+    {
+      "id": "conviene-afirmado",
+      "texto": "Conviene repetir la medida mañana.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "conviene-pregunta-gemelo"
+    },
+    {
+      "id": "conviene-pregunta-gemelo",
+      "texto": "¿Conviene repetir la medida mañana?",
+      "bloquea": []
+    },
+    {
+      "id": "valorar-si-afirmado",
+      "texto": "Valorar si evacuar al tripulante.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "valorar-si-pregunta-gemelo"
+    },
+    {
+      "id": "valorar-si-pregunta-gemelo",
+      "texto": "¿Es razonable repetir el estudio en otra ventana?",
+      "bloquea": []
+    },
+    {
+      "id": "accion-en-pregunta",
+      "texto": "¿Suspender el tratamiento?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "conviene-pregunta-gemelo"
+    },
+    {
+      "id": "descarta-diagnostico",
+      "texto": "El estudio descarta la trombosis.",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "descartar-artefacto-gemelo"
+    },
+    {
+      "id": "descartar-artefacto-gemelo",
+      "texto": "Se repitió el corte para descartar artefacto.",
+      "bloquea": []
+    },
+    {
+      "id": "sugiere",
+      "texto": "El patrón sugiere una retención urinaria.",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "sugiere-gemelo"
+    },
+    {
+      "id": "sugiere-gemelo",
+      "texto": "El operador anotó el signo como presente.",
+      "bloquea": []
+    },
+    {
+      "id": "confirma-que-afirmado",
+      "texto": "La ecografía confirma que hay derrame.",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "confirma-que-pregunta-gemelo"
+    },
+    {
+      "id": "confirma-que-pregunta-gemelo",
+      "texto": "¿Se confirma que la imagen de ejemplo es suficiente?",
+      "bloquea": []
+    },
+    {
+      "id": "confirma-entidad-en-pregunta",
+      "texto": "¿Se confirma la trombosis?",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "confirma-que-pregunta-gemelo"
+    },
+    {
+      "id": "coletilla-tapa-deliberacion",
+      "texto": "Conviene repetir la medida esta tarde, ¿vale?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "coletilla-tapa-veredicto",
+      "texto": "Se descarta que haya sangrado, ¿de acuerdo?",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "coletilla-sin-abrir",
+      "texto": "Conviene repetir la medida, vale?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-sin-abrir-tras-coma-gemelo"
+    },
+    {
+      "id": "interrogacion-suelta-tapa-frase",
+      "texto": "¿Hola. Conviene repetir la medida. Vale?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "pronombre-pegado",
+      "texto": "Suspéndala esta tarde, ¿vale?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "pronombre-pegado-dosis",
+      "texto": "Adminístrelo esta noche.",
+      "bloquea": [
+        "dosing"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "dos-pronombres-pegados",
+      "texto": "Adminístreselo esta noche, ¿vale?",
+      "bloquea": [
+        "dosing"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "dos-pronombres-orden",
+      "texto": "Suspéndasela hoy.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "cierre-sin-abrir-tapa-imperativo",
+      "texto": "Descarta que haya sangrado?",
+      "bloquea": [
+        "diagnosis"
+      ],
+      "gemelo": "confirma-que-pregunta-gemelo"
+    },
+    {
+      "id": "plural-pronombre-dosis",
+      "texto": "Adminístrenselo esta noche, ¿vale?",
+      "bloquea": [
+        "dosing"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "plural-pronombre-orden",
+      "texto": "Suspéndanla hoy.",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "infinitivo-pronombre-dosis",
+      "texto": "Administrarlo esta noche.",
+      "bloquea": [
+        "dosing"
+      ],
+      "gemelo": "pregunta-abierta-con-comas-gemelo"
+    },
+    {
+      "id": "coletilla-tras-raya",
+      "texto": "Conviene repetir la medida — vale?",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-sin-abrir-tras-coma-gemelo"
+    },
+    {
+      "id": "coletilla-tras-parentesis",
+      "texto": "Conviene repetir la medida (vale?)",
+      "bloquea": [
+        "order"
+      ],
+      "gemelo": "pregunta-sin-abrir-tras-coma-gemelo"
+    },
+    {
+      "id": "pregunta-abierta-con-comas-gemelo",
+      "texto": "¿Conviene, en su opinión, repetir la medida?",
+      "bloquea": []
+    },
+    {
+      "id": "pregunta-sin-abrir-tras-coma-gemelo",
+      "texto": "Si no mejora, conviene repetir la medida?",
+      "bloquea": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "target": "app/evidence/support.py",
+  "test": [
+    "tests/test_citation_support.py"
+  ],
+  "mutations": [
+    {
+      "label": "las fracciones del resumen no aportan cifras",
+      "old": "        text = _FRACTION.sub(r\"\\1 \\2\", text)\n",
+      "new": ""
+    },
+    {
+      "label": "los rangos del resumen no aportan cifras",
+      "old": "        text = _RANGE.sub(r\"\\1 \\2\", text)\n",
+      "new": ""
+    },
+    {
+      "label": "una cifra ausente ya no bloquea (soporte_cita)",
+      "old": "    if missing_numbers:\n        return NOT_SUPPORTED, detail\n",
+      "new": ""
+    }
+  ]
+}

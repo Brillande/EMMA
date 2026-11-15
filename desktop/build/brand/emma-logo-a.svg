@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.06 48" width="768" height="192">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, logotipo de la candidata A para fondo oscuro. Generado por
+       desktop/scripts/brand.py: la marca es emma-mark-a.svg tal cual y «EMMA» va en
+       contornos de IBM Plex Sans SemiBold (600; SIL OFL 1.1), así que no necesita la
+       fuente instalada. Color del texto: text de palette.ts. -->
+  <title>EMMA</title>
+  <g transform="scale(2)">
+    <rect x="0.5" y="0.5" width="23" height="23" rx="5" fill="#0A0D12" stroke="#2A3446"/>
+  <circle cx="12" cy="12" r="7" fill="none" stroke="#EEF2F6" stroke-width="2"/>
+  <path d="M2.5 12H8L10 7.5L14 16.5L16 12H21.5" fill="none" stroke="#EEF2F6" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path fill="#EEF2F6" d="M85.29 39.0H65.52V9.00H85.29V14.02H71.19V21.33H83.66V26.32H71.19V33.97H85.29ZM93.03 39.0V9.00H99.30L103.81 17.51L107.04 23.65H107.17L110.35 17.51L114.82 9.00H121.09V39.0H115.72V17.68H115.59L113.27 22.23L107.04 33.58L100.89 22.28L98.53 17.46H98.40V39.0ZM129.86 39.0V9.00H136.14L140.65 17.51L143.87 23.65H144.00L147.18 17.51L151.65 9.00H157.93V39.0H152.55V17.68H152.42L150.10 22.23L143.87 33.58L137.73 22.28L135.36 17.46H135.23V39.0ZM191.15 39.0H185.26L182.85 31.34H172.20L169.83 39.0H164.07L174.13 9.00H181.18ZM181.48 26.49 179.03 18.92 177.61 14.15H177.40L175.98 18.92L173.57 26.49Z"/>
+</svg>

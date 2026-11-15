@@ -1,0 +1,26 @@
+{
+  "target": "app/committee_dossier.py",
+  "test": ["tests/test_committee_dossier.py"],
+  "mutations": [
+    {
+      "label": "una objeción sin cita pasa por trazable",
+      "old": "            \"fuente\": str(item.get(\"quote\") or \"\") if item.get(\"counted\") else \"?\",",
+      "new": "            \"fuente\": str(item.get(\"quote\") or \"\"),"
+    },
+    {
+      "label": "todas las objeciones pesan lo mismo",
+      "old": "            \"impacto\": \"critica\" if item.get(\"counted\") else \"media\",",
+      "new": "            \"impacto\": \"media\","
+    },
+    {
+      "label": "las barreras deterministas no entran",
+      "old": "    if barriers:",
+      "new": "    if False:"
+    },
+    {
+      "label": "lo que pasa del tope se tira",
+      "old": "        \"deferred\": [plain(item) for item in deferred],",
+      "new": "        \"deferred\": [],"
+    }
+  ]
+}

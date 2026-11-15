@@ -1,0 +1,31 @@
+{"target": "app/analysis/alert_context.py",
+ "test": [
+  "tests/test_system_status.py::test_a_declaration_moves_no_level_alert_or_excursion_and_shows_in_the_context",
+  "tests/test_system_status.py::test_the_context_source_reads_only_the_window_and_says_when_nothing_changed"
+ ],
+ "mutations": [
+  {"label": "sin ninguna declaracion la fuente dice que tenia dato",
+   "old": "    if not declarations:\n        return items, _source(\n            \"system_status\"",
+   "new": "    if False:\n        return items, _source(\n            \"system_status\""},
+  {"label": "una declaracion de fuera de la ventana se lista como contexto de la alerta",
+   "old": "        moment = dt.datetime.fromisoformat(told[\"at\"])\n        if not _overlaps(moment, moment, window):\n            continue\n",
+   "new": "        moment = dt.datetime.fromisoformat(told[\"at\"])\n"},
+  {"label": "el contexto de la alerta no lee lo declarado de los sistemas",
+   "old": "        _system_status(system_declarations, window, anchor),\n",
+   "new": "        _system_status((), window, anchor),\n"},
+  {"label": "el elemento no dice que es una declaracion y no telemetria",
+   "old": "                f\"{habitat_systems.DECLARED_LABEL}; declarado por {told['declared_by']}, \"",
+   "new": "                f\"declarado por {told['declared_by']}, \""},
+  {"label": "la nota de la fuente no dice que es una declaracion y no telemetria",
+   "old": "        f\"Solo lo declarado en la consola ({habitat_systems.DECLARED_LABEL}): que no conste un \"",
+   "new": "        \"Solo lo declarado en la consola: que no conste un \""},
+  {"label": "una declaracion que no cambia nada se cuenta como cambio",
+   "old": "            f\"antes constaba «{told['previous_state_display']}»\" if told[\"changed\"]\n            else \"sin cambio respecto a lo declarado antes\"\n        )\n        items.append(_item(",
+   "new": "            f\"antes constaba «{told['previous_state_display']}»\"\n        )\n        items.append(_item("},
+  {"label": "el elemento no dice de que modulo habla la declaracion",
+   "old": "        where = \"\" if told[\"module\"] is None else f\" en {told['module_display']}\"\n        before = (\n            f\"antes constaba «{told['previous_state_display']}»\" if told[\"changed\"]\n            else \"sin cambio respecto a lo declarado antes\"\n        )\n        items.append(_item(",
+   "new": "        where = \"\"\n        before = (\n            f\"antes constaba «{told['previous_state_display']}»\" if told[\"changed\"]\n            else \"sin cambio respecto a lo declarado antes\"\n        )\n        items.append(_item("},
+  {"label": "la fuente cuenta todas las declaraciones y no las de la ventana",
+   "old": "        \"system_status\", \"Sistemas del hábitat\", WITH_DATA, len(items),",
+   "new": "        \"system_status\", \"Sistemas del hábitat\", WITH_DATA, len(declarations),"}
+ ]}

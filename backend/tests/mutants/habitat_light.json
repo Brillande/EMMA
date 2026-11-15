@@ -1,0 +1,28 @@
+{
+ "target": "app/environment/habitat.py",
+ "test": [
+  "tests/test_habitat_flow.py"
+ ],
+ "mutations": [
+  {
+   "label": "lo que solo se muestra se juzga si su ficha lleva un limite",
+   "old": "        if key in DISPLAY_ONLY:",
+   "new": "        if False:"
+  },
+  {
+   "label": "la luz recibe un limite inventado",
+   "old": "        physical_max=physical_max, limits=(), limit_note=limit_note,",
+   "new": "        physical_max=physical_max, limits=(Limit(None, 500.0, \"[V2 0000]\", \"health\"),), limit_note=limit_note,"
+  },
+  {
+   "label": "la luz deja de decir que no tiene limite verificado",
+   "old": "        physical_max=physical_max, limits=(), limit_note=limit_note,",
+   "new": "        physical_max=physical_max, limits=(), limit_note=None,"
+  },
+  {
+   "label": "una lectura de luz no se reconoce como parametro de cabina",
+   "old": "    found = PARAMETERS.get(key) or DISPLAY_ONLY.get(key)",
+   "new": "    found = PARAMETERS.get(key)"
+  }
+ ]
+}

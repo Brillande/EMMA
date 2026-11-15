@@ -1,0 +1,163 @@
+{
+  "target": "scripts/polaris_sync.py",
+  "test": [
+    "tests/test_polaris_sync.py"
+  ],
+  "mutations": [
+    {
+      "label": "una entrada desconocida de ADOPTADO.txt se salta en vez de abortar",
+      "old": "            raise SystemExit(f\"ADOPTADO.txt: entrada desconocida {line!r}\")",
+      "new": "            continue"
+    },
+    {
+      "label": "una línea mal formada de ADOPTADO.txt se salta en vez de abortar",
+      "old": "            raise SystemExit(f\"ADOPTADO.txt: entrada desconocida (mal formada) {line!r}\")",
+      "new": "            continue"
+    },
+    {
+      "label": "una lista sin commit de origen se acepta",
+      "old": "    if not adopted.commit:\n",
+      "new": "    if False:\n"
+    },
+    {
+      "label": "el comentario al final de la línea ya no se quita y la entrada se pierde",
+      "old": "line.split(\"#\", 1)[0].split()",
+      "new": "line.split()"
+    },
+    {
+      "label": "`test <fichero>` deja de leerse",
+      "old": "        elif kind == \"test\":\n            adopted.named_tests.append(value)",
+      "new": "        elif kind == \"test\":\n            pass"
+    },
+    {
+      "label": "`fichas auto` deja de leerse",
+      "old": "        elif kind == \"fichas\" and value == \"auto\":\n            adopted.cards = True",
+      "new": "        elif kind == \"fichas\" and value == \"auto\":\n            pass"
+    },
+    {
+      "label": "una prueba pedida que no existe ya no aborta",
+      "old": "        raise SystemExit(f\"no existen en Polaris: {missing}\")\n    return names",
+      "new": "        pass\n    return names"
+    },
+    {
+      "label": "las pruebas pedidas se ignoran: solo entran las elegibles",
+      "old": "    return names\n",
+      "new": "    return []\n"
+    },
+    {
+      "label": "entra la prueba que nombra o importa una herramienta sin copiar",
+      "old": "        if (named | (used & tools)) - modules:",
+      "new": "        if False:"
+    },
+    {
+      "label": "entra la prueba que importa algo no instalado",
+      "old": "not _importable(m) for m in used",
+      "new": "False for m in used"
+    },
+    {
+      "label": "entra la prueba que no prueba ninguna herramienta",
+      "old": "        if not (named | (used & tools)):",
+      "new": "        if False:"
+    },
+    {
+      "label": "una herramienta solo importada (sin nombrar `x.py`) ya no cuenta",
+      "old": "        if not (named | (used & tools)):",
+      "new": "        if not named:"
+    },
+    {
+      "label": "una prueba pedida y elegible se copia dos veces",
+      "old": "tests = sorted({*tests, *named_tests(source, adopted.named_tests)})",
+      "new": "tests = sorted([*tests, *named_tests(source, adopted.named_tests)])"
+    },
+    {
+      "label": "los ayudantes de tests/ dejan de viajar",
+      "old": "out = [path.relative_to(source) for path in sorted(root.glob(\"*.py\"))",
+      "new": "out = [path.relative_to(source) for path in sorted(root.glob(\"_nada_*.py\"))"
+    },
+    {
+      "label": "viajan todas las fixtures, se nombren o no",
+      "old": "        if path.is_file() and path.name in text:",
+      "new": "        if path.is_file():"
+    },
+    {
+      "label": "viajan las campañas de herramientas sin copiar",
+      "old": "        if target in modules:",
+      "new": "        if True:"
+    },
+    {
+      "label": "viajan las fichas de todas las herramientas, no solo de las copiadas",
+      "old": "        for path in copied\n",
+      "new": "        for path in [Path(\"tools\") / p.name for p in sorted((source / \"tools\").glob(\"*.py\"))]\n"
+    },
+    {
+      "label": "la lista de fichas heredadas no viaja",
+      "old": "    if (cards / \"_heredadas.txt\").is_file():",
+      "new": "    if False:"
+    },
+    {
+      "label": "los instalables (node_modules) de una carpeta de datos entran en la copia",
+      "old": "if item.is_file() and not SKIP_DIRS.intersection(item.relative_to(source).parts)",
+      "new": "if item.is_file()"
+    },
+    {
+      "label": "lo que sobra de una copia anterior no se borra",
+      "old": "        if path.is_file() and rel.as_posix() not in wanted_set:",
+      "new": "        if False:"
+    },
+    {
+      "label": "las carpetas que quedan vacías no se quitan",
+      "old": "        elif path.is_dir() and not any(path.iterdir()):",
+      "new": "        elif False:"
+    },
+    {
+      "label": "al limpiar se borran los ficheros de EMMA (ADOPTADO.txt, ORIGEN.md…)",
+      "old": "        if SKIP_DIRS.intersection(rel.parts) or rel.as_posix() in EMMA_FILES:",
+      "new": "        if SKIP_DIRS.intersection(rel.parts):"
+    },
+    {
+      "label": "al limpiar se borran node_modules y __pycache__",
+      "old": "        if SKIP_DIRS.intersection(rel.parts) or rel.as_posix() in EMMA_FILES:",
+      "new": "        if rel.as_posix() in EMMA_FILES:"
+    },
+    {
+      "label": "la copia pasa por texto y deja de ser byte a byte",
+      "old": "        shutil.copyfile(source / rel, target)",
+      "new": "        target.write_text((source / rel).read_text(encoding=\"utf-8\", errors=\"replace\"), encoding=\"utf-8\")"
+    },
+    {
+      "label": "el manifiesto guarda la huella del origen y no la de lo copiado",
+      "old": "        original = hashlib.sha256(target.read_bytes()).hexdigest()",
+      "new": "        original = hashlib.sha256(rel.as_posix().encode(\"utf-8\")).hexdigest()"
+    },
+    {
+      "label": "un fichero cambiado sale en el manifiesto sin su marca ni la huella del original",
+      "old": "            lines.append(f\"{digest}  {rel.as_posix()}  # cambiado; original {original}\")",
+      "new": "            lines.append(f\"{digest}  {rel.as_posix()}\")"
+    },
+    {
+      "label": "un cambio decidido sobre un fichero que no se copia pasa inadvertido",
+      "old": "    if unknown:\n        raise SystemExit(f\"CAMBIOS.json cambia",
+      "new": "    if False:\n        raise SystemExit(f\"CAMBIOS.json cambia"
+    },
+    {
+      "label": "un cambio sin fecha, motivo o reemplazos se acepta",
+      "old": "        if not all(entry.get(key) for key in (\"ruta\", \"fecha\", \"motivo\", \"reemplazos\")):",
+      "new": "        if not all(entry.get(key) for key in (\"ruta\",)):"
+    },
+    {
+      "label": "un `viejo` que aparece dos veces se cambia igual",
+      "old": "        if count != 1:",
+      "new": "        if count == 0:"
+    },
+    {
+      "label": "un `viejo` que no aparece se da por cambiado",
+      "old": "        if count != 1:",
+      "new": "        if count > 1:"
+    },
+    {
+      "label": "el manifiesto se escribe con los saltos de línea del sistema (CRLF en Windows)",
+      "old": "encoding=\"utf-8\", newline=\"\\n\")",
+      "new": "encoding=\"utf-8\")"
+    }
+  ]
+}

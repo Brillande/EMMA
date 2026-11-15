@@ -1,0 +1,12 @@
+EMMA, fixture de pruebas (unidad D6, 2026-10-22). Las cifras de las dos filas (delta, deldot, 1-way_down_LT, S-O-T y /r) se leyeron ese dia en la API de Horizons (format=text, COMMAND='499', CENTER='500@399', QUANTITIES='20,21,23', 2028-03-20 a 2028-03-21, paso 1d), y se reescriben aqui en el CSV que pide astroquery (CSV_FORMAT=YES, CAL_FORMAT=BOTH); el dia juliano se calcula de la fecha. Las lineas de cuerpo y centro son las que el analizador de astroquery necesita, no una copia literal de la respuesta.
+*******************************************************************************
+Target body name: Mars (499)                      {source: EMMA fixture}
+Center body name: Earth (399)                     {source: EMMA fixture}
+*******************************************************************************
+ Date__(UT)__HR:MN, Date_________JDUT, , , delta, deldot, 1-way_down_LT, S-O-T,/r,
+*******************************************************************************
+$$SOE
+ 2028-Mar-20 00:00, 2461850.500000000, , , 2.38685031840805, 1.4564992, 19.85082879, 0.8531,/T,
+ 2028-Mar-21 00:00, 2461851.500000000, , , 2.38768638560019, 1.4386280, 19.85778215, 0.8121,/T,
+$$EOE
+*******************************************************************************

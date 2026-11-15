@@ -1,0 +1,15 @@
+{"target": "app/api/routes.py",
+ "test": [
+  "tests/test_exercise_context.py::test_the_verdict_and_the_band_are_identical_with_and_without_the_exercise[dehydration]"
+ ],
+ "mutations": [
+  {"label": "el estado sirve la banda sin lo medido al lado",
+   "old": "                exercise=exercise,",
+   "new": ""},
+  {"label": "el contexto de una alerta no recibe las lecturas de ejercicio",
+   "old": "                    obs for obs in assessed.observations if obs.key in exercise_summary.KEYS",
+   "new": "                    obs for obs in assessed.observations if False"},
+  {"label": "el contexto de una alerta recibe como ejercicio todas las lecturas menos las de ejercicio",
+   "old": "                    obs for obs in assessed.observations if obs.key in exercise_summary.KEYS",
+   "new": "                    obs for obs in assessed.observations if obs.key not in exercise_summary.KEYS"}
+ ]}

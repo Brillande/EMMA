@@ -1,0 +1,56 @@
+{
+ "target": "app/api/sensor_bindings.py",
+ "test": [
+  "tests/test_sensor_bindings.py::test_declaring_writes_one_console_entry_and_the_latest_holds",
+  "tests/test_sensor_bindings.py::test_what_cannot_be_signed_is_a_422_and_nothing_is_written",
+  "tests/test_sensor_bindings.py::test_only_what_the_console_signed_counts",
+  "tests/test_sensor_bindings.py::test_ground_only_sees_what_existed_at_its_cut"
+ ],
+ "mutations": [
+  {
+   "label": "un vinculo que no firmo la consola se da por vigente",
+   "old": "        if _counts(item, until)\n        and (until is None",
+   "new": "        if (until is None"
+  },
+  {
+   "label": "Tierra ve un vinculo firmado despues de su corte",
+   "old": "        if _counts(item, until)\n",
+   "new": "        if _counts(item, None)\n"
+  },
+  {
+   "label": "Tierra ve un vinculo que vale desde un instante posterior a su corte",
+   "old": "        and (until is None or dt.datetime.fromisoformat(item[\"since\"]) <= until)\n",
+   "new": ""
+  },
+  {
+   "label": "el vinculo lo firma una identidad que no es la consola",
+   "old": "            identity_for(CONSOLE_IDENTITY), crew=payload.crew, device=payload.device,",
+   "new": "            identity_for(\"otra-fuente\"), crew=payload.crew, device=payload.device,"
+  },
+  {
+   "label": "un corte sin zona horaria no se rechaza",
+   "old": "    if until is not None and until.tzinfo is None:\n        raise HTTPException(status_code=422, detail=\"`until` debe llevar zona horaria\")\n",
+   "new": ""
+  },
+  {
+   "label": "la lectura ignora el corte de Tierra",
+   "old": "    return bindings.overview(binding_declarations(store, until))",
+   "new": "    return bindings.overview(binding_declarations(store, None))"
+  },
+  {
+   "label": "la declaracion admite campos que no son suyos",
+   "old": "class SensorBindingIn(BaseModel):\n    model_config = ConfigDict(extra=\"forbid\")",
+   "new": "class SensorBindingIn(BaseModel):\n    model_config = ConfigDict(extra=\"ignore\")"
+  },
+  {
+   "label": "una nota sin tope de longitud",
+   "old": "Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)]",
+   "new": "Note = Annotated[str, StringConstraints(strip_whitespace=True)]"
+  },
+  {
+   "label": "un firmante sin tope de longitud",
+   "old": "Operator = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)]",
+   "new": "Operator = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]"
+  }
+ ]
+}

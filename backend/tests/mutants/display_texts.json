@@ -1,0 +1,21 @@
+{"target": "app/analysis/staleness.py", "test": ["tests/test_display_texts.py"],
+ "mutations": [
+  {"label": "justo en el plazo ya cuenta como caducado",
+   "old": "        if age_seconds > STALE_AFTER[source].total_seconds()",
+   "new": "        if age_seconds >= STALE_AFTER[source].total_seconds()"},
+  {"label": "un dato sin antiguedad se da por vigente",
+   "old": "        return Freshness.MISSING",
+   "new": "        return Freshness.FRESH"},
+  {"label": "la meteorologia espacial caduca a los seis dias, no a las seis horas",
+   "old": "    ExternalSource.SPACE_WEATHER: dt.timedelta(hours=6),",
+   "new": "    ExternalSource.SPACE_WEATHER: dt.timedelta(days=6),"},
+  {"label": "las efemerides caducan al dia, no a la semana",
+   "old": "    ExternalSource.EPHEMERIS: dt.timedelta(days=7),",
+   "new": "    ExternalSource.EPHEMERIS: dt.timedelta(days=1),"},
+  {"label": "un dato ausente declara una antiguedad",
+   "old": "        \"age_seconds\": None if state is Freshness.MISSING else age_seconds,",
+   "new": "        \"age_seconds\": age_seconds,"},
+  {"label": "un dato caducado se declara vigente",
+   "old": "        \"is_current\": state is Freshness.FRESH,",
+   "new": "        \"is_current\": state is not Freshness.MISSING,"}
+ ]}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+  <!-- EMMA, candidata C «E de pulso»: la inicial, con el trazo central convertido en un latido.
+       Borrador para el equipo. Colores de palette.ts: bg, line y text. -->
+  <title>EMMA</title>
+  <rect x="0.5" y="0.5" width="23" height="23" rx="5" fill="#0A0D12" stroke="#2A3446"/>
+  <path d="M18 5H6V19H18" fill="none" stroke="#EEF2F6" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6 12H10L12 8L14.5 16L16.5 12H19" fill="none" stroke="#EEF2F6" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

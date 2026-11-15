@@ -1,0 +1,23 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_recorded_by.py"
+ ],
+ "mutations": [
+  {
+   "label": "la ingesta genérica puede firmar como el diario y como la PVT de consola, sin anotador",
+   "old": "        \"crew-diary\", \"console-pvt\",\n",
+   "new": ""
+  },
+  {
+   "label": "la ingesta genérica puede firmar como el diario",
+   "old": "        \"crew-diary\", \"console-pvt\",\n",
+   "new": "        \"console-pvt\",\n"
+  },
+  {
+   "label": "la ingesta genérica puede firmar como la PVT de consola",
+   "old": "        \"crew-diary\", \"console-pvt\",\n",
+   "new": "        \"crew-diary\",\n"
+  }
+ ]
+}

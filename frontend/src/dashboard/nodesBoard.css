@@ -1,0 +1,311 @@
+/*
+ * Pestaña «Distancia y nodos» (lote «reservas», 2026-11-14): la maqueta «Panel médico espacial EMMA
+ * para la ISS» en su propia pestaña, con las tarjetas de «Inicio» (`ref-home`). Aquí solo el reparto
+ * de la pestaña: arriba el marco global compacto de la maqueta (estado, RIDGE y cuerpo, sin vitales
+ * ni tendencia, que viven en «Inicio»), el tripulante y el riesgo; debajo la distancia, el
+ * diagnóstico con la ayuda urgente y, plegables, las reservas. Con las reservas plegadas llena la
+ * ventana («tiene que ser responsivo y ocupar espacio de la pantalla»). Sin colores propios.
+ */
+
+/* El marco global en una fila, como en la maqueta: estado, índice y RIDGE, y el cuerpo. */
+.section-body.ref-home.nodes-home .ref-global-grid {
+  grid-template-columns: 0.9fr 1.6fr 0.5fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: "mission ridge body";
+}
+
+/* `!important`: la regla de «llenar la ventana» de `referenceDashboard.css` también casa aquí (misma
+   `ref-home` con una raya plegada) y da `display: flex` a los vitales. */
+.nodes-home :is(.ref-vitals, .ref-trend, .ref-notes, .ref-next) {
+  display: none !important;
+}
+
+/* Selector largo: tiene que ganar al de «Inicio» (`.section-body.ref-home .ref-body-figure`, 16 rem). */
+.section-body.ref-home.nodes-home .ref-body-figure {
+  --silhouette-height: 9.5rem;
+}
+
+.section-body.ref-home.nodes-home .ref-body-figure :is(.body-silhouette, .body-silhouette-figure) {
+  --silhouette-height: 9.5rem;
+  height: 9.5rem;
+}
+
+@media (max-width: 1000px) {
+  .section-body.ref-home.nodes-home .ref-global-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "mission body" "ridge ridge";
+  }
+}
+
+@media (max-width: 760px) {
+  .section-body.ref-home.nodes-home .ref-global-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "mission" "body" "ridge";
+  }
+}
+
+/* Llenar la ventana con las reservas plegadas: la fila del diagnóstico se queda con lo que sobra. */
+@media (min-width: 1401px) {
+  :where(.app[data-look="reference"]) .section-body.ref-home.nodes-home:has(.ref-divider[data-open="false"]) {
+    min-height: var(--home-fill, auto);
+    /* Ubicación, marco global (con tripulante y riesgo), distancia y sincronización, diagnóstico con
+       la ayuda urgente, la raya de las reservas y la última fila (riesgos, correlaciones, escenarios). */
+    grid-template-rows: auto auto auto 1fr auto auto;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.nodes-home .dx-frame {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :where(.app[data-look="reference"]) .section-body.nodes-home .dx-grid {
+    flex: 1;
+  }
+}
+
+/* Compacto como la maqueta: la sububicación y la capacidad médica en una línea (el texto entero sigue
+   en su `title`), y las notas del visor, más apretadas. */
+.nodes-home .ref-subplace .ref-select-like {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nodes-home .dx-capability {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.nodes-home .dx-note {
+  margin: 0.2rem 0 0;
+  line-height: 1.2;
+}
+
+/* Última fila (riesgos, correlaciones, escenarios), compacta como la maqueta: una línea por frase de
+   la fuente y por par (el texto entero sigue en su `title` o en su sección), y los títulos sin el
+   rótulo del perfil, que ya dice la fila de arriba y partía las tarjetas estrechas. */
+.nodes-home :is(.no-corr, .no-scen) .ref-h > .secondary {
+  display: none;
+}
+
+.nodes-home :is(.no-challenge-aspect, .no-corr-scope, .no-scen-rec .ref-clamp-2) {
+  -webkit-line-clamp: 1;
+}
+
+.nodes-home .no-pair-names {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* La medida de cada reto no pisa su nombre: una línea con puntos suspensivos (entera en su `title`). */
+.nodes-home .no-challenge-measure {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* El nombre del reto entero en su columna; la medida y los niveles, en lo que queda. */
+@media (min-width: 901px) {
+  .nodes-home .no-challenges > li {
+    grid-template-columns: max-content minmax(0, 1fr) auto;
+  }
+}
+
+/* Diagnóstico más bajo: la columna de pruebas, más ancha, deja cada prueba en una o dos líneas. */
+@media (min-width: 1101px) {
+  .nodes-home .dx-grid {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  }
+}
+
+/* Más cerca de la maqueta (2026-11-14): cada reto en una sola línea —nombre, medida y nivel—; la
+   frase de su fuente queda en el `title` de la fila y entera en «Peligros y alertas». */
+@media (min-width: 901px) {
+  .nodes-home .no-challenge-aspect {
+    display: none;
+  }
+}
+
+/* Cada par de variables en una fila: los nombres a la izquierda (dos líneas como mucho) y su r a la
+   derecha, como la lista de la maqueta. */
+.nodes-home .no-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.4rem;
+}
+
+/* El motivo de que no haya segmentación, en una línea (entero en su `title`); la advertencia de que
+   no es diagnóstico a bordo se queda entera. */
+.nodes-home .dx-note-unavailable {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* La lista de pares, más ancha que la dispersión, como en la maqueta. */
+@media (min-width: 641px) {
+  .nodes-home .no-corr-grid {
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+  }
+}
+
+/* Cada prueba en una línea cuando cabe (nombre y recuento seguidos), como los botones de la maqueta;
+   el botón conserva su altura táctil mínima. */
+.nodes-home .dx-test-text {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.4rem;
+}
+
+/* El visor como en la maqueta: el render y su rótulo; los volúmenes de cada estructura, en el visor
+   completo y en el `aria-label` del render. */
+.nodes-home .dx-preview-render .dx-structures {
+  display: none;
+}
+
+/* Con un render, el visor se queda en la imagen y su rótulo, como en la maqueta: el motivo de que
+   falte el segmentador sobra (la segmentación ya está hecha) y el origen del TAC cabe en una línea
+   (entero en su `title`). La advertencia de que no es diagnóstico a bordo sigue entera. */
+.nodes-home .dx-preview-render ~ .dx-note-unavailable {
+  display: none;
+}
+
+.nodes-home .dx-note-dataset {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nodes-home .dx-preview-render .dx-render {
+  height: 8rem;
+}
+
+/* Tendencias: el nombre del indicador ocupa su línea entera (no cortado a la primera sílaba en la
+   columna estrecha; entero en su `title`) y debajo van la serie y la última cifra. */
+.nodes-home .dx-trends li {
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 0.1rem;
+}
+
+.nodes-home .dx-trend-name {
+  grid-column: 1 / -1;
+}
+
+/* La nota de las efemérides en una línea (entera en su `title`), como el pie de la maqueta. */
+.nodes-home .dist-foot {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+/* Lo que EMMA no mide del enlace, en una línea (entero en su `title`): la tarjeta de sincronización
+   queda a la altura de la de distancia, como en la maqueta. */
+.nodes-home .dist-sync-note {
+  -webkit-line-clamp: 1;
+}
+
+.nodes-home .no-pair.no-pair-more {
+  display: block;
+  color: var(--c-text-secondary);
+}
+
+/* «Ajustar a pantalla» (`NodesFit`): con el zoom puesto, la rejilla no estira filas para llenar la
+   ventana (ya cabe) y no se sale por la derecha. */
+.section-body.nodes-home[data-fit="true"] {
+  min-height: auto !important;
+}
+
+/* El interruptor va al final de la pestaña, en su fila y a la derecha. Flotando abajo a la derecha
+   tapaba «Pedir ayuda» (visto el 2026-11-15): nada se pone encima de la ayuda urgente. */
+.nodes-home .nodes-fit {
+  grid-column: 1 / -1;
+  order: 99;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Por debajo de la rejilla ancha no se ajusta (`NodesFit`): el interruptor no haría nada. */
+@media (max-width: 1400px) {
+  .nodes-home .nodes-fit {
+    display: none;
+  }
+}
+
+/* Que la pestaña quepa sin encoger la letra (2026-11-15, «hay algo que ocupa de más»: el diagnóstico
+   medía 445 px, la sincronización 253 y la última fila 301). Lo que se recorta, entero en su `title`. */
+
+/* Sincronización: cada rótulo en una línea (partidos en dos, la tarjeta doblaba su alto). */
+.nodes-home .dist-kv dt {
+  white-space: nowrap;
+}
+
+/* Pruebas: el nombre y su recuento en una línea; el recuento, con puntos suspensivos si no cabe. */
+.nodes-home .dx-test-text {
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.nodes-home .dx-test-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.nodes-home .dx-test-count {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Visor: la advertencia empieza por lo que importa y cabe en una línea; el origen del TAC, igual. */
+.nodes-home .dx-note-reference {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* La fecha del estudio sobra junto al render (está en el visor completo). */
+.nodes-home .dx-preview-render .dx-preview-text > .secondary:first-of-type {
+  display: none;
+}
+
+/* Diagnóstico más bajo, como la maqueta (2026-11-15): sin la línea de capacidad médica (es la del
+   perfil de misión, en «Misión y hábitat») y con el nombre del render y su estado en una línea. */
+.nodes-home .dx-capability {
+  display: none;
+}
+
+.nodes-home .dx-preview-render .dx-preview-text {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.4rem;
+}
+
+/* «Estado de riesgo» con avisos (`HomeRisk notices`): cada dominio por encima del nivel más bajo, su
+   nivel y su primera causa, en una o dos líneas. */
+.nodes-home .ref-risk-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.35rem;
+  min-width: 0;
+}
+
+.nodes-home .ref-risk-notice small {
+  flex-basis: 100%;
+  min-width: 0;
+}

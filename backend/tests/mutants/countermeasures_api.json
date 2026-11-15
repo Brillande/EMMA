@@ -1,0 +1,9 @@
+{"target": "app/api/countermeasures.py", "test": ["tests/test_countermeasures.py"],
+ "mutations": [
+  {"label": "se adopta lo que no estaba recomendado",
+   "old": "    if offered is None:\n        raise HTTPException(",
+   "new": "    if offered is None:\n        offered = {\"domain\": \"behavioral\"}\n    if False:\n        raise HTTPException("},
+  {"label": "un seguimiento se cierra dos veces",
+   "old": "        raise HTTPException(status_code=409, detail=\"ese seguimiento ya está cerrado\")",
+   "new": "        pass"}
+ ]}

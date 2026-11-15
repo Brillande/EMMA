@@ -1,0 +1,118 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_anatomy.py::test_each_postflight_day_falls_in_one_milestone",
+    "tests/test_anatomy.py::test_a_long_daily_recovery_gives_one_moment_per_milestone",
+    "tests/test_anatomy.py::test_a_replayed_flight_lands_when_it_landed_and_skips_the_configured_phases",
+    "tests/test_anatomy.py::test_each_preflight_day_falls_in_one_milestone",
+    "tests/test_anatomy.py::test_a_milestone_day_is_read_or_design_not_both",
+    "tests/test_anatomy.py::test_each_milestones_basis_names_exactly_its_milestones",
+    "tests/test_anatomy.py::test_preflight_readings_give_one_moment_per_milestone",
+    "tests/test_anatomy.py::test_a_phase_change_never_links_to_a_milestone_that_falls_on_it",
+    "tests/test_anatomy.py::test_the_lungs_are_a_view_without_a_level_of_their_own",
+    "tests/test_anatomy.py::test_a_region_without_level_declares_its_analytes_coherently"
+  ],
+  "mutations": [
+    {
+      "label": "R+180 y R+365 vuelven a ser de diseno",
+      "old": "DESIGN_MILESTONES: tuple[int, ...] = (90,)",
+      "new": "DESIGN_MILESTONES: tuple[int, ...] = (90, 180, 365)"
+    },
+    {
+      "label": "la densitometria se presenta como el calendario de Standard Measures, no como solo del hueso",
+      "old": "    MilestoneSource((180, 365, 730, 1095), BONE_DXA_SOURCE, BONE_DXA_SCOPE),",
+      "new": "    MilestoneSource((180, 365, 730, 1095), BONE_DXA_SOURCE, STANDARD_MEASURES_SCOPE),"
+    },
+    {
+      "label": "un hito deja de decir lo que cubre su fuente",
+      "old": "        return {\"days\": list(self.days), \"source\": source, \"scope\": self.scope}",
+      "new": "        return {\"days\": list(self.days), \"source\": source, \"scope\": None}"
+    },
+    {
+      "label": "los hitos prevuelo salen con las fuentes del posvuelo",
+      "old": "            \"sources\": [item.to_dict() for item in PREFLIGHT_SOURCES],",
+      "new": "            \"sources\": [item.to_dict() for item in POSTFLIGHT_SOURCES],"
+    },
+    {
+      "label": "un dia de hito puede ser leido y de diseno a la vez",
+      "old": "    if both:",
+      "new": "    if not both and both:"
+    },
+    {
+      "label": "un dia que dan dos fuentes sale dos veces",
+      "old": "    return tuple(sorted({*read, *design}, reverse=reverse))",
+      "new": "    return tuple(sorted([*read, *design], reverse=reverse))"
+    },
+    {
+      "label": "R+180 cambia de dia y la base no lo dice",
+      "old": "    MilestoneSource((180, 365, 730, 1095), BONE_DXA_SOURCE, BONE_DXA_SCOPE),",
+      "new": "    MilestoneSource((182, 365, 730, 1095), BONE_DXA_SOURCE, BONE_DXA_SCOPE),"
+    },
+    {
+      "label": "L-30 pasa a Standard Measures y la base sigue con la densitometria",
+      "old": "    MilestoneSource((30,), BONE_DXA_SOURCE, BONE_DXA_SCOPE),",
+      "new": "    MilestoneSource((30,), STANDARD_MEASURES_SOURCE, BONE_DXA_SCOPE),"
+    },
+    {
+      "label": "la base prevuelo deja de decir que L-30 es una lectura de EMMA",
+      "old": "    \"«L- 180/30 d», tan cerca del lanzamiento como se pueda, y leerlo como una toma en L-30 es de \"",
+      "new": "    \"«L- 180/30 d», tan cerca del lanzamiento como se pueda, L-30 en \""
+    },
+    {
+      "label": "el dia de un hito prevuelo cae en el tramo siguiente",
+      "old": "    return next((milestone for milestone in PREFLIGHT_MILESTONES if day >= milestone), None)",
+      "new": "    return next((milestone for milestone in PREFLIGHT_MILESTONES if day > milestone), None)"
+    },
+    {
+      "label": "el L- cuenta al reves, como un R+",
+      "old": "    return days_after_landing(launch, moment)",
+      "new": "    return days_after_landing(moment, launch)"
+    },
+    {
+      "label": "la ultima lectura prevuelo se ofrece como hito y como lanzamiento",
+      "old": "    segments = _segments(preflight, preflight_milestone, max(preflight.values()))",
+      "new": "    segments = _segments(preflight, preflight_milestone, launch)"
+    },
+    {
+      "label": "el tramo que llega al lanzamiento se ofrece como hito",
+      "old": "        if milestone is not None\n    ]",
+      "new": "    ]"
+    },
+    {
+      "label": "la clave de un tramo prevuelo es la del hito y no la de su dia",
+      "old": "        (f\"L-{day}\", \"preflight_milestone\", _preflight_display(milestone, day), instant, None, day)",
+      "new": "        (f\"L-{milestone}\", \"preflight_milestone\", _preflight_display(milestone, day), instant, None, day)"
+    },
+    {
+      "label": "un tramo prevuelo se rotula sin su primer dia",
+      "old": "        f\"Tramo de L-{earlier[-1] - 1} a L-{milestone}: última lectura, en L-{day}\",",
+      "new": "        f\"Tramo de L-{earlier[-1]} a L-{milestone}: última lectura, en L-{day}\","
+    },
+    {
+      "label": "no se ofrecen los hitos prevuelo",
+      "old": "            *_preflight_moments(observations, launch),",
+      "new": "            *_preflight_moments(observations[:0], launch),"
+    },
+    {
+      "label": "un cambio de fase enlaza con un hito que cae en una lectura",
+      "old": "PHASE_KINDS = frozenset({\"phase_change\", \"landing\"})",
+      "new": "PHASE_KINDS = frozenset({\"phase_change\", \"landing\", \"preflight_milestone\"})"
+    },
+    {
+      "label": "los pulmones pierden la saturacion de oxigeno",
+      "old": "LUNG_ANALYTES = (\"respiratory-rate\", \"oxygen-saturation\")",
+      "new": "LUNG_ANALYTES = (\"respiratory-rate\",)"
+    },
+    {
+      "label": "la lista de los pulmones cita la ficha del higado",
+      "old": "        analytes=LUNG_ANALYTES, level_of=Domain.CARDIOVASCULAR, analytes_source=LUNG_SOURCE,",
+      "new": "        analytes=LUNG_ANALYTES, level_of=Domain.CARDIOVASCULAR, analytes_source=LIVER_SOURCE,"
+    },
+    {
+      "target": "app/timeline.py",
+      "label": "corregir una frecuencia respiratoria no obliga a recalcular la vista de los pulmones",
+      "old": "            if region.shows(key):",
+      "new": "            if code.domain in region.domains:"
+    }
+  ]
+}

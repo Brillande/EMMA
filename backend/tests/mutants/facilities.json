@@ -1,0 +1,123 @@
+{
+ "target": "app/evidence/facilities.py",
+ "test": [
+  "tests/test_facilities.py"
+ ],
+ "mutations": [
+  {
+   "label": "una frase de un sitio que no es ESA, NASA ni PubMed Central pasa",
+   "old": "    if urlsplit(ref.url or \"\").hostname not in OFFICIAL_HOSTS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una ficha sin rastro de la lectura de ese día pasa",
+   "old": "    if read_on not in (ref.notes or \"\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un eslabón que falta o va fuera de orden pasa",
+   "old": "    if steps != list(STEPS):",
+   "new": "    if steps is None:"
+  },
+  {
+   "label": "un eslabón sin frase y sin hueco dicho pasa",
+   "old": "        elif not quotes:",
+   "new": "        elif False:"
+  },
+  {
+   "label": "un hueco sin decir dónde se buscó pasa",
+   "old": "    if not isinstance(searched, list) or not searched:",
+   "new": "    if not isinstance(searched, list):"
+  },
+  {
+   "label": "un hueco sin decir qué falta pasa",
+   "old": "    if not isinstance(missing, dict) or not _text(missing, \"what\"):",
+   "new": "    if not isinstance(missing, dict):"
+  },
+  {
+   "label": "una cadena con una fuente que no es de personas pasa sin salvedad",
+   "old": "    if populations & registry.NON_HUMAN:",
+   "new": "    if False:"
+  },
+  {
+   "label": "una frase repetida en un eslabón pasa",
+   "old": "            if item[\"quote\"] in seen:",
+   "new": "            if False:"
+  },
+  {
+   "label": "un campo de más en una frase pasa",
+   "old": "    if extra := sorted(item.keys() - expected):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "una instalación repetida pasa",
+   "old": "        if facility[\"id\"] in ids:",
+   "new": "        if False:"
+  },
+  {
+   "label": "una lectura sin fecha pasa",
+   "old": "    if not _text(raw, \"read_on\"):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un eslabón con frases y hueco sale como leído entero",
+   "old": "    return \"partial\" if link[\"missing\"] is not None else \"read\"",
+   "new": "    return \"read\""
+  },
+  {
+   "label": "un eslabón sin frase sale como leído",
+   "old": "    if not link[\"quotes\"]:\n        return \"not_found\"",
+   "new": "    if False:\n        return \"not_found\""
+  },
+  {
+   "label": "una ficha que no está en el registro se escapa con otro error",
+   "old": "        raise FacilitiesError(f\"{key}: {error}\") from None",
+   "new": "        raise"
+  },
+  {
+   "label": "una frase sin su texto pasa",
+   "old": "        if not _text(item, field):",
+   "new": "        if False:"
+  },
+  {
+   "label": "lo que dice la base de conocimiento de una instalación puede ir sin texto",
+   "old": "    if not isinstance(role, dict) or not (_text(role, \"text\") and _text(role, \"where\")):",
+   "new": "    if not isinstance(role, dict):"
+  },
+  {
+   "label": "la cadena de la base de conocimiento puede ir sin texto",
+   "old": "    if not isinstance(chain, dict) or not (_text(chain, \"text\") and _text(chain, \"where\")):",
+   "new": "    if not isinstance(chain, dict):"
+  },
+  {
+   "label": "una línea vacía en lo no encontrado pasa",
+   "old": "        isinstance(line, str) and line.strip() for line in not_found",
+   "new": "        isinstance(line, str) for line in not_found"
+  },
+  {
+   "label": "una línea repetida en lo no encontrado pasa",
+   "old": "    if len(set(not_found)) != len(not_found):",
+   "new": "    if False:"
+  },
+  {
+   "label": "una línea repetida en lo buscado pasa",
+   "old": "    if len(set(searched)) != len(searched):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un campo de más en un hueco pasa",
+   "old": "    if extra := sorted(missing.keys() - {\"what\", \"searched\"}):",
+   "new": "    if extra := []:"
+  },
+  {
+   "label": "una salvedad vacía pasa en una cadena de personas",
+   "old": "    elif caveat is not None and not (isinstance(caveat, str) and caveat.strip()):",
+   "new": "    elif False:"
+  },
+  {
+   "label": "un eslabón que no es un objeto tumba el cargador con otro error",
+   "old": "    if not isinstance(item, dict):",
+   "new": "    if False:"
+  }
+ ]
+}

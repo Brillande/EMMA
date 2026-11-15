@@ -1,0 +1,17 @@
+{"target": "app/api/routes.py",
+ "test": [
+  "tests/test_earth_link.py::test_the_status_says_it_and_ground_sees_only_what_existed_at_its_cut",
+  "tests/test_earth_link.py::test_only_the_console_signs_the_link",
+  "tests/test_earth_link.py::test_comms_carries_the_declared_link_next_to_the_ephemeris"
+ ],
+ "mutations": [
+  {"label": "Tierra ve el enlace declarado despues de su corte",
+   "old": "    declarations = _system_declarations(store, until)",
+   "new": "    declarations = _system_declarations(store, None)"},
+  {"label": "cuenta una declaracion del enlace que no firmo la consola",
+   "old": "    return system_declarations(store, until)\n",
+   "new": "    return store.system_statuses()\n"},
+  {"label": "/comms no dice lo declarado del enlace",
+   "old": "        \"declared_link\": habitat_systems.earth_link(_system_declarations(store, None)),\n",
+   "new": ""}
+ ]}

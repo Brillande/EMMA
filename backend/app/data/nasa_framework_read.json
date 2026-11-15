@@ -1,0 +1,1259 @@
+{
+  "_nota": "El marco de NASA, leído. Cada `quote` es la frase o la fila exacta de la fuente oficial, copiada con la fuente delante el día `read_on` (el de la fuente en `sources` si lo declara; si no, el general, que es el de la primera lectura y no puede ser posterior al de ninguna fuente); `where` dice la sección o la página, `ref` la ficha del registro (data/evidence_refs.json) y `url` la dirección leída cuando no es la de la ficha (null: la de la ficha). `note` es de EMMA y no añade cifras. `emma` dice, aparte y sin adjetivos, qué hace EMMA: citar un documento no es implementarlo (CLAUDE.md, invariante 6). `gap`, en la frase que da el estado de un hueco del Human Research Roadmap, dice qué hueco y en qué estado figura (open, closed, merged, archived, split) tal como lo publica su página: de ahí lo toma todo texto de EMMA que nombre ese hueco. `not_read` dice qué se buscó y no se encontró, o qué no se leyó. `question`, opcional en un bloque, es una pregunta que lo leído contesta: `answer` lo redacta EMMA con las palabras de las frases y sin añadir nada, y `rests_on` nombra las frases del bloque en que se apoya, entre ellas la del documento de fecha más reciente del bloque. `sources` declara cuánto se leyó de cada documento. Nada de esto entra en el análisis (invariante 5). El cargador (app/evidence/nasa_framework.py) rechaza una frase sin fuente, una fuente sin alcance de lectura y un `emma` que reclame conformidad.",
+  "read_on": "2026-10-13",
+  "sources": {
+    "ntrs-20220017869": {"extent": "full", "read_on": "2026-10-26", "what": "Ficha de NTRS y PDF entero (HRP-48032 Rev. B, 30 páginas), leídos el 2026-10-13. El 2026-10-26 se volvió a descargar el PDF, se copiaron del §6 (p. 16) los dieciséis supuestos y las cuatro restricciones del diseño, y se comprobaron contra él todas las frases citadas."},
+    "ntrs-20160012678": {"extent": "full", "what": "Ficha de NTRS, resumen y las 14 diapositivas en texto; los diagramas, solo por sus rótulos."},
+    "ntrs-20180008706": {"extent": "partial", "read_on": "2026-11-01", "what": "Ficha de NTRS y las diapositivas en texto; de ellas se copia la 8, «Levels of Care»."},
+    "ntrs-20205011728": {"extent": "partial", "read_on": "2026-10-31", "what": "Las diapositivas en texto (leídas el 2026-10-31); los gráficos, solo por sus rótulos."},
+    "ntrs-20240001402": {"extent": "partial", "read_on": "2026-11-01", "what": "Las diapositivas de 2024 en texto; el documento de ConOps no está en NTRS."},
+    "ntrs-20250000009": {"extent": "partial", "read_on": "2026-11-01", "what": "Las diapositivas de 2025 en texto; el documento de ConOps no está en NTRS."},
+    "ntrs-20230015831": {"extent": "full", "read_on": "2026-11-01", "what": "El resumen de una página, único documento de NTRS."},
+    "ochmo-tb-013": {"extent": "full", "read_on": "2026-10-31", "what": "PDF entero (Rev E, 25 páginas), en texto."},
+    "ochmo-tb-031": {"extent": "full", "read_on": "2026-11-01", "what": "PDF entero (26 páginas), leído el 2026-10-14 y releído buscando si describe el ejercicio como sistema."},
+    "ntrs-20205008731": {"extent": "partial", "what": "Ficha de NTRS y el resumen de una página, que es el único documento que NTRS ofrece; las diapositivas no están."},
+    "ntrs-20200000567": {"extent": "record", "read_on": "2026-10-26", "what": "Leído: resumen de NTRS y, el 2026-10-26, el único PDF que ofrece NTRS, que es ese mismo resumen en una página con los autores y sus centros; las diapositivas de la presentación no están en NTRS."},
+    "ntrs-20170004345": {"extent": "full", "what": "PDF entero (NASA/TM-2017-219290, 12 páginas)."},
+    "nasa-std-3001-vol1-rev-c": {"extent": "partial", "what": "Registro de cambios (páginas 2 y 3 de 86), arranque de la sección 3 y Apéndice E en nasa.gov/reference (desde el 2026-10-26, con ficha propia: nasa-std-3001-appendix-e); el PDF entero se recorrió buscando «level(s) of care»."},
+    "nasa-std-3001-appendix-e": {"extent": "partial", "read_on": "2026-10-26", "what": "La página web del Apéndice E de NASA-STD-3001 en nasa.gov/reference: de E.1 a E.2.3, con las tablas E.2-1 y E.2-2; leída el 2026-10-13 (sus frases se citaban entonces con la ficha del Volumen 1) y releída entera el 2026-10-26. La figura E.2-1 es una imagen y no se leyó."},
+    "nasa-imm-overview": {"extent": "partial", "read_on": "2026-10-22", "what": "Cuerpo de la página entero; de lo que enlaza, solo la página de ejecuciones en órbita baja. Leída el 2026-10-13 y releída entera el 2026-10-22, la misma versión (actualizada el 16 de septiembre de 2026): todas las frases citadas de ella se comprobaron ese día, y no nombra a MEDPRAT ni a IMPACT."},
+    "nasa-imm": {"extent": "full", "what": "Página entera."},
+    "hrr-gaps": {"extent": "partial", "what": "Las páginas de Food-01 a Food-04, de los huecos FN que los suceden y de Med07, Med10 y Medical-701; el listado general, paginado, no se recorrió."},
+    "hrr-risk-food-nutrition": {"extent": "partial", "what": "Cabecera, enunciado del riesgo, estado de conocimiento y lista de huecos; las fichas de las tareas, no."},
+    "hrp-food-system-evidence-report": {"extent": "partial", "read_on": "2026-10-26", "what": "Portada, resumen ejecutivo y lista de huecos de la introducción (páginas 1 a 6 de 48), leídos el 2026-10-13. El 2026-10-26, buscados «radiation» e «irradiat» en el texto del PDF entero y leídas enteras las páginas 5, 16, 19, 28 y 29, donde habla de la radiación y el alimento; la frase de la página 6 se comprobó ese día."},
+    "nasa-trish": {"extent": "full", "read_on": "2026-10-26", "what": "Cuerpo de la página entero; de lo que enlaza, la página de HERMES de Baylor College of Medicine y la nota de noviembre de 2023 sobre los dos proyectos seleccionados, que no son de NASA y se resumen en compliance/state-of-the-art.md."},
+    "ntrs-20180004678": {"extent": "full", "read_on": "2026-10-21", "what": "Ficha de NTRS y el póster entero (una página) en texto; el diagrama, solo por sus rótulos."},
+    "ntrs-20230001121": {"extent": "record", "read_on": "2026-10-21", "what": "Leído: resumen de NTRS; las diapositivas, no."},
+    "ntrs-20230013414": {"extent": "record", "read_on": "2026-10-21", "what": "Leído: resumen de NTRS; los dos PDF que enlaza, no."},
+    "ntrs-20230014551": {"extent": "record", "read_on": "2026-10-21", "what": "Leído: resumen de NTRS; el resumen descargable, no."},
+    "ntrs-20200000853": {"extent": "full", "read_on": "2026-10-22", "what": "Ficha de NTRS y las 27 diapositivas en texto; las gráficas y los diagramas, solo por sus rótulos."},
+    "ntrs-20200000974": {"extent": "full", "read_on": "2026-10-22", "what": "Ficha de NTRS y las 34 diapositivas en texto; las gráficas y los diagramas, solo por sus rótulos."},
+    "ntrs-20240012058": {"extent": "full", "read_on": "2026-10-22", "what": "PDF entero (NASA/TM-20240012058, febrero de 2025; 66 páginas en el fichero, 57 numeradas) en texto; las tablas, como texto extraído, y las figuras, solo por sus rótulos."},
+    "ntrs-20240013005": {"extent": "record", "read_on": "2026-10-26", "what": "Leído el 2026-10-22: resumen de NTRS. El 2026-10-26, el resumen descargable, el único PDF que ofrece NTRS (2 páginas): el mismo texto con los autores y sus centros, y la frase citada comprobada contra él ese día; las diapositivas de la presentación no están en NTRS."},
+    "nasa-iss-atcs-overview": {"extent": "full", "read_on": "2026-10-21", "what": "PDF entero (19 páginas) en texto; las figuras, solo por sus rótulos."},
+    "ochmo-tb-002": {"extent": "full", "read_on": "2026-10-21", "what": "PDF entero (Rev B, 23 páginas) en texto; las figuras, solo por sus rótulos."}
+  },
+  "blocks": [
+    {
+      "id": "cdss",
+      "title": "Arquitectura del CDSS de ExMC",
+      "about": "Qué pide NASA a un sistema de apoyo a la decisión clínica para misiones de exploración: las cuatro funciones, los dieciséis supuestos y las cuatro restricciones del diseño, y los temas que la presentación de 2020 pedía para la hoja de ruta del nivel V, con las palabras de la fuente; y, punto por punto, qué hace EMMA con cada uno.",
+      "statements": [
+        {
+          "id": "cdss-functions",
+          "label": "Las cuatro funciones",
+          "quote": "The crew will need to autonomously detect, diagnose, treat, and prevent medical events.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§1 Introduction, p. 6",
+          "note": null
+        },
+        {
+          "id": "cdss-mission-constraints",
+          "label": "Restricciones de la misión",
+          "quote": "These ambitious goals will require significant changes in in-flight medical care due to constraints on mass, volume, power, crew time, and medical evacuation capabilities.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§1 Introduction, p. 6",
+          "note": null
+        },
+        {
+          "id": "cdss-comm-delay",
+          "label": "Retardo de comunicaciones",
+          "quote": "Furthermore, while crews currently rely on real-time communications with ground-based medical providers, as distance from Earth increases, so do communication delays and disruptions.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§1 Introduction, p. 6",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-1",
+          "label": "Supuesto 1 del diseño",
+          "quote": "Hardware and software technologies will evolve over time such that new technologies will be inserted or exchanged into the CDSS without affecting other components of the system.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-2",
+          "label": "Supuesto 2 del diseño",
+          "quote": "Interoperability, clinical ontologies, and data metrics will be established and adhered to over time, ensuring seamless integration of all technologies and capabilities.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-3",
+          "label": "Supuesto 3 del diseño",
+          "quote": "The CDSS will interface with the medical system and other systems.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-4",
+          "label": "Supuesto 4 del diseño",
+          "quote": "The CDSS will utilize resources for medical management that are included in the medical kit available to the crew, including any changes to medical management needed secondary to supply shortages or predicted future resource needs.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-5",
+          "label": "Supuesto 5 del diseño",
+          "quote": "The CDSS will interface with the vehicle computer system and other vehicle systems.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-6",
+          "label": "Supuesto 6 del diseño",
+          "quote": "The CDSS will interface with a disparate set of data sources.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-7",
+          "label": "Supuesto 7 del diseño",
+          "quote": "The CDSS will enable crew self-reliance when communication with ground is unavailable for extended periods of time or delayed due to distance from Earth.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-8",
+          "label": "Supuesto 8 del diseño",
+          "quote": "Periods of no communication with the ground will be anticipated during missions.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-9",
+          "label": "Supuesto 9 del diseño",
+          "quote": "Communication delays due to distance will occur.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-10",
+          "label": "Supuesto 10 del diseño",
+          "quote": "The mission will consist of at least 4 crew members.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-11",
+          "label": "Supuesto 11 del diseño",
+          "quote": "The CDSS will have the ability to provide just-in-time training in flight.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-12",
+          "label": "Supuesto 12 del diseño",
+          "quote": "The CDSS will enable asynchronous communication with ground-based medical personnel and crew family members.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-13",
+          "label": "Supuesto 13 del diseño",
+          "quote": "The CDSS will support and integrate delayed clinical input and guidance from ground-based medical personnel and systems.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-14",
+          "label": "Supuesto 14 del diseño",
+          "quote": "The CDSS will need to have the ability to train AI-models in flight.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-assumption-15",
+          "label": "Supuesto 15 del diseño",
+          "quote": "The CDSS will be able to receive software updates during a mission.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-validated-models",
+          "label": "Supuesto 16 del diseño",
+          "quote": "The CDSS will use validated decision-making models.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.1 Assumptions, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-constraint-1",
+          "label": "Restricción 1 del sistema",
+          "quote": "The CDSS will have limited computational power on the scale of the capability of a laptop computer.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.2 Constraints, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-constraint-2",
+          "label": "Restricción 2 del sistema",
+          "quote": "Use of cloud services will not be an option on exploration missions.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.2 Constraints, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-constraint-3",
+          "label": "Restricción 3 del sistema",
+          "quote": "Internet services will not be accessible.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.2 Constraints, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-constraint-4",
+          "label": "Restricción 4 del sistema",
+          "quote": "The CDSS may be influenced by NASA security policy and protocols.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§6.2 Constraints, p. 16",
+          "note": null
+        },
+        {
+          "id": "cdss-definition",
+          "label": "Qué entiende por CDSS",
+          "quote": "The CDSS may be defined as software designed to directly aid in medical-relevant and crew health and performance decisions in which characteristics of individual crew members are matched to a computerized knowledge base for the purpose of generating crew member specific assessments or recommendations which are then presented to clinicians or the crew for consideration.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§5.1 CDSS Definition, p. 11",
+          "note": null
+        },
+        {
+          "id": "cdss-not-a-design",
+          "label": "Lo que el documento dice no ser",
+          "quote": "This recommendation is not intended to be a design document for how technologies should be implemented.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§1.1 Purpose, p. 6",
+          "note": null
+        },
+        {
+          "id": "cdss-gap-medical-701",
+          "label": "Hueco que el proyecto dice abordar",
+          "quote": "The project addresses the ExMC gap Medical-701: We need to increase inflight medical capabilities and identify new capabilities that (a) maximize benefit and/or (b) reduce “costs” on human system/mission/vehicle resources.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§1 Introduction, p. 6",
+          "note": "No nombra Med 07 ni Med 10. Según el Roadmap, Med 07 figura cerrado y Med 10 fusionado en Medical-701: va en el bloque siguiente."
+        },
+        {
+          "id": "cdss-2016-heterogeneous",
+          "label": "El antecedente de 2016",
+          "quote": "Inflight electronic health data sources are often heterogeneous, and thus may be isolated or not examined as an aggregate whole.",
+          "ref": "ntrs-20160012678",
+          "url": null,
+          "where": "resumen (Abstract)",
+          "note": null
+        },
+        {
+          "id": "cdss-2021-role",
+          "label": "El papel del CDSS en el concepto de operaciones",
+          "quote": "In general, the CDSS’s role is to assist the crew in prevention, detection, diagnosis and treatment of crew health and performance related conditions that may arise in exploration spaceflight.",
+          "ref": "ntrs-20205008731",
+          "url": null,
+          "where": "resumen de una página (documento descargable)",
+          "note": null
+        },
+        {
+          "id": "cdss-roadmap-2020-topics",
+          "label": "Lo que debía mirar la hoja de ruta del nivel V (2020)",
+          "quote": "The development of a clinical decision support for exploration missions (Level of Care V) roadmap is needed: one that assesses of current state of the art of clinical decision support systems (CDSS), interoperability issues, identification of challenges in health and performance monitoring, obtaining and processing information from biosensors, knowledge and data management, data integration and fusion, and advanced algorithm development.",
+          "ref": "ntrs-20200000567",
+          "url": null,
+          "where": "resumen de NTRS (y el PDF, que es el mismo resumen)",
+          "note": "«assesses of» está así en la fuente. Es la lista que la conversación de ideación del equipo resume como interoperabilidad, fusión de datos, algoritmos y predicción de eventos médicos."
+        },
+        {
+          "id": "cdss-roadmap-2020-prototypes",
+          "label": "Los prototipos que debía incluir (2020)",
+          "quote": "This roadmap must also include rapid prototype development in the areas of data processing, advanced analysis and prediction of medical events, and treatment based on medically relevant information processing and evidence-based best practices.",
+          "ref": "ntrs-20200000567",
+          "url": null,
+          "where": "resumen de NTRS (y el PDF, que es el mismo resumen)",
+          "note": null
+        }
+      ],
+      "coverage": {
+        "about": "Lo que piden las frases de este bloque, punto por punto, y qué hace EMMA con cada uno, con el fichero donde está. «Cubre» quiere decir que EMMA tiene una pieza que lo hace; no que se haya evaluado frente al documento ni probado en vuelo. «En parte», que hace algo de lo que pide, y la fila dice qué falta; «no», que no lo hace. Las frases que describen el problema o el documento sin pedir nada no llevan fila. Inventario: no interviene en el estado de la tripulación.",
+        "rows": [
+          {"statement": "cdss-functions", "asks": "detect", "coverage": "partial", "emma": "Señala desviaciones de cada lectura frente a la línea base del propio tripulante y tendencias sostenidas. No detecta eventos médicos como tales: dice que algo cambió, no qué es.", "files": ["backend/app/analysis/baseline.py", "backend/app/analysis/trend.py", "backend/app/analysis/risk.py"]},
+          {"statement": "cdss-functions", "asks": "diagnose", "coverage": "outside", "emma": "No diagnostica: informa y recomienda comprobaciones (invariante 7 de CLAUDE.md). El borrador del modelo local de interpret/ no entra en el análisis ni en ninguna alerta.", "files": []},
+          {"statement": "cdss-functions", "asks": "treat", "coverage": "outside", "emma": "No trata ni administra terapia: recomienda comprobaciones y contramedidas, y decide una persona.", "files": []},
+          {"statement": "cdss-functions", "asks": "prevent", "coverage": "partial", "emma": "Propone contramedidas de una biblioteca escrita como datos, cada una con su evidencia. No se ha medido que prevengan nada.", "files": ["backend/app/advisor/countermeasures.py", "backend/app/data/countermeasures.json"]},
+          {"statement": "cdss-assumption-1", "asks": "new technologies will be inserted or exchanged into the CDSS without affecting other components of the system", "coverage": "partial", "emma": "Cada fuente entra por ingest/ y sale como una Observation de FHIR R4: cambiar de wearable no toca el análisis. No se ha probado con equipos de vuelo.", "files": ["backend/app/ingest/fhir.py", "backend/app/ingest/wearable.py"]},
+          {"statement": "cdss-assumption-2", "asks": "Interoperability, clinical ontologies, and data metrics", "coverage": "partial", "emma": "Las observaciones son FHIR R4; cada código LOINC está verificado en su ficha oficial y los demás usan un sistema propio que dice por qué (invariante 1). El intercambio con otro sistema médico no se ha probado.", "files": ["backend/app/ingest/fhir.py", "backend/app/ingest/codes.py"]},
+          {"statement": "cdss-assumption-3", "asks": "interface with the medical system and other systems", "coverage": "outside", "emma": "No se conecta a ningún sistema médico: recibe lecturas por su API y lo que una persona declara en la consola.", "files": []},
+          {"statement": "cdss-assumption-4", "asks": "resources for medical management that are included in the medical kit available to the crew", "coverage": "partial", "emma": "No lleva inventario del botiquín. Hay un vocabulario cerrado de recursos y lo que una persona declara disponible o no, puesto junto a cada recomendación; sin cantidades, sin escasez y sin necesidades previstas.", "files": ["backend/app/core/resources.py", "backend/app/data/resources.json"]},
+          {"statement": "cdss-assumption-5", "asks": "interface with the vehicle computer system and other vehicle systems", "coverage": "outside", "emma": "No lee ningún ordenador ni sistema de la nave: el estado de un sistema del hábitat lo declara una persona, firmado en el registro, y la telemetría del hábitat de la demostración es simulada.", "files": []},
+          {"statement": "cdss-assumption-6", "asks": "interface with a disparate set of data sources", "coverage": "covered", "emma": "Lee wearables (BLE y exportaciones de Apple Health y Google Fit), la PVT, ecografías DICOM, informes escaneados con OCR local, entrada manual y el simulador, y todas esas observaciones pasan por el mismo registro encadenado. Aparte lee las efemérides de JPL y DONKI.", "files": ["backend/app/ingest/wearable.py", "backend/app/ingest/pvt.py", "backend/app/imaging/dicom.py", "backend/app/reports/ocr.py", "backend/app/core/ledger.py", "backend/app/environment/donki.py"]},
+          {"statement": "cdss-assumption-7", "asks": "enable crew self-reliance when communication with ground is unavailable for extended periods of time or delayed due to distance from Earth", "coverage": "partial", "emma": "Funciona sin red como modo nominal y la consola de a bordo no espera a Tierra; el riesgo se escala con el tiempo de luz. Que con eso una tripulación se valga sola no se ha evaluado.", "files": ["backend/app/core/config.py", "backend/app/analysis/risk.py"]},
+          {"statement": "cdss-assumption-8", "asks": "Periods of no communication with the ground will be anticipated", "coverage": "covered", "emma": "Un corte del enlace se declara en la consola y Tierra ve hasta dónde le llegó; sin red, todo sigue funcionando a bordo.", "files": ["backend/app/environment/systems.py", "backend/app/core/egress.py"]},
+          {"statement": "cdss-assumption-9", "asks": "Communication delays due to distance will occur.", "coverage": "covered", "emma": "El retardo sale de las efemérides de JPL: la consola de Tierra ve los datos con él aplicado y el riesgo se escala con el tiempo de luz.", "files": ["backend/app/environment/ephemeris.py", "backend/app/analysis/risk.py", "frontend/src/ground/GroundConsole.tsx"]},
+          {"statement": "cdss-assumption-10", "asks": "at least 4 crew members", "coverage": "covered", "emma": "El simulador genera varios tripulantes (cuatro por defecto en un escenario ambiental) y la réplica de Inspiration4 lleva los cuatro de esa misión.", "files": ["backend/app/api/routes.py", "backend/app/ingest/inspiration4.py"]},
+          {"statement": "cdss-assumption-11", "asks": "just-in-time training in flight", "coverage": "partial", "emma": "Cada protocolo de ecografía recuerda al operador cómo se toma la medida y qué la invalida, y una medida mal planteada se rechaza con el motivo. No es formación, y fuera de la ecografía no hay nada.", "files": ["backend/app/imaging/protocols.py", "backend/app/imaging/measure.py"]},
+          {"statement": "cdss-assumption-12", "asks": "asynchronous communication with ground-based medical personnel and crew family members", "coverage": "outside", "emma": "No lleva mensajes: la consola de Tierra lee los mismos datos con el retardo aplicado, pero no hay un canal con el personal médico ni con la familia.", "files": []},
+          {"statement": "cdss-assumption-13", "asks": "integrate delayed clinical input and guidance from ground-based medical personnel and systems", "coverage": "outside", "emma": "La consola de Tierra solo lee: no hay vía para que una indicación de Tierra entre en lo que ve la tripulación.", "files": []},
+          {"statement": "cdss-assumption-14", "asks": "train AI-models in flight", "coverage": "outside", "emma": "El análisis no usa aprendizaje automático: son reglas y estadística con versión. El único modelo, el borrador local de interpret/, no se entrena.", "files": []},
+          {"statement": "cdss-assumption-15", "asks": "receive software updates during a mission", "coverage": "outside", "emma": "No hay vía de actualización en vuelo: el paquete de escritorio se construye en Tierra. Cada veredicto lleva la versión de las reglas que lo dio.", "files": []},
+          {"statement": "cdss-validated-models", "asks": "validated decision-making models", "coverage": "outside", "emma": "Sus reglas y umbrales no son modelos de decisión validados clínicamente. Lo medido es la tasa de falsa alarma en personas sanas y la sensibilidad sobre deterioros inyectados en esa misma fisiología, en Tierra; no la validez clínica ni en vuelo.", "files": ["compliance/external-validation.md"]},
+          {"statement": "cdss-constraint-1", "asks": "limited computational power on the scale of the capability of a laptop computer", "coverage": "covered", "emma": "Corre en un portátil: la aplicación de escritorio arranca el backend congelado en local. Lo pesado y opcional (TotalSegmentator, Whisper) va aparte y se declara no disponible si falta. No se ha medido en equipos de vuelo.", "files": ["desktop/main.cjs", "backend/packaging/freeze.py"]},
+          {"statement": "cdss-constraint-2", "asks": "Use of cloud services will not be an option", "coverage": "covered", "emma": "No usa servicios en la nube: el modelo de interpret/ es local y toda salida a internet pasa por una lista blanca con modo sin red.", "files": ["backend/app/core/egress.py", "backend/app/interpret/llm.py"]},
+          {"statement": "cdss-constraint-3", "asks": "Internet services will not be accessible.", "coverage": "covered", "emma": "Sin red es el modo nominal de misión, no uno degradado, y las pruebas corren con la red cortada.", "files": ["backend/app/core/config.py", "backend/app/core/egress.py"]},
+          {"statement": "cdss-constraint-4", "asks": "NASA security policy and protocols", "coverage": "outside", "emma": "No se ha revisado frente a ninguna política de seguridad de NASA. Lo que lleva (registro encadenado y firmado, servidor solo en local) no se ha evaluado con ese fin.", "files": []},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "current state of the art of clinical decision support systems (CDSS)", "coverage": "partial", "emma": "compliance/state-of-the-art.md sitúa a EMMA entre los sistemas leídos; es una lectura de concurso, no la evaluación de una hoja de ruta.", "files": ["compliance/state-of-the-art.md"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "interoperability issues", "coverage": "partial", "emma": "FHIR R4 y códigos LOINC verificados, con un sistema propio justificado para el resto. El intercambio con otro sistema no se ha probado.", "files": ["backend/app/ingest/fhir.py", "backend/app/ingest/codes.py"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "health and performance monitoring", "coverage": "covered", "emma": "Vigila constantes y sueño frente a la línea base personal, y el rendimiento con la PVT. Lo medido es con fisiología de Tierra (compliance/external-validation.md), no en vuelo.", "files": ["backend/app/analysis/baseline.py", "backend/app/ingest/pvt.py"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "obtaining and processing information from biosensors", "coverage": "partial", "emma": "Lee el pulso y los intervalos R-R por BLE (perfil estándar de frecuencia cardiaca) y exportaciones de Apple Health y Google Fit. Ningún biosensor de vuelo.", "files": ["backend/app/ingest/wearable.py"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "knowledge and data management", "coverage": "covered", "emma": "Cada observación se anexa a un registro encadenado y firmado y a un almacén de solo anexar; la evidencia vive en un registro de fichas, cada una con lo que se leyó y cuándo.", "files": ["backend/app/core/ledger.py", "backend/app/core/storage.py", "backend/app/evidence/registry.py"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "data integration and fusion", "coverage": "partial", "emma": "Junta en el estado de cada tripulante constantes, entorno, hábitat y radiación, y ordena hipótesis de causa común entre tripulantes. No fusiona señales de sensores.", "files": ["backend/app/analysis/context.py"]},
+          {"statement": "cdss-roadmap-2020-topics", "asks": "advanced algorithm development", "coverage": "outside", "emma": "A propósito: reglas deterministas y estadística sobre la línea base, que una persona puede revisar. Sin aprendizaje automático en el análisis.", "files": []},
+          {"statement": "cdss-roadmap-2020-prototypes", "asks": "data processing", "coverage": "covered", "emma": "Normaliza cada lectura a FHIR R4 con su código y su unidad y la pasa por el control de calidad de los datos.", "files": ["backend/app/ingest/fhir.py", "backend/app/analysis/data_quality.py"]},
+          {"statement": "cdss-roadmap-2020-prototypes", "asks": "advanced analysis and prediction of medical events", "coverage": "partial", "emma": "Proyecta las derivas a un horizonte fijo, rotuladas como predichas, y contrasta después lo proyectado con lo medido. No predice eventos médicos ni su probabilidad.", "files": ["backend/app/analysis/trend.py", "backend/app/analysis/forecast_check.py"]},
+          {"statement": "cdss-roadmap-2020-prototypes", "asks": "treatment based on medically relevant information processing and evidence-based best practices", "coverage": "partial", "emma": "Las recomendaciones citan su evidencia con la fecha en que se leyó y su gradación. No hay tratamiento: decide una persona.", "files": ["backend/app/advisor/recommendations.py", "backend/app/evidence/registry.py"]}
+        ]
+      },
+      "emma": "EMMA es un prototipo de concurso, no un CDSS de vuelo, y no se ha evaluado frente a este documento. Lo que hace: compara cada lectura con la línea base del propio tripulante, señala desviaciones y tendencias, y recomienda comprobaciones y contramedidas de una biblioteca escrita como datos; decide una persona. No diagnostica ni trata. Funciona sin red y sin servicios en la nube. Sus reglas y umbrales no son modelos de decisión validados clínicamente: lo que se ha medido está en compliance/external-validation.md.",
+      "not_read": [
+        "HRP-48033 (concepto de operaciones del CDSS), HRP-48034 y HRP-48035 (requisitos funcionales del sistema de datos para los niveles IV y V): el documento los cita; no se han buscado ni leído.",
+        "Los gráficos de las diapositivas de «Clinical Decision Support - Concepts of Operation» (no están en NTRS 20205008731, sino en otro registro, NTRS 20205011728): solo se leyeron sus rótulos.",
+        "Las diapositivas de la presentación de 2020 (NTRS 20200000567), con «the beginning framework of a Level of Care V CDSS development roadmap»: NTRS solo ofrece el resumen. Buscada el 2026-11-01 esa hoja de ruta en NTRS («Level of Care V» con «roadmap») y en la web: solo sale esta misma presentación, y no se encontró publicada."
+      ]
+    },
+    {
+      "id": "hermes",
+      "title": "HERMES, la plataforma de datos de salud de TRISH",
+      "about": "Lo que dice NASA de HERMES, la plataforma de datos de salud que desarrolla TRISH, el instituto con el que colabora el Human Research Program por un acuerdo de cooperación. La conversación de ideación del equipo pone a TRISH en su mapa y abre la categoría del software existente («Existing Software / Open Source / Prior Art»); de lo leído, HERMES es lo más parecido a EMMA.",
+      "statements": [
+        {
+          "id": "trish-agreement",
+          "label": "Qué es TRISH",
+          "quote": "One collaboration is a cooperative agreement called the Translational Research Institute for Space Health (TRISH), a consortium led by Baylor College of Medicine with the California Institute of Technology in Pasadena and the Massachusetts Institute of Technology in Cambridge.",
+          "ref": "nasa-trish",
+          "url": null,
+          "where": "cuerpo de la página, primer párrafo",
+          "note": null
+        },
+        {
+          "id": "hermes-what",
+          "label": "Qué es HERMES",
+          "quote": "TRISH is developing a health and research data management platform, known as the Human and Environmental Research Matrix for Exploration of Space (HERMES).",
+          "ref": "nasa-trish",
+          "url": null,
+          "where": "«TRISH Science Initiatives», apartado «Medical System Architecture»",
+          "note": null
+        },
+        {
+          "id": "hermes-aim",
+          "label": "Para qué",
+          "quote": "HERMES aims to provide astronauts with the health information they need to make informed medical decisions on distant missions from Earth.",
+          "ref": "nasa-trish",
+          "url": null,
+          "where": "«TRISH Science Initiatives», apartado «Medical System Architecture»",
+          "note": "El enlace «Read More About HERMES» lleva a la página de investigación de TRISH en bcm.edu, que no es de NASA: lo que dice está en compliance/state-of-the-art.md."
+        }
+      ],
+      "emma": "EMMA no usa HERMES, no se conecta a él y no se ha comparado con él más allá de estas páginas. Lo leído lo describe como una plataforma de gestión de datos de salud e investigación; EMMA es un prototipo de concurso que compara cada lectura con la línea base del propio tripulante y propone comprobaciones, y decide una persona. Lo que dicen de HERMES las páginas de Baylor College of Medicine, y en qué se parece y en qué no, está en la fila de HERMES de compliance/state-of-the-art.md.",
+      "not_read": [
+        "Cómo detecta HERMES un cambio, si compara con una línea base personal, con qué se ha validado y si ha volado: no está en las páginas leídas, y no se han buscado publicaciones.",
+        "Lo que han entregado los dos proyectos seleccionados en 2023 (Ejenta y TrialX): solo se leyó la nota de su selección.",
+        "La convocatoria de HERMES de TRISH, que la nota de 2023 enlaza, no se ha leído."
+      ]
+    },
+    {
+      "id": "exmc-gaps-today",
+      "title": "Med 07 y Med 10, hoy",
+      "about": "El estado que el Human Research Roadmap publica de los dos huecos que /api/framework cita con su enunciado de 2020.",
+      "statements": [
+        {
+          "id": "gap-med07-closed",
+          "label": "Med07 · cerrado",
+          "gap": {"id": "Med07", "status": "closed"},
+          "quote": "NASA now has the capability to comprehensively process medically-relevant information to support medical operations during exploration missions.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=639",
+          "where": "Closure Rationale; la página dice «Status: Closed» y «Last Published: 05/13/25»",
+          "note": null
+        },
+        {
+          "id": "gap-med10-merged",
+          "label": "Med10 · fusionado",
+          "gap": {"id": "Med10", "status": "merged"},
+          "quote": "This Gap was merged into the following Gap:",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=642",
+          "where": "cabecera de la página del hueco Med10",
+          "note": "El hueco de destino es Medical-701. La página no da motivo («No rationale available»)."
+        },
+        {
+          "id": "gap-medical-701-open",
+          "label": "Medical-701 · abierto",
+          "gap": {"id": "Medical-701", "status": "open"},
+          "quote": "Status: Open",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=716",
+          "where": "cabecera de la página del hueco Medical-701; «Last Published: 05/13/25»",
+          "note": "La página dice que en Medical-701 se fusionaron seis huecos, entre ellos Med10."
+        }
+      ],
+      "emma": "/api/framework sigue citando Med 07 y Med 10 con su enunciado de 2020 porque de ahí parte el diseño. Según el Roadmap leído el 2026-10-13, Med07 está cerrado y Med10 se fusionó en Medical-701, que sigue abierto. EMMA no ha contribuido a ninguno de los dos y no forma parte del trabajo de ExMC.",
+      "not_read": [
+        "Los otros cinco huecos fusionados en Medical-701 y las tareas que lista su página no se han leído."
+      ]
+    },
+    {
+      "id": "imm-limitations",
+      "title": "Limitaciones que NASA declara del IMM",
+      "about": "Los supuestos y límites del Integrated Medical Model tal como los escribe NASA en su página de resumen y en el Apéndice E de NASA-STD-3001 Vol 1.",
+      "statements": [
+        {
+          "id": "imm-iss-baseline",
+          "label": "Base en la ISS",
+          "quote": "ISS Baseline: The model’s standard medical capabilities and space flight environment are currently baselined to the International Space Station (ISS), which operates with regular 6-month resupplies and the ability to quickly return to Earth.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«Model Assumptions & Limitations»",
+          "note": null
+        },
+        {
+          "id": "imm-clinical-optimism",
+          "label": "Diagnóstico correcto y tratamiento eficaz",
+          "quote": "Clinical Optimism: The model assumes that all medical conditions are correctly diagnosed by the crew and that all administered treatments are effective.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«Model Assumptions & Limitations»",
+          "note": null
+        },
+        {
+          "id": "imm-resource-limits",
+          "label": "Recursos agotados",
+          "quote": "Resource Limits: If an essential resource runs out during a simulation, the condition goes untreated, representing the strict reality of medical care in isolated spaceflight.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«Model Assumptions & Limitations»",
+          "note": null
+        },
+        {
+          "id": "imm-credibility",
+          "label": "Credibilidad de los resultados",
+          "quote": "It is strongly recommended that care be taken when using the results of the simulation and the output should be weighted appropriately for its level of credibility with respect to informing any decision making.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«Integrated Medical Model Runs»",
+          "note": null
+        },
+        {
+          "id": "imm-std-limitation",
+          "label": "La limitación según la norma",
+          "quote": "One limitation is that IMM was developed for application to ISS missions, but it may be applied to other design reference missions if the appropriate limitations are considered during interpretation of results.",
+          "ref": "nasa-std-3001-appendix-e",
+          "url": null,
+          "where": "Apéndice E, §E.2.3",
+          "note": null
+        },
+        {
+          "id": "imm-std-crew-assumption",
+          "label": "Supuesto sobre la tripulación",
+          "quote": "IMM also assumes that the crew selection and Health Stabilization Program technical requirements are followed to ensure that the crew is in the best health posture prior to the mission.",
+          "ref": "nasa-std-3001-appendix-e",
+          "url": null,
+          "where": "Apéndice E, §E.2.2",
+          "note": null
+        },
+        {
+          "id": "imm-count-overview",
+          "label": "Cuántas condiciones · página de resumen",
+          "quote": "The IMM currently tracks and simulates 100 specific medical conditions that have occurred or could occur during spaceflight.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«Modeled Medical Conditions»",
+          "note": "Las dos páginas de NASA no dicen lo mismo: esta, «100»; la otra, «more than 100»."
+        },
+        {
+          "id": "imm-count-page",
+          "label": "Cuántas condiciones · página general",
+          "quote": "The model evaluates more than 100 medical conditions, ranging from common health concerns to hazards specific to spaceflight, like:",
+          "ref": "nasa-imm",
+          "url": null,
+          "where": "«How the Model Works»",
+          "note": "Esta página no declara limitaciones."
+        }
+      ],
+      "emma": "EMMA no es un modelo probabilístico de planificación y no usa el IMM ni su base iMED. No estima probabilidades de evento médico, de evacuación ni de pérdida de tripulación: vigila a cada tripulante durante el vuelo frente a su propia línea base.",
+      "not_read": [
+        "«Sensibilidad de los resultados a las especificaciones de misión» y «validaciones históricas con diferencias entre predicción y eventos observados» (docs/contexto/knowledge-base-v1.md §2.3): buscadas en las dos páginas del IMM y en el Apéndice E; no aparecen con esas palabras. Siguen sin verificar.",
+        "Las páginas de ejecuciones lunar, marciana y de espacio profundo y los PDF que enlaza la página de resumen (NTRS 20150002713 y 20190027540) no se han leído."
+      ]
+    },
+    {
+      "id": "medprat",
+      "title": "MEDPRAT e IMPACT, después del IMM",
+      "about": "Qué es MEDPRAT (Medical Extensible Dynamic Probabilistic Risk Assessment Tool), qué relación tiene con el IMM y con IMPACT, su sucesor, con las palabras de NTRS. La base de conocimiento del equipo pedía mapear su estado (§15, P0) para no duplicarlo.",
+      "statements": [
+        {
+          "id": "medprat-purpose",
+          "label": "Qué pretende MEDPRAT (2018)",
+          "quote": "A key component in the development of NASA Human Research Program’s (HRP) next generation risk model, the Medical Extensible Dynamic Probabilistic Risk Assessment Tool (MEDPRAT) intends to deliver a means to quantify how HRP products impact astronaut medical and health risks.",
+          "ref": "ntrs-20180004678",
+          "url": null,
+          "where": "«Abstract» del póster",
+          "note": null
+        },
+        {
+          "id": "medprat-design-information",
+          "label": "Para qué sirve su salida (2018)",
+          "quote": "This tool provides risk-based medical system design information necessary to evaluate new technologies, procedures, research insights and mission plans.",
+          "ref": "ntrs-20180004678",
+          "url": null,
+          "where": "«Abstract» del póster",
+          "note": null
+        },
+        {
+          "id": "medprat-question",
+          "label": "Una de las preguntas que contesta (2018)",
+          "quote": "Given a pre-specified list of available medical equipment, what is the estimated level of risk?",
+          "ref": "ntrs-20180004678",
+          "url": null,
+          "where": "«ExMC Questions» del póster",
+          "note": "El póster lista siete preguntas; todas son de diseño de la misión antes de volar (equipo, probabilidad de una condición, tiempo hasta asistencia definitiva)."
+        },
+        {
+          "id": "medprat-sel-2020",
+          "label": "El selector de material médico (2020)",
+          "quote": "The MEDPRAT resource set selector (SEL) searches the space of resource benefits v. cost, closing a feedback loop around the simulator, thus selecting resource sets with best benefit for cost.",
+          "ref": "ntrs-20200000853",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "Las diapositivas lo explican con un ejemplo de misión lunar y una advertencia: «Software results are no better than the inputs» (diapositiva 22). No dicen nada del IMM."
+        },
+        {
+          "id": "medprat-sin-2020",
+          "label": "La red de inferencia de susceptibilidad (2020)",
+          "quote": "The SIN allows for the medical events being simulated to be related to, and influence the likelihood of one another, providing a more robust risk estimate.",
+          "ref": "ntrs-20200000974",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "Según las diapositivas, las condiciones se habían implementado «with probabilistic independence» (diapositiva 21), y las relaciones entre ellas se estudian con datos desidentificados de misiones del transbordador y de la ISS pedidos a Lifetime Surveillance of Astronaut Health (diapositiva 28). No dicen nada del IMM."
+        },
+        {
+          "id": "medprat-mimics-imm",
+          "label": "Su relación con el IMM (2023)",
+          "quote": "While MEDPRAT implemented a new, efficient architecture and new capability, it's basic functionality mimics that of the IMM.",
+          "ref": "ntrs-20230001121",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "«it's» está así en la fuente."
+        },
+        {
+          "id": "imm-accepted-standard-2023",
+          "label": "El IMM, todavía la referencia (2023)",
+          "quote": "The Integrated Medical Model (IMM) is the accepted standard for quantifying spaceflight mission medical risk in NASA operations.",
+          "ref": "ntrs-20230001121",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": null
+        },
+        {
+          "id": "impact-successor",
+          "label": "IMPACT, sucesor del IMM (2024)",
+          "quote": "NASA has developed a new evidence-based data-driven probabilistic risk assessment and tradespace analysis tool as a successor to the Integrated Medical Model.",
+          "ref": "ntrs-20230013414",
+          "url": null,
+          "where": "resumen de NTRS, primera frase",
+          "note": "La frase siguiente le da nombre: «IMPACT (Informing Mission Planning via Analysis of Complex Tradespaces)»."
+        },
+        {
+          "id": "impact-what",
+          "label": "Qué estima IMPACT",
+          "quote": "IMPACT estimates the frequency and consequences of medical conditions that might arise during exploration missions.",
+          "ref": "ntrs-20230013414",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": null
+        },
+        {
+          "id": "impact-runs-on-medprat",
+          "label": "MEDPRAT dentro de IMPACT",
+          "quote": "Observed mission and crew characteristics from STS and ISS missions were used as model inputs within MEDPRAT (Medical Extensible Dynamic Probabilistic Risk Assessment Tool).",
+          "ref": "ntrs-20230013414",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "Es la validación de IMPACT: sus simulaciones se hicieron en MEDPRAT. El resumen no dice más de qué parte de IMPACT es MEDPRAT."
+        },
+        {
+          "id": "impact-not-pass-fail",
+          "label": "Lo que esa validación no es",
+          "quote": "The results of this validation analysis should not be interpreted as a pass/fail test of the validity of IMPACT.",
+          "ref": "ntrs-20230013414",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": null
+        },
+        {
+          "id": "impact-will-replace-imm",
+          "label": "IMPACT sustituirá al IMM (2024)",
+          "quote": "IMPACT v1.0 improves upon and will soon replace NASA's existing tool, the Integrated Medical Model, with:",
+          "ref": "ntrs-20230014551",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "Resumen enviado el 2023-10-06 al taller de febrero de 2024, el mismo que el de la validación. Siguen cuatro puntos: una base de evidencia propia de la exploración, 119 condiciones médicas, más recursos médicos y el tiempo perdido en tareas de la misión."
+        },
+        {
+          "id": "medprat-evolution-2025",
+          "label": "MEDPRAT, evolución del IMM (2025)",
+          "quote": "As an evolution of the Integrated Medical Model (IMM), MEDPRAT provides enhanced capabilities and higher fidelity, and incorporates more appropriate assumptions for long-duration spaceflight.",
+          "ref": "ntrs-20240012058",
+          "url": null,
+          "where": "«Summary», p. 1",
+          "note": "El memorando compara las salidas del IMM 4.1 con las de MEDPRAT 1.0 y 2.0 en las mismas misiones de referencia."
+        },
+        {
+          "id": "imm-accepted-standard-2025",
+          "label": "El IMM, todavía la referencia (2025)",
+          "quote": "IMM is the currently accepted standard for quantifying spaceflight mission medical risk in NASA operations that uses a probabilistic risk assessment (PRA) approach.",
+          "ref": "ntrs-20240012058",
+          "url": null,
+          "where": "«Summary», p. 1",
+          "note": "El §1.3 (p. 5) lo repite. El memorando no nombra a IMPACT: la palabra solo sale en el título de dos escenarios («Impact of Sex…», «Impact of Heroic Medical Care Measures…»)."
+        },
+        {
+          "id": "medprat-comparable-2025",
+          "label": "Lo que concluye la comparación (2025)",
+          "quote": "Thus, the conclusion is that MEDPRAT V1.0 and V2.0 produce results very comparable to IMM, while also incorporating additional fidelity, assumptions, and enhanced capabilities more consonant with the requirements and mission planning in long-duration spaceflight.",
+          "ref": "ntrs-20240012058",
+          "url": null,
+          "where": "«4.0 Conclusion», p. 57",
+          "note": null
+        },
+        {
+          "id": "impact-anticipated-2025",
+          "label": "IMPACT, todavía en futuro (2025)",
+          "quote": "For future missions, the IMPACT tool is anticipated to produce more valuable results for mission planners developing medical systems for missions beyond LEO.",
+          "ref": "ntrs-20240013005",
+          "url": null,
+          "where": "resumen de NTRS, «DISCUSSION»",
+          "note": "Resumen para el congreso de AsMA-UHMS de junio de 2025, enviado el 2024-10-10; la frase está igual en el resumen descargable de NTRS, que no añade más que los autores y sus centros. Dice también que el IMM «was operationalized for medical system development on the International Space Station (ISS)» y que no puede modelar misiones en la superficie lunar. Desarrolla las siglas como «Informing Mission Planners via Assessment of Complex Tradespaces», no como el resumen de 2024."
+        },
+        {
+          "id": "imm-used-2026",
+          "label": "El IMM, en presente (2026)",
+          "quote": "The Integrated Medical Model (IMM) is a sophisticated, stochastic (probabilistic) risk assessment tool used by NASA to evaluate the impact of medical events during spaceflight.",
+          "ref": "nasa-imm-overview",
+          "url": null,
+          "where": "«What is the IMM?»",
+          "note": "La página dice «Page Last Updated: Sep 16, 2026» y no nombra a MEDPRAT ni a IMPACT."
+        }
+      ],
+      "question": {
+        "text": "¿Ha sustituido IMPACT al IMM, y desde cuándo?",
+        "answer": "Lo leído no fecha ninguna sustitución. En el taller de febrero de 2024, IMPACT «will soon replace» al IMM; el memorando técnico de febrero de 2025 sigue llamando al IMM «the currently accepted standard» y no nombra a IMPACT; un resumen para el congreso de junio de 2025 habla de IMPACT en futuro («is anticipated to produce»); y la página del IMM en nasa.gov, actualizada el 16 de septiembre de 2026, lo describe en presente sin nombrar a IMPACT ni a MEDPRAT. Ninguna fuente leída dice que la sustitución haya ocurrido ni cuándo ocurrirá.",
+        "rests_on": ["impact-will-replace-imm", "imm-accepted-standard-2025", "impact-anticipated-2025", "imm-used-2026"]
+      },
+      "emma": "EMMA no es un modelo probabilístico de planificación y no usa MEDPRAT, IMPACT ni el IMM. No estima la frecuencia ni las consecuencias de eventos médicos, ni la probabilidad de evacuación o de pérdida de tripulación, ni elige el material médico de una misión. Esas herramientas contestan antes de volar qué riesgo tiene una misión; EMMA vigila durante el vuelo a cada tripulante frente a su propia línea base y propone comprobaciones, y decide una persona. No duplica esas estimaciones ni las sustituye.",
+      "not_read": [
+        "Una fecha de la sustitución del IMM por IMPACT: buscada en el memorando NASA/TM-20240012058 (leído entero), en las fichas de NTRS que devolvió una búsqueda web de IMPACT, el IMM y «replaced» (2026-10-22) y en las dos páginas del IMM en nasa.gov, actualizadas el 16 de septiembre de 2026 (la de resumen, releída entera el 2026-10-22; la general, recorrida ese día buscando esos nombres), y no encontrada. Ninguna dice que haya ocurrido.",
+        "Qué parte de IMPACT es MEDPRAT: ningún documento leído lo describe. El memorando de 2025, que compara MEDPRAT con el IMM, no nombra a IMPACT.",
+        "Las cifras de las tablas del memorando (condiciones, métricas de misión, consumo de recursos y botiquín optimizado de Orion) no se citan: se leyeron como texto extraído del PDF, no comprobadas contra la página impresa.",
+        "NTRS 20240002721 (taller de 2024) repite palabra por palabra la frase «will soon replace» del resumen 20230014551: se vio y no se añade como fuente."
+      ]
+    },
+    {
+      "id": "food-gaps",
+      "title": "Huecos de alimentación Food-01 a Food-04, hoy",
+      "about": "El estado que el Human Research Roadmap publica de los cuatro huecos del informe de evidencia de 2016. La base de conocimiento del equipo pedía comprobarlo antes de darlos por abiertos.",
+      "statements": [
+        {
+          "id": "food-2016-list",
+          "label": "El informe de 2016 los enuncia",
+          "quote": "The following are gaps for this risk identified in the HRP Integrated Research Plan:",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§III Introduction, p. 6",
+          "note": "Siguen los enunciados de Food-01, Food-02, Food-03 y Food-04."
+        },
+        {
+          "id": "food-01-split",
+          "label": "Food-01 · dividido",
+          "gap": {"id": "Food-01", "status": "split"},
+          "quote": "This Gap was split into the following Gaps:",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=297",
+          "where": "cabecera de la página del hueco Food-01 («Previous Title: AFT1»)",
+          "note": "En FN-102 y FN-103. La página no da un campo de estado para Food-01 ni motivo de la división."
+        },
+        {
+          "id": "food-02-split",
+          "label": "Food-02 · dividido",
+          "gap": {"id": "Food-02", "status": "split"},
+          "quote": "This Gap was split into the following Gaps:",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=301",
+          "where": "cabecera de la página del hueco Food-02 («Previous title: AFT3»)",
+          "note": "En FN-201, FN-202, FN-203 y FN-204."
+        },
+        {
+          "id": "food-03-split",
+          "label": "Food-03 · dividido",
+          "gap": {"id": "Food-03", "status": "split"},
+          "quote": "This Gap was split into the following Gaps:",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=302",
+          "where": "cabecera de la página del hueco Food-03 («Previous title: AFT4»)",
+          "note": "En FN-101, FN-102, FN-103, FN-201, FN-202, FN-203, FN-204, FN-301 y FN-603."
+        },
+        {
+          "id": "food-04-split",
+          "label": "Food-04 · dividido",
+          "gap": {"id": "Food-04", "status": "split"},
+          "quote": "This Gap was split into the following Gaps:",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=581",
+          "where": "cabecera de la página del hueco Food-04",
+          "note": "En FN-601 y FN-602."
+        },
+        {
+          "id": "fn-101-open",
+          "label": "FN-101 · abierto",
+          "gap": {"id": "FN-101", "status": "open"},
+          "quote": "FN-101: Determine the nutritional requirements that would maintain health and performance for DRMs.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=779",
+          "where": "cabecera de la página; «Status: Open», «Last Published: 05/13/25»",
+          "note": null
+        },
+        {
+          "id": "fn-102-open",
+          "label": "FN-102 · abierto",
+          "gap": {"id": "FN-102", "status": "open"},
+          "quote": "FN-102: Determine the nutrient content, safety, and acceptability of the spaceflight food system (specific to each DRM and associated vehicle constraints).",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=780",
+          "where": "cabecera de la página; «Status: Open», «Last Published: 05/13/25»",
+          "note": null
+        },
+        {
+          "id": "fn-205-archived",
+          "label": "FN-205 (fatiga de menú) · archivado",
+          "gap": {"id": "FN-205", "status": "archived"},
+          "quote": "This Gap has been Archived and removed from the Current Research Plan.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=809",
+          "where": "cabecera de la página del hueco FN-205",
+          "note": "FN-205 es «Determine food system variety required to prevent menu fatigue and support adequate nutritional consumption»; en él se fusionaron FN-201, FN-202, FN-203 y FN-204."
+        },
+        {
+          "id": "fn-604-archived",
+          "label": "FN-604 · archivado",
+          "gap": {"id": "FN-604", "status": "archived"},
+          "quote": "This Gap has been Archived and removed from the Current Research Plan.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=810",
+          "where": "cabecera de la página del hueco FN-604",
+          "note": "En FN-604 se fusionaron FN-103, FN-602 y FN-603."
+        },
+        {
+          "id": "fn-301-archived",
+          "label": "FN-301 · archivado",
+          "gap": {"id": "FN-301", "status": "archived"},
+          "quote": "This Gap has been Archived and removed from the Current Research Plan.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=787",
+          "where": "cabecera de la página del hueco FN-301",
+          "note": null
+        },
+        {
+          "id": "fn-601-archived",
+          "label": "FN-601 · archivado",
+          "gap": {"id": "FN-601", "status": "archived"},
+          "quote": "This Gap has been Archived and removed from the Current Research Plan.",
+          "ref": "hrr-gaps",
+          "url": "https://humanresearchroadmap.nasa.gov/Gaps/gap.aspx?i=790",
+          "where": "cabecera de la página del hueco FN-601",
+          "note": null
+        },
+        {
+          "id": "food-risk-today",
+          "label": "El riesgo, hoy",
+          "quote": "HRP Risk Status: Active [current research ongoing]",
+          "ref": "hrr-risk-food-nutrition",
+          "url": null,
+          "where": "cabecera de la página del riesgo; «Last Published: 05/13/25»",
+          "note": "El riesgo se titula hoy «Risk of Performance Decrement and Crew Illness Due to Inadequate Food and Nutrition» ; su página dice que su contenido procede de dos riesgos anteriores, el de alimentación del informe de 2016 y el de nutrición. También lista seis huecos: N2 y N13, cerrados, y FN-101, FN-102, FN-206 y FN-302, abiertos."
+        }
+      ],
+      "emma": "EMMA lleva un dominio de nutrición con indicadores de código propio y un escenario simulado de fatiga de menú. No modela inventario, vida útil ni contenido de nutrientes, y no aborda ninguno de estos huecos. Food-01 a Food-04 son, como decía la base de conocimiento del equipo, un mapa histórico: ninguno figura hoy como hueco vigente con ese nombre.",
+      "not_read": [
+        "El listado general de huecos del Roadmap va paginado y no se recorrió entero: solo las páginas enlazadas desde el riesgo y desde cada hueco.",
+        "El informe de evidencia que enlaza hoy la página del riesgo («Multiple Evidence Reports.pdf») no se ha leído.",
+        "Del informe de 2016 solo se leyeron la portada, el resumen ejecutivo y la lista de huecos; lo que dice de la radiación va en el bloque siguiente."
+      ]
+    },
+    {
+      "id": "food-radiation",
+      "title": "Radiación y estabilidad del alimento",
+      "about": "Lo que dice el informe de evidencia de alimentación de 2016 sobre la radiación y la comida guardada. La base de conocimiento del equipo (§5) pedía explorar la cadena radiación → estabilidad del alimento → nutrición → astronauta: aquí va solo lo leído, sin modelo.",
+      "statements": [
+        {
+          "id": "food-radiation-beyond-leo",
+          "label": "Fuera de la órbita baja, un efecto desconocido",
+          "quote": "In addition, beyond low-Earth orbit, the food will be exposed to more severe sources of radiation, which have an unknown effect on the nutritional content and acceptability of the foods.",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§III Introduction, p. 5",
+          "note": "Las frases anteriores dan el contexto: la comida enviada por delante puede tener de tres a cinco años al comerse, y la vida útil declarada de la comida envasada de NASA es de unos dos."
+        },
+        {
+          "id": "food-radiation-losses",
+          "label": "Pérdidas posibles, sin frío para evitarlas",
+          "quote": "Radiation levels expected during deep space missions may contribute to nutrient and quality losses and exploration vehicles will be limited in available mass or power to provide cold storage for food.",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§V.D, p. 16",
+          "note": null
+        },
+        {
+          "id": "food-radiation-iss",
+          "label": "Lo medido en la ISS",
+          "quote": "These foods received a cumulative radiation dose of 74.53 mGy over 880 days on ISS, which did not cause a significant decrease in the 30 nutrients measured.",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§V.D, p. 19",
+          "note": "Son cinco alimentos (Zwart et al. 2009). La frase siguiente dice que el ácido fólico, la tiamina y las vitaminas K y C bajaron en órbita igual que en las muestras guardadas en Tierra, y el informe lo toma como prueba de la pérdida por almacenamiento prolongado."
+        },
+        {
+          "id": "food-radiation-deep-space",
+          "label": "En el espacio profundo, desconocido",
+          "quote": "While radiation in low Earth orbit did not compromise the nutrition in this limited test sample, the effects of continual exposure to mixed types of radiation in deep space are unknown (Zwart et al. 2009).",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§V.D, p. 19",
+          "note": "El mismo párrafo nombra como mitigaciones por evaluar el almacenamiento en frío y añadir antioxidantes, y dice que las instalaciones de radiación en Tierra tienen un espectro limitado."
+        },
+        {
+          "id": "food-radiation-gcr-spe",
+          "label": "Rayos cósmicos y fulguraciones",
+          "quote": "Although radiation has not been shown to reduce nutritional content in low Earth orbit (Zwart et al. 2009), the ability of galactic cosmic rays and solar flares to initiate unacceptable changes to food quality and reduce nutritional content in deep space is unknown.",
+          "ref": "hrp-food-system-evidence-report",
+          "url": null,
+          "where": "§VI.D, p. 28",
+          "note": "Sigue en la página 29: los alimentos irradiados para esterilizarlos se congelan antes para proteger su calidad, y el efecto de la radiación de partículas sobre la comida está por cuantificar."
+        }
+      ],
+      "emma": "EMMA no modela la estabilidad del alimento ni la dosis que recibe la comida, y nada de este bloque entra en el análisis. Su dominio de nutrición vigila indicadores de la persona, y la dosis de radiación que calcula es la de la tripulación. Lo leído es de 2016 y lo que dice de la radiación es que en cinco alimentos guardados en la ISS la dosis no causó una bajada significativa de los nutrientes medidos y que en el espacio profundo no se sabe: no hay una cifra que trasladar a un modelo.",
+      "not_read": [
+        "Estudios posteriores a 2016 sobre la comida guardada fuera de la órbita baja o sobre su vida útil con radiación: no se han buscado.",
+        "Zwart et al. 2009 (los cinco alimentos de la ISS) y el resto de los artículos que cita el informe sobre la radiación no se han leído: las cifras son las del informe.",
+        "El informe de evidencia que enlaza hoy la página del riesgo («Multiple Evidence Reports.pdf») no se ha leído."
+      ]
+    },
+    {
+      "id": "level-of-care",
+      "title": "Niveles de asistencia médica (Level of Care) IV y V",
+      "about": "Dónde definía NASA los niveles de asistencia, qué decían el IV y el V, y qué dice hoy la norma.",
+      "statements": [
+        {
+          "id": "loc-standard-today",
+          "label": "La norma vigente ya no los define",
+          "quote": "Section 3 -The Levels of Care have been replaced with Health and Medical Care Technical requirements.",
+          "ref": "nasa-std-3001-vol1-rev-c",
+          "url": null,
+          "where": "Document History Log, Revision B (2022-01-05), p. 2 de 86",
+          "note": "En el texto de la Revisión C la expresión solo aparece en esta línea del registro de cambios."
+        },
+        {
+          "id": "loc-five-levels",
+          "label": "Dónde se definían",
+          "quote": "The five levels of care defined in the NASA-STD-3001 are summarized in Table 1 and show a progression of capability.",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "Introduction, p. 5",
+          "note": null
+        },
+        {
+          "id": "loc-iv-row",
+          "label": "Nivel IV · capacidades (fila de la Tabla 1)",
+          "quote": "Level III + Medical Imaging, Sustainable Advanced Life Support, Limited Surgical, Dental Care",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "Table 1, p. 5",
+          "note": null
+        },
+        {
+          "id": "loc-v-row",
+          "label": "Nivel V · capacidades (fila de la Tabla 1)",
+          "quote": "Level IV + Autonomous Advanced Life Support and Ambulatory Care, Basic Surgical Care",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "Table 1, p. 5",
+          "note": null
+        },
+        {
+          "id": "loc-iv-definition",
+          "label": "Nivel IV · definición de la norma, citada por el memorando",
+          "quote": "Moderate to high level of potential risk exists that personnel may experience medical problems on orbit. Risk to the mission is greater for medical issues beyond routine ambulatory medicine. Preventive strategies shall be used to a greater degree to reduce the overall risk. The ability to support chronic illness is limited. Intervention strategies shall be used to reduce the risk to an acceptable level, including increasing levels of advanced care in the form of medications, equipment, training, or consumables over and above previous levels. The scope of medical care available shall be limited or triaged because of availability of supplies, consumables, or mission risk.",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "«Level of Care IV», pp. 8-9",
+          "note": null
+        },
+        {
+          "id": "loc-v-definition",
+          "label": "Nivel V · definición de la norma, citada por el memorando",
+          "quote": "A high level of potential risk exists that personnel may experience medical problems on orbit at some time during the mission. Preventive strategies shall be used to a greater degree to reduce the overall risk. The ability to support chronic illness is limited. Intervention strategies shall be used to reduce the risk to an acceptable level, including increasing levels of autonomous advanced care in the form of medications, equipment, training, or consumables over and above those for previous levels. The training and skill of the caregiver shall be at the physician level, because of the exclusively autonomous nature of the mission. The scope of medical care available shall be limited or triaged because of availability of supplies, consumables, or mission risk. Return to Earth is not a viable option for more serious illness/injuries. Impact to overall mission is greater.",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "«Level of Care V», p. 10",
+          "note": null
+        },
+        {
+          "id": "loc-not-requirements",
+          "label": "Las definiciones del memorando no son requisitos",
+          "quote": "Definitions and example actions are not requirements and are not meant to imply that the medical system for a future program must be capable of managing each action, but instead serve as the starting place for developing a concept of operations and a systematic process for requirements.",
+          "ref": "ntrs-20170004345",
+          "url": null,
+          "where": "Introduction, p. 5",
+          "note": null
+        },
+        {
+          "id": "loc-iv-mda-2020",
+          "label": "El nivel IV y la arquitectura de datos (2020)",
+          "quote": "To date, the MDA foundational architecture has recommended exploration medical system Level of Care IV requirements through a series of test bed prototype developments and analog demonstrations.",
+          "ref": "ntrs-20200000567",
+          "url": null,
+          "where": "resumen de NTRS",
+          "note": "El mismo resumen dice que hace falta una hoja de ruta de apoyo a la decisión clínica para el nivel V."
+        },
+        {
+          "id": "loc-v-highest",
+          "label": "El nivel V y el CDSS (2021)",
+          "quote": "Such missions correspond with medical Level of Care V (LOC V), the highest level specified in NASA-STD-3001.",
+          "ref": "ntrs-20205008731",
+          "url": null,
+          "where": "resumen de una página (documento descargable)",
+          "note": "Escrito antes de la Revisión B de la norma."
+        },
+        {
+          "id": "loc-still-used",
+          "label": "ExMC los sigue usando en 2023",
+          "quote": "Recommendations for the CHP Data System functional requirements are described in HRP-48034 and HRP-48035 for LevCare IV and LevCare V, respectively.",
+          "ref": "ntrs-20220017869",
+          "url": null,
+          "where": "§5.4, p. 15",
+          "note": null
+        },
+        {
+          "id": "loc-iv-lunar-row",
+          "label": "Nivel IV y clase de misión (diapositiva de 2017)",
+          "quote": "IV Lunar > 30 day Level III + Medical Imaging, Sustainable Advanced Life Support, Limited Surgical, Dental Care",
+          "ref": "ntrs-20180008706",
+          "url": null,
+          "where": "diapositiva 8, «Levels of Care» (al pie, «NASA-STD-3001 Vol 1, Rev A»)",
+          "note": "Es una copia en una diapositiva de la tabla que rotula «NASA-STD-3001 Vol 1, Rev A», que sigue sin leerse."
+        },
+        {
+          "id": "loc-v-mars-row",
+          "label": "Nivel V y clase de misión (diapositiva de 2017)",
+          "quote": "V Mars Expedition Level IV + Autonomous Advanced Life Support and Ambulatory Care, Basic Surgical Care",
+          "ref": "ntrs-20180008706",
+          "url": null,
+          "where": "diapositiva 8, «Levels of Care» (al pie, «NASA-STD-3001 Vol 1, Rev A»)",
+          "note": "Es una copia en una diapositiva de la tabla que rotula «NASA-STD-3001 Vol 1, Rev A», que sigue sin leerse."
+        },
+        {
+          "id": "loc-v-self-reliance-2021",
+          "label": "El nivel V en las diapositivas del CDSS (2021)",
+          "quote": "NASA-STD-3001 presents the need for crew members to operate independently during long duration space exploration missions that require medical Level of Care V",
+          "ref": "ntrs-20205011728",
+          "url": null,
+          "where": "diapositiva 3, «Need for Crew Self-Reliance»",
+          "note": null
+        }
+      ],
+      "emma": "EMMA no declara ni reclama un nivel de asistencia. Los niveles describen capacidades médicas de una misión —soporte vital, cirugía, imagen, telemedicina— y EMMA es software de vigilancia y apoyo a la decisión. La conversación de ideación del equipo habla de la progresión del nivel IV al V: lo leído dice que la norma vigente ya no define esos niveles y que los documentos de ExMC los siguen usando.",
+      "not_read": [
+        "NASA-STD-3001 Vol 1 Revisión A (2014), donde estaban las definiciones originales, no se ha leído: las definiciones se toman del memorando NASA/TM-2017-219290, que las cita entre comillas.",
+        "La norma vigente se leyó en nasa.gov. En standards.nasa.gov, el 2026-11-01, las páginas probadas de los dos volúmenes dieron «Page not found»: la Revisión A y su tabla no se han leído, y las filas que ponen un nivel junto a una clase de misión vienen solo de una diapositiva de 2017.",
+        "El memorando rotula su Tabla 1 «Reference NASA-STD-3001, V2, Rev A, Table 13» aunque su texto atribuye los niveles al Vol 1: se anota tal como está escrito, sin resolverlo.",
+        "HRP-48034 y HRP-48035 (requisitos para los niveles IV y V) no se han leído: buscados el 2026-11-01 en NTRS y en la web, sin resultados."
+      ]
+    },
+    {
+      "id": "eimo",
+      "title": "Operaciones médicas independientes de la Tierra (EIMO)",
+      "about": "Qué dice NASA de EIMO. EMMA lo nombraba con una descripción propia, sin frase leída.",
+      "statements": [
+        {
+          "id": "eimo-definition",
+          "label": "Qué es EIMO",
+          "quote": "EIMO – The gradual transition of medical care and decision making from terrestrial to space-based assets, enabling support of astronaut health and performance and reducing overall mission risk",
+          "ref": "ntrs-20240001402",
+          "url": null,
+          "where": "diapositiva 5, «EIMO ConOps Aims»",
+          "note": null
+        },
+        {
+          "id": "eimo-mars-class",
+          "label": "Para qué misiones",
+          "quote": "Progressive Earth-independent crew health & performance systems for Mars-class missions",
+          "ref": "ntrs-20240001402",
+          "url": null,
+          "where": "diapositiva 2",
+          "note": null
+        },
+        {
+          "id": "eimo-paradigm",
+          "label": "Un paradigma para Artemis y Marte",
+          "quote": "the overarching goal of enabling progressively Earth-Independent Medical Operations (EIMO), a new paradigm that will be necessary for future Artemis and Mars medical and vehicle systems.",
+          "ref": "ntrs-20230015831",
+          "url": null,
+          "where": "BACKGROUND, resumen de una página",
+          "note": null
+        },
+        {
+          "id": "eimo-autonomy-2025",
+          "label": "La ConOps de 2025",
+          "quote": "The ConOps serves as an initial recommendation to increase crew autonomy gradually and safely for Mars missions and future deep-space exploration.",
+          "ref": "ntrs-20250000009",
+          "url": null,
+          "where": "diapositiva 17",
+          "note": null
+        }
+      ],
+      "emma": "EMMA no implementa EIMO ni se ha evaluado frente a su ConOps. Lo que tiene en común: funciona sin red y el riesgo se escala con el tiempo de luz; decide una persona.",
+      "not_read": [
+        "El documento de ConOps de EIMO y sus requisitos fundacionales: las diapositivas los nombran, y NTRS no los ofrece."
+      ]
+    },
+    {
+      "id": "habitat-systems",
+      "title": "Control térmico de la ISS (ATCS) y soporte vital (ECLSS)",
+      "about": "Las dos fuentes que dan la especificación del equipo (§16 y §17) y su base de conocimiento (§6) para los sistemas del hábitat, leídas para ver qué respaldan del vocabulario de sistemas de EMMA y de la correlación con el contexto compartido.",
+      "statements": [
+        {
+          "id": "tb013-food-system",
+          "label": "La comida, como sistema",
+          "quote": "The space food system must provide food that is safe, nutritious, and acceptable to the crew to maintain crew health and performance during space flight.",
+          "ref": "ochmo-tb-013",
+          "url": null,
+          "where": "Executive Summary, p. 1",
+          "note": null
+        },
+        {
+          "id": "tb031-exercise-system",
+          "label": "El ejercicio, como sistema",
+          "quote": "The vehicle must be designed to accommodate all aspects of the exercise system (i.e., mass, volume, vibration) as well as the volume envelope required for human movement while exercising.",
+          "ref": "ochmo-tb-031",
+          "url": null,
+          "where": "Design Considerations, p. 21",
+          "note": null
+        },
+        {
+          "id": "atcs-purpose",
+          "label": "Para qué existe el ATCS",
+          "quote": "Most of the Station's many systems produce waste heat, which needs to be transferred from the ISS to space to achieve thermal control and maintain components at acceptable temperatures.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Active Thermal Control System Architecture», p. 1",
+          "note": null
+        },
+        {
+          "id": "atcs-water-inside",
+          "label": "Agua dentro de los módulos",
+          "quote": "The ITCS uses water because it is an efficient thermal transport fluid and is safe inside a habitable module.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Internal Active Thermal Control System (IATCS)», p. 2",
+          "note": null
+        },
+        {
+          "id": "atcs-cabin-air",
+          "label": "El aire de cabina es del ECLSS",
+          "quote": "The LTL is designed to operate at 40° F (4° C) and service systems equipment requiring low temperatures, such as the Environmental Control and Life Support System (ECLSS) Common Cabin Air Assembly (CCAA) and some payload experiments.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Internal Active Thermal Control System (IATCS)», p. 2",
+          "note": "El equipo que trata el aire de cabina es del ECLSS; el circuito de baja temperatura del ATCS lo enfría."
+        },
+        {
+          "id": "atcs-loop-redundancy",
+          "label": "Dos circuitos internos",
+          "quote": "This approach allows for segregation of the heat loads, simplifies heat load management, and provides redundancy in case of equipment failure.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Internal Active Thermal Control System (IATCS)», p. 2",
+          "note": "«This approach» son los dos circuitos independientes del laboratorio Destiny, uno de baja temperatura y otro de temperatura moderada."
+        },
+        {
+          "id": "eatcs-independent-loops",
+          "label": "Dos circuitos externos independientes",
+          "quote": "The independent loops were designed so that a failure in one would not take down the entire EATCS system.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«External Active Thermal Control System (EATCS) Overview», p. 5",
+          "note": null
+        },
+        {
+          "id": "eatcs-reduced-capacity",
+          "label": "Con un circuito caído",
+          "quote": "If a loop does go down, the EATCS operates at a reduced capacity.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«External Active Thermal Control System (EATCS) Overview», p. 5",
+          "note": null
+        },
+        {
+          "id": "eatcs-capacity",
+          "label": "Capacidad",
+          "quote": "The EATCS is designed to provide 35 kW of heat rejection per loop for a total capability of 70 kW.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«External Active Thermal Control System (EATCS) Overview», p. 5",
+          "note": null
+        },
+        {
+          "id": "eatcs-ammonia-outside",
+          "label": "El amoníaco, fuera",
+          "quote": "All EATCS components are located outside the pressurized volumes to prevent crew contact with ammonia.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«External Active Thermal Control System (EATCS) Overview», p. 5",
+          "note": "Es la única frase del documento sobre la tripulación."
+        },
+        {
+          "id": "atcs-pressure-voting",
+          "label": "Votación de sensores de presión",
+          "quote": "The PVCP Inlet pressure, Radiator return pressure, and Bypass return pressure sensors are part of this system and two of three pressure readings are used to determine if an overpressure condition exists.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Low and High Pressure flow Control Monitoring», p. 11",
+          "note": "Es la «lógica de votación» que cita la conversación de ideación del equipo. La misma página llama al conjunto «Failure Detection, Isolation and Recovery (FDIR)»; la 17, «Fault Detection, Isolation, and Recovery»."
+        },
+        {
+          "id": "atcs-telemetry",
+          "label": "Telemetría",
+          "quote": "Telemetry from the various temperature, pressure, flow, and quantity sensors is monitored by TCS software and displayed on crew laptops or ground workstations.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Software», p. 17",
+          "note": null
+        },
+        {
+          "id": "atcs-fdir",
+          "label": "Detección, aislamiento y recuperación de fallos",
+          "quote": "In addition, Fault Detection, Isolation, and Recovery (FDIR) software is used to monitor the performance of the TCS and, if there is a problem, alert the crew and flight controllers.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Software», p. 17",
+          "note": null
+        },
+        {
+          "id": "atcs-fdir-recovery",
+          "label": "Recuperación automática",
+          "quote": "In some cases, FDIR software initiates recovery actions.",
+          "ref": "nasa-iss-atcs-overview",
+          "url": null,
+          "where": "«Software», p. 17",
+          "note": null
+        },
+        {
+          "id": "tb002-reference-only",
+          "label": "Qué es el resumen técnico",
+          "quote": "This Technical Brief is derived from NASA-STD-3001 and is for reference only.",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "cabecera de cada página",
+          "note": null
+        },
+        {
+          "id": "tb002-eclss-manages",
+          "label": "Qué gestiona el ECLSS",
+          "quote": "The ECLSS manages air and water quality, waste, atmospheric parameters, and emergency response systems.",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "«Executive Summary», p. 1",
+          "note": null
+        },
+        {
+          "id": "tb002-pressure-control",
+          "label": "Control de presión: oxígeno y nitrógeno",
+          "quote": "Maintain O2/N2 environment pressurized to ranges that are habitable for crew and functional for the cabin air-cooled equipment",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "«Pressure Control System (PCS)», lista «PCS functions include:», p. 5",
+          "note": "Viñeta sin punto final, como en la fuente. La misma lista pone en este sistema la vigilancia del oxígeno, del nitrógeno y de la presión total."
+        },
+        {
+          "id": "tb002-air-revitalization",
+          "label": "Revitalización de aire",
+          "quote": "Air Revitalization System (ARS) is responsible for air quality during crewed missions including:",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "«Background», p. 7",
+          "note": "Siguen cuatro viñetas: «Control of temperature and humidity», «Air circulation and ventilation», «Removal of CO2 and trace contaminants» y «All associated monitoring»."
+        },
+        {
+          "id": "tb002-fire",
+          "label": "Detección y extinción de incendios",
+          "quote": "The Fire Detection and Suppression subsystem provides fire detection sensors for the Station, fire extinguishers, portable breathing equipment, and a system of alarms and automatic software actions to alert the crew and automatically respond to a fire.",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "«ECLSS Fire Detection and Suppression», p. 13",
+          "note": null
+        },
+        {
+          "id": "tb002-cites-atcs",
+          "label": "El resumen técnico cita el del ATCS",
+          "quote": "Active Thermal Control System Overview. Boeing IDS Business Support, Communications, and Community Affairs.",
+          "ref": "ochmo-tb-002",
+          "url": null,
+          "where": "«Reference List», referencia 1, p. 23",
+          "note": "La dirección que da es la antigua (www.nasa.gov/pdf/…); el PDF leído está en la de su ficha."
+        }
+      ],
+      "emma": "EMMA no lee telemetría de ningún sistema del hábitat ni modela el control térmico de una nave: el estado de un sistema lo declara una persona en la consola, firmado en el registro. Su vocabulario de sistemas (data/habitat_systems.json) es de diseño y lo dice. Lo leído lo sitúa así: OCHMO-TB-002 pone la temperatura, la humedad, el CO2 y los contaminantes en traza en la revitalización de aire, y el oxígeno en el control de presión, mientras que EMMA los reparte de otra manera; energía, comunicaciones e iluminación no son del ECLSS, y la detección de incendios, que sí lo es, no está en el vocabulario. El ATCS evacua el calor de los equipos; lo que EMMA llama «control térmico y de humedad» es, en estas fuentes, parte del aire de cabina. analysis/context.py cita el FDIR del ATCS como inspiración: EMMA no lo reproduce, solo ordena hipótesis de causa común, y decide una persona.",
+      "not_read": [
+        "La cadena «SENSE → COMPARE → DETECT ANOMALY → ISOLATE → RESPOND → RECOVER» de la conversación de ideación del equipo: buscada en el resumen del ATCS, no aparece con esas palabras. Es una lectura del equipo; el documento dice FDIR, vigilancia de telemetría y aviso a la tripulación y a Tierra.",
+        "Que «el estado del vehículo modifica el estado humano» (base de conocimiento, §6) no lo dice el resumen del ATCS: es la lección que saca el equipo. Lo que sí dice la base de conocimiento de él —circuitos de agua dentro, amoníaco y radiadores fuera, dos circuitos y hasta 70 kW— está en las frases de arriba.",
+        "El resumen del ATCS describe la estación de 2006, en ensamblaje: no se ha buscado cómo es hoy.",
+        "Los resúmenes técnicos relacionados que lista OCHMO-TB-002 (OCHMO-TB-003, -004, -008, -015, -027 y -042) y sus referencias no se han leído.",
+        "Una partición de los sistemas de un hábitat de exploración (Gateway, Artemis) con la que sustituir la de EMMA: no se ha buscado."
+      ]
+    }
+  ]
+}

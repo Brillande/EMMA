@@ -1,0 +1,35 @@
+{
+ "target": "app/api/twins.py",
+ "test": [
+  "tests/test_twins.py::test_each_answer_is_what_the_state_and_the_crew_view_already_say",
+  "tests/test_twins.py::test_for_the_ground_every_answer_is_cut_where_its_state_is_and_nothing_later_leaks",
+  "tests/test_twins.py::test_the_ground_questions_hand_their_cut_to_what_waits"
+ ],
+ "mutations": [
+  {
+   "label": "la ruta no lee la vista de tripulación y el hábitat se queda sin hipótesis",
+   "old": "        crew: dict[str, Any] | None = crew_overview(store, settings, until=until)",
+   "new": "        crew: dict[str, Any] | None = None"
+  },
+  {
+   "label": "Tierra ve el estado de a bordo",
+   "old": "        settings, store, subject=subject, epoch=None, cumulative_dose_msv=None, until=until",
+   "new": "        settings, store, subject=subject, epoch=None, cumulative_dose_msv=None, until=None"
+  },
+  {
+   "label": "Tierra ve la vista de tripulación de a bordo",
+   "old": "crew_overview(store, settings, until=until)",
+   "new": "crew_overview(store, settings, until=None)"
+  },
+  {
+   "label": "lo que espera a una persona no se corta para Tierra",
+   "old": "waiting_for(status, store, subject, until)",
+   "new": "waiting_for(status, store, subject)"
+  },
+  {
+   "label": "las respuestas no dicen su corte",
+   "old": "    return twins.compose(status, crew, pending, until, radiation)",
+   "new": "    return twins.compose(status, crew, pending, None, radiation)"
+  }
+ ]
+}

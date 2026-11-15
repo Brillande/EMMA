@@ -1,0 +1,176 @@
+{
+ "target": "app/api/spec5.py",
+ "test": [
+  "tests/test_spec5_import.py",
+  "tests/test_observation_unit.py"
+ ],
+ "mutations": [
+  {
+   "label": "un texto numerico pasa como instante",
+   "old": "    if isinstance(timestamp, str) and not _ISO_INSTANT.match(timestamp):\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "una clave repetida se resuelve a la ultima",
+   "old": "    if isinstance(item, _Reading) and item.repeated:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "el indicador de otra via solo lo para el ledger, sin decir la lectura",
+   "old": "        if elsewhere:\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "el analito no se comprueba antes de firmar",
+   "old": "    if key in LAB_REPORT_ONLY:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "el motivo no se acota",
+   "old": "        if isinstance(exc.detail, str) and len(exc.detail) > MAX_DETAIL_CHARS:\n",
+   "new": "        if False:\n"
+  },
+  {
+   "label": "el aviso de vinculo se pierde",
+   "old": "        \"binding_notices\": [notice for notice in notices if notice],\n",
+   "new": "        \"binding_notices\": [],\n"
+  },
+  {
+   "label": "el aviso mezcla los sujetos del lote",
+   "old": "            [item for item in observations if item.subject == subject],\n",
+   "new": "            observations,\n"
+  },
+  {
+   "label": "la traduccion acepta campos que §5 no tiene",
+   "old": "    unknown = sorted(set(item) - set(FIELDS))\n    if unknown:\n",
+   "new": "    unknown = sorted(set(item) - set(FIELDS))\n    item = {k: v for k, v in item.items() if k in FIELDS}\n    if False:\n"
+  },
+  {
+   "label": "un obligatorio ausente se deja suponer al alta manual",
+   "old": "    missing = sorted(name for name in REQUIRED if item.get(name) is None)\n",
+   "new": "    missing: list[str] = []\n"
+  },
+  {
+   "label": "la correspondencia pierde la calidad de §5",
+   "old": "    \"quality\": \"confidence\",\n",
+   "new": ""
+  },
+  {
+   "label": "el instante de §5 cae en otro campo",
+   "old": "    \"timestamp\": \"effective\",\n",
+   "new": "    \"timestamp\": \"model_version\",\n"
+  },
+  {
+   "label": "el alias de ISS desaparece",
+   "old": "            value = EVIDENCE_CONTEXT_ALIASES.get(value, value)\n",
+   "new": "            pass\n"
+  },
+  {
+   "label": "el alias pasa todo a minusculas",
+   "old": "            value = EVIDENCE_CONTEXT_ALIASES.get(value, value)\n",
+   "new": "            value = value.lower()\n"
+  },
+  {
+   "label": "un opcional nulo se envia como nulo",
+   "old": "        if value is None:\n            continue\n",
+   "new": "        if value is None and name in REQUIRED:\n            continue\n"
+  },
+  {
+   "label": "el lote admite varias fuentes y se firma con la primera",
+   "old": "    if len(sources) > 1:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "la unidad del lote no se compara: se asume siempre la del catalogo",
+   "old": "            recorded, unit = _observation_or_422(code, payload, settings)\n",
+   "new": "            recorded, unit = _observation_or_422(\n                code, payload.model_copy(update={\"unit\": None}), settings\n            )\n"
+  },
+  {
+   "label": "la respuesta cuenta al reves lo declarado y lo asumido",
+   "old": "        tally[\"assumed\" if unit[\"unit_assumed\"] else \"declared\"] += 1\n",
+   "new": "        tally[\"declared\" if unit[\"unit_assumed\"] else \"assumed\"] += 1\n"
+  },
+  {
+   "label": "el lote se firma lectura a lectura: media tanda queda escrita",
+   "old": "    entries = _recorded_or_422(\n        lambda: store.record_many(observations, identity_for(sources[0]))\n    )\n",
+   "new": "    entries = [\n        _recorded_or_422(lambda item=item: store.record(item, identity_for(sources[0])))[0]\n        for item in observations\n    ]\n"
+  },
+  {
+   "label": "el lote se firma antes de comprobar la ultima lectura",
+   "old": "        observations.append(recorded)\n",
+   "new": "        observations.append(recorded)\n        if len(observations) == 1:\n            store.record(recorded, identity_for(sources[0]))\n"
+  },
+  {
+   "label": "el indicador desconocido no dice el campo",
+   "old": "                status_code=exc.status_code, detail=f\"{label}, campo 'variable_id': {exc.detail}\"\n",
+   "new": "                status_code=exc.status_code, detail=f\"{label}: {exc.detail}\"\n"
+  },
+  {
+   "label": "el rechazo no dice que lectura",
+   "old": "        raise HTTPException(status_code=422, detail=f\"{label}: {exc}\") from exc\n    # ESTRICTO",
+   "new": "        raise HTTPException(status_code=422, detail=str(exc)) from exc\n    # ESTRICTO"
+  },
+  {
+   "label": "los tipos vuelven al modo laxo: true es 1.0 y \"64\" es 64",
+   "old": "        payload = ObservationIn.model_validate_json(json.dumps(translated), strict=True)\n",
+   "new": "        payload = ObservationIn.model_validate_json(json.dumps(translated), strict=False)\n"
+  },
+  {
+   "label": "un instante sin zona se toma por UTC, como en el alta manual",
+   "old": "    if payload.effective is not None and payload.effective.tzinfo is None:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "un error sin campo se atribuye a un campo vacio",
+   "old": "        if not location:\n            reasons.append(message)\n            continue\n",
+   "new": "        if not location:\n            location = [\"\"]\n"
+  },
+  {
+   "label": "el error del esquema nombra el campo con el nombre de EMMA",
+   "old": "        location[0] = _SPEC_NAME.get(location[0], location[0])\n",
+   "new": ""
+  },
+  {
+   "label": "el tope de lecturas no se aplica",
+   "old": "    if len(batch) > routes.MAX_IMPORT_RECORDS:\n",
+   "new": "    if len(batch) > 10 ** 9:\n"
+  },
+  {
+   "label": "una lista vacia es una importacion de cero lecturas",
+   "old": "    if not batch:\n",
+   "new": "    if False:\n"
+  },
+  {
+   "label": "un objeto suelto se acepta como lote de uno",
+   "old": "    if not isinstance(batch, list):\n",
+   "new": "    if not isinstance(batch, list):\n        batch = [batch]\n    if False:\n"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla da a la calidad otro nombre en la ingesta",
+   "old": "| `confidence` | `confidence` | `confidence` |",
+   "new": "| `confidence` | `confidence` | `quality` |"
+  },
+  {
+   "target": "../compliance/record-integrity.md",
+   "label": "la tabla pierde la columna de la ingesta",
+   "old": "| `unit` | `valueQuantity.code` | `code.unit` | — | `unit` |",
+   "new": "| `unit` | `valueQuantity.code` | `code.unit` | — |"
+  },
+  {
+   "target": "app/data/samples/spec5_observations.json",
+   "label": "la muestra trae una lectura en otra unidad",
+   "old": "    \"unit\": \"ng/mL\",\n",
+   "new": "    \"unit\": \"nmol/L\",\n"
+  },
+  {
+   "target": "app/data/samples/spec5_observations.json",
+   "label": "la muestra escribe el indicador como el ejemplo de §5",
+   "old": "    \"variable_id\": \"hrv-rmssd\",\n",
+   "new": "    \"variable_id\": \"hrv_rmssd\",\n"
+  },
+  {"label": "un instante en el futuro entra y queda firmado", "target": "app/api/spec5.py", "old": "    if payload.effective is not None and payload.effective > latest:\n", "new": "    if False:\n"},
+  {"label": "un campo en blanco cuenta como procedencia", "target": "app/api/spec5.py", "old": "        if isinstance(item.get(name), str) and not item[name].strip()\n", "new": "        if isinstance(item.get(name), str) and not item[name]\n"},
+  {"label": "una fuente sin tope entra", "target": "app/api/spec5.py", "old": "    if isinstance(source, str) and len(source) > MAX_SOURCE_CHARS:\n", "new": "    if False:\n"}
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "fuente": "bateria-2026-11-12T0210.csv",
+ "fases": [
+  {
+   "fase": "pantalla_encendida_1",
+   "duracion_s": 60.0,
+   "muestras": 59,
+   "equipo_w_media": 49.52,
+   "equipo_julios": 2971.2
+  },
+  {
+   "fase": "pantalla_apagada",
+   "duracion_s": 60.0,
+   "muestras": 59,
+   "equipo_w_media": 48.33,
+   "equipo_julios": 2899.9
+  },
+  {
+   "fase": "pantalla_encendida_2",
+   "duracion_s": 60.0,
+   "muestras": 58,
+   "equipo_w_media": 50.45,
+   "equipo_julios": 3027.3
+  }
+ ]
+}

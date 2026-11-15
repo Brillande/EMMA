@@ -1,0 +1,23 @@
+{"target": "app/api/countermeasures.py",
+ "test": ["tests/test_close_level.py", "-k",
+          "closing_saves or closing_state_not or closing_without"],
+ "mutations": [
+  {"label": "el cierre guarda el nivel de la adopcion en vez del estado de ahora",
+   "old": "            level_at_close=at_close[0] if at_close else None,\n",
+   "new": "            level_at_close=adoption[\"level\"] if at_close else None,\n"},
+  {"label": "el cierre no guarda el nivel",
+   "old": "    at_close = _level_at_close(settings, store, payload.subject, adoption[\"domain\"])\n",
+   "new": "    at_close = None\n"},
+  {"label": "el cierre guarda el nivel de otro dominio",
+   "old": "(risk.level for name, risk in assessed.status.domains.items() if str(name) == domain),",
+   "new": "(risk.level for name, risk in assessed.status.domains.items()),"},
+  {"label": "el cierre guarda el instante de la adopcion como instante del cierre",
+   "old": "            closed_reference_time=at_close[1] if at_close else None,\n",
+   "new": "            closed_reference_time=dt.datetime.fromisoformat(adoption[\"reference_time\"]) if at_close else None,\n"},
+  {"label": "sin estado que copiar no se puede cerrar",
+   "old": "    except HTTPException:\n        return None\n    level = next(",
+   "new": "    except HTTPException:\n        raise\n    level = next("},
+  {"label": "el cliente puede mandar el nivel al cerrar",
+   "old": "\"\"\"Una persona cierra el seguimiento de una adopcion, con su motivo.\"\"\"\n\n    model_config = ConfigDict(extra=\"forbid\")\n",
+   "new": "\"\"\"Una persona cierra el seguimiento de una adopcion, con su motivo.\"\"\"\n\n    model_config = ConfigDict(extra=\"ignore\")\n"}
+ ]}

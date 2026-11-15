@@ -1,0 +1,378 @@
+/*
+ * Mobiliario común bajo la concha de la maqueta: mandos (`button.command`), entradas y selectores de
+ * los formularios (`.silence-form`, `.inline-form`, `.field-block`, `.operator`), pliegues
+ * (`details > summary`), insignias (`.level`, `.obs-type`), baldosas (`.stat-tile`), tablas
+ * (`table.ledger`, `.quality-table`, `.table-scroll`, `.library-table`, `.profile-matrix`), `.kv`,
+ * `.evidence`, `.mode-notice` y los títulos de panel. Solo bajo `.app[data-look="reference"]`.
+ *
+ * Lo que se veía al capturar las pestañas con la concha nueva (2026-11-07): los paneles ya eran las
+ * tarjetas de la maqueta, pero por dentro seguía el mobiliario clásico: mandos verdes sobre el fondo
+ * de mando, entradas con filete gris, plegables con el triángulo del navegador, tablas sin cabecera
+ * y los niveles como texto suelto. La maqueta viste cada pieza igual: el filete `--ref-edge`, radio de
+ * 8 px, fondo transparente o azul marino, y el dibujo en verde azulado (`--ref-teal`). Aquí se le da
+ * esa forma a lo que comparten todas las secciones; cada sección añade lo suyo en su hoja, con
+ * selectores más específicos.
+ *
+ * Ámbito: `main`. La franja (`header.strip`) y el carril (`nav.rail`) quedan fuera porque son de la
+ * concha: el carril ya da forma a su pliegue («Ver o elegir otro entorno», «Pantalla») en `styles.css`
+ * y, con la fila de acceso de aquí, el rótulo pasaba a dos líneas y escondía una pestaña. «Inicio»
+ * (`.section-body.ref-home`) ya tiene su hoja, y donde usa la misma pieza (`Command`, `.level`, `h3`,
+ * `dt`) se excluye igual: su `.ref-plus` sin borde sigue sin borde.
+ *
+ * Lo que no cambia, porque significa (NASA-STD-3001 F.5-1): el color de `.level`, el de `.mark.c-*`,
+ * el cian de lo caducado o ausente y el gris de lo no disponible. Un dibujo pasa a `--ref-teal` solo
+ * cuando es un signo (de qué es la pieza: el de un título, un mando, un rótulo de campo, una cabecera
+ * de tabla, un plegable) y nunca cuando él o su dueño llevan una clase `c-*`, que es color con
+ * sentido; el de una marca (`.mark > .pictogram`) hereda el de la marca y no se toca. Los guardas van
+ * en `:where()` para que no suban la especificidad y las hojas de sección ganen con poco.
+ *
+ * El alto táctil (`--touch`) se mantiene en todo mando, entrada y plegable; en alto contraste el
+ * grosor de 2 px del mando sigue siendo el de `styles.css`, porque aquí solo se cambia el color del
+ * filete.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Títulos                                                              */
+/* ------------------------------------------------------------------ */
+
+/* El título de panel, un punto más pequeño que el clásico y con el filete de la tarjeta debajo,
+   como la cabecera de una tarjeta de la maqueta (`.ref-h`): separa la cabecera del cuerpo sin
+   subir el peso. */
+.app[data-look="reference"] main .panel > h2 {
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
+}
+
+/* El dibujo-signo, en el verde azulado de la maqueta: en títulos, plegables, rótulos de campo,
+   claves de definición, cabeceras de tabla, baldosas y mandos. Dueño o dibujo con clase `c-*`:
+   color con significado, se deja. */
+.app[data-look="reference"]
+  main
+  :is(h2, h3, h4, summary, label, legend, dt, .th-sign, .stat-label, button.command, a.command):where(
+    :not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary, .ref-home *, .rail *)
+  )
+  > .pictogram:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary)) {
+  color: var(--ref-teal);
+}
+
+/* La insignia del título de tarjeta (tercera ronda del lote «muestra», 2026-11-08). En la muestra
+   cada tarjeta lleva su dibujo dentro de un cuadrado teñido (las letras RIDGE, el calendario de
+   «Próximas acciones», el escudo de «Estado de riesgo»); aquí el dibujo era una línea suelta del
+   tamaño de la letra. Solo CSS: el `<svg>` exterior es una caja como otra, así que relleno, filete y
+   radio van sobre el propio pictograma (`PanelTitle` no cambia y el texto del título tampoco).
+   El tinte es el acento de la sección (`--sec-acc`, adorno, §2.5 de `hmi-state-of-the-art.md`)
+   mezclado al 50 % con el azul marino, y el dibujo va en el color del texto: con el acento más claro
+   (el verde de «Cuerpo») el dibujo queda a 3,8:1 sobre la insignia, y con los demás entre 3,9 y 4,7
+   (≥ 3:1 de un gráfico; calculado con los valores de `lib/palette.ts`). Al 55 % el verde bajaba a
+   3,4 y al 40 % la insignia apenas se distinguía del fondo de la tarjeta. Lo que significa no
+   entra: un título o un dibujo con clase `c-*` (el cian de lo que falta, por ejemplo) o un título
+   de dato caducado (`.stale`) conservan su dibujo suelto y su color.
+   La especificidad sube con `[data-pictogram]` para ganar a `board.css`, que tiñe el dibujo del
+   título con el acento (`.section-body > .slot .panel > h2 .pictogram`): dentro de la insignia el
+   dibujo es claro. */
+.app[data-look="reference"]
+  main
+  .panel
+  > h2:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary, .stale, .ref-home *, .rail *))
+  > .pictogram[data-pictogram]:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary)) {
+  box-sizing: border-box;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0.34rem;
+  margin-right: 0.5em;
+  vertical-align: middle;
+  border: 1px solid color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 75%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 50%, var(--ref-navy));
+  color: var(--c-text);
+}
+
+/* La ficha con cifra lleva la misma insignia, más pequeña (~1,6 rem) y redonda, como los iconos de
+   las cifras de la muestra (duración, distancia, radiación de «Rutas espaciales»). Mismos guardas:
+   la ficha caducada (`.stale`) deja su dibujo como estaba, y el estado de la ficha va en su marca
+   (`.mark`), que no se toca. Ninguna hoja de sección da forma a este dibujo; la especificidad
+   tiene que ganar a la regla del verde azulado de arriba, que pinta el dibujo de `.stat-label`. */
+.app[data-look="reference"]
+  main
+  .stat-tile:where(:not(.stale, .ref-home *, .rail *))
+  > .stat-label:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary))
+  > .pictogram[data-pictogram]:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary)) {
+  box-sizing: border-box;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0.3rem;
+  margin-right: 0.45em;
+  vertical-align: middle;
+  border: 1px solid color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 75%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sec-acc, var(--ref-teal)) 50%, var(--ref-navy));
+  color: var(--c-text);
+}
+
+/* Alto contraste: sin relleno, solo el contorno; el dibujo, en el color del texto sobre el fondo de
+   siempre. */
+.app[data-look="reference"][data-high-contrast="on"]
+  main
+  .panel
+  > h2:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary, .stale, .ref-home *, .rail *))
+  > .pictogram[data-pictogram]:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary)),
+.app[data-look="reference"][data-high-contrast="on"]
+  main
+  .stat-tile:where(:not(.stale, .ref-home *, .rail *))
+  > .stat-label:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary))
+  > .pictogram[data-pictogram]:where(:not(.c-red, .c-yellow, .c-blue, .c-gray, .c-cyan, .c-magenta, .c-green, .c-text, .c-textSecondary)) {
+  background: none;
+  border-color: var(--sec-acc, var(--ref-teal));
+}
+
+/* Con la insignia, la cifra de la ficha sube un punto (de 2 a 2,25 rem) para que siga mandando,
+   como las cifras grandes de la muestra. En una ficha estrecha se queda en lo de la hoja clásica
+   (1,625 rem): ahí «12 min» ya iba justo (el contenedor es la propia ficha, `container-type` en
+   `styles.css`). La ficha caducada, sin insignia, deja también su cifra como estaba.
+   Especificidad baja: las hojas de sección que fijan su cifra (`log.css`, `mission.css`,
+   `ground-received.css`) siguen mandando. */
+:where(.app[data-look="reference"] main) .stat-tile:where(:not(.stale, .ref-home *, .rail *)) > .stat-value {
+  font-size: 2.25rem;
+}
+
+@container (max-width: 9rem) {
+  :where(.app[data-look="reference"] main) .stat-tile:where(:not(.stale, .ref-home *, .rail *)) > .stat-value {
+    font-size: 1.625rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Mandos                                                               */
+/* ------------------------------------------------------------------ */
+
+/* El mando de la maqueta (`.ref-quick-links .command`): filete `--ref-edge`, radio de 8 px, sin
+   fondo. Solo cambia el color del filete, no el `border` entero: el mando peligroso pinta su cinta
+   amarilla y negra con `border-image` (F.4.3.2 i) y el atajo la borraría. Los enlaces con aspecto
+   de mando de Tierra (`a.command`) van igual. */
+.app[data-look="reference"] main :is(button.command, a.command):where(:not(.ref-home *, .rail *)) {
+  background: transparent;
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.app[data-look="reference"] main :is(button.command, a.command):where(:not(.ref-home *, .rail *)):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ref-teal) 12%, transparent);
+  box-shadow: 0 0 10px var(--ref-glow);
+}
+
+/* F.5.4 c: al pulsar, el filete pasa al color del texto, como en la hoja clásica. */
+.app[data-look="reference"] main :is(button.command, a.command):where(:not(.ref-home *, .rail *)):active {
+  border-color: var(--c-text);
+}
+
+/* Lo elegido o desplegado, como la ubicación elegida de la maqueta (`.ref-place[aria-pressed]`): anillo
+   verde azulado y fondo teñido. El segundo anillo va por dentro (`inset`) y no como borde de 2 px,
+   para que la fila no se mueva al elegir. */
+.app[data-look="reference"]
+  main
+  :is(button.command, a.command):where(:not(.ref-home *, .rail *)):is([aria-pressed="true"], [aria-expanded="true"]) {
+  border-color: var(--ref-teal);
+  background: color-mix(in srgb, var(--ref-teal) 18%, var(--c-raised));
+  box-shadow:
+    0 0 14px var(--ref-glow),
+    inset 0 0 0 1px var(--ref-teal);
+}
+
+/* No disponible: gris (F.5-1), también el dibujo, que deja el verde azulado. */
+.app[data-look="reference"] main button.command:where(:not(.ref-home *, .rail *)):disabled {
+  color: var(--c-gray);
+  background: none;
+  border-color: var(--c-gray);
+  box-shadow: none;
+}
+
+.app[data-look="reference"] main button.command:disabled > .pictogram {
+  color: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Entradas y selectores                                                */
+/* ------------------------------------------------------------------ */
+
+/* El selector de la maqueta (`.ref-select-like`): filete `--ref-edge`, radio de 8 px, fondo azul
+   marino. A todo campo de texto, selector y área de texto dentro de la página; las casillas, los
+   botones de opción, los deslizadores y los de fichero conservan su forma del navegador. El alto
+   táctil va siempre, no solo donde ya lo ponía la hoja clásica. */
+.app[data-look="reference"]
+  main
+  :is(
+    select,
+    textarea,
+    input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="file"], [type="color"], [type="submit"], [type="button"])
+  ) {
+  font: inherit;
+  color: var(--c-text);
+  background: color-mix(in srgb, var(--ref-navy) 78%, transparent);
+  border: 1px solid var(--ref-edge);
+  border-radius: 8px;
+  min-height: var(--touch);
+  padding: 6px 12px;
+}
+
+.app[data-look="reference"] main :is(select, textarea, input):disabled {
+  color: var(--c-gray);
+  border-color: var(--c-gray);
+  cursor: not-allowed;
+}
+
+/* El recuadro de un formulario (silenciar, declarar, cambiar el nivel): un marco interior de la
+   tarjeta, con el filete atenuado y el fondo azul marino, en vez del fondo realzado clásico. */
+.app[data-look="reference"] main .silence-form {
+  border-color: color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 50%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Plegables (components/Fold.tsx)                                      */
+/* ------------------------------------------------------------------ */
+
+/* La fila de acceso de la maqueta (`.ref-quick-links a`): caja con filete, el dibujo delante y una
+   punta de flecha a la derecha que gira al abrir. El triángulo del navegador se quita porque la punta
+   lo sustituye. El resumen sigue siendo un bloque de texto que fluye y se parte donde haga falta (los
+   `lead` son frases enteras con marcas dentro), no una fila flexible, que separaría sus trozos; el
+   relleno vertical centra un renglón en el alto táctil y un resumen de varias líneas crece. */
+.app[data-look="reference"] main details:where(:not(.rail *)) > summary {
+  position: relative;
+  list-style: none;
+  min-height: var(--touch);
+  margin: 0.2rem 0;
+  padding: 0.6rem 2.2rem 0.6rem 0.6rem;
+  padding-block: max(var(--space-1), calc((var(--touch) - 1lh - 2px) / 2));
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 80%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 45%, transparent);
+}
+
+.app[data-look="reference"] main details:where(:not(.rail *)) > summary::-webkit-details-marker {
+  display: none;
+}
+
+.app[data-look="reference"] main details:where(:not(.rail *)) > summary:hover {
+  background: color-mix(in srgb, var(--ref-teal) 10%, transparent);
+}
+
+.app[data-look="reference"] main details:where(:not(.rail *)) > summary::after {
+  content: "";
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 2px solid var(--ref-teal);
+  border-bottom: 2px solid var(--ref-teal);
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+.app[data-look="reference"] main details[open]:where(:not(.rail *)) > summary {
+  margin-bottom: 0.5rem;
+}
+
+.app[data-look="reference"] main details[open]:where(:not(.rail *)) > summary::after {
+  transform: translateY(-70%) rotate(45deg);
+}
+
+/* ------------------------------------------------------------------ */
+/* Insignias                                                            */
+/* ------------------------------------------------------------------ */
+
+/* El nivel, como la píldora de la maqueta (`.ref-pill`): el filete y el fondo salen de
+   `currentColor`, así que cambia la forma y el color sigue siendo el del nivel, lo ponga la clase
+   `c-*` de la marca o el texto. La píldora mide lo que su palabra: como hija directa de una rejilla
+   (el titular `.panel.summary`, la tarjeta de dominio) se estiraba a todo el ancho y parecía una
+   barra. Las de «Inicio» ya llevan la suya. */
+.app[data-look="reference"] main .level:where(:not(.ref-home *)) {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.05em 0.6em;
+  border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  line-height: 1.35;
+}
+
+/* Medido / inferido / predicho y la etiqueta de cadena: la misma caja, con el filete de la maqueta. */
+.app[data-look="reference"] main :is(.obs-type, .chain-tag) {
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--ref-navy) 60%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Baldosas (components/StatTile.tsx)                                   */
+/* ------------------------------------------------------------------ */
+
+/* La ficha con cifra, como una tarjeta pequeña de la maqueta: el mismo degradado y el mismo
+   resplandor interior, atenuados para que no compita con el panel que la contiene. */
+.app[data-look="reference"] main .stat-tile {
+  border-color: color-mix(in srgb, var(--ref-edge) 75%, transparent);
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ref-card) 70%, transparent),
+    color-mix(in srgb, var(--ref-navy) 60%, transparent)
+  );
+  box-shadow: 0 0 10px var(--ref-glow) inset;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tablas                                                               */
+/* ------------------------------------------------------------------ */
+
+/* La tabla de la maqueta: la cabecera sobre azul marino y las filas separadas por el filete
+   atenuado. Las celdas se separan (`separate`) en vez de fundirse: con los bordes fundidos el radio
+   de las esquinas de la cabecera no se pinta; con espacio cero las líneas se ven igual. */
+.app[data-look="reference"] main :is(table.ledger, table.recovery) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.app[data-look="reference"] main :is(table.ledger, table.recovery) :is(th, td) {
+  padding: 6px 10px;
+  border-bottom-color: color-mix(in srgb, var(--ref-edge) 50%, transparent);
+}
+
+.app[data-look="reference"] main :is(table.ledger, table.recovery) thead th {
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+  border-bottom: 1px solid var(--ref-edge);
+  letter-spacing: 0.02em;
+}
+
+.app[data-look="reference"] main :is(table.ledger, table.recovery) thead tr:first-child > th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.app[data-look="reference"] main :is(table.ledger, table.recovery) thead tr:first-child > th:last-child {
+  border-top-right-radius: 6px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Listas con forma                                                     */
+/* ------------------------------------------------------------------ */
+
+/* Las referencias de una recomendación: colgadas de un filete, como los aspectos de la ruta en la
+   maqueta (`.ref-aspects`), con el número de cada una en verde azulado. */
+.app[data-look="reference"] main .evidence {
+  margin-left: 0.2rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 55%, transparent);
+}
+
+.app[data-look="reference"] main .evidence > li::marker {
+  color: var(--ref-teal);
+}
+
+/* El aviso de modo (esencial, privacidad) es un panel de una sola línea: más ceñido que una tarjeta
+   de contenido, para que no parezca una sección más. */
+.app[data-look="reference"] main .panel.mode-notice {
+  padding: 0.6rem 0.9rem;
+  gap: 0.5rem 1rem;
+}

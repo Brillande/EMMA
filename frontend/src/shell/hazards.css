@@ -1,0 +1,933 @@
+/*
+ * «Peligros y alertas» bajo la concha de la maqueta: el resumen con su nivel (`.panel.summary`), las
+ * baldosas, las tarjetas de peligro (`.hazards > article.hazard`), las filas de alerta (`AlertRow`) y
+ * las recomendaciones. También `HazardCards` en «Estado recibido» de Tierra. Solo bajo
+ * `.app[data-look="reference"]`.
+ *
+ * Lo que vi (capturas del 2026-11-07 en `#referencia`, 1672 × 941): la concha ya pone a cada panel el
+ * marco de la maqueta, pero por dentro seguía la consola clásica —la insignia del resumen suelta sobre
+ * el panel, las tarjetas de peligro, las alertas y las recomendaciones con el fondo realzado plano, el
+ * borde gris y el radio de 10 px, los motivos con viñeta—; al lado de «Inicio» parecían dos interfaces.
+ * Aquí cada caja interior toma el marco de `.ref-card` (borde `--ref-edge`, 9 px, degradado y
+ * resplandor), la insignia del resumen el «hero» de «Estado de riesgo» (`.ref-level-now`), las listas
+ * las filas de «Próximas acciones» (`.ref-next li`) y los peligros el acento por letra de `.ref-hazard`.
+ *
+ * Tablero (decisión del usuario, 2026-11-07, segunda pasada; capturas del 2026-11-08 a 1672 px): la
+ * sección seguía siendo una columna de cinco paneles a todo el ancho, con el resumen (137 px) y las
+ * baldosas (87 px) una debajo de la otra y media pantalla de aire. Ahora es la rejilla de `board.css`:
+ * el resumen y las baldosas (6 + 6 desde «Una pantalla», al final) comparten la primera fila; los cinco peligros, las
+ * alertas y «Qué hacer» van a todo el ancho. Las alertas y las recomendaciones NO se emparejan aunque
+ * se propuso (7 + 5): una tarjeta de recomendación mide unos 650 px y a 5 columnas solo cabe una por
+ * fila, así que tres recomendaciones (≈ 2000 px) dejaban al lado una tarjeta de alertas de 325 px
+ * estirada con 1600 px de nada; a 12 columnas caben dos por fila, como antes. Las piezas que cada
+ * panel monta (`BoardOnly`): las píldoras de recuento (`.board-tally`), los segmentos por dominio
+ * (`.ref-segments`), la letra del peligro (`.hazard-letter`) y los medidores bajo las baldosas
+ * (`.meter`); aquí solo su sitio y su tamaño.
+ *
+ * Lo que no se toca: el color de cada nivel (`.level`, `[data-level]`, `[data-tone]`; aquí solo se usa
+ * para teñir el marco de su propia pieza, como hace «Inicio»), el magenta de «lo propone la
+ * automatización» (filete de la recomendación, F.5-2), el cian del dato ausente, el gris de lo no
+ * disponible, el parpadeo del crítico sin reconocer y la cinta de peligro de los mandos de silenciar.
+ * Los mandos, las entradas, las baldosas, los pliegues y los títulos de panel son del mobiliario común
+ * (`furniture.css`): aquí solo la caja que los rodea y, desde el tablero, el reparto de las baldosas.
+ *
+ * Especificidad a propósito baja: el prefijo de la concha va dentro de `:where()`, que no cuenta, y
+ * las reglas ganan a las de `styles.css` solo por cargar después con la misma especificidad. Así los
+ * modos de baja visión y alto contraste (`.app[data-low-vision="on"] article.hazard`…, `styles.css`),
+ * que engordan los bordes a 2 px, siguen ganando aquí. Por lo mismo, donde la pieza ya tenía borde
+ * en la hoja clásica no se usa el atajo `border` (que arrastraría el grosor): solo `border-color`.
+ *
+ * Los acentos por letra RIDGE son adorno (desviación declarada de F.5-1, `compliance/hmi-state-of-the-art.md`)
+ * y repiten las mezclas de `referenceDashboard.css`; se eligen por el dibujo de la tarjeta
+ * (`data-pictogram="ridge-…"`, que pone `Pictogram`), no por su posición, para que un peligro que
+ * falte o llegue desordenado no cambie el color de los demás. El acento va en el marco, no detrás de
+ * las insignias: una «Precaución» amarilla sobre un fondo azul al 50 % se leería peor que en «Inicio»,
+ * donde las letras llevan segmentos y no palabras.
+ */
+
+/* ---- Colocación en la rejilla (`board.css`): la primera fila a 5 + 7, el resto a todo el ancho ---- */
+
+/* Medido por sonda (2026-11-08): a 1672 px de ventana el cuerpo de la sección mide 1123 px, menos de
+   los 72 rem (1152 px) del corte intermedio de `board.css`, así que a la anchura de referencia manda
+   `--span-mid`, no `--span`. Por eso los dos valen lo mismo: el reparto se mantiene hasta que el
+   cuerpo baja de 48 rem (una tableta en vertical, baja visión), donde `board.css` pone una columna. */
+/* El `#crew-panel-hazards` va también dentro de `:where()`: el id solo elige la sección, no debe
+   pesar (lo señaló la revisión: con él, `.stat-tile .meter` pisaba a `.meter.meter-oor`). */
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(> .slot-body > [data-ui="summary"]) {
+  --span: 6;
+  --span-mid: 6;
+}
+
+/* Las baldosas no llevan `data-ui` (su raíz es `div.stat-tiles`) y tapadas por privacidad siguen
+   dentro del mismo `.slot`: se buscan a cualquier profundidad. */
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(.stat-tiles) {
+  --span: 6;
+  --span-mid: 6;
+}
+
+/* ---- Baldosas: dos filas (2 + 3) en sus 6 columnas, a la altura del resumen ---- */
+
+/* Lo que se vio: en una sola fila las cinco baldosas medían 96 px y el resumen de al lado unos 200,
+   así que quedaban estiradas con la mitad de aire; y a 8 rem de mínimo (`styles.css`) solo cabían
+   cuatro y la quinta se iba sola a otra fila. Seis pistas: el día y el retardo, los dos datos de
+   cabecera, a media fila cada uno; alertas, dosis y lecturas debajo a un tercio. Sin hueco y con la
+   cifra a su tamaño grande (las baldosas pasan de 9 rem). Si algún día hubiera más de cinco, las
+   que sobren siguen a un tercio, en otra fila. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tiles {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile {
+  grid-column: span 2;
+  padding: 0.4rem 0.7rem 0.45rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(-n + 2) {
+  grid-column: span 3;
+}
+
+/* Cuerpo estrecho (≤ 48 rem: tableta en vertical), donde `board.css` ya pone una columna: las seis
+   pistas fijas dejaban tres baldosas por fila a un tercio de 360-480 px (lo señaló la revisión);
+   vuelve el `auto-fit` de `styles.css`, que las deja caer a dos o una por fila. */
+@container board (max-width: 48rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tiles {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(n) {
+    grid-column: auto;
+  }
+}
+
+/* El medidor bajo la cifra (día de misión, dosis): la pista en los tonos de la maqueta, con el borde
+   que ya tenía (solo el color). Misma especificidad que `.meter` y menos que `.meter.meter-oor`: fuera
+   de escala sigue el borde discontinuo en texto secundario. */
+:where(.app[data-look="reference"] #crew-panel-hazards .stat-tile) .meter-block {
+  margin-top: 0.2rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards .stat-tile) .meter {
+  height: 8px;
+  border-color: color-mix(in srgb, var(--ref-edge) 70%, transparent);
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* La píldora de recuento a cero (`LevelCountPill`, `secondary`): el marco en texto secundario, como
+   su palabra, en vez del verde azulado de las píldoras neutras. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .board-pill.secondary {
+  --lvl: var(--c-text-secondary);
+}
+
+/* ---- Resumen: la insignia del nivel como el «hero» de la maqueta, la frase del backend debajo ---- */
+
+:where(.app[data-look="reference"]) .panel.summary[data-level] {
+  --lvl: var(--ref-teal);
+  gap: 0.6rem;
+  padding: 0.8rem 1.1rem 0.9rem;
+}
+
+/* El mismo reparto que el filete de `styles.css`; `nominal` se queda con el marco común, sin color de alerta. */
+:where(.app[data-look="reference"]) .panel.summary[data-level="watch"] {
+  --lvl: var(--c-blue);
+}
+
+:where(.app[data-look="reference"]) .panel.summary[data-level="concern"] {
+  --lvl: var(--c-yellow);
+}
+
+:where(.app[data-look="reference"]) .panel.summary[data-level="critical"] {
+  --lvl: var(--c-red);
+}
+
+/* La insignia no tenía borde: aquí nace, con el atajo. */
+:where(.app[data-look="reference"]) .panel.summary[data-level] > .level {
+  justify-self: start;
+  max-width: 100%;
+  gap: 0.6rem;
+  padding: 0.35rem 1rem 0.35rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--lvl) 50%, transparent);
+  border-radius: 8px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--lvl) 28%, transparent), color-mix(in srgb, var(--lvl) 8%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--lvl) 30%, transparent);
+  font-size: 1.6rem;
+}
+
+/* El dibujo dentro de su anillo (`.ref-hero-icon`), del color que ya tenía la insignia. */
+:where(.app[data-look="reference"]) .panel.summary[data-level] > .level > .pictogram {
+  box-sizing: content-box;
+  padding: 0.22em;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 10px color-mix(in srgb, currentColor 45%, transparent);
+}
+
+/* En la tarjeta de 5 columnas la frase del backend baja un punto y no se limita a 70 caracteres: a
+   ese ancho se parte sola. */
+:where(.app[data-look="reference"]) .panel.summary[data-level] > p {
+  max-width: none;
+  font-size: 1.05rem;
+}
+
+/* Las píldoras por nivel (`LevelPill`: cada una con `--lvl` propio) en dos columnas de dos, en el
+   orden de la escala: en fila, a 5 columnas (462 px) la cuarta se quedaba sola debajo (visto en la
+   segunda captura). Debajo, los segmentos por dominio con la cuenta; los segmentos crecen hasta
+   16 rem para que el ojo los lea de un golpe. */
+:where(.app[data-look="reference"]) .panel.summary[data-level] > .board-tally {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 0.35rem 0.5rem;
+  margin: 0;
+}
+
+/* La insignia dentro de la píldora vuelve a su letra: `.panel.summary[data-level] .level` de
+   `styles.css` (1,75 rem, pensada para la insignia grande) la alcanzaba, y las cuatro píldoras salían
+   del tamaño del «hero» (visto en la primera captura). */
+:where(.app[data-look="reference"]) .panel.summary[data-level] .board-pill > .level {
+  font-size: inherit;
+}
+
+:where(.app[data-look="reference"]) .panel.summary[data-level] .summary-domains {
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"]) .panel.summary[data-level] .summary-domains > .ref-segments {
+  flex: 1 1 8rem;
+  max-width: 16rem;
+}
+
+/* ---- Los cinco peligros: el acento por letra de «Inicio» en el marco de cada tarjeta ---- */
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazards {
+  gap: 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard {
+  --acc: var(--ref-teal);
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border-color: color-mix(in srgb, var(--acc) 65%, var(--ref-edge));
+  border-radius: 9px;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--acc) 22%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 10px color-mix(in srgb, var(--acc) 28%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(> h3 [data-pictogram="ridge-radiation"]) {
+  --acc: color-mix(in srgb, var(--c-magenta) 55%, var(--c-blue));
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(> h3 [data-pictogram="ridge-isolation"]) {
+  --acc: var(--c-blue);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(> h3 [data-pictogram="ridge-distance"]) {
+  --acc: color-mix(in srgb, var(--c-cyan) 60%, var(--c-green));
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(> h3 [data-pictogram="ridge-gravity"]) {
+  --acc: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red));
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(> h3 [data-pictogram="ridge-environment"]) {
+  --acc: var(--c-green);
+}
+
+/* El título de la tarjeta, como `.ref-h3`, con un filete fino del acento debajo; la letra de la sigla
+   delante, en su ficha redonda del acento (`.ref-chip-letter` de «Inicio»: adorno, `aria-hidden`). */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--acc) 45%, transparent);
+  font-size: 1.05rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > h3 > .mark {
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-letter {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--acc);
+  color: var(--c-bg);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Las tarjetas se estiran a la más alta (la de cinco dominios): la lista toma el sobrante y lo que va
+   debajo (los segmentos con la cuenta, el retardo de la distancia) queda al pie, alineado en las cinco.
+   La lista no reparte ese sobrante entre sus filas: los dominios siguen arriba, juntos. */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+/* Un dominio por fila, con la raya de las listas de «Inicio»; la insignia sigue siendo la del backend. */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-domains {
+  gap: 0;
+  align-content: start;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-domains > li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-domains > li:last-child {
+  border-bottom: 0;
+}
+
+/* Los segmentos por dominio y la cuenta, bajo la lista: la fila de `.ref-hazard-bars` de «Inicio». */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-tally {
+  flex-wrap: nowrap;
+  font-size: 0.875rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-tally > .ref-segments {
+  flex: 1 1 auto;
+  height: 0.45rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-tally > span {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* ---- Alertas activas: cada alerta es una tarjeta; los motivos, filas como las de «Próximas acciones» ---- */
+
+/* La fila de recuentos pegada al título, antes del tripulante en consola. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) > .board-tally {
+  margin: 0 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row {
+  gap: 0.75rem 1.25rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+  border-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row + .alert-row {
+  margin-top: 0.6rem;
+}
+
+/* Silenciada sigue en la lista (F.6.4), con el marco apagado: la forma dice lo que el color no debe. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row.silenced {
+  border-color: color-mix(in srgb, var(--ref-edge) 55%, transparent);
+  box-shadow: none;
+}
+
+/* El encabezado de la alerta (insignia y dominio) sobre su propio filete, como el título de una tarjeta. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row [role="heading"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers {
+  list-style: none;
+  margin: 0.4rem 0;
+  padding-left: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers > li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
+}
+
+/* Un punto del color del marco en vez de la viñeta: adorno, no una casilla ni una señal. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers > li::before {
+  content: "";
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-top: 0.55em;
+  border-radius: 50%;
+  background: var(--ref-teal);
+  box-shadow: 0 0 4px var(--ref-glow);
+}
+
+/* Lo que se dijo sobre la alerta (suprimida, inhibida, descartada), en una caja aparte de los motivos;
+   no tenía borde, así que aquí nace. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .annunciation,
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .dismissal {
+  margin: 0.4rem 0;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 70%, transparent);
+}
+
+/* El formulario de silenciar o descartar: la caja de la maqueta; sus entradas y mandos, del mobiliario. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .silence-form {
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border-color: var(--ref-edge);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ref-navy) 85%, transparent);
+  box-shadow: 0 0 14px var(--ref-glow) inset;
+}
+
+/* La columna de mandos, separada del contenido por un filete; en panel estrecho baja debajo y el
+   filete pasa arriba (el contenedor es el panel, como en `styles.css`). */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-actions {
+  gap: 0.5rem;
+  padding-left: 1rem;
+  border-left: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+@container (max-width: 44rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-actions {
+    padding-top: 0.6rem;
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+  }
+}
+
+/* ---- Qué hacer: la tarjeta de la maqueta con el filete magenta de la automatización intacto ---- */
+
+/* La fila de recuentos pegada al título, antes de la nota de recursos y las tarjetas. */
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) > .board-tally {
+  margin: 0 0 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendations {
+  gap: 0.6rem;
+}
+
+/* Tres tarjetas por fila en vez de dos (2026-11-08, «que se parezca más a la referencia»): con la
+   rejilla de la maqueta el cuerpo mide unos 70 rem y cada tarjeta de 28 rem dejaba solo dos, muy
+   largas. Con 20 rem caben tres, y dentro las claves van encima de su valor, así el texto del
+   backend usa todo el ancho de la tarjeta en vez de una columna estrecha. Nada se oculta. */
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendations {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendation dl.kv.countermeasure {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0.1rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendation dl.kv.countermeasure > dd {
+  margin: 0 0 0.35rem;
+}
+
+/* Tres lados con el borde de la maqueta; el izquierdo lo sigue poniendo `styles.css` (magenta, o el
+   color de las líneas en una recomendación pasada). */
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendations > .recommendation {
+  align-content: start;
+  gap: 0.4rem;
+  padding: 0.7rem 0.85rem 0.8rem;
+  border-top-color: var(--ref-edge);
+  border-right-color: var(--ref-edge);
+  border-bottom-color: var(--ref-edge);
+  border-radius: 9px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+  box-shadow:
+    0 0 14px var(--ref-glow) inset,
+    0 0 6px color-mix(in srgb, var(--c-cyan) 10%, transparent);
+}
+
+/* El rótulo de la recomendación (dominio, urgencia, Tierra) sobre su filete, como el título de una tarjeta. */
+:where(.app[data-look="reference"] .panel[data-ui="recommendations"]) .recommendations > .recommendation > .source-tag {
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 60%, transparent);
+}
+
+/* ---- La tarjeta de peligro con muchos dominios, más ancha (2026-11-08) ---- */
+
+/* Las cinco tarjetas se estiran a la más alta, y la de «Campos gravitatorios» trae cinco dominios
+   uno debajo de otro: las otras cuatro, con uno, quedaban con media tarjeta vacía. Con sitio (≥ 60 rem)
+   la que tiene tres o más dominios crece tres veces más que las otras y reparte su lista en tres
+   columnas: cinco dominios, dos filas. El orden de los peligros y de sus dominios no cambia.
+
+   En fila flexible y no en una rejilla de columnas fijas (lo señaló la revisión): con 6 o 7 columnas
+   el reparto solo cuadraba con los datos de hoy —un peligro con muchos dominios—; sin ninguno
+   quedaban columnas vacías y con dos la fila se partía. Así las cinco caben en una fila sea cual
+   sea el reparto. Probado también a cuatro de ocho: las otras cuatro quedaban tan estrechas que
+   «confinamiento» se salía de la suya; por eso la letra de la lista larga bajaba un punto, para que
+   «Musculoesquelético» cupiera en su tercio (a 0,88 rem partía la lista en tres filas). Segunda
+   ronda (2026-11-08), letra al suelo de 0,875 rem: la lista larga sube de 0,82 al suelo, que sigue
+   un pelo por debajo de los 0,88 del resto; en captura a 1672 y 1300 px los tres tercios siguen en
+   dos filas, como antes. */
+@container board (min-width: 60rem) {
+  :where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazards {
+    display: flex;
+  }
+
+  :where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard {
+    flex: 1 1 0;
+  }
+
+  :where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard:has(.hazard-domains > li:nth-child(3)) {
+    flex-grow: 3;
+  }
+
+  :where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard .hazard-domains:has(> li:nth-child(3)) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 0.4rem;
+    font-size: 0.875rem;
+  }
+
+  /* Cada columna es estrecha: el dominio arriba y su insignia debajo, como en las otras tarjetas
+     (con la tarjeta ancha, `styles.css` los ponía lado a lado y partía el nombre). */
+  :where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard .hazard-domains:has(> li:nth-child(3)) > li {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 2px;
+  }
+}
+
+/* ==== Una pantalla (decisión del usuario, 2026-11-08: «está muy lejos todavía de la muestra») ====
+
+   Lo que se vio (capturas a 1672 × 941): la sección medía 2519 px. En la vista cabían el resumen,
+   las baldosas y los cinco peligros, y las alertas empezaban justo bajo el borde: para ver la
+   alerta activa había que desplazar. Debajo, «Qué hacer» con tres tarjetas de unos 950 px cada una.
+   Aquí, sin quitar nada: el resumen y las baldosas más bajos, las tarjetas de peligro más bajas
+   (dominio e insignia más pequeños, la de muchos dominios en tres columnas), los recuentos junto al
+   título de su panel y no debajo, y cada recomendación como un mosaico con su ficha tras «Ver
+   detalle» (`RecommendationCard.tsx`). Lo que nunca se pliega sigue a la vista: el nivel y su frase,
+   cada alerta con sus motivos y sus mandos, «Tripulante en consola», el motivo de cada recomendación
+   y el magenta de «Recomendación del sistema». */
+
+/* Los paneles de la sección, con menos relleno y el título más cerca de su contenido. */
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot .panel {
+  padding: 0.6rem 0.85rem 0.7rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot .panel > h2 {
+  margin-bottom: 0.35rem;
+}
+
+/* La primera fila, a 6 + 6 columnas y no a 5 + 7 (arriba): a 5 columnas las cuatro píldoras del
+   resumen no cabían en una fila y la cuarta («Crítico 0») bajaba sola, y era esa fila la que daba
+   la altura al resumen y a las baldosas (visto en las dos primeras capturas). A 6 caben; las
+   baldosas a un tercio de 6 columnas siguen con su cifra entera («21 120»). */
+
+/* El resumen: la insignia un punto más baja y las cuatro píldoras en una fila (si no caben, la
+   fila se parte, nunca una letra). */
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] {
+  gap: 0.45rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > .level {
+  padding: 0.2rem 0.85rem 0.2rem 0.35rem;
+  font-size: 1.35rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > p {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > .board-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.3rem;
+}
+
+/* Los cinco peligros, más bajos: título y dominios más pequeños, menos hueco. */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard {
+  gap: 0.35rem;
+  padding: 0.4rem 0.55rem 0.45rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > h3 {
+  gap: 0.35rem;
+  padding-bottom: 0.2rem;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  /* A 1300 px «confinamiento» rozaba el borde de su tarjeta: con el `lang="es"` del documento se
+     parte por sílabas («confina-miento»), nunca letra a letra. */
+  hyphens: auto;
+  /* Y si el navegador no tiene diccionario de guiones para el español (Chrome sin ventana no lo
+     trae), la palabra se parte donde haga falta antes que salirse de la tarjeta (visto el
+     2026-11-08 a 1300 px: «confinamiento» y «1 dominio» sobresalían de «Aislamiento»). */
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* Lo mismo para la cuenta del pie: en una tarjeta estrecha, los segmentos encima y la cuenta debajo. */
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard {
+  min-width: 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-tally {
+  flex-wrap: wrap;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > h3 .pictogram {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-domains {
+  font-size: 0.88rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) .hazard-domains > li {
+  padding: 0.15rem 0;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > p {
+  font-size: 0.88rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="hazards"]) article.hazard > p .num {
+  font-size: 1.05rem;
+}
+
+/* Alertas y «Qué hacer»: los recuentos al lado del título, no en una fila propia. El título y las
+   píldoras comparten la primera fila; todo lo demás va a lo ancho, en el orden de siempre. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel:is([data-ui="alerts"], [data-ui="recommendations"]) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel:is([data-ui="alerts"], [data-ui="recommendations"]) > * {
+  grid-column: 1 / -1;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel:is([data-ui="alerts"], [data-ui="recommendations"]) > h2 {
+  grid-column: 1;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel:is([data-ui="alerts"], [data-ui="recommendations"]) > .board-tally {
+  grid-column: 2;
+  margin: 0 0 0.5rem;
+}
+
+/* «Tripulante en consola»: la entrada y su frase, con menos aire; no se pliega. */
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="alerts"]) > .operator {
+  margin-bottom: 0.45rem;
+  font-size: 0.92rem;
+}
+
+/* La alerta: menos relleno; los mandos siguen con su alto táctil. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row {
+  gap: 0.5rem 1rem;
+  padding: 0.55rem 0.8rem 0.6rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers {
+  margin: 0.25rem 0;
+}
+
+/* ---- «Qué hacer»: cada recomendación, un mosaico (`RecommendationCard.tsx`) ---- */
+
+/* La contramedida, lo principal del mosaico: un punto más grande que el resto. */
+:where(.app[data-look="reference"]) .recommendation > .source-tag + p {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Adoptar y No adoptar en una fila: el motivo del «no» toma el sitio que queda, y si no cabe la
+   fila se parte (la entrada baja entera, nunca letra a letra). */
+:where(.app[data-look="reference"]) .recommendation > .recommendation-commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+:where(.app[data-look="reference"]) .recommendation > .recommendation-commands > p {
+  margin: 0;
+}
+
+:where(.app[data-look="reference"]) .recommendation > .recommendation-commands > .inline-form {
+  flex: 1 1 14rem;
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+}
+
+:where(.app[data-look="reference"]) .recommendation > .recommendation-commands > .inline-form > input {
+  flex: 1 1 6rem;
+}
+
+/* El «Ver detalle» de la tarjeta, al pie y sin margen arriba; su rótulo («ficha, respuesta previa y
+   evidencia») iba a dos renglones a 20 rem de tarjeta y se bajó un punto. Segunda ronda
+   (2026-11-08), letra al suelo: a 0,85 rem también iba a dos renglones a 1672 px (captura), así
+   que sube a 0,875 sin perder nada. */
+:where(.app[data-look="reference"]) .recommendation > .board-detail {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"]) .recommendation > .board-detail > .board-detail-toggle {
+  font-size: 0.875rem;
+}
+
+/* ---- Mosaicos llenos de color (R4-4, 2026-11-08: «todavía se puede asemejar más») ----
+
+   En la muestra, «Variables RIDGE – Acceso rápido» son mosaicos llenos de su color (violeta, azul,
+   verde, ámbar, verde) con la palabra en claro encima; aquí cada peligro solo llevaba el acento en el
+   marco y un velo que se apagaba a media tarjeta. La tarjeta entera no puede ir llena: lleva las
+   insignias de nivel de sus dominios, y ningún adorno va detrás de un nivel (§2.5; ver la cabecera).
+   Lo que se llena es su cabecera —la letra RIDGE y el nombre del peligro, que no son un nivel—: una
+   banda de lado a lado con la receta de `.tile-acc` (`board.css`): el acento al 30 % sobre
+   `--ref-navy`, que solo baja al 24 % (más lleno que `.tile-acc`, que baja al 14 %), y el filete
+   del acento debajo. El texto va en `--c-text`: medido con
+   la paleta base, 7,6:1 sobre el violeta de radiación, 7,5 sobre el azul de aislamiento, 6,8 sobre el
+   verde azulado de distancia, 7,3 sobre el ámbar de gravedad y 6,6 sobre el verde de entorno (el peor
+   punto, el arranque del degradado al 30 %). Solo en la consola de tripulación: «Estado recibido» de
+   Tierra no es de esta unidad. Con alto contraste, sin relleno (abajo). */
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard > h3 {
+  margin: -0.4rem -0.55rem 0.1rem;
+  padding: 0.4rem 0.55rem 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--acc) 80%, var(--c-text));
+  border-radius: 8px 8px 0 0;
+  color: var(--c-text);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--acc) 30%, var(--ref-navy)), color-mix(in srgb, var(--acc) 24%, var(--ref-navy)));
+  box-shadow: inset 0 0 14px color-mix(in srgb, var(--acc) 30%, transparent);
+}
+
+/* El dibujo del peligro, en la mezcla de `.tile-acc .pictogram`: se distingue del fondo lleno. */
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard > h3 .pictogram {
+  color: color-mix(in srgb, var(--acc) 55%, var(--c-text));
+}
+
+/* La tarjeta ya no lleva el velo de arriba (ahora lo pone la banda): el resto, el fondo de siempre,
+   que es el que hay detrás de las insignias. Gana a la regla de arriba (la del velo, que sigue para
+   «Estado recibido» de Tierra) solo por ir después con el mismo peso: no se sube por encima de ella. */
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ref-card) 96%, transparent), color-mix(in srgb, var(--ref-navy) 92%, transparent));
+}
+
+/* Alto contraste: sin relleno ni brillo; la banda se queda en su filete. */
+.app[data-look="reference"][data-high-contrast="on"] #crew-panel-hazards .panel[data-ui="hazards"] article.hazard > h3 {
+  background: none;
+  box-shadow: none;
+}
+
+/* ==== R5-4 (2026-11-09, «se va acercando pero todavía hay margen de mejora») ====
+
+   Lo que se vio (captura post-R4 a 1672 × 941): la página medía 1752 px. El resumen y las baldosas
+   (dos filas, 2 + 3) ocupaban unos 195 px, las tarjetas de peligro se estiraban a la de cinco
+   dominios con 100 px vacíos en las de uno, y la alerta activa empezaba hacia los 770 px, rozando
+   el pliegue. En la muestra, «Estado de riesgo» es compacto y todo cabe en una pantalla. Aquí, sin
+   plegar nada: el resumen a dos columnas en el orden del DOM (insignia | frase, píldoras |
+   segmentos), las cinco baldosas en una fila, las tarjetas de peligro más bajas y la rejilla de
+   «Qué hacer» más apretada. Lo que nunca se pliega sigue a la vista. */
+
+/* El resumen: la insignia y la frase del backend en la primera fila, las píldoras por nivel y los
+   segmentos en la segunda. En fila flexible que se parte, en el orden del DOM leído de izquierda a
+   derecha: nada se reordena. En rejilla de dos columnas (primera prueba) las píldoras, anchas,
+   ensanchaban la columna de la insignia y la frase quedaba en una columna de 120 px. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  gap: 0.45rem 0.9rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > .level {
+  flex: none;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > p {
+  flex: 1 1 16rem;
+  margin: 0;
+  line-height: 1.3;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > .board-tally {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .panel.summary[data-level] > .summary-domains {
+  flex: 1 1 10rem;
+  min-width: 0;
+  margin: 0;
+}
+
+/* La primera fila a 5 + 7: compacto, el resumen cabe en 5 columnas (insignia y frase, píldoras y
+   segmentos), y las cinco baldosas en una fila necesitan las 7 (a 6, «40,0 de 180» y «11 min ida»
+   partían la unidad en otra línea; visto en la segunda captura). */
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(> .slot-body > [data-ui="summary"]) {
+  --span: 5;
+  --span-mid: 5;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(.stat-tiles) {
+  --span: 7;
+  --span-mid: 7;
+}
+
+/* Las cinco baldosas en una fila, a la altura del resumen; la cifra un punto más baja (1,5 rem)
+   para que «21 120» y «40,0 de 180» quepan en un quinto de siete columnas. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tiles {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: 100%;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile,
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(-n + 2) {
+  grid-column: auto;
+  align-content: space-between;
+  padding: 0.4rem 0.45rem 0.45rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile > .stat-label {
+  line-height: 1.25;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:where(:not(.stale)) > .stat-value {
+  font-size: 1.5rem;
+}
+
+/* Cuerpo de menos de 66 rem (a 1300 px de ventana mide unos 1000 px): a un quinto de siete columnas
+   cada baldosa medía 108 px, con la unidad y el rótulo partidos (visto en captura). Ahí vuelve el
+   reparto de antes: 6 + 6 y las baldosas en dos filas (2 + 3). */
+@container board (max-width: 66rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(> .slot-body > [data-ui="summary"]),
+  :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(.stat-tiles) {
+    --span: 6;
+    --span-mid: 6;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tiles {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile {
+    grid-column: span 2;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(-n + 2) {
+    grid-column: span 3;
+  }
+}
+
+/* Cuerpo estrecho: vuelve el reparto automático de `styles.css` (dos o una por fila). */
+@container board (max-width: 48rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(n) {
+    grid-column: auto;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tiles {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  }
+}
+
+/* Los cinco peligros, sin aire muerto: menos relleno entre dominios y la cuenta del pie pegada. La
+   tarjeta más alta era la de la distancia (título en dos renglones, el dominio con su insignia
+   debajo y el retardo), y las de un dominio quedaban con 70 px vacíos. La de muchos dominios crece
+   2,4 veces y no 3: así las de uno pasan de 194 a unos 210 px y su dominio va en la misma línea que
+   su insignia (la regla de `styles.css` lo hace en cuanto la tarjeta da para ello); en fila
+   flexible que se parte, nunca letra a letra. */
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) .hazards {
+  gap: 0.5rem;
+}
+
+/* Solo con cuerpo ancho (≥ 66 rem): a 1300 px de ventana, con 2,4, la lista de cinco dominios
+   partía «Neuro-ocular» y separaba cada dibujo de su nombre (visto en captura); ahí sigue en 3. */
+@container board (min-width: 66rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard:has(.hazard-domains > li:nth-child(3)) {
+    flex-grow: 2.4;
+  }
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) .hazard-domains:not(:has(> li:nth-child(3))) > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 0.4rem;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard > p {
+  margin: 0;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) .hazard-domains > li {
+  padding: 0.1rem 0;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="hazards"]) article.hazard {
+  gap: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+/* La alerta: los mandos (Reconocer, Suprimir, Inhibir…) de dos en dos y no en columna. En columna,
+   tres mandos de alto táctil medían 150 px y la tarjeta, con dos líneas de contenido, quedaba con
+   la mitad vacía. Siguen todos a la vista, con su alto táctil; lo que no es mando (quién reconoció,
+   el estado declarado con su nota) ocupa su fila entera. En panel estrecho manda la regla de
+   `styles.css` (fila que se parte). */
+@container (min-width: 44rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="alerts"]) .alert-actions {
+    flex-flow: row wrap;
+    align-content: start;
+    width: 21rem;
+    min-width: 0;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="alerts"]) .alert-actions > .command {
+    flex: 1 1 9rem;
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="alerts"]) .alert-actions > :is(.secondary, .resolution) {
+    flex-basis: 100%;
+  }
+}
+
+/* «Qué hacer»: las tarjetas reparten todo el ancho. Con `auto-fill` de 20 rem quedaba una cuarta
+   pista vacía de 340 px a la derecha (la nota de recursos, que va de lado a lado, la mantiene
+   viva: ni `auto-fit` la plegaba), y las tres tarjetas, estrechas, partían cada texto en tres o
+   cuatro renglones. Con sitio, tres pistas iguales; con una o dos recomendaciones, tantas pistas
+   como tarjetas. Más de tres siguen en filas de tres. */
+@container board (min-width: 62rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="recommendations"]) .recommendations {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="recommendations"]) .recommendations:not(:has(> .recommendation ~ .recommendation ~ .recommendation)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  :where(.app[data-look="reference"] #crew-panel-hazards .panel[data-ui="recommendations"]) .recommendations:not(:has(> .recommendation ~ .recommendation)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Adoptar y No adoptar en la misma fila cuando la tarjeta da para ello (≈ 26 rem): el formulario
+   del «no» baja de 14 a 11 rem de base y su entrada crece con lo que sobre. Antes «Adoptar y
+   seguir» iba solo en su fila y el motivo con «No adoptar» en otra. Ningún mando se esconde; si no
+   cabe, la fila se parte entera. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .recommendation > .recommendation-commands > .inline-form {
+  flex-basis: 11rem;
+}
+
+/* El ancho propio de la entrada (unos 20 caracteres) contaba como su mínimo y empujaba el
+   formulario a otra fila: aquí parte de 4 rem y crece. */
+:where(.app[data-look="reference"] #crew-panel-hazards) .recommendation > .recommendation-commands > .inline-form > input {
+  flex: 1 1 4rem;
+  width: 4rem;
+  min-width: 4rem;
+}

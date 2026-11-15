@@ -1,0 +1,112 @@
+{
+  "_nota": "Glosario de los términos que usa la interfaz (unidad 3, 2026-11-03). Cada término dice de dónde sale su definición (`origin`): `emma` es una definición de EMMA y nombra el fichero del repositorio que la sostiene (`document`, ruta desde la raíz del repositorio), donde está escrito lo que el término hace en el sistema; `source` es una definición tomada de una fuente leída, y lleva al menos una frase en su idioma con su ficha del registro (data/evidence_refs.json), su sitio y su día de lectura (`basis`). Una definición de EMMA puede llevar además frases leídas que la apoyan. Las definiciones explican, no recomiendan: el cargador (app/guides.py) las pasa por el filtro de lenguaje (app/text_guard.py) y rechaza un término sin origen, un origen `emma` sin documento, uno `source` sin frase, una ficha que no está en el registro y un identificador repetido. Que el documento exista lo comprueba una prueba (tests/test_guides.py), no el cargador: el paquete de escritorio no lleva el repositorio.",
+  "terms": [
+    {
+      "id": "baseline",
+      "term": "Línea base personal",
+      "definition": "Lo que es normal para cada tripulante, calculado con sus propias lecturas (mediana y desviación absoluta mediana) y no con una tabla de población. En una misión larga lo normal se desplaza, y una tabla de Tierra daría falsas alarmas al principio y ceguera después.",
+      "origin": "emma",
+      "document": "backend/app/analysis/baseline.py"
+    },
+    {
+      "id": "deviation",
+      "term": "Desviación",
+      "definition": "Cuánto se aparta una lectura de la línea base personal del tripulante. Sirve para lo agudo, lo que ha cambiado hoy; la deriva lenta es cosa de la tendencia.",
+      "origin": "emma",
+      "document": "backend/app/analysis/baseline.py"
+    },
+    {
+      "id": "trend",
+      "term": "Tendencia (deriva)",
+      "definition": "Un cambio sostenido a lo largo de días o semanas, separado del ruido: se ajusta una recta a la serie, y su pendiente solo cuenta si es clara frente a su propio error típico.",
+      "origin": "emma",
+      "document": "backend/app/analysis/trend.py"
+    },
+    {
+      "id": "false-alarm-rate",
+      "term": "Tasa de falsa alarma",
+      "definition": "La proporción de alertas que da el sistema en personas sanas, sin ningún deterioro. EMMA la mide con fisiología humana real registrada en Tierra (el conjunto MMASH); no valida la fisiología del vuelo.",
+      "origin": "emma",
+      "document": "compliance/external-validation.md"
+    },
+    {
+      "id": "sensitivity",
+      "term": "Sensibilidad",
+      "definition": "La proporción de deterioros que el sistema detecta cuando se inyectan sobre esa misma fisiología real. Se mide junto a la tasa de falsa alarma: un sistema apagado no da ninguna falsa alarma y tampoco detecta nada.",
+      "origin": "emma",
+      "document": "compliance/external-validation.md"
+    },
+    {
+      "id": "light-time",
+      "term": "Tiempo de luz",
+      "definition": "Lo que tarda la luz, y con ella una transmisión de radio, entre la Tierra y la nave: 1,3 segundos hasta la Luna a la distancia media y de 3 a 22 minutos hasta Marte, según dónde estén los dos planetas. Con ese retardo Tierra no puede contestar al momento, y EMMA escala el riesgo con él.",
+      "origin": "emma",
+      "document": "backend/app/environment/ephemeris.py",
+      "basis": [
+        {"ref": "nasa-science-light-day", "quote": "The Moon is 238,855 miles (384,400 kilometers) from Earth, on average. The astronauts on the Artemis II mission took about three days to get there, but light can traverse that distance in 1.3 seconds.", "where": "What Is a Light-Day?", "read_on": "2026-11-03"},
+        {"ref": "nasa-science-light-day", "quote": "The distance between Earth and Mars changes as they orbit the Sun, and it can take anywhere from three minutes to 22 minutes for light to travel between the two planets. Same for a radio transmission, either to or from a spacecraft at Mars.", "where": "What Is a Light-Day?", "read_on": "2026-11-03"}
+      ]
+    },
+    {
+      "id": "solar-particle-event",
+      "term": "Evento de partículas solares (SPE)",
+      "definition": "Una erupción gigante en la superficie del Sol que lanza al espacio energía en forma de rayos X, rayos gamma y corrientes de protones y electrones. Puede afectar a los astronautas y a sus equipos aunque estén lejos del Sol.",
+      "origin": "source",
+      "basis": [
+        {"ref": "nasa-why-space-radiation-matters", "quote": "Occasionally, giant explosions, called solar flares, occur on the surface of the Sun and release massive amounts of energy out into space in the form of x-rays, gamma rays, and streams of protons and electrons. This is called a solar particle event (SPE). These solar flares can have serious consequences to astronauts and their equipment, even at locations that are far from the Sun.", "where": "cuerpo de la página, sobre el Sol como fuente de radiación", "read_on": "2026-11-03"}
+      ]
+    },
+    {
+      "id": "ridge",
+      "term": "RIDGE (los cinco peligros)",
+      "definition": "Las cinco categorías con que el Human Research Program de NASA agrupa los peligros del vuelo humano: radiación, aislamiento y confinamiento, distancia de la Tierra, gravedad (y su falta) y entornos cerrados u hostiles. RIDGE son sus iniciales en inglés; cada dominio de riesgo de EMMA lleva la suya.",
+      "origin": "emma",
+      "document": "backend/app/ingest/codes.py",
+      "basis": [
+        {"ref": "nasa-hrp-hazards", "quote": "has pinpointed five hazards that astronauts will encounter on their journeys. These include space radiation, isolation and confinement, distance from Earth, gravity (and the lack of it), and closed or hostile environments.", "where": "About the Five Hazards", "read_on": "2026-11-03"}
+      ]
+    },
+    {
+      "id": "signed-ledger",
+      "term": "Registro firmado (ledger)",
+      "definition": "El registro por el que pasa toda observación antes de guardarse: cada entrada va firmada y encadenada a la anterior por su huella, de modo que una lectura cambiada, borrada o recortada al final se detecta al verificar la cadena.",
+      "origin": "emma",
+      "document": "compliance/record-integrity.md"
+    },
+    {
+      "id": "safe-mode",
+      "term": "Modo seguro",
+      "definition": "Un interruptor firmado que corta toda salida de EMMA a internet. Lo activa cualquiera con un motivo y solo una persona lo levanta; las constantes, el análisis y las alertas siguen funcionando.",
+      "origin": "emma",
+      "document": "backend/app/api/safe_mode.py"
+    },
+    {
+      "id": "measured",
+      "term": "Medido",
+      "definition": "Un valor que sale directamente de un sensor, de una prueba o de lo que anota el propio tripulante.",
+      "origin": "emma",
+      "document": "backend/app/ingest/fhir.py"
+    },
+    {
+      "id": "inferred",
+      "term": "Inferido",
+      "definition": "Un valor estimado por un modelo a partir de otras medidas: no lo leyó ningún sensor.",
+      "origin": "emma",
+      "document": "backend/app/ingest/fhir.py"
+    },
+    {
+      "id": "predicted",
+      "term": "Predicho",
+      "definition": "Un valor proyectado hacia el futuro, por ejemplo la continuación de una tendencia. Todavía no ha pasado.",
+      "origin": "emma",
+      "document": "backend/app/ingest/fhir.py"
+    },
+    {
+      "id": "decision-support",
+      "term": "Apoyo a la decisión",
+      "definition": "Lo que hace EMMA: informa y propone, y la decisión es de la tripulación y del equipo médico. No da órdenes médicas ni sustituye el juicio clínico; por eso sus textos pasan por un filtro de lenguaje.",
+      "origin": "emma",
+      "document": "backend/app/text_guard.py"
+    }
+  ]
+}

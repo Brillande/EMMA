@@ -1,0 +1,13 @@
+{
+  "target": "app/anatomy.py",
+  "test": [
+    "tests/test_soup_polaris.py"
+  ],
+  "mutations": [
+    {
+      "label": "el módulo que la ficha da como usuario de una carga indirecta deja de nombrarla",
+      "old": "con `esqueleto_referencia.py` de Polaris",
+      "new": "con un guion de Polaris"
+    }
+  ]
+}

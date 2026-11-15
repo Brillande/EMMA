@@ -1,0 +1,11 @@
+{
+  "target": "app/api/routes.py",
+  "test": ["tests/test_names_es.py"],
+  "mutations": [
+    {
+      "label": "/api/indicators deja de publicar el nombre en español y su origen",
+      "old": "                **names_es.fields(code.key),",
+      "new": "                \"display_es\": code.display,"
+    }
+  ]
+}

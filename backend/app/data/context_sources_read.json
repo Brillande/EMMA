@@ -1,0 +1,200 @@
+{
+  "_nota": "Las fuentes del contexto de producto: las que no tenían ficha, con lo que se leyó de cada una el 2026-10-26 (decimoséptima ronda, U8) y lo que no se pudo leer, con su motivo. El mismo día, en la decimoctava ronda (U19), entraron las seis direcciones de §17 que seguían sin ficha y el informe de comida del HRP, que ya la tenía y entra por su frase sobre el origen de HACCP. Las dos frases del «espacio a la Tierra» de la conversación de ideación se enseñan aquí, junto a la carta de Stuhlinger: la de HACCP, en la entrada del informe de comida; la de la ISS como plataforma de atención médica miniaturizada, que se buscó y no se encontró en una fuente de NASA, en la entrada del vídeo de la estación, tras el que la conversación la escribe. Las listas son la especificación del equipo (§17, «URLs de las fuentes») y la base de conocimiento (§11.3, los dos posts de X). `listed_as` es el rótulo literal de la línea de §17; una fuente que no está en esas listas lleva en su lugar `why_added`. `status` es «read» (leída), «partial» (leída una parte: la página de un vídeo, el texto de una publicación sin su vídeo) o «not_read» (buscada y no leída); lo no leído lleva `not_read` con el motivo. `read_on` por fuente es el día en que se leyó esa fuente cuando no es el del fichero (`null` = el del fichero): lo trajo la decimonovena ronda (U2, 2026-10-31), que leyó el enunciado del reto, publicado el 29 de octubre en otra dirección del sitio que la de §17. Cada ficha vive en data/evidence_refs.json y dice qué se leyó; aquí solo se dice para qué la tiene EMMA (`emma_use`). Es un inventario: no entra en el análisis, en el riesgo ni en ninguna alerta (invariante 5). La tabla «lo que pide el reto → dónde lo cubre EMMA» está en compliance/challenge-coverage.md.",
+  "read_on": "2026-10-26",
+  "lists": [
+    {
+      "id": "spec-17",
+      "document": "docs/contexto/especificacion-tecnica-v1.1.md",
+      "section": "17",
+      "title": "URLs de las fuentes"
+    },
+    {
+      "id": "kb-11-3",
+      "document": "docs/contexto/knowledge-base-v1.md",
+      "section": "11.3",
+      "title": "Referencias X / enlaces no recuperables"
+    }
+  ],
+  "sources": [
+    {
+      "ref": "space-apps-2026-health-monitoring-challenge",
+      "lists": ["spec-17"],
+      "listed_as": "NASA Space Apps Challenge 2026 – Create Health Monitoring Software for Astronauts on Space Missions",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyó entero el texto del enunciado (resumen, antecedentes, objetivos y consideraciones) el 2026-10-31, en la dirección donde el sitio lo sirve (/2026/challenges/health-monitoring-software/; la de §17 sigue dando «Oops! Page Not Found»). El vídeo embebido («2026 Challenge | Create Health Monitoring Software for Astronauts on Space Missions») no se ha visto; la pestaña «Resources» dice «Resources will be available on Friday, November 13.» y no enlaza ningún recurso todavía, así que la clasificación de recursos que pide la conversación de ideación queda para esa fecha; la pestaña «Teams» está vacía.",
+      "read_on": "2026-10-31",
+      "emma_use": "Es el reto que EMMA aborda. Sus frases, una por fila y con dónde las cubre EMMA, están en compliance/challenge-coverage.md, separadas de la interpretación del equipo; lo que EMMA no tiene (la gamificación) se dice como «no»."
+    },
+    {
+      "ref": "nasa-space-apps-2026-announcement",
+      "lists": [],
+      "listed_as": null,
+      "why_added": "Buscando el enunciado: es la frase oficial más cercana a lo que pide el reto que se pudo leer.",
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Tabla «lo leído de NASA sobre el concurso» de compliance/challenge-coverage.md: «monitoring physiological and behavioral health indicators» en viajes de larga duración. Desde que el enunciado está leído, es contexto, no la fuente de lo que pide el reto."
+    },
+    {
+      "ref": "space-apps-2026-participant-faqs",
+      "lists": [],
+      "listed_as": null,
+      "why_added": "Buscando el enunciado: dice cuándo se publica y qué reglas obligan a la entrega.",
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Calendario y reglas del concurso en compliance/challenge-coverage.md, como asunto del equipo: EMMA no decide nada con ellas."
+    },
+    {
+      "ref": "nasa-living-in-space",
+      "lists": ["spec-17"],
+      "listed_as": "NASA – Living in Space",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Índice de divulgación. No respalda ningún parámetro: lo que EMMA cita de la salud en vuelo sale de páginas con ficha propia."
+    },
+    {
+      "ref": "nasa-osdr-portal",
+      "lists": ["spec-17"],
+      "listed_as": "NASA OSDR – Open Science Data Repository",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Portada del repositorio del que salen OSD-288 y OSD-569 y la API de RadLab. Cada estudio que EMMA usa tiene su ficha, con su población."
+    },
+    {
+      "ref": "esa-kids-columbus-10-years",
+      "lists": ["spec-17"],
+      "listed_as": "ESA – Columbus laboratory (educational overview)",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Contexto de Columbus para el público. Lo que EMMA cita de EPM y Biolab sale de las páginas de ESA de cada instalación."
+    },
+    {
+      "ref": "estacionespacial-columbus",
+      "lists": ["spec-17"],
+      "listed_as": "EstacionEspacial.com – Columbus Orbital Facility historical page",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Contexto histórico de un sitio no oficial, escrito en parte antes del lanzamiento. No respalda ningún dato de EMMA."
+    },
+    {
+      "ref": "naukas-stuhlinger-letter",
+      "lists": ["spec-17"],
+      "listed_as": "Naukas – traducción de la carta de Ernst Stuhlinger",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Marco narrativo de la transferencia a Tierra (base de conocimiento §12): de arquitectura, nunca de equivalencia clínica. El ejemplo concreto que la conversación de ideación le junta, el origen de HACCP, va con su frase en la entrada del informe de comida del HRP."
+    },
+    {
+      "ref": "nasa-iss-humanity-lab-video",
+      "lists": ["spec-17"],
+      "listed_as": "ISS overview video supplied by project",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyó la página del vídeo (título, canal, fecha, duración y descripción); el vídeo no se vio ni se leyeron sus subtítulos. Tras el vídeo, la conversación de ideación escribe que NASA contempla la ISS como plataforma para desarrollar atención médica miniaturizada, autónoma y autosuficiente, transferible a la atención domiciliaria, a lugares remotos y a países en desarrollo, sin decir de dónde lo saca. El 2026-10-26 (decimoctava ronda, U19) se buscó esa frase con un buscador web y se buscaron sus palabras («miniaturi», «self-suffic», «developing countr») en cinco páginas de nasa.gov (la de la estación, su presentación, su investigación y tecnología, el Research Explorer y el segundo paso hacia Marte, «Step 2, Station») y en los tres libros «International Space Station Benefits for Humanity» (2012, 2016 y 2022): no está en ninguno. Lo más cercano, en el de 2022, es un dispositivo miniaturizado para tratar heridas que «could expand uses from hospital settings to doctors' offices, patients' homes, and even remote locations worldwide», que no es la misma afirmación. EMMA no repite la frase de la conversación.",
+      "read_on": null,
+      "emma_use": "Presentación de la estación para el público. No respalda ningún dato de EMMA."
+    },
+    {
+      "ref": "x-miriamgonp-liver-render",
+      "lists": ["spec-17", "kb-11-3"],
+      "listed_as": "X post supplied by project – Miriam",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "La referencia de «renderizar el hígado» (base de conocimiento §11.1): el visor 3D de Polaris sobre un TAC, con hallazgos que nadie ha validado. Respalda que EMMA no presente el visor como diagnóstico; no recoge los datos clínicos de la autora."
+    },
+    {
+      "ref": "x-israeldfirzt-protoclone",
+      "lists": ["spec-17", "kb-11-3"],
+      "listed_as": "X post supplied by project – Israel",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyó el texto de la publicación; el vídeo que la acompaña no se vio.",
+      "read_on": null,
+      "emma_use": "Ninguno todavía: una frase sobre un androide anatómico, sin el vídeo no se le atribuye ninguna idea."
+    },
+    {
+      "ref": "nasa-hrp-roi",
+      "lists": ["spec-17"],
+      "listed_as": "NASA HRP – Research Operations & Integration",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Contexto de quién organiza en el HRP la investigación humana en la estación y en las simulaciones en Tierra. No respalda ningún parámetro: CIPHER, el Twins Study y el primer paso hacia Marte, que la portada enlaza, tienen ficha propia."
+    },
+    {
+      "ref": "nasa-iss-astronaut-record-holders",
+      "lists": ["spec-17"],
+      "listed_as": "NASA – ISS Astronaut Record Holders",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "Ninguno en el análisis: cuánto duraron los vuelos más largos de NASA. El perfil de misión la leyó sin citarla (data/mission_profiles.json); sus cifras no entran en el riesgo."
+    },
+    {
+      "ref": "astroquery-docs",
+      "lists": ["spec-17"],
+      "listed_as": "Astroquery documentation",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyó la portada de la documentación (presentación, instalación e índice de servicios); las páginas de cada servicio, entre ellas la de JPL Horizons, no se leyeron en esta lectura.",
+      "read_on": null,
+      "emma_use": "No se adopta: de astroquery, EMMA usa solo astroquery.jplhorizons, para el tiempo de luz (environment/ephemeris.py), y lo usaba antes de esta lectura. No es un backend de salud ni una fuente de datos biomédicos (CLAUDE.md, minas conocidas)."
+    },
+    {
+      "ref": "nasa-std-3001-appendix-e",
+      "lists": ["spec-17"],
+      "listed_as": "NASA-STD-3001 Appendix E – Health and Medical Care Technical Requirements",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "La figura E.2-1 es una imagen y no se leyó; el texto y las dos tablas de la página, enteros.",
+      "read_on": null,
+      "emma_use": "Dos frases del bloque del IMM en /api/framework: un supuesto sobre la tripulación (§E.2.2) y un límite del modelo (§E.2.3). EMMA no usa sus probabilidades por misión ni su lista de condiciones."
+    },
+    {
+      "ref": "beyondtheprotocol-polaris",
+      "lists": ["spec-17"],
+      "listed_as": "GitHub – BeyondTheProtocol/polaris",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyó la portada del repositorio con su README; el código, docs/ y el historial no se leyeron en esta lectura, y lo que cambió entre el commit leído y el que copió EMMA no se ha revisado.",
+      "read_on": null,
+      "emma_use": "EMMA incorpora código suyo: una copia literal en polaris/ (licencia AGPL-3.0-or-later, NOTICE), a la que entra solo por app/polaris. Qué se copió y de qué commit lo dicen polaris/ADOPTADO.txt y docs/polaris-divergencias.md; esta entrada es la portada leída."
+    },
+    {
+      "ref": "bonilista-zerokeyusb",
+      "lists": ["spec-17"],
+      "listed_as": "ZeroKeyUSB Supermo share supplied by project",
+      "why_added": null,
+      "status": "read",
+      "not_read": null,
+      "read_on": null,
+      "emma_use": "No se adopta: ni hardware ni código. Queda como la referencia de diseño local y sin red que conserva la base de conocimiento (§11.2); la especificación (§15) deja el nodo de salud en hardware como decisión pospuesta."
+    },
+    {
+      "ref": "hrp-food-system-evidence-report",
+      "lists": ["spec-17"],
+      "listed_as": "NASA Human Research Roadmap – Evidence Report: Inadequate Food System (2016)",
+      "why_added": null,
+      "status": "partial",
+      "not_read": "Se leyeron la portada, el resumen ejecutivo, la lista de huecos y las páginas que tratan la radiación (5, 16, 19, 28 y 29), y se buscó «HACCP» en el PDF entero; el resto del informe no se ha releído.",
+      "read_on": null,
+      "emma_use": "La frase sobre el origen de HACCP que la conversación de ideación junta a la carta de Stuhlinger como ejemplo de transferencia a Tierra (página 5 del PDF): «Similarly, the need to ensure food safety through mission critical, medically limited situations drove the development of the Hazard Analysis Critical Control Point (HACCP) system by NASA, U.S. Army Natick Soldier Research, Development & Engineering Center (NSRDEC), and Pillsbury. HACCP has since improved food safety throughout food industry (Heidelbaugh 1966).». Es relato, como la carta: no respalda nada clínico de EMMA. El informe lo usa además el bloque de comida y radiación de /api/framework."
+    }
+  ]
+}

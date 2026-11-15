@@ -1,0 +1,31 @@
+{
+  "target": "app/reports/labs.py",
+  "test": ["tests/test_lab_readings.py"],
+  "mutations": [
+    {
+      "label": "una lectura que exige corrección se confirma tal cual",
+      "old": "    if reading.get(\"requires_correction\") and (value is None or unit is None):",
+      "new": "    if False:"
+    },
+    {
+      "label": "se acepta una unidad que no es la del catálogo",
+      "old": "            require_catalog_unit(code, unit)\n",
+      "new": "            pass\n"
+    },
+    {
+      "label": "un valor censurado no exige corrección",
+      "old": "\"requires_correction\": confidence == \"baja\" or comparator is not None,",
+      "new": "\"requires_correction\": confidence == \"baja\","
+    },
+    {
+      "label": "el nombre en español se guarda con la clave de Polaris y no con la del indicador",
+      "old": "        LAB_KEYS[str(entry[\"key\"])]: str(entry[\"nombre\"])",
+      "new": "        str(entry[\"key\"]): str(entry[\"nombre\"])"
+    },
+    {
+      "label": "el cociente derivado se queda sin el nombre con que se enseña su lectura",
+      "old": "    found.setdefault(LAB_KEYS[\"bun_cr\"], _BUN_CR_NAME)",
+      "new": "    pass"
+    }
+  ]
+}

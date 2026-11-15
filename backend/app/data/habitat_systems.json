@@ -1,0 +1,112 @@
+{
+  "basis": "Vocabulario de diseño de EMMA: EMMA no modela una nave concreta y esta lista no se ha leído de ninguna. Es una partición funcional mínima de los sistemas de un hábitat y se sustituye por la del vehículo real al desplegar. Las funciones de soporte vital que nombra están en el resumen técnico de NASA sobre el ECLSS (OCHMO-TB-002), que las agrupa de otra manera: la temperatura, la humedad, el CO2 y los contaminantes en traza van en la revitalización de aire, y el oxígeno en el control de presión. Energía, comunicaciones e iluminación no son del ECLSS. La comida y el ejercicio entran porque dos resúmenes técnicos de la NASA los llaman sistema: «The space food system must provide food that is safe, nutritious, and acceptable to the crew» (OCHMO-TB-013 Rev E, p. 1, leído el 2026-10-31) y «The vehicle must be designed to accommodate all aspects of the exercise system» (OCHMO-TB-031, Design Considerations, leído el 2026-11-01). El control térmico activo de la ISS (ATCS) evacua el calor de los equipos; el aire de cabina lo trata un equipo del ECLSS.",
+  "basis_refs": ["ochmo-tb-002", "nasa-iss-atcs-overview", "ochmo-tb-013", "ochmo-tb-031"],
+  "declared_label": "declarado por una persona, no telemetría",
+  "declared_note": "EMMA no lee el estado de ningún sistema del hábitat: lo que se muestra es lo que una persona declaró en la consola, firmado en el registro. No entra en ninguna puntuación ni mueve niveles, alertas o excursiones.",
+  "relation_basis": "La relación entre un sistema y un parámetro de cabina es de definición: en este vocabulario el sistema se define por lo que hace con ese parámetro. No es una afirmación médica ni una hipótesis de causa.",
+  "life_support_basis": "La lista de sistemas es de diseño de EMMA, pero qué funciones son de soporte vital no: sale del resumen técnico de la NASA sobre el ECLSS (OCHMO-TB-002 Rev B, leído el 2026-10-21), que dice que el ECLSS «provides clean air and water to crew» y «manages air and water quality, waste, atmospheric parameters, and emergency response systems», y cuyo diagrama de subsistemas (página 3) incluye los límites de temperatura y humedad [V2 6012]. Con esa lectura se marcan como de soporte vital la revitalización de aire, el control de presión, el control térmico y de humedad, el control de contaminantes y el agua; la iluminación, la energía y las comunicaciones no. La alimentación y el ejercicio tampoco: OCHMO-TB-013 y OCHMO-TB-031 no los llaman soporte vital, y OCHMO-TB-002 los trata como una demanda sobre el ECLSS, no como una de sus funciones. Solo sirve para proponer un sistema declarado degradado o fuera de servicio como causa común candidata cuando varios tripulantes cambian a la vez: el documento no dice qué efecto tiene en las personas que falle un sistema concreto.",
+  "not_coded": "Un sistema y su estado son identificadores de esta lista, no observaciones clínicas: no llevan código LOINC ni entran en el catálogo de indicadores.",
+  "default_state": "undeclared",
+  "states": [
+    {
+      "key": "nominal",
+      "display": "nominal",
+      "declarable": true,
+      "off_nominal": false,
+      "description": "Quien declara dice que el sistema funciona como se espera."
+    },
+    {
+      "key": "degraded",
+      "display": "degradado",
+      "declarable": true,
+      "off_nominal": true,
+      "description": "Quien declara dice que el sistema funciona, pero no como se espera."
+    },
+    {
+      "key": "out-of-service",
+      "display": "fuera de servicio",
+      "declarable": true,
+      "off_nominal": true,
+      "description": "Quien declara dice que el sistema no funciona."
+    },
+    {
+      "key": "undeclared",
+      "display": "sin declarar",
+      "declarable": false,
+      "off_nominal": false,
+      "description": "Nadie ha declarado el estado de este sistema. No quiere decir que funcione: no se sabe."
+    }
+  ],
+  "systems": [
+    {
+      "key": "air-revitalization",
+      "display": "Revitalización de aire",
+      "description": "Retira el CO2 del aire de cabina y repone el oxígeno.",
+      "parameters": ["cabin-ppco2", "cabin-ppo2"],
+      "life_support": true
+    },
+    {
+      "key": "pressure-control",
+      "display": "Control de presión",
+      "description": "Mantiene la presión total de cabina.",
+      "parameters": ["cabin-pressure"],
+      "life_support": true
+    },
+    {
+      "key": "thermal-control",
+      "display": "Control térmico y de humedad",
+      "description": "Mantiene la temperatura y la humedad del aire de cabina.",
+      "parameters": ["cabin-temperature", "cabin-humidity"],
+      "life_support": true
+    },
+    {
+      "key": "contaminant-control",
+      "display": "Control de contaminantes del aire",
+      "description": "Retira del aire de cabina los contaminantes en traza.",
+      "parameters": ["cabin-co", "cabin-ammonia", "cabin-formaldehyde"],
+      "life_support": true
+    },
+    {
+      "key": "lighting",
+      "display": "Iluminación",
+      "description": "Ilumina la cabina.",
+      "parameters": ["cabin-light"],
+      "life_support": false
+    },
+    {
+      "key": "power",
+      "display": "Energía",
+      "description": "Genera, almacena y distribuye la energía eléctrica del hábitat.",
+      "parameters": [],
+      "life_support": false
+    },
+    {
+      "key": "communications",
+      "display": "Comunicaciones",
+      "description": "Enlace de voz y datos con Tierra y entre módulos.",
+      "parameters": [],
+      "life_support": false
+    },
+    {
+      "key": "water",
+      "display": "Agua",
+      "description": "Almacena, recupera y distribuye el agua del hábitat.",
+      "parameters": ["water-toc", "water-silver", "water-microbial"],
+      "life_support": true
+    },
+    {
+      "key": "food",
+      "display": "Alimentación",
+      "description": "Proporciona a la tripulación comida segura, nutritiva y aceptable.",
+      "parameters": [],
+      "life_support": false
+    },
+    {
+      "key": "exercise",
+      "display": "Ejercicio",
+      "description": "Equipo con el que la tripulación hace ejercicio a bordo.",
+      "parameters": [],
+      "life_support": false
+    }
+  ]
+}

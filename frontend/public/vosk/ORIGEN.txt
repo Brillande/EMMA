@@ -1,0 +1,67 @@
+vosk-model-small-es-0.42.tar.gz: de dónde sale el modelo que oye la palabra «EMMA»
+==================================================================================
+
+Qué es: el modelo pequeño de español de Vosk (Kaldi, red «chain» TDNN; acústico am/final.mdl,
+grafo de búsqueda graph/HCLr.fst y graph/Gr.fst, extractor de i-vectores ivector/), de Alpha
+Cephei (AC Technologies LLC). EMMA lo usa con una gramática cerrada («emma», «emma deja de
+escuchar» y [unk]) para saber cuándo empieza una frase para el asistente
+(frontend/src/assistant/wake/). No transcribe lo que se dice: eso lo hace Whisper en el backend
+local con la frase grabada después de la palabra.
+
+Descargado una vez, en desarrollo, el 2026-11-03, de:
+  https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip
+  (zip original: 39 817 833 bytes, SHA-256
+  09b239888f633ef2f0b4e09736e3d9936acfd810bc65d53fad45261762c6511f)
+Reempaquetado sin cambiar ningún fichero como .tar.gz (ustar, con la carpeta
+vosk-model-small-es-0.42/ dentro), que es lo que sabe abrir vosk-browser:
+Tamaño: 39 802 199 bytes.
+SHA-256: bcbcc2dd0986c8ac94c7cbbeaa58c034a58ff7ab65b4ab1eb79281f73e3737fa
+(lo comprueba frontend/src/assistant/wake/voskModel.test.ts)
+
+En ejecución no se descarga nada: el fichero viaja en el paquete (Vite lo copia de public/ a dist/)
+y el trabajador de Vosk lo pide a su propio origen. Lo guarda descomprimido en IndexedDB de ese
+origen para no descomprimirlo en cada arranque: es el modelo, nunca audio.
+
+Licencia: Apache License, Version 2.0, según la tabla de modelos de Vosk
+(https://alphacephei.com/vosk/models, fila vosk-model-small-es-0.42, leída el 2026-11-03: 39M,
+WER 16.02 en Common Voice, 16.72 en MTEDx, 11.21 en MLS, «Apache 2.0»). El README del modelo dice
+«Copyright 2022-2050 AC Technologies LLC» y viaja dentro del archivo. Texto de la licencia:
+LICENSE-Apache-2.0.txt, aquí al lado (el mismo de public/mediapipe/), como pide la §4(a) al
+redistribuir. Anotado también en NOTICE, en la raíz.
+
+Límites: el README da 42.63 % de WER en llamadas telefónicas y no habla de acentos, ruido de
+ventiladores ni de una nave. EMMA no lo ha probado con personas: falsos disparos y palabras
+perdidas están por medir.
+
+
+vosk-model-small-en-us-0.15.tar.gz: el mismo oído, para la interfaz en inglés
+=============================================================================
+
+Qué es: el modelo pequeño de inglés de Estados Unidos de Vosk (misma familia y misma forma que el
+de español: am/final.mdl, graph/HCLr.fst y graph/Gr.fst, ivector/), de Alpha Cephei. Desde que la
+interfaz se lee en castellano o en inglés (2026-11-15, frontend/src/lib/i18n.ts), el modo
+«Escuchar "EMMA"» carga el modelo del idioma de la interfaz
+(frontend/src/assistant/wake/listener.ts, MODEL_PATH_EN), con la gramática cerrada inglesa
+(«emma», «emma stop listening» y [unk]; frontend/src/assistant/wake/machine.ts).
+
+Descargado una vez, en desarrollo, el 2026-11-15, de:
+  https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+  (zip original: 41 205 931 bytes, SHA-256
+  30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498)
+Reempaquetado sin cambiar ningún fichero como .tar.gz (ustar, con la carpeta
+vosk-model-small-en-us-0.15/ dentro; los 14 ficheros comparados byte a byte con los del zip):
+Tamaño: 41 116 714 bytes.
+SHA-256: 6954e0d6b58a59c1c405faf2cf98b962f56d28f42d9b5a7f14b671d785454052
+(lo comprueba frontend/src/assistant/wake/voskModel.test.ts)
+
+Licencia: Apache License, Version 2.0, según la tabla de modelos de Vosk
+(https://alphacephei.com/vosk/models, fila vosk-model-small-en-us-0.15, leída el 2026-11-15: 40M,
+9.85 en librispeech test-clean, 10.38 en tedlium, «Lightweight wideband model for Android and
+RPi», «Apache 2.0»). El README del modelo dice «Copyright 2020 Alpha Cephei Inc» y viaja dentro
+del archivo. El texto de la licencia es el mismo LICENSE-Apache-2.0.txt de aquí al lado.
+
+Límites: SIN PROBAR. No se ha comprobado con el modelo cargado que reconozca la palabra «EMMA»:
+la gramática de Vosk solo admite palabras de su vocabulario, y lo único mirado es que la cadena
+«emma» aparece en graph/Gr.fst (36 veces, sin distinguir la palabra suelta de trozos de otras).
+Si no la reconoce, se ajusta ENGLISH_WAKE_FORMS en wake/machine.ts. Tampoco se ha probado con
+personas, acentos ni ruido de cabina: falsos disparos y palabras perdidas están por medir.

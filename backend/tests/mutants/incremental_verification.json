@@ -1,0 +1,114 @@
+{
+ "target": "app/core/storage.py",
+ "test": [
+  "tests/test_incremental_verification.py"
+ ],
+ "mutations": [
+  {
+   "label": "la verificación reutiliza lo anterior sin mirar la marca de disco",
+   "old": "                and state.disk.same_as(disk)\n",
+   "new": ""
+  },
+  {
+   "label": "la marca de disco no mira total_changes",
+   "old": "        return self.same_but_own_writes(other) and self.total_changes == other.total_changes\n",
+   "new": "        return self.same_but_own_writes(other)\n"
+  },
+  {
+   "label": "la marca de disco no mira data_version",
+   "old": "            and self.data_version == other.data_version\n",
+   "new": ""
+  },
+  {
+   "label": "la marca de disco no mira schema_version",
+   "old": "            and self.schema_version == other.schema_version\n",
+   "new": ""
+  },
+  {
+   "label": "la escritura propia no comprueba la marca antes de escribir",
+   "old": "ajena hecha por la misma conexion quedaria absorbida en esa subida.\n        \"\"\"\n        state = self._verified\n        if state is not None:\n",
+   "new": "ajena hecha por la misma conexion quedaria absorbida en esa subida.\n        \"\"\"\n        state = self._verified\n        if False:\n"
+  },
+  {
+   "label": "la escritura propia absorbe un data_version o un esquema ajenos",
+   "old": "        if current is not None and current.same_but_own_writes(state.disk):\n",
+   "new": "        if current is not None:\n"
+  },
+  {
+   "label": "una escritura rechazada sin tocar la base olvida la verificación",
+   "old": "        self._content_verified = min(self._content_verified, start)\n        state = self._verified\n",
+   "new": "        self._content_verified = min(self._content_verified, start)\n        self._verified = None\n        state = self._verified\n"
+  },
+  {
+   "label": "los lectores dan el contenido por comprobado aunque la memoria haya cambiado",
+   "old": "        if mark is not None and self.ledger.unchanged_since(mark):\n",
+   "new": "        if mark is not None:\n"
+  },
+  {
+   "label": "la memoria intacta no mira los payloads mutados",
+   "target": "app/core/ledger.py",
+   "old": "                or _payload_edits != mark.payload_edits\n",
+   "new": ""
+  },
+  {
+   "label": "la memoria intacta no mira las reescrituras de la lista",
+   "target": "app/core/ledger.py",
+   "old": "                or entries.rewrites != mark.rewrites\n",
+   "new": ""
+  },
+  {
+   "label": "la memoria intacta no mira si la lista es la misma",
+   "target": "app/core/ledger.py",
+   "old": "                or entries is not mark.entries\n",
+   "new": ""
+  },
+  {
+   "label": "una lista sin vigilar se da por intacta",
+   "target": "app/core/ledger.py",
+   "old": "                type(entries) is not _EntryList\n                or entries is not mark.entries\n",
+   "new": "                entries is not mark.entries\n"
+  },
+  {
+   "label": "la memoria intacta no mira la autoridad",
+   "target": "app/core/ledger.py",
+   "old": "                or self.redaction_authority != mark.authority\n",
+   "new": ""
+  },
+  {
+   "label": "la memoria intacta no mira el registro",
+   "target": "app/core/ledger.py",
+   "old": "            return all(current.get(identity) == key for identity, key in mark.registry)\n",
+   "new": "            return True\n"
+  },
+  {
+   "label": "una lápida o una enmienda nuevas no devuelven a la verificación completa",
+   "target": "app/core/ledger.py",
+   "old": "        if any(entries[position].entry_type in _CROSS_ENTRY_TYPES\n",
+   "new": "        if False and any(entries[position].entry_type in _CROSS_ENTRY_TYPES\n"
+  },
+  {
+   "label": "mutar un payload en sitio no deja rastro",
+   "target": "app/core/ledger.py",
+   "old": "    def __setitem__(self, key: str, value: Any) -> None:\n        try:\n            super().__setitem__(key, _watched(value))\n        finally:\n            _note_payload_edit()\n",
+   "new": "    def __setitem__(self, key: str, value: Any) -> None:\n        try:\n            super().__setitem__(key, _watched(value))\n        finally:\n            pass\n"
+  },
+  {
+   "label": "lo anidado entra sin vigilar",
+   "target": "app/core/ledger.py",
+   "old": "        return _WatchedList([_watched(item, depth + 1) for item in value])\n",
+   "new": "        return [_watched(item, depth + 1) for item in value]\n"
+  },
+  {
+   "label": "sustituir un asiento no cuenta como reescritura",
+   "target": "app/core/ledger.py",
+   "old": "                super().__setitem__(index, _watched_entry(value))\n        finally:\n            self.rewrites += 1\n",
+   "new": "                super().__setitem__(index, _watched_entry(value))\n        finally:\n            pass\n"
+  },
+  {
+   "label": "lo cargado de disco entra sin vigilar",
+   "target": "app/core/ledger.py",
+   "old": "        super().extend(_watched_entry(entry) for entry in entries)\n",
+   "new": "        super().extend(entries)\n"
+  }
+ ]
+}

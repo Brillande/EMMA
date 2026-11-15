@@ -1,0 +1,31 @@
+{
+  "target": "app/polaris/__init__.py",
+  "test": ["tests/test_egress.py"],
+  "mutations": [
+    {
+      "label": "el señuelo se siembra donde el borde no mira",
+      "old": "        decoys.CANARIOS = str(border.CANARIO_FILE)",
+      "new": "        decoys.CANARIOS = str(folder / \"otro.json\")"
+    },
+    {
+      "label": "el señuelo se rota en cada arranque",
+      "old": "        if token is None or token not in seeded:",
+      "new": "        if True:"
+    },
+    {
+      "label": "varios hilos siembran el señuelo a la vez",
+      "old": "    with _seed_lock:",
+      "new": "    if True:"
+    },
+    {
+      "label": "varios hilos configuran Polaris a la vez",
+      "old": "    with _configure_lock:",
+      "new": "    if True:"
+    },
+    {
+      "label": "la nota del registro vuelve a decir que los cerebros de nube no se copian",
+      "old": "están en la copia (su registro y sus módulos), pero no se registran aquí y por eso no \"",
+      "new": "no se registran ni se copian y por eso no \""
+    }
+  ]
+}

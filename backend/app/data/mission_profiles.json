@@ -1,0 +1,1108 @@
+{
+  "source": {
+    "read_on": "2026-10-13",
+    "how": "Cada frase se leyó en el documento oficial de la NASA que se cita (páginas de nasa.gov y science.nasa.gov, documentos de ntrs.nasa.gov) y se copió literal, en su idioma; cada cita lleva el día en que se leyó, y cada página leída sin cita, los suyos. La primera lectura fue el 2026-10-13; el 2026-10-21 (decimocuarta ronda, unidad C8) se buscaron los seis aspectos que quedaban sin verificar y se añadió el entorno de radiación de cada perfil. El 2026-10-31 y el 2026-11-01 (decimonovena ronda, U8) se leyó lo que faltaba del plazo de regreso, se añadió el perfil de la superficie de Marte y se citaron en la capacidad médica las filas de los niveles IV y V. El 2026-11-03 (unidad 8 del trabajo en paralelo) se añadió el perfil del espacio cislunar: se leyeron la página de la misión Artemis II, las notas de prensa del récord de distancia y del regreso, la guía de referencia de Orion y la de Gateway, y se releyeron el artículo de la radiación de Artemis I y el de Step 3. El mismo día se añadieron a todos los perfiles el polvo de superficie y el ciclo de día y noche, con las páginas de datos de la estación, la Luna y Marte, el libro blanco de 2022 sobre el polo sur lunar, el artículo sobre el polvo de Marte medido por Perseverance y el informe de evidencia del HRP sobre el polvo celeste; donde nada leído los dice, quedan sin verificar con lo que se buscó. El texto en castellano que acompaña a cada frase es de EMMA y no dice más que la frase.",
+    "pages_cited": [
+      "nasa-human-body-in-space",
+      "nasa-hrp-step2-station",
+      "nasa-hrp-step3-artemis",
+      "nasa-hrp-hazards",
+      "nasa-hrp-hazard-distance",
+      "nasa-hrp-hazard-space-radiation",
+      "nasa-why-space-radiation-matters",
+      "nasa-artemis-iv",
+      "nasa-science-light-day",
+      "ntrs-20250003885",
+      "ntrs-20240011063",
+      "ntrs-20090040343",
+      "ntrs-20180008706",
+      "ntrs-20240001402",
+      "nasa-m2m-mars-abort",
+      "nasa-real-martians",
+      "nasa-std-3001-vol1-rev-c",
+      "nasa-artemis-ii",
+      "nasa-artemis2-record-distance",
+      "nasa-artemis2-splashdown",
+      "nasa-orion-reference",
+      "nasa-artemis1-radiation-research",
+      "nasa-moon-facts",
+      "hrp-dust-evidence-report",
+      "nasa-perseverance-mars-dust",
+      "nasa-iss-facts-figures",
+      "nasa-acr22-lunar-south-pole",
+      "nasa-mars-facts"
+    ],
+    "pages_read_without_citation": [
+      {"title": "NASA’s Human Research Program: Three Steps to Mars", "url": "https://www.nasa.gov/humans-in-space/nasas-human-research-program-three-steps-to-mars/", "read_on": ["2026-10-13"]},
+      {"title": "Step 1, Earth: Analogs Help Advance Missions to Moon, Mars", "url": "https://www.nasa.gov/humans-in-space/step-1-earth-analogs-help-advance-missions-to-moon-mars/", "read_on": ["2026-10-13"]},
+      {"title": "Hazard: Gravity Fields", "url": "https://www.nasa.gov/hrp/hazard-gravity-fields/", "read_on": ["2026-10-13"]},
+      {"title": "Houston, Do You Copy? HERA Crew Navigates Communication Delays", "url": "https://www.nasa.gov/humans-in-space/houston-do-you-copy-hera-crew-navigates-communication-delays/", "read_on": ["2026-10-13"]},
+      {"title": "International Space Station Astronaut Record Holders", "url": "https://www.nasa.gov/international-space-station/space-station-astronaut-record-holders/", "read_on": ["2026-10-13"]},
+      {"title": "SCaN: Communicating with Missions", "url": "https://www.nasa.gov/communicating-with-missions/", "read_on": ["2026-10-13"]},
+      {"title": "Moon to Mars | NASA's Artemis Program", "url": "https://www.nasa.gov/humans-in-space/artemis/", "read_on": ["2026-10-13", "2026-10-21"]},
+      {"title": "Artemis III", "url": "https://www.nasa.gov/mission/artemis-iii/", "read_on": ["2026-10-21"]},
+      {"title": "La NASA refuerza Artemis: añade una misión y perfecciona su arquitectura general", "url": "https://www.nasa.gov/humans-in-space/astronauts/la-nasa-refuerza-artemis-anade-una-mision-y-perfecciona-su-arquitectura-general/", "read_on": ["2026-10-21", "2026-11-03"]},
+      {"title": "NASA’s Artemis IV: Building First Lunar Space Station", "url": "https://www.nasa.gov/general/nasas-artemis-iv-building-first-lunar-space-station/", "read_on": ["2026-10-21"]},
+      {"title": "Gateway", "url": "https://www.nasa.gov/mission/gateway/", "read_on": ["2026-11-03"]}
+    ]
+  },
+  "profiles": [
+    {
+      "id": "leo",
+      "display": "órbita baja terrestre (estación espacial)",
+      "ephemeris_target": null,
+      "aspects": {
+        "comm_delay": {
+          "status": "read",
+          "statement": "La fuente no da una cifra de retardo. Dice que, a bordo de la estación, la tripulación recibe guía de Control de Misión en tiempo real durante los procedimientos médicos.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «When medical issues arise on Mars»",
+              "quote": "Aboard the space station, astronauts receive real-time guidance from Mission Control when using medical technologies to perform procedures.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "gravity_regime": {
+          "status": "read",
+          "statement": "Microgravedad.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step2-station",
+              "section": "cuerpo del artículo, párrafo que empieza «The microgravity environment on the space station»",
+              "quote": "The microgravity environment on the space station affects the human body in a variety of ways.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "return_or_evacuation": {
+          "status": "read",
+          "statement": "Se estima que una evacuación médica desde la estación tarda menos de 24 horas en llegar a atención definitiva. Lo dice un artículo de congreso archivado en NTRS, que lo toma de un manual de medicina aeroespacial: es una estimación, no un procedimiento de vuelo.",
+          "citations": [
+            {
+              "ref": "ntrs-20240011063",
+              "section": "Introduction (página 2)",
+              "quote": "On the ISS, medical evacuation is estimated to require less than 24h to reach definitive care[6], but due to the multiple vehicles and orbits involved in deep space Artemis missions, medical evacuation from the lunar surface may require the CMO to stabilize and maintain an critically ill crewmember for up to an estimated 14 days[7] during a return to Earth.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "resupply": {
+          "status": "read",
+          "statement": "Las tripulaciones de la estación reciben suministros con regularidad en vuelos de carga desde la Tierra.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "Unlike space station crews, which regularly receive supplies from cargo flights from Earth, astronauts going to Mars will have to bring all of the food, equipment, and medical supplies they need.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "typical_duration": {
+          "status": "read",
+          "statement": "Misiones de estación «típicas» de seis meses; la misma página habla, en otro apartado, de misiones de seis a doce meses.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Space Radiation, párrafo «The Key»",
+              "quote": "Compared to typical six-month space station missions, later Moon and Mars missions will be much longer on average.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Isolation and Confinement",
+              "quote": "Expedition crews selected for a stay onboard the space station are carefully chosen, trained, and supported to ensure they will be able to work effectively as a team for the duration of their six to 12-month missions.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "distance": {
+          "status": "read",
+          "statement": "La estación orbita a 240 millas sobre la Tierra.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "The space station orbits 240 miles above Earth.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": {
+            "text": "Otra página de la NASA da «unas 250 millas», no 240.",
+            "citations": [
+              {
+                "ref": "nasa-hrp-step2-station",
+                "section": "cuerpo del artículo, párrafo que empieza «Aboard the space station»",
+                "quote": "Aboard the space station, which orbits about 250 miles above Earth at 17,500 miles per hour, NASA’s Human Research Program team conducts research to help understand and manage the effects of extended stays in space.",
+                "read_on": "2026-10-13"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "radiation_environment": {
+          "status": "read",
+          "statement": "Dentro de la protección del campo magnético de la Tierra: la tripulación de la estación recibe más radiación que en la Tierra, pero el campo magnético del planeta la protege de forma significativa. Del ciclo solar, otra página dice que el Sol tiene un ciclo de 11 años que culmina en un gran aumento del número y la intensidad de las fulguraciones; no dice en qué fase está el ciclo hoy.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Even though crews aboard the space station»",
+              "quote": "Even though crews aboard the space station are exposed to more radiation than on Earth, the planet’s magnetic field provides them with significant protection.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-why-space-radiation-matters",
+              "section": "What Factors Determine the Amount of Radiation Astronauts Receive?",
+              "quote": "Solar cycle – the Sun has an 11-year cycle, which culminates in a dramatic increase in the number and intensity of solar flares, especially during periods when there are numerous sunspots.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "surface_dust": {
+          "status": "unverified",
+          "statement": null,
+          "citations": [],
+          "discrepancy": null,
+          "searched": "En el resumen ejecutivo y la introducción del informe de evidencia del HRP sobre el polvo celeste (leídos el 2026-11-03) se buscó qué dicen del polvo a bordo de la estación espacial: hablan del polvo de la superficie de un cuerpo celeste y del que entra desde ella en el vehículo de regreso; ninguna frase leída habla del polvo a bordo de la estación espacial."
+        },
+        "day_night_cycle": {
+          "status": "read",
+          "statement": "En 24 horas, la estación da 16 vueltas a la Tierra y pasa por 16 amaneceres y 16 atardeceres.",
+          "citations": [
+            {
+              "ref": "nasa-iss-facts-figures",
+              "section": "lista de datos del principio de la página",
+              "quote": "In 24 hours, the space station makes 16 orbits of Earth, traveling through 16 sunrises and sunsets.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "medical_capability": {
+          "status": "read",
+          "statement": "A bordo de la estación, la tripulación recibe guía de Control de Misión en tiempo real cuando usa tecnologías médicas para hacer procedimientos.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «When medical issues arise on Mars»",
+              "quote": "Aboard the space station, astronauts receive real-time guidance from Mission Control when using medical technologies to perform procedures.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        }
+      }
+    },
+    {
+      "id": "cislunar",
+      "display": "espacio cislunar (Orion, entre la Tierra y la Luna)",
+      "ephemeris_target": null,
+      "aspects": {
+        "comm_delay": {
+          "status": "read",
+          "statement": "La luz recorre la distancia media entre la Tierra y la Luna en 1,3 segundos. Eso es el tiempo de luz, no el retardo de las comunicaciones: un memorando técnico de la NASA da para las misiones lunares latencias de 3 a 14 segundos por sentido, por la distancia y por la arquitectura de comunicaciones. En el sobrevuelo de Artemis II, la NASA preveía perder el contacto con la tripulación unos 40 minutos mientras la Luna tapaba las señales entre la nave y la Tierra: es un corte previsto, no un retardo.",
+          "citations": [
+            {
+              "ref": "nasa-science-light-day",
+              "section": "cuerpo del artículo, párrafo que empieza «The Moon is 238,855 miles»",
+              "quote": "The Moon is 238,855 miles (384,400 kilometers) from Earth, on average. The astronauts on the Artemis II mission took about three days to get there, but light can traverse that distance in 1.3 seconds.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "Due to the great distances from Earth and the communication architectures involved, lunar missions may experience one-way communication latencies ranging from 3 to 14 seconds, while Mars missions will encounter up to 22-minute one- way (44-minute round-trip) delay at maximum distance from Earth.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-artemis2-record-distance",
+              "section": "cuerpo de la nota, párrafo que empieza «NASA is expecting to lose communication»",
+              "quote": "NASA is expecting to lose communication with the astronauts for about 40 minutes during a planned blackout period. The break will occur as the Moon blocks signals between the spacecraft and the Earth through the Deep Space Network.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un artículo de congreso archivado en NTRS da para la Luna «hasta 5-14 segundos» de latencia, no de 3 a 14.",
+            "citations": [
+              {
+                "ref": "ntrs-20240011063",
+                "section": "Introduction (página 2)",
+                "quote": "Missions to the Moon for example, may have up to a 5-14 second communication latency, long enough to impair real-time communication with the ground and require a staggered communication system between crew and ground support[3].",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "gravity_regime": {
+          "status": "read",
+          "statement": "Microgravedad: la nota del regreso de Artemis II dice que su experimento AVATAR estudia cómo responde el tejido humano a la microgravedad y al entorno de radiación del espacio profundo. Una página de la NASA de 2021 describía Gateway, la estación que entonces se planeaba alrededor de la Luna, como un entorno de microgravedad y de espacio profundo; es un plan, no un vuelo.",
+          "citations": [
+            {
+              "ref": "nasa-artemis2-splashdown",
+              "section": "cuerpo de la nota, párrafo que empieza «Wiseman, Glover, Koch, and Hansen also supported»",
+              "quote": "These experiments — including the AVATAR investigation, which studies how human tissue responds to microgravity and the deep space radiation environment, and other human research performance studies — are gathering essential health data for long-duration missions.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «When equipping the Gateway»",
+              "quote": "Although astronauts will test and train with such devices and procedures on the ground, experience at the Gateway will determine if crew members can reliably use these systems independently in a microgravity and deep space environment.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "return_or_evacuation": {
+          "status": "read",
+          "statement": "Los trajes de Orion pueden mantener con vida a la tripulación seis días si la cabina se despresuriza, para cubrir un regreso de varios días desde la Luna. Lo dice la guía de referencia de Orion, que no da un plazo de evacuación médica.",
+          "citations": [
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Distance and duration both dictate»",
+              "quote": "Additional crew systems include advanced display and control panels, a compact toilet, exercise equipment to help prevent muscle and bone atrophy, and spacesuits capable of keeping the astronauts alive for six days in the event of cabin depressurization to support a multi-day return from the Moon.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un memorando técnico de la NASA dice, de las misiones tripuladas al espacio profundo en general y sin nombrar el espacio cislunar, que no habrá opciones viables de evacuación ni de rescate.",
+            "citations": [
+              {
+                "ref": "ntrs-20250003885",
+                "section": "1. Introduction (página 2)",
+                "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "resupply": {
+          "status": "read",
+          "statement": "La guía de referencia de Orion dice que en la Luna la tripulación no tendrá envíos frecuentes de repuestos desde la Tierra, como los que llegan a la estación espacial, y que Orion lleva los consumibles, como la comida y el agua, para toda la misión. Otra página dice, de las misiones más allá de la órbita baja en general, que un reto es cubrir las necesidades básicas sin misiones de reabastecimiento desde tierra.",
+          "citations": [
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Orion requires highly reliable systems»",
+              "quote": "Orion requires highly reliable systems for deep space missions because astronauts at the Moon will not have the benefit of frequent resupply shipments to bring spare parts from Earth, like those to the International Space Station.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Orion requires highly reliable systems»",
+              "quote": "Orion’s compact systems maximize available space not only for crew comfort, but also to accommodate the volume needed to carry consumables, such as food and water for the entirety of a mission lasting days, weeks, or even months.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "Related Articles, tarjeta «NASA Achieves Water Recovery Milestone»",
+              "quote": "For space missions that venture beyond low-Earth orbit, new challenges include how to provide basic needs for crew members without resupply missions from the ground.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "typical_duration": {
+          "status": "read",
+          "statement": "Artemis II, un sobrevuelo lunar y el primer vuelo tripulado de Orion, duró 9 días, 1 hora y 32 minutos: es la duración observada de un vuelo, no una duración típica. La guía de referencia de Orion habla de misiones de días, semanas o incluso meses.",
+          "citations": [
+            {
+              "ref": "nasa-artemis-ii",
+              "section": "cabecera de la página, campos «Mission Type» y «MISSION DURATION»",
+              "quote": "Mission Type Crewed Lunar Flyby MISSION DURATION 9 Days, 1 Hour, 32 Minutes",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Artemis II was the first crewed Orion flight»",
+              "quote": "Artemis II was the first crewed Orion flight, building on the uncrewed Artemis I flight test by demonstrating a broad range of Orion capabilities needed on deep space missions.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Orion requires highly reliable systems»",
+              "quote": "Orion’s compact systems maximize available space not only for crew comfort, but also to accommodate the volume needed to carry consumables, such as food and water for the entirety of a mission lasting days, weeks, or even months.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "distance": {
+          "status": "read",
+          "statement": "La Luna está de media a 384.400 kilómetros de la Tierra, y la tripulación de Artemis II tardó unos tres días en llegar. En su punto más lejano, Artemis II llevó a su tripulación a 252.756 millas de la Tierra.",
+          "citations": [
+            {
+              "ref": "nasa-science-light-day",
+              "section": "cuerpo del artículo, párrafo que empieza «The Moon is 238,855 miles»",
+              "quote": "The Moon is 238,855 miles (384,400 kilometers) from Earth, on average. The astronauts on the Artemis II mission took about three days to get there, but light can traverse that distance in 1.3 seconds.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-artemis2-splashdown",
+              "section": "cuerpo de la nota, párrafo que empieza «NASA astronauts Reid Wiseman, Victor Glover, and Christina Koch, and CSA»",
+              "quote": "NASA astronauts Reid Wiseman, Victor Glover, and Christina Koch, and CSA (Canadian Space Agency) astronaut Jeremy Hansen splashed down at 5:07 p.m. PDT Friday off the coast of San Diego, completing a nearly 10-day journey that took them 252,756 miles from home at their farthest distance from Earth.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "radiation_environment": {
+          "status": "read",
+          "statement": "Un artículo de la NASA de 2022, anterior al vuelo sin tripulación de Artemis I, decía que Orion atravesaría los cinturones de Van Allen, con dos periodos de radiación intensa en las primeras horas tras el lanzamiento y otra vez al volver, y que fuera de la protección del campo magnético de la Tierra quedaría expuesta a un entorno de radiación más duro que el de la estación, con partículas solares energéticas y rayos cósmicos galácticos. Es una previsión, no una medida del vuelo. Del ciclo solar, otra página dice que el Sol tiene un ciclo de 11 años que culmina en un gran aumento del número y la intensidad de las fulguraciones; no dice en qué fase está el ciclo hoy.",
+          "citations": [
+            {
+              "ref": "nasa-artemis1-radiation-research",
+              "section": "cuerpo del artículo, párrafo que empieza «Orion will pass through two periods of intense radiation»",
+              "quote": "Orion will pass through two periods of intense radiation within the first few hours of launch, and again when returning to Earth, as it travels through the Van Allen Belts that contain space radiation trapped around Earth by the planet’s magnetosphere. As Orion travels beyond the protection of Earth’s magnetic field, it will be exposed to a harsher radiation environment than crew aboard the space station experience in low-Earth orbit. Outside the Van Allen Belts, the deep space radiation environment includes solar energetic particle events produced by the Sun during solar flares and particles from galactic cosmic rays that come from outside the galaxy.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-why-space-radiation-matters",
+              "section": "What Factors Determine the Amount of Radiation Astronauts Receive?",
+              "quote": "Solar cycle – the Sun has an 11-year cycle, which culminates in a dramatic increase in the number and intensity of solar flares, especially during periods when there are numerous sunspots.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "surface_dust": {
+          "status": "unverified",
+          "statement": null,
+          "citations": [],
+          "discrepancy": null,
+          "searched": "En el resumen ejecutivo y la introducción del informe de evidencia del HRP sobre el polvo celeste (leídos el 2026-11-03) se buscó qué dicen del polvo a bordo de Orion: la única frase sobre el polvo en microgravedad habla del vehículo que regresa de una superficie («the return vehicle»), no de Orion, y no se aplica a una nave que la frase no nombra."
+        },
+        "day_night_cycle": {
+          "status": "unverified",
+          "statement": null,
+          "citations": [],
+          "discrepancy": null,
+          "searched": "En las páginas leídas de Artemis II (la de la misión y las notas del récord y del regreso) y en la guía de referencia de Orion se buscó «sunrise», «sunset», «sunlight», «daylight», «night» y «circadian»: solo hablan del día y la noche de la superficie lunar vista desde la nave, no de la luz a bordo."
+        },
+        "medical_capability": {
+          "status": "read",
+          "statement": "Los trajes de Orion pueden mantener con vida a la tripulación seis días si la cabina se despresuriza, para cubrir un regreso de varios días desde la Luna. Un memorando técnico de la NASA dice, de las misiones tripuladas al espacio profundo en general, que no habrá opciones viables de evacuación ni de rescate y que la latencia de las comunicaciones impedirá el apoyo operativo y médico en tiempo real.",
+          "citations": [
+            {
+              "ref": "nasa-orion-reference",
+              "section": "Orion Overview, párrafo que empieza «Distance and duration both dictate»",
+              "quote": "Additional crew systems include advanced display and control panels, a compact toilet, exercise equipment to help prevent muscle and bone atrophy, and spacesuits capable of keeping the astronauts alive for six days in the event of cabin depressurization to support a multi-day return from the Moon.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        }
+      }
+    },
+    {
+      "id": "lunar-surface",
+      "display": "superficie lunar",
+      "ephemeris_target": null,
+      "aspects": {
+        "comm_delay": {
+          "status": "read",
+          "statement": "La luz recorre la distancia media entre la Tierra y la Luna en 1,3 segundos. Eso es el tiempo de luz, no el retardo de las comunicaciones: un memorando técnico de la NASA da para las misiones lunares latencias de 3 a 14 segundos por sentido, por la distancia y por la arquitectura de comunicaciones.",
+          "citations": [
+            {
+              "ref": "nasa-science-light-day",
+              "section": "cuerpo del artículo, párrafo que empieza «The Moon is 238,855 miles»",
+              "quote": "The Moon is 238,855 miles (384,400 kilometers) from Earth, on average. The astronauts on the Artemis II mission took about three days to get there, but light can traverse that distance in 1.3 seconds.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "Due to the great distances from Earth and the communication architectures involved, lunar missions may experience one-way communication latencies ranging from 3 to 14 seconds, while Mars missions will encounter up to 22-minute one- way (44-minute round-trip) delay at maximum distance from Earth.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un artículo de congreso archivado en NTRS da para la Luna «hasta 5-14 segundos» de latencia, no de 3 a 14.",
+            "citations": [
+              {
+                "ref": "ntrs-20240011063",
+                "section": "Introduction (página 2)",
+                "quote": "Missions to the Moon for example, may have up to a 5-14 second communication latency, long enough to impair real-time communication with the ground and require a staggered communication system between crew and ground support[3].",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "gravity_regime": {
+          "status": "read",
+          "statement": "Gravedad parcial: en la superficie lunar, alrededor de un sexto de la gravedad de la Tierra.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Likewise, astronauts landing on the Moon»",
+              "quote": "Likewise, astronauts landing on the Moon will have to adapt to the gravity of the lunar surface, which is about one-sixth of Earth’s gravity.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "return_or_evacuation": {
+          "status": "read",
+          "statement": "Una evacuación médica desde la superficie lunar podría obligar a mantener estable a un tripulante grave hasta unos 14 días durante el regreso a la Tierra, por los varios vehículos y órbitas que intervienen. Lo dice un artículo de congreso archivado en NTRS, que lo toma de otra referencia: es una estimación.",
+          "citations": [
+            {
+              "ref": "ntrs-20240011063",
+              "section": "Introduction (página 2)",
+              "quote": "On the ISS, medical evacuation is estimated to require less than 24h to reach definitive care[6], but due to the multiple vehicles and orbits involved in deep space Artemis missions, medical evacuation from the lunar surface may require the CMO to stabilize and maintain an critically ill crewmember for up to an estimated 14 days[7] during a return to Earth.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un memorando técnico de la NASA dice, de las misiones tripuladas al espacio profundo en general y sin nombrar la Luna, que no habrá opciones viables de evacuación ni de rescate.",
+            "citations": [
+              {
+                "ref": "ntrs-20250003885",
+                "section": "1. Introduction (página 2)",
+                "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "resupply": {
+          "status": "read",
+          "statement": "Ante una necesidad imprevista de un material concreto, la tripulación podría tener que esperar semanas o meses a recibirlo de la Tierra; el artículo lo dice en un párrafo sobre las misiones a la Luna, con el ejemplo de un medicamento. Otra página dice, de las misiones más allá de la órbita baja en general, que un reto es cubrir las necesidades básicas sin misiones de reabastecimiento desde tierra.",
+          "citations": [
+            {
+              "ref": "ntrs-20240011063",
+              "section": "Introduction (página 2)",
+              "quote": "In the event of unanticipated need for specific supplies like an oral anticoagulant to treat a novel jugular venous thrombosis[5], crews may have to wait weeks to months to get resupplied from Earth.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "Related Articles, tarjeta «NASA Achieves Water Recovery Milestone»",
+              "quote": "For space missions that venture beyond low-Earth orbit, new challenges include how to provide basic needs for crew members without resupply missions from the ground.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "typical_duration": {
+          "status": "read",
+          "statement": "En Artemis IV, dos tripulantes bajarán a la superficie y pasarán aproximadamente una semana cerca del polo sur de la Luna. Es el plan de una misión, no una duración observada.",
+          "citations": [
+            {
+              "ref": "nasa-artemis-iv",
+              "section": "Mission Overview, apartado «Humanity’s return to the lunar surface»",
+              "quote": "Artemis IV astronauts will travel to lunar orbit, where two crew members will descend to the surface and spend approximately a week near the South Pole of the Moon conducting new science before returning to lunar orbit to join their crew for the journey back to Earth.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "distance": {
+          "status": "read",
+          "statement": "Unas 1.000 veces más lejos de la Tierra que la estación espacial. Otra página habla de «un viaje lunar de tres días».",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Missions to the Moon are about 1,000 times farther»",
+              "quote": "Missions to the Moon are about 1,000 times farther from Earth and more challenging than expeditions to the space station.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "cuerpo de la página, segundo párrafo",
+              "quote": "Rather than a three-day lunar trip, astronauts bound for Mars would be leaving our planet for roughly three years.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "radiation_environment": {
+          "status": "read",
+          "statement": "Fuera de la magnetosfera protectora de la Tierra, y la Luna no tiene campo magnético propio. Del ciclo solar, otra página dice que el Sol tiene un ciclo de 11 años que culmina en un gran aumento del número y la intensidad de las fulguraciones; no dice en qué fase está el ciclo hoy.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Even though crews aboard the space station»",
+              "quote": "The Moon is beyond Earth’s protective magnetosphere and lacks a magnetic field of its own, making it an ideal place to study the effects of deep space radiation.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-why-space-radiation-matters",
+              "section": "What Factors Determine the Amount of Radiation Astronauts Receive?",
+              "quote": "Solar cycle – the Sun has an 11-year cycle, which culminates in a dramatic increase in the number and intensity of solar flares, especially during periods when there are numerous sunspots.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "surface_dust": {
+          "status": "read",
+          "statement": "Casi toda la Luna está cubierta de regolito: polvo gris y fino y restos de roca. En las misiones Apollo, el polvo que se había pegado a los trajes en las salidas entró en el módulo lunar, quedó suelto en el aire al despegar y les irritó los ojos y la garganta a las tripulaciones. Un informe de evidencia del HRP de 2015 dice que se fijó en 0,3 mg/m³ el límite de exposición episódica al polvo lunar en el aire para una estancia de seis meses en la superficie.",
+          "citations": [
+            {
+              "ref": "nasa-moon-facts",
+              "section": "Surface, párrafo que empieza «Over billions of years»",
+              "quote": "Nearly the entire Moon is covered by a rubble pile of charcoal-gray, powdery dust, and rocky debris called the lunar regolith.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "hrp-dust-evidence-report",
+              "section": "III Introduction (página 5 del PDF, impresa 2)",
+              "quote": "During the Apollo missions, lunar dust, which had adhered to space suits during EVAs, gained entry to the interior of the lunar modules where, after becoming dislodged, it became airborne with the loss of lunar gravity upon ascent of the vehicle from the surface. The airborne dust irritated the eyes and throats of Apollo crews (Wagner, 2006).",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "hrp-dust-evidence-report",
+              "section": "II Executive Summary (página 4 del PDF, impresa 1)",
+              "quote": "A PEL for episodic exposure to airborne lunar dust during a six-month stay on the lunar surface was established, in consultation with an independent, extramural panel of expert pulmonary toxicologists, at 0.3 mg/m3.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "day_night_cycle": {
+          "status": "read",
+          "statement": "En los lugares de Apollo, cerca del ecuador lunar, hay unos 14,5 días terrestres de luz y después unos 14,5 de noche. En las regiones polares el ciclo es irregular y depende de las estaciones lunares: hay zonas que nunca reciben luz solar directa y otras que están iluminadas más de 14,5 días y a oscuras mucho menos tiempo. Lo dice un libro blanco de arquitectura de la NASA de 2022.",
+          "citations": [
+            {
+              "ref": "nasa-acr22-lunar-south-pole",
+              "section": "Lunar Lighting (página 2)",
+              "quote": "Unlike equatorial locations, such as the Apollo sites, the polar day-night cycle is irregular and heavily influenced by the lunar seasons. At Apollo sites there are ~14.5 Earth days of light, followed by ~14.5 Earth days of night.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-acr22-lunar-south-pole",
+              "section": "Lunar Lighting (página 2)",
+              "quote": "These factors create one of the most unique aspects of the poles: that there are regions that never receive direct sunlight, as well as areas that are illuminated for longer than the 14.5 days experienced at equatorial locations, and are in darkness for much shorter times than those equatorial areas (Fig. 2).",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "medical_capability": {
+          "status": "read",
+          "statement": "Una evacuación médica desde la superficie lunar podría obligar al oficial médico de la tripulación (CMO) a estabilizar y mantener a un tripulante en estado crítico hasta unos 14 días durante el regreso a la Tierra. Lo dice un artículo de congreso archivado en NTRS, que lo toma de otra referencia: es una estimación. Una diapositiva de 2017 pone el nivel de asistencia IV junto a «Lunar > 30 day»: por duración, no por el destino solo.",
+          "citations": [
+            {"ref": "ntrs-20180008706", "section": "diapositiva 8, «Levels of Care» (al pie, «NASA-STD-3001 Vol 1, Rev A»)", "quote": "IV Lunar > 30 day Level III + Medical Imaging, Sustainable Advanced Life Support, Limited Surgical, Dental Care", "read_on": "2026-11-01"},
+            {
+              "ref": "ntrs-20240011063",
+              "section": "Introduction (página 2)",
+              "quote": "On the ISS, medical evacuation is estimated to require less than 24h to reach definitive care[6], but due to the multiple vehicles and orbits involved in deep space Artemis missions, medical evacuation from the lunar surface may require the CMO to stabilize and maintain an critically ill crewmember for up to an estimated 14 days[7] during a return to Earth.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        }
+      }
+    },
+    {
+      "id": "mars-transit",
+      "display": "tránsito a Marte",
+      "ephemeris_target": "499",
+      "aspects": {
+        "comm_delay": {
+          "status": "read",
+          "statement": "Hasta 20 minutos por sentido. La fuente lo dice de las misiones a Marte y de la estancia en Marte, no del tránsito en particular.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "With a communication delay of up to 20 minutes one-way while on Mars, astronauts must be able to solve problems and identify solutions as a team without help from NASA’s mission control.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "cuerpo de la página, tercer párrafo",
+              "quote": "Facing a communication delay of up to 20 minutes one way, the possibility of equipment failures or medical emergencies, and a critical need to ration food and supplies, astronauts must be capable of confronting an array of situations with minimal support from teams on Earth.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un memorando técnico de la NASA da hasta 22 minutos por sentido, no 20, a la máxima distancia de la Tierra. Una página de NASA Science da el tiempo de luz entre los dos planetas, de 3 a 22 minutos según su posición: es tiempo de luz, no el retardo de un sistema de comunicaciones, y no dice cuánto añade este.",
+            "citations": [
+              {
+                "ref": "ntrs-20250003885",
+                "section": "1. Introduction (página 2)",
+                "quote": "Due to the great distances from Earth and the communication architectures involved, lunar missions may experience one-way communication latencies ranging from 3 to 14 seconds, while Mars missions will encounter up to 22-minute one- way (44-minute round-trip) delay at maximum distance from Earth.",
+                "read_on": "2026-10-21"
+              },
+              {
+                "ref": "nasa-science-light-day",
+                "section": "cuerpo del artículo, párrafo que empieza «The distance between Earth and Mars changes»",
+                "quote": "The distance between Earth and Mars changes as they orbit the Sun, and it can take anywhere from three minutes to 22 minutes for light to travel between the two planets.",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "gravity_regime": {
+          "status": "read",
+          "statement": "Ingravidez durante el trayecto entre los planetas. La misma frase dice que, ya en la superficie de Marte, la gravedad es de aproximadamente un tercio de la terrestre.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Gravity Fields",
+              "quote": "Astronauts will encounter three different gravity fields on a Mars mission. On the six-month trek between the planets, crews will be weightless. While living and working on Mars, crews will be in approximately one-third of Earth’s gravity.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": {
+            "text": "Sobre la gravedad en la superficie de Marte (no la del tránsito), otra página de la NASA dice «tres octavos» y no «un tercio».",
+            "citations": [
+              {
+                "ref": "nasa-hrp-hazards",
+                "section": "Watch Videos, apartado «Gravity Fields»",
+                "quote": "On Mars, astronauts would need to live and work in three-eighths of Earth’s gravitational pull for up to two years.",
+                "read_on": "2026-10-13"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "return_or_evacuation": {
+          "status": "read",
+          "statement": "Abortar en el tránsito a Marte puede tardar muchos meses en devolver a la tripulación a la Tierra, sea cual sea el sistema de transporte, y en muchos casos puede no servir ante una emergencia, porque el regreso duraría más de lo que la tripulación puede contenerla. Lo dice un análisis de alcance de NASA, de abortar la misión y no de evacuar a un enfermo; ninguna fuente leída da un plazo de evacuación médica propio del tránsito. Un memorando técnico dice, del espacio profundo en general, que no hay opciones viables de evacuación ni de rescate, y la norma, en general, que el regreso a la Tierra puede no ser posible o tardar tanto que sea inútil.",
+          "citations": [
+            {"ref": "nasa-m2m-mars-abort", "section": "Overview (página 1)", "quote": "Depending on when an abort is initiated in a Mars mission timeline, the heliocentric nature of transit — in orbit around the Sun — may require many months to return to Earth, regardless of the transportation system selected.", "read_on": "2026-11-01"},
+            {"ref": "nasa-m2m-mars-abort", "section": "Overview (página 1)", "quote": "In many cases, transit abort may not be a practical response to an emergency because the time to return the crew may exceed the crew’s ability to stave off the emergency.", "read_on": "2026-11-01"},
+            {"ref": "nasa-m2m-mars-abort", "section": "página 3", "quote": "Mission aborts will be measured in months, not days.", "read_on": "2026-11-01"},
+            {"ref": "nasa-std-3001-vol1-rev-c", "section": "§3.6 Medical Evacuation, justificación de [V1 3007]", "quote": "Depending on mission parameters and orbital dynamics, a return to Earth may not be possible, or may take such a long time as to be rendered futile.", "read_on": "2026-11-01"},
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "resupply": {
+          "status": "read",
+          "statement": "Sin los vuelos de carga que recibe la estación: quienes vayan a Marte tendrán que llevar consigo toda la comida, el equipo y el material médico.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "Unlike space station crews, which regularly receive supplies from cargo flights from Earth, astronauts going to Mars will have to bring all of the food, equipment, and medical supplies they need.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "typical_duration": {
+          "status": "read",
+          "statement": "Un trayecto de seis meses entre los planetas; la misión de ida y vuelta, hasta tres años.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Gravity Fields",
+              "quote": "On the six-month trek between the planets, crews will be weightless.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Round-trip missions to Mars»",
+              "quote": "Round-trip missions to Mars are expected to take up to three years, and engineers and scientists at NASA’s Human Research Program, or HRP, seek to better understand what might happen to the human body during that time.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "distance": {
+          "status": "read",
+          "statement": "Marte está, de media, a 140 millones de millas de la Tierra.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "In contrast, Mars is on average 140 million miles from Earth.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": {
+            "text": "Otra página de la NASA da esa misma cifra, 140 millones de millas, como el viaje de ida y vuelta y no como la distancia media.",
+            "citations": [
+              {
+                "ref": "nasa-hrp-step3-artemis",
+                "section": "cuerpo del artículo, párrafo que empieza «Missions to the Moon are about 1,000 times farther»",
+                "quote": "Lunar missions will enable researchers to address the challenges of living farther from Earth than ever before, and test new technologies and procedures needed for the approximately 140 million mile round-trip to the Red Planet.",
+                "read_on": "2026-10-13"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "radiation_environment": {
+          "status": "read",
+          "statement": "Fuera del campo magnético y de la atmósfera que protegen la Tierra: la página lo dice del viaje a Marte. Del ciclo solar, otra página dice que el Sol tiene un ciclo de 11 años que culmina en un gran aumento del número y la intensidad de las fulguraciones; no dice en qué fase está el ciclo hoy.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-hazard-space-radiation",
+              "section": "What Is Space Radiation?, primer párrafo",
+              "quote": "Outside Earth’s protective magnetic field and atmosphere, the ionizing radiation in space will pose a serious risk to astronauts as they travel to Mars.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "nasa-why-space-radiation-matters",
+              "section": "What Factors Determine the Amount of Radiation Astronauts Receive?",
+              "quote": "Solar cycle – the Sun has an 11-year cycle, which culminates in a dramatic increase in the number and intensity of solar flares, especially during periods when there are numerous sunspots.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "surface_dust": {
+          "status": "unverified",
+          "statement": null,
+          "citations": [],
+          "discrepancy": null,
+          "searched": "En el artículo de la NASA sobre el polvo de Marte medido por Perseverance y en el resumen ejecutivo y la introducción del informe de evidencia del HRP sobre el polvo celeste (leídos el 2026-11-03) se buscó qué dicen del polvo durante el viaje: hablan del polvo de la superficie y del que entra desde ella en los hábitats y los vehículos, no del tránsito."
+        },
+        "day_night_cycle": {
+          "status": "unverified",
+          "statement": null,
+          "citations": [],
+          "discrepancy": null,
+          "searched": "En las páginas leídas del tránsito (los peligros del HRP de la gravedad y de la distancia) se buscó «sunrise», «sunset», «sunlight», «daylight», «night» y «circadian»: no hablan de la luz del día ni de la noche durante el viaje."
+        },
+        "medical_capability": {
+          "status": "read",
+          "statement": "Ante la posibilidad de emergencias médicas, con un retardo de hasta 20 minutos por sentido, la tripulación tendrá que afrontar situaciones diversas con un apoyo mínimo de los equipos de Tierra; la página lo dice de las misiones a Marte. Un memorando técnico dice, de las misiones tripuladas al espacio profundo en general, que la latencia de las comunicaciones impide el apoyo operativo y médico en tiempo real. Una diapositiva de 2017 pone el nivel de asistencia V junto a «Mars Expedition», y las de EIMO hablan de sistemas de salud cada vez más independientes de la Tierra para misiones de clase Marte.",
+          "citations": [
+            {"ref": "ntrs-20180008706", "section": "diapositiva 8, «Levels of Care» (al pie, «NASA-STD-3001 Vol 1, Rev A»)", "quote": "V Mars Expedition Level IV + Autonomous Advanced Life Support and Ambulatory Care, Basic Surgical Care", "read_on": "2026-11-01"},
+            {"ref": "ntrs-20240001402", "section": "diapositiva 2", "quote": "Progressive Earth-independent crew health & performance systems for Mars-class missions", "read_on": "2026-11-01"},
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "cuerpo de la página, tercer párrafo",
+              "quote": "Facing a communication delay of up to 20 minutes one way, the possibility of equipment failures or medical emergencies, and a critical need to ration food and supplies, astronauts must be capable of confronting an array of situations with minimal support from teams on Earth.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        }
+      }
+    },
+    {
+      "id": "mars-surface",
+      "display": "superficie de Marte",
+      "ephemeris_target": "499",
+      "aspects": {
+        "comm_delay": {
+          "status": "read",
+          "statement": "Hasta 20 minutos por sentido mientras se está en Marte.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "With a communication delay of up to 20 minutes one-way while on Mars, astronauts must be able to solve problems and identify solutions as a team without help from NASA’s mission control.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "cuerpo de la página, tercer párrafo",
+              "quote": "Facing a communication delay of up to 20 minutes one way, the possibility of equipment failures or medical emergencies, and a critical need to ration food and supplies, astronauts must be capable of confronting an array of situations with minimal support from teams on Earth.",
+              "read_on": "2026-10-13"
+            }
+          ],
+          "discrepancy": {
+            "text": "Un memorando técnico de la NASA da hasta 22 minutos por sentido, no 20, a la máxima distancia de la Tierra. Una página de NASA Science da el tiempo de luz entre los dos planetas, de 3 a 22 minutos según su posición: es tiempo de luz, no el retardo de un sistema de comunicaciones, y no dice cuánto añade este.",
+            "citations": [
+              {
+                "ref": "ntrs-20250003885",
+                "section": "1. Introduction (página 2)",
+                "quote": "Due to the great distances from Earth and the communication architectures involved, lunar missions may experience one-way communication latencies ranging from 3 to 14 seconds, while Mars missions will encounter up to 22-minute one- way (44-minute round-trip) delay at maximum distance from Earth.",
+                "read_on": "2026-10-21"
+              },
+              {
+                "ref": "nasa-science-light-day",
+                "section": "cuerpo del artículo, párrafo que empieza «The distance between Earth and Mars changes»",
+                "quote": "The distance between Earth and Mars changes as they orbit the Sun, and it can take anywhere from three minutes to 22 minutes for light to travel between the two planets.",
+                "read_on": "2026-10-21"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "gravity_regime": {
+          "status": "read",
+          "statement": "Gravedad parcial: aproximadamente un tercio de la terrestre.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Gravity Fields",
+              "quote": "Astronauts will encounter three different gravity fields on a Mars mission. On the six-month trek between the planets, crews will be weightless. While living and working on Mars, crews will be in approximately one-third of Earth’s gravity.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "nasa-hrp-step3-artemis",
+              "section": "cuerpo del artículo, párrafo que empieza «Exercise helps combat bone and muscle loss»",
+              "quote": "The gravity on Mars – about one-third that of Earth’s – could pose similar problems after crews spend months traveling in microgravity.",
+              "read_on": "2026-10-31"
+            },
+            {
+              "ref": "ntrs-20090040343",
+              "section": "página 19, características del entorno de Marte",
+              "quote": "increased value of the surface gravity from 1/6 g on the lunar surface to 1/3 g on Mars",
+              "read_on": "2026-11-01"
+            }
+          ],
+          "discrepancy": {
+            "text": "Las fuentes de NASA no dan una sola cifra: las de arriba dicen un tercio y otra página dice tres octavos. EMMA no elige y enseña las dos.",
+            "citations": [
+              {
+                "ref": "nasa-hrp-hazards",
+                "section": "Watch Videos, apartado «Gravity Fields»",
+                "quote": "On Mars, astronauts would need to live and work in three-eighths of Earth’s gravitational pull for up to two years.",
+                "read_on": "2026-10-13"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "return_or_evacuation": {
+          "status": "read",
+          "statement": "Opciones limitadas de abortar el descenso y el ascenso en las primeras misiones humanas a Marte. La arquitectura de referencia DRA 5.0 limita los abortos de Marte al principio de la misión o a regresos de varios años; un memorando técnico dice, de las misiones al espacio profundo en general, que no hay opciones viables de evacuación ni de rescate. Ninguna da un plazo de evacuación desde la superficie.",
+          "citations": [
+            {
+              "ref": "nasa-m2m-mars-abort",
+              "section": "Overview (página 1)",
+              "quote": "Early human Mars missions will also have limited abort options for descent to and ascent from the surface.",
+              "read_on": "2026-11-01"
+            },
+            {
+              "ref": "ntrs-20090040343",
+              "section": "Tabla 1, «Comparison of Lunar and Mars Mission Challenges» (página 23)",
+              "quote": "Aborts Anytime return Limited to early in the mission or multi-year",
+              "read_on": "2026-11-01"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "resupply": {
+          "status": "read",
+          "statement": "Quienes vayan a Marte tendrán que llevar consigo toda la comida, el equipo y el material médico. La arquitectura de referencia DRA 5.0 da una entrega de logística cada 26 meses.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "Unlike space station crews, which regularly receive supplies from cargo flights from Earth, astronauts going to Mars will have to bring all of the food, equipment, and medical supplies they need.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "ntrs-20090040343",
+              "section": "Tabla 1, «Comparison of Lunar and Mars Mission Challenges» (página 23)",
+              "quote": "Logistics Delivery Daily Every 26 months",
+              "read_on": "2026-11-01"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "typical_duration": {
+          "status": "read",
+          "statement": "Vivir y trabajar en Marte hasta dos años. La arquitectura de referencia DRA 5.0 da una estancia de 495 a 540 días; es una arquitectura, no el plan de una misión.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-hazards",
+              "section": "Watch Videos, apartado «Gravity Fields»",
+              "quote": "On Mars, astronauts would need to live and work in three-eighths of Earth’s gravitational pull for up to two years.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "ntrs-20090040343",
+              "section": "Tabla 1, «Comparison of Lunar and Mars Mission Challenges» (página 23)",
+              "quote": "Stay Time 7 days (sortie mission) 495 – 540 days",
+              "read_on": "2026-11-01"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "distance": {
+          "status": "read",
+          "statement": "Marte está, de media, a 140 millones de millas de la Tierra. La arquitectura de referencia DRA 5.0 da de 58 a 400 millones de kilómetros.",
+          "citations": [
+            {
+              "ref": "nasa-human-body-in-space",
+              "section": "Distance from Earth",
+              "quote": "In contrast, Mars is on average 140 million miles from Earth.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "ntrs-20090040343",
+              "section": "Tabla 1, «Comparison of Lunar and Mars Mission Challenges» (página 23)",
+              "quote": "Mars 58,000,000 – 400,000,000 km",
+              "read_on": "2026-11-01"
+            }
+          ],
+          "discrepancy": {
+            "text": "Otra página de la NASA da esa misma cifra, 140 millones de millas, como el viaje de ida y vuelta y no como la distancia media.",
+            "citations": [
+              {
+                "ref": "nasa-hrp-step3-artemis",
+                "section": "cuerpo del artículo, párrafo que empieza «Missions to the Moon are about 1,000 times farther»",
+                "quote": "Lunar missions will enable researchers to address the challenges of living farther from Earth than ever before, and test new technologies and procedures needed for the approximately 140 million mile round-trip to the Red Planet.",
+                "read_on": "2026-10-13"
+              }
+            ]
+          },
+          "searched": null
+        },
+        "radiation_environment": {
+          "status": "read",
+          "statement": "Marte no tiene un campo magnético global, y su atmósfera, mucho más tenue que la de la Tierra, da solo una protección mínima incluso en la superficie. La fuente no da una dosis. Del ciclo solar, otra página dice que el Sol tiene un ciclo de 11 años que culmina en un gran aumento del número y la intensidad de las fulguraciones; no dice en qué fase está el ciclo hoy.",
+          "citations": [
+            {
+              "ref": "nasa-real-martians",
+              "section": "cuerpo del artículo, párrafo que empieza «A human mission to Mars»",
+              "quote": "Mars has no global magnetic field to deflect energetic particles, and its atmosphere is much thinner than Earth’s, so they’ll get only minimal protection even on the surface of Mars.",
+              "read_on": "2026-10-31"
+            },
+            {
+              "ref": "nasa-why-space-radiation-matters",
+              "section": "What Factors Determine the Amount of Radiation Astronauts Receive?",
+              "quote": "Solar cycle – the Sun has an 11-year cycle, which culminates in a dramatic increase in the number and intensity of solar flares, especially during periods when there are numerous sunspots.",
+              "read_on": "2026-10-21"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "surface_dust": {
+          "status": "read",
+          "statement": "Durante 1.645 días marcianos, Perseverance midió polvo fino y ultrafino pegado a muestras de material de traje, con partículas lo bastante pequeñas para entrar en los pulmones y pasar a la sangre. El polvo de Marte es sobre todo de silicatos y lleva compuestos reactivos, como percloratos que pueden alterar la función tiroidea y hierro reactivo que daña las células; el artículo dice que su riesgo para la salud depende de la cantidad de polvo y del tiempo de exposición, y que sus granos son menos abrasivos que los de la Luna. Un informe de evidencia del HRP de 2015 decía que quedaba por hacer el trabajo para fijar un límite de exposición al polvo de Marte.",
+          "citations": [
+            {
+              "ref": "nasa-perseverance-mars-dust",
+              "section": "primer párrafo del artículo, que empieza «Over 1,645 Martian days»",
+              "quote": "Over 1,645 Martian days, NASA’s Perseverance Mars rover measured the fine and ultrafine Martian dust particles found clinging to samples of spacesuit materials that are carried aboard the rover, including some that are small enough to penetrate the lungs and enter the bloodstream.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-perseverance-mars-dust",
+              "section": "apartado «Protecting crews», párrafo que empieza «Martian dust is composed»",
+              "quote": "Martian dust is composed predominantly of silicate minerals and carries chemically reactive compounds, including perchlorates that can disrupt thyroid function and reactive iron that induces cellular damage. Scientists believe that the health risks of Mars dust depend on the quantity of dust and length of exposure.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "nasa-perseverance-mars-dust",
+              "section": "apartado «Fine, ultrafine», párrafo que empieza «Rounded by wind-driven collisions»",
+              "quote": "Rounded by wind-driven collisions with other particles, dust grains on Mars are less abrasive than those on the Moon.",
+              "read_on": "2026-11-03"
+            },
+            {
+              "ref": "hrp-dust-evidence-report",
+              "section": "II Executive Summary (página 4 del PDF, impresa 1)",
+              "quote": "Work to support the establishment of PELs for Martian dust and dusts of asteroids remains to be accomplished.",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "day_night_cycle": {
+          "status": "read",
+          "statement": "Marte da una vuelta sobre sí mismo cada 24,6 horas, muy parecido al día de la Tierra (23,9 horas); a los días marcianos se los llama soles.",
+          "citations": [
+            {
+              "ref": "nasa-mars-facts",
+              "section": "Orbit and Rotation, párrafo que empieza «As Mars orbits the Sun»",
+              "quote": "As Mars orbits the Sun, it completes one rotation every 24.6 hours, which is very similar to one day on Earth (23.9 hours). Martian days are called sols — short for \"solar day.\"",
+              "read_on": "2026-11-03"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        },
+        "medical_capability": {
+          "status": "read",
+          "statement": "Con un retardo de hasta 20 minutos por sentido, la tripulación tendrá que afrontar situaciones diversas con un apoyo mínimo de los equipos de Tierra. Una diapositiva de 2017 pone el nivel de asistencia V junto a «Mars Expedition», y las de EIMO hablan de sistemas de salud cada vez más independientes de la Tierra para misiones de clase Marte.",
+          "citations": [
+            {
+              "ref": "nasa-hrp-hazard-distance",
+              "section": "cuerpo de la página, tercer párrafo",
+              "quote": "Facing a communication delay of up to 20 minutes one way, the possibility of equipment failures or medical emergencies, and a critical need to ration food and supplies, astronauts must be capable of confronting an array of situations with minimal support from teams on Earth.",
+              "read_on": "2026-10-13"
+            },
+            {
+              "ref": "ntrs-20250003885",
+              "section": "1. Introduction (página 2)",
+              "quote": "In deep-space crewed missions, the crew will be confronted with infrequent resupply opportunities, no viable options for evacuation or rescue, and high-latency communications prohibiting real-time operational and medical support.",
+              "read_on": "2026-10-21"
+            },
+            {
+              "ref": "ntrs-20180008706",
+              "section": "diapositiva 8, «Levels of Care» (al pie, «NASA-STD-3001 Vol 1, Rev A»)",
+              "quote": "V Mars Expedition Level IV + Autonomous Advanced Life Support and Ambulatory Care, Basic Surgical Care",
+              "read_on": "2026-11-01"
+            },
+            {
+              "ref": "ntrs-20240001402",
+              "section": "diapositiva 2",
+              "quote": "Progressive Earth-independent crew health & performance systems for Mars-class missions",
+              "read_on": "2026-11-01"
+            }
+          ],
+          "discrepancy": null,
+          "searched": null
+        }
+      }
+    }
+  ]
+}

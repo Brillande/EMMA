@@ -1,0 +1,25 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_anatomy.py::test_the_state_at_a_moment_is_recomputed_and_signs_nothing",
+  "tests/test_anatomy.py::test_the_series_of_a_past_moment_reaches_that_moment",
+  "tests/test_anatomy.py::test_an_alerting_region_has_the_same_context_as_its_alert"
+ ],
+ "mutations": [
+  {
+   "label": "un estado pasado da una lista de momentos mermada",
+   "old": "            if until is None else None",
+   "new": "            if True else None"
+  },
+  {
+   "label": "la serie de un momento pasado no se corta en el",
+   "old": "    results = store.query(subject, key=key, until=until, limit=limit)",
+   "new": "    results = store.query(subject, key=key, limit=limit)"
+  },
+  {
+   "label": "el constructor ignora si hay alerta",
+   "old": "            alert=alert,\n",
+   "new": "            alert=True,\n"
+  }
+ ]
+}

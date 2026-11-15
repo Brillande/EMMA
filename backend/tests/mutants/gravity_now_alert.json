@@ -1,0 +1,9 @@
+{"target": "app/analysis/alert_context.py", "test": ["tests/test_alert_context.py"],
+ "mutations": [
+  {"label": "la frase de la alerta en posvuelo vuelve a la gravedad de configuracion",
+   "old": "                f\"{mission['phase_display']}, {mission['gravity_display']}.\"",
+   "new": "                f\"{mission['phase_display']}, {mission['gravity_regime']}.\""},
+  {"label": "la frase de la alerta da solo la gravedad del momento",
+   "old": "                f\"{mission['phase_display']}, {mission['gravity_display']}.\"",
+   "new": "                f\"{mission['phase_display']}, {mission['gravity_now']}.\""}
+ ]}

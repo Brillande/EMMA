@@ -1,0 +1,13 @@
+{
+ "target": "app/api/timeline.py",
+ "test": [
+  "tests/test_alert_history.py::test_the_chronicle_route_carries_the_history_and_keeps_signed_facts_apart"
+ ],
+ "mutations": [
+  {
+   "label": "la ruta de la cronica no recalcula la historia",
+   "old": "    history = history_view(settings, store, subject, until, assessed) if assessed else None",
+   "new": "    history = None if assessed else None"
+  }
+ ]
+}

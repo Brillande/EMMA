@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+**/*.tsbuildinfo
+.quality/
+.data/
+.data-fresh/
+.worktrees/
+.e2e-data/
+.playwright-mcp/

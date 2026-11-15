@@ -1,0 +1,4 @@
+Paciente: Laura Gil Moreno
+Teléfono de contacto: +34 699 123 456
+Tarjeta sanitaria: BBBB123456789012
+PCR 2,1 mg/L

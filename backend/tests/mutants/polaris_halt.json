@@ -1,0 +1,58 @@
+{
+  "target": "app/polaris/__init__.py",
+  "test": [
+    "tests/test_egress.py"
+  ],
+  "mutations": [
+    {
+      "label": "el freno HALT vuelve a leerse de la carpeta personal y de la copia",
+      "old": "        _confine_halt()",
+      "new": "        pass"
+    },
+    {
+      "label": "una importación que falla a medias deja el freno sin confinar",
+      "old": "    finally:\n        # También si falla: una importación a medias ya puede haber traído a `borde`. El gancho",
+      "new": "    else:\n        # También si falla: una importación a medias ya puede haber traído a `borde`. El gancho"
+    },
+    {
+      "label": "se pisa el freno de cualquier módulo, no solo el de las herramientas de Polaris",
+      "old": "    if not origin or Path(origin).resolve().parent != tools:",
+      "new": "    if not origin:"
+    },
+    {
+      "label": "soporte_cita sigue mirando la carpeta personal (_halt_files sin sustituir)",
+      "old": "    if reader is not None:",
+      "new": "    if False:"
+    },
+    {
+      "label": "el fichero de freno de EMMA vive dentro de la copia de Polaris",
+      "old": "    return state_dir() / \".HALT\"",
+      "new": "    return root() / \".HALT\""
+    },
+    {
+      "label": "el gancho de importación no se instala: lo importado tarde conserva las rutas de fábrica",
+      "old": "        sys.meta_path.insert(0, _BRAKE_HOOK)",
+      "new": "        pass"
+    },
+    {
+      "label": "el gancho envuelve el cargador pero no confina el freno al ejecutar el módulo",
+      "old": "            _confine_module(module, self._tools, str(halt_file()))",
+      "new": "            pass"
+    },
+    {
+      "label": "el gancho se instala otra vez en cada llamada (deja de ser idempotente)",
+      "old": "    if _BRAKE_HOOK not in sys.meta_path:",
+      "new": "    if True:"
+    },
+    {
+      "label": "el gancho envuelve cualquier módulo con nombre de herramienta, aunque sea de otra copia",
+      "old": "            if origin and not wrapped and Path(origin).resolve().parent == tools:",
+      "new": "            if origin and not wrapped:"
+    },
+    {
+      "label": "el gancho se queda con el primer buscador aunque no encuentre el módulo",
+      "old": "            if spec is None:\n                continue",
+      "new": "            if spec is None:\n                return None"
+    }
+  ]
+}
