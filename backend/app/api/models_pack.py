@@ -10,6 +10,8 @@ otro hilo y solo deja códigos.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -19,7 +21,7 @@ from app.api.console_header import console_post
 from app.api.routes import SettingsDep
 from app.core.config import Settings
 from app.core.i18n import tr
-from app.models_download import PackError, downloader, installed, models_dir
+from app.models_download import MANIFEST_NAME, PackError, downloader, installed, models_dir
 
 models_pack_router = APIRouter(prefix="/models-pack")
 
@@ -114,6 +116,19 @@ def _state(settings: Settings) -> dict[str, Any]:
     }
 
 
+def _missing_pieces(dest: Path) -> bool:
+    """Si falta alguna pieza: sin nada instalado, o con piezas del manifiesto sin instalar."""
+    have = installed(dest)
+    if not have:
+        return True
+    try:
+        manifest = json.loads((dest / MANIFEST_NAME).read_text(encoding="utf-8-sig"))
+        pieces = set(manifest["components"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return True
+    return bool(pieces - set(have))
+
+
 @models_pack_router.get("")
 def read_models_pack(settings: SettingsDep) -> dict[str, Any]:
     """Lo instalado y, si ya se consultó, lo publicado. No sale a la red."""
@@ -146,14 +161,18 @@ def cancel_models_pack(settings: SettingsDep) -> dict[str, Any]:
 
 
 def autostart(settings: Settings) -> bool:
-    """La descarga pedida en el instalador: el paquete entero, si no hay ninguna pieza instalada.
+    """La descarga pedida en el instalador: lo que falte del paquete, al arrancar.
 
     Solo con `models_autodownload` (lo pone la aplicación de escritorio) y con red: en modo sin
     red no se intenta, y el panel «Modelos de IA» lo dice. Devuelve si la ha lanzado.
+
+    Sigue mientras falte alguna pieza del manifiesto instalado, no solo con la carpeta vacía: con
+    la primera pieza ya instalada, una descarga cortada (EMMA cerrada, una versión nueva instalada
+    encima) no se retomaba al volver a abrir (2026-11-15). Completo, no sale a la red.
     """
     if not settings.models_autodownload or settings.offline:
         return False
-    if installed(models_dir(settings)):
+    if not _missing_pieces(models_dir(settings)):
         return False
     try:
         downloader.start(settings, None)

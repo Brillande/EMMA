@@ -376,3 +376,26 @@ def test_a_server_without_ranges_is_not_taken_for_a_whole_part(
         job = run(settings, ["voice"])
     assert job["state"] == "error" and job["error"] == "network"
     assert not (tmp_path / "EMMA-modelos" / "voice").exists()
+
+
+def test_a_cut_download_resumes_on_the_next_start_with_a_piece_installed(
+    tmp_path: Path, published: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Con la primera pieza ya instalada, al volver a abrir EMMA se sigue con las demás."""
+    from app.api import models_pack
+
+    first = Downloader()
+    monkeypatch.setattr(models_pack, "downloader", first)
+    settings = settings_for(tmp_path, models_autodownload=True)
+    with respx.mock as router:
+        serve(router, published)
+        first.start(settings, ["tesseract"])
+        first.wait(30)
+    assert set(installed(tmp_path / "EMMA-modelos")) == {"tesseract"}
+    again = Downloader()
+    monkeypatch.setattr(models_pack, "downloader", again)
+    with respx.mock as router:
+        serve(router, published)
+        assert models_pack.autostart(settings) is True
+        again.wait(30)
+    assert set(installed(tmp_path / "EMMA-modelos")) == {"tesseract", "voice"}

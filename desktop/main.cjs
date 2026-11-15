@@ -625,9 +625,9 @@ async function main() {
     modelsBackendEnv.EMMA_LLM_URL = `http://${LOOPBACK}:${ollamaPort}`;
   }
   // «Descargar también los modelos de IA», marcado en el instalador (`installer.nsh` deja la marca
-  // junto al ejecutable). Mientras no haya paquete instalado, el backend lo baja al arrancar
-  // (`app/api/models_pack.py: autostart`); una vez instalado, la marca ya no cuenta.
-  if (models === null && fs.existsSync(path.join(path.dirname(app.getPath("exe")), "descargar-modelos"))) {
+  // junto al ejecutable). El backend decide si falta algo y lo baja al arrancar
+  // (`app/api/models_pack.py: autostart`): con el paquete completo no hace nada.
+  if (fs.existsSync(path.join(path.dirname(app.getPath("exe")), "descargar-modelos"))) {
     modelsBackendEnv.EMMA_MODELS_AUTODOWNLOAD = "true";
   }
   startBackend(port, {
