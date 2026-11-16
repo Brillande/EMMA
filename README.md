@@ -32,6 +32,11 @@ más: lleva el backend, la interfaz y el planificador.
   `instalar.cmd` (ver las notas de `modelos-1`).
 - **Sin modelos EMMA funciona igual:** constantes, análisis, alertas y recomendaciones no
   dependen de ellos; lo que sí, se muestra como «no disponible».
+- **Actualizaciones desde la app (desde la 0.1.5).** En «About EMMA» → «Update EMMA», «Check
+  for a new version» mira si hay una versión más nueva aquí, «Download» baja su instalador y lo
+  comprueba con su SHA-256, e «Install and restart» la instala conservando los datos. Nunca lo
+  hace solo, y sin red no busca nada. La 0.1.4 y anteriores no traen el actualizador: para pasar
+  a la 0.1.5 se instala a mano una vez.
 - **Sin firma de código.** Windows SmartScreen avisará: «Más información» → «Ejecutar de todas
   formas».
 
@@ -43,7 +48,7 @@ más: lleva el backend, la interfaz y el planificador.
 | Pruebas | **5522** en la suite normal del backend · 10 `live`, de contrato contra APIs reales y modelos locales · **42 de validación externa** |
 | Calidad | `ruff` limpio · `mypy --strict` limpio |
 | Interfaz | Consola de tripulación y consola de Tierra · **1768 pruebas**, entre ellas las reglas de pantalla de NASA-STD-3001 Vol 2 |
-| Escritorio | [Instalador de Windows](https://github.com/Brillande/EMMA/releases/latest) (Electron), funciona sin red · modelos de IA descargables desde el instalador · **sin firma de código** |
+| Escritorio | [Instalador de Windows](https://github.com/Brillande/EMMA/releases/latest) (Electron), funciona sin red · modelos de IA descargables desde el instalador · se actualiza desde las Releases de GitHub, solo con botón · **sin firma de código** |
 | API | 95 rutas de lectura · 51 de escritura: ingesta, firmas y decisiones de la tripulación, gestión de alertas, enmienda y supresión. La lista viva está en `/docs` |
 
 Cifras medidas el 3 de noviembre de 2026 sobre el commit `f8276ea` (la última suite completa del
@@ -88,6 +93,41 @@ Aplicación de escritorio (Windows):
 cd desktop
 npm install && npm run dist                     # desktop/release/EMMA Setup x.y.z.exe
 ```
+
+### Actualizar el EMMA instalado desde GitHub
+
+El EMMA instalado se pone al día con las versiones que se publican como Releases de
+[`github.com/Brillande/EMMA`](https://github.com/Brillande/EMMA/releases): cada una lleva su
+`EMMA.Setup.X.Y.Z.exe` y un manifiesto `emma-update.json` con la versión, el tamaño y el SHA-256
+del instalador. Desde la **0.1.5**, la primera que lo trae; la 0.1.4 y anteriores se pasan a la
+0.1.5 instalándola a mano una vez. En «Acerca de EMMA» → «Actualizar EMMA» (con la interfaz en
+inglés, «About EMMA» → «Update EMMA»: «Check for a new version», «Download», «Install and
+restart»):
+
+1. **Comprobar si hay una versión nueva** lee el manifiesto de la última Release y dice si hay una versión más nueva.
+2. **Descargar** baja el instalador (reanudable) y comprueba tamaño y SHA-256.
+3. **Instalar y reiniciar** cierra EMMA, instala la versión nueva conservando los datos y la abre
+   de nuevo. La aplicación de escritorio vuelve a comprobar la huella antes de lanzarlo.
+
+Nada de esto ocurre solo: no hay comprobación al arrancar ni descarga en segundo plano. Solo se sale
+a internet al pulsar «Comprobar…» o «Descargar», y siempre por `backend/app/core/egress.py`
+(propósito `app-update`). En modo sin red (`EMMA_OFFLINE=true`, el nominal de misión) no se busca
+nada: una versión nueva se instala con su instalador desde un USB. Con el **modo seguro** activo no
+se busca, no se descarga y **tampoco se instala** lo ya descargado. El actualizador nunca baja de
+versión; volver a una anterior es ejecutar a mano su instalador.
+
+Publicar una versión para que el exe la vea (lo hace el responsable, nunca la aplicación):
+
+```bash
+# misma versión en backend/pyproject.toml, frontend/package.json, desktop/package.json y app/main.py
+cd desktop && npm run dist
+cd ../backend && .venv/Scripts/python.exe packaging/publish_app.py --notes "Qué cambia" --dry-run  # revisar el plan
+.venv/Scripts/python.exe packaging/publish_app.py --notes "Qué cambia"            # sube con gh
+```
+
+Guía completa en [`docs/actualizaciones.md`](docs/actualizaciones.md); especificación, modelo de
+amenazas y su encaje en IEC 62304 en
+[`compliance/software-update.md`](compliance/software-update.md).
 
 Las pruebas normales **no tocan la red**. Las `live` confirman que las APIs de
 NASA siguen respondiendo como se documentó, que cada cita de EMMA existe en su

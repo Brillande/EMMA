@@ -1,4 +1,5 @@
 import { Fold } from "./components/Fold";
+import { AppUpdate } from "./components/AppUpdate";
 import { ModelsPack } from "./components/ModelsPack";
 import { tr } from "./lib/i18n";
 
@@ -30,6 +31,8 @@ export function About() {
       </Fold>
       {/* El paquete de modelos: lo instalado y «Descargar modelos» (2026-11-15). */}
       <ModelsPack />
+      {/* Actualizar EMMA a la versión publicada: comprobar, bajar e instalar, cada paso a mano (2026-11-16). */}
+      <AppUpdate />
     </footer>
   );
 }

@@ -1,7 +1,7 @@
 # Clasificación de seguridad del software — IEC 62304
 
 **Estado:** decidido y justificado. Clase B.
-**Última revisión:** 2026-09-22, entera; el 2026-10-07, solo la clasificación de Polaris (§4 y §4.2)
+**Última revisión:** 2026-09-22, entera; el 2026-10-07, solo la clasificación de Polaris (§4 y §4.2); el 2026-11-16, solo la actualización de la aplicación (§3, §4.1 y §5)
 
 Este documento existe porque el resto del proyecto lo cita. `record-integrity.md` §1.5 remite aquí,
 el README afirma que EMMA se desarrolla *conforme a* IEC 62304 Clase B, y `CLAUDE.md` lo convierte
@@ -274,6 +274,7 @@ tener una clase menor que el conjunto si su fallo no puede contribuir a una situ
 | `reports/labs.py`, `reports/identity.py`, `reports/incongruences.py` | Analíticas escaneadas: cifras propuestas por confirmar, si el informe es de este tripulante y dos analíticas de la misma muestra que no coinciden | **B** | Una cifra, una unidad o un analito que no son los del papel (H17, H4), un informe ajeno dado por propio (H3) o dos cifras del mismo día confirmadas cada una por su lado (H17). Ninguna cifra entra en el análisis hasta que una persona la confirma |
 | `evidence/dossier.py` | El dosier de evidencia comprobado con las reglas de Polaris: esquema cerrado, ninguna contradicción, «alta» solo con fuente y frescura | **B** | Una pieza mal formada, contradictoria o caducada respalda una contramedida (H20) |
 | `validation/mmash.py`, `injection.py`, `report.py` | Validación externa contra fisiología real | **A** | Herramienta de banco de pruebas: no corre en vuelo |
+| Actualizador (`/api/app-update` y su módulo del backend, el sondeo de `instalar.json` en `desktop/main.cjs`, `packaging/publish_app.py`) (2026-11-16) | Comprobar, descargar y verificar la versión nueva publicada, y lanzar su instalador cuando una persona lo pide | **B** | No toca el ledger, el análisis ni las alertas, pero cambia el software entero: un instalador corrupto o una instalación cortada dejan EMMA sin vigilar o con otro programa (H25-H28). No se ha argumentado una clase menor, así que queda la del conjunto (§2). Especificación en [`software-update.md`](software-update.md) |
 | `spikes/`, `scripts/fetch_mmash.py` | Verificación de las APIs externas, descarga del dataset | — | No forman parte del producto |
 
 ---
@@ -293,7 +294,7 @@ versión, y qué se espera de él. Versiones exactas del entorno del 2026-09-22,
 | `fhir.resources` | 8.3.0 | Modelo canónico FHIR R4 | Afecta a la exportación, no al análisis |
 | `pydantic-settings` | 2.15.0 | Configuración desde el entorno (`core/config.py`) | Arranque con una configuración por defecto; el modo offline es lo que más pesa |
 | `numpy` | 2.5.3 | El simulador fisiológico (`ingest/simulator.py`); desde el 2026-09-24 también los fotogramas ecográficos (`imaging/render.py`), los fantomas (`imaging/phantom.py`) y la validación HC18 (`validation/hc18.py`) | Se caen las series simuladas, la visualización de fotogramas y los fantomas. El análisis de constantes no lo usa (`statistics` de la biblioteca estándar), y la medida ecográfica tampoco: es geometría con `math` |
-| `httpx` | 0.28.1 | Los clientes que salen a la red: NASA DONKI, RadLab (OSDR) y la API de datos de OSDR (fichas de estudio) | El modo offline responde con el dato cacheado y su antigüedad |
+| `httpx` | 0.28.1 | Los clientes que salen a la red: NASA DONKI, RadLab (OSDR) y la API de datos de OSDR (fichas de estudio); desde el 2026-11-16 también el actualizador (`software-update.md`) | El modo offline responde con el dato cacheado y su antigüedad |
 | `astroquery` | 0.4.11 | Solo `jplhorizons`: distancia y tiempo de luz | Sin efemérides no hay factor de aislamiento; el riesgo se calcula sin él y se declara |
 | `spiceypy` (con CSPICE N0067 de NAIF dentro) y los núcleos `naif0012.tls` y `de432s.bsp` de NAIF | 8.3.0; núcleos fijados por tamaño y SHA-256 (y el MD5 que publica NAIF para el SPK) en `environment/spice.py` | Calcular en local, sin red, el tiempo de luz y la elongación solar de los días sin efeméride de Horizons en caché (`environment/spice.py`), solo hacia Marte y desde el geocentro. Extra opcional `[spice]` en desarrollo, donde los núcleos se bajan con `scripts/fetch_spice_kernels.py` a `data/spice/`. **La aplicación de escritorio lo lleva dentro** (decisión del usuario, 2026-11-11: el retardo con Tierra, sin red desde el primer arranque): el entorno limpio instala `[desktop,spice]`, `packaging/freeze.py` declara `spiceypy` (el hook de `pyinstaller-hooks-contrib` recoge `cspice.dll`) y su `dist-info` con la licencia, y mete los dos núcleos en `_internal/spice/` solo si pasan la comprobación de tamaño y huella (si faltan, los baja con el guion; si no verifican, no congela). En el congelado se buscan primero en la carpeta configurada y después en el paquete, comprobados igual, y `/api/spice` dice de dónde salen (`kernel_origin`). `spiceypy`: licencia MIT; CSPICE y núcleos: reglas de NAIF (https://naif.jpl.nasa.gov/naif/rules.html, leídas el 2026-11-11: incluir módulos del Toolkit en el paquete de una herramienta propia basada en SPICE «is entirely appropriate», uso comercial sin tasas ni licencia, entregado «AS-IS»; los núcleos «may be downloaded and used by anyone», y redistribuirlos sin modificar está permitido; la página no dice «dominio público»; SPICE está designado TSPA para exportación, y quien fuera de NAIF produce un producto derivado que lo incorpora «must obtain her/his own export designation»). Añadido el 2026-11-11 | Sin la biblioteca o sin núcleos válidos, «SPICE no instalado» o «Núcleos SPICE ausentes» y el retardo sale como antes (Horizons y su caché). Un cálculo equivocado escalaría mal el factor de aislamiento: se mitiga con la huella de los núcleos, la verificación cruzada del tiempo de luz con la distancia y la comparación con Horizons del spike (≤ 3 µs en los 181 días de la misión); desde que SPICE va primero (decisión del usuario, 2026-11-11), además, con el contraste de cada día con la efeméride de Horizons en caché: si discrepan por encima del error declarado, se dice y se usa Horizons |
 | `pandas` | 3.0.6 | **Ninguno.** Declarada en `pyproject.toml` y sin una sola importación en el código | Nada. La validación externa lee MMASH con `csv` y `zipfile` |
@@ -424,7 +425,22 @@ convertía `EMMA.exe` en un intérprete de Node para cualquier proceso; se compr
 cerró. La página corre en *sandbox*, sin Node, sin preload ni IPC, y solo navega al backend local.
 
 **Lo que no hay:** el instalador **no va firmado** con certificado de código (Windows SmartScreen
-avisará), y no hay actualización automática.
+avisará).
+
+**Actualización (2026-11-16): manual, con botón, nunca automática.** El panel «Actualizaciones» del
+pie «Acerca de» comprueba, descarga e instala la versión nueva publicada en
+`github.com/Brillande/EMMA` solo cuando una persona lo pide, y nunca instala sin que alguien pulse
+«Instalar y reiniciar». La descarga la hace el backend por `core/egress.py` (propósito
+`app-update`) y comprueba tamaño y SHA-256 contra el manifiesto `emma-update.json`; la aplicación
+de escritorio vuelve a comprobar la huella antes de lanzar el instalador. Se descartó
+`electron-updater`, que saldría a internet desde Node saltándose la puerta. **No se añade ningún
+SOUP**: ni dependencia nueva en el backend, en la interfaz ni en `desktop/package.json`; el
+actualizador usa `httpx` (ya en la tabla del §4), la biblioteca estándar de Python y los módulos
+de Node que ya trae Electron. Como el instalador no va firmado, la
+huella protege de la corrupción y de las descargas cortadas, no de una cuenta de publicación
+comprometida: el manifiesto viaja por el mismo canal que el exe. Especificación, modelo de amenazas
+y límites en [`software-update.md`](software-update.md); peligros H25-H28 en
+[`risk-management-file.md`](risk-management-file.md).
 
 ### 4.2 Polaris, la copia literal: ficha de SOUP (2026-10-07)
 
@@ -825,9 +841,9 @@ comprobarlo antes de citarlo fuera.
 | 5.2-5.4 Requisitos, arquitectura y diseño detallado | **Parcial.** La arquitectura está documentada y cada módulo explica por qué existe; no hay especificación de requisitos numerada ni trazabilidad requisito→código |
 | 5.5 Implementación y verificación de unidades | **Sí.** Suite completa en verde con `ruff` y `mypy --strict` limpios, y un criterio de aceptación por prueba. El recuento vigente lo da el README, no este documento |
 | 5.6-5.7 Integración y pruebas de sistema | **Sí**, por la API, incluida la validación externa contra fisiología humana real |
-| 6 Mantenimiento | **Parcial.** Seis revisiones adversarias con sus hallazgos y correcciones documentados (`record-integrity.md` §7), más una auditoría de estos dos documentos contra el código |
+| 6 Mantenimiento | **Parcial.** Seis revisiones adversarias con sus hallazgos y correcciones documentados (`record-integrity.md` §7), más una auditoría de estos dos documentos contra el código. Desde el 2026-11-16, una versión nueva llega a una instalación existente por un camino especificado y verificado —comprobación con botón, huella SHA-256, sin perder los datos de usuario— ([`software-update.md`](software-update.md)). No hay plan de mantenimiento formal ni análisis de impacto escrito por versión |
 | 7 Gestión de riesgos | **Sí**, en [`risk-management-file.md`](risk-management-file.md) y en `clinical-decision-rationale.md` |
-| 8 Gestión de configuración | **No.** El repositorio **no usa control de versiones**. Es el incumplimiento más claro de este documento |
+| 8 Gestión de configuración | **Parcial.** El repositorio de trabajo usa git, **solo local** y sin remoto; cada versión que se entrega se publica como una foto sin historia en `github.com/Brillande/EMMA`, con etiqueta `vX.Y.Z`, su instalador y, desde el 2026-11-16, su manifiesto con la huella (`software-update.md` §2). La versión es la misma en `backend/pyproject.toml`, `frontend/package.json`, `desktop/package.json` y `backend/app/main.py`, con prueba. Las dependencias tienen versión exacta (§4). Falta: control de cambios con aprobación formal, y la trazabilidad cambio a cambio de lo publicado vive solo en el repositorio local. Hasta el 2026-11-16 esta fila decía «el repositorio no usa control de versiones»: estaba desfasada |
 | 9 Resolución de problemas | **Parcial.** Cada hallazgo queda documentado con su corrección y su prueba, pero no hay un registro formal de problemas |
 
 **Y lo que no se reclama, por si queda duda:** ninguna certificación, ningún sistema de gestión de

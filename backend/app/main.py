@@ -19,6 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from app import guides, sharing
 from app.advisor import effects
 from app.api.alert_history import alert_history_router
+from app.api.app_update import app_update_router
 from app.api.assistant import assistant_router
 from app.api.baseline_profile import baseline_profile_router
 from app.api.cognition import cognition_router
@@ -152,7 +153,7 @@ app = FastAPI(
         "Apoyo a la decisión, no prescripción: el sistema informa y recomienda, "
         "no administra terapia ni sustituye el juicio clínico."
     ),
-    version="0.1.4",
+    version="0.1.5",
 )
 
 # En vuelo no hay navegador remoto: el frontend se sirve junto al backend. Esta
@@ -188,6 +189,7 @@ app.include_router(volumes_router, prefix="/api")
 app.include_router(polaris_router, prefix="/api")
 app.include_router(safe_mode_router, prefix="/api")
 app.include_router(models_pack_router, prefix="/api")
+app.include_router(app_update_router, prefix="/api")
 app.include_router(link_sync_router, prefix="/api")
 app.include_router(mission_mode_router, prefix="/api")
 app.include_router(mission_profile_router, prefix="/api")

@@ -1,0 +1,132 @@
+/*
+ * Las pestañas por páginas de dos filas (`components/RowPages.tsx`, decisión del usuario 2026-11-16).
+ * Cada fila conserva su reparto de siempre (la hoja de su pestaña); aquí solo se apagan las filas que
+ * no tocan y se pinta la barra de páginas. Colores solo de la paleta (`palette.test.ts`): azul, no cian
+ * (el cian es «dato caducado o ausente», tabla F.5-1).
+ */
+
+.app [data-row-off] {
+  display: none !important;
+}
+
+/* La barra de páginas: a lo ancho, bajo las dos filas; flecha a la izquierda y a la derecha. */
+.app .section-body > .row-pages {
+  grid-column: 1 / -1;
+}
+
+/* Si las dos filas piden más alto que la ventana (su contenido manda), la barra se queda pegada al pie
+   de la ventana mientras se desplaza la página: las flechas siempre a mano. */
+.app .section-body > .row-pages {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  padding-block: 0.2rem;
+  background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+  border-top: 1px solid var(--c-line);
+}
+
+/* Flecha a la izquierda, posición y puntos en medio, flecha a la derecha. */
+.row-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: var(--touch, 44px);
+}
+
+.row-pages[hidden] {
+  display: none;
+}
+
+.row-pages-arrow {
+  display: grid;
+  place-items: center;
+  width: var(--touch, 44px);
+  height: var(--touch, 44px);
+  border: 1px solid var(--c-blue);
+  border-radius: 50%;
+  background: var(--c-bg);
+  color: var(--c-text);
+  cursor: pointer;
+}
+
+.row-pages-arrow:hover,
+.row-pages-arrow:focus-visible {
+  background: var(--c-raised);
+}
+
+/* Hay un solo dibujo de flecha (a la derecha): la anterior es la misma, de espejo. */
+.row-pages-previous svg {
+  transform: scaleX(-1);
+}
+
+.row-pages-where {
+  margin-left: auto;
+  color: var(--c-text-secondary);
+}
+
+.row-pages-dots {
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+/* Objetivo táctil del tamaño mínimo; el punto visible va dentro. */
+.row-pages-dot {
+  display: grid;
+  place-items: center;
+  width: var(--touch, 44px);
+  height: var(--touch, 44px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.row-pages-dot::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--c-blue);
+  border-radius: 50%;
+}
+
+.row-pages-dot[aria-current="true"]::before {
+  background: var(--c-blue);
+}
+
+/* «Ayuda urgente» (el módulo de «Inicio», fijo en todas las pestañas): si las filas piden más alto que la
+   ventana, se queda pegada justo encima de la barra de páginas, a la vista sin desplazar (HMI §2.7). En un
+   tablero genérico el que se pega es su `.slot` (lo pegado no sale de su caja contenedora). */
+.app .section-body > .slot[data-row-pin] > .slot-body > .ref-emergency-wide,
+.app .section-body:not(.ref-home) > .slot[data-row-pin]:has(.urgent-host) {
+  position: sticky;
+  bottom: calc(var(--touch, 44px) + 0.7rem);
+  z-index: 3;
+}
+
+/* El carrusel: la página nueva entra deslizándose (`data-row-slide` lo pone `RowPages` al cambiar de
+   página). Sin movimiento si quien mira lo pidió (`prefers-reduced-motion`). */
+@keyframes row-slide-from-right {
+  from { transform: translateX(6%); opacity: 0.2; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes row-slide-from-left {
+  from { transform: translateX(-6%); opacity: 0.2; }
+  to { transform: none; opacity: 1; }
+}
+
+.app .section-body[data-row-slide="next"] [data-row]:not([data-row-off]) {
+  animation: row-slide-from-right 280ms ease-out;
+}
+
+.app .section-body[data-row-slide="previous"] [data-row]:not([data-row-off]) {
+  animation: row-slide-from-left 280ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app .section-body[data-row-slide] [data-row] {
+    animation: none;
+  }
+}

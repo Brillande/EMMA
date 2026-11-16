@@ -128,7 +128,9 @@
 
 .grav-gauge { display: grid; justify-items: center; gap: 0.2rem; text-align: center; }
 .grav-gauge .ref-ring { width: 6.6rem; }
-.grav-gauge .ref-ring strong { font-size: 1.6rem; line-height: 1; }
+/* La palabra del régimen («micro», «lunar»…) dentro del anillo: a 1,6 rem «micro» ocupaba todo el
+   ancho y se salía del círculo cuando el anillo encoge con la tarjeta (2026-11-16). */
+.grav-gauge .ref-ring strong { font-size: 1.25rem; line-height: 1; }
 .grav-gauge .ref-ring .ref-ring-fill,
 .grav-gauge .ref-ring .ref-ring-track { stroke-width: 9; }
 

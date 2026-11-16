@@ -53,6 +53,7 @@ EXIT_NAMES: dict[str, str] = {
     "planner-quotes": "la cita del día del planificador (ZenQuotes)",
     "planner-onthisday": "las efemérides del planificador (Wikipedia)",
     "models-pack": "la descarga del paquete de modelos (GitHub)",
+    "app-update": "la búsqueda y descarga de versiones nuevas de EMMA (GitHub)",
 }
 i18n.en_many(
     {
@@ -67,6 +68,8 @@ i18n.en_many(
         EXIT_NAMES["datasets"]: "the download of validation datasets (Zenodo)",
         EXIT_NAMES["planner-quotes"]: "the planner's quote of the day (ZenQuotes)",
         EXIT_NAMES["planner-onthisday"]: "the planner's on-this-day entries (Wikipedia)",
+        EXIT_NAMES["models-pack"]: "the download of the model pack (GitHub)",
+        EXIT_NAMES["app-update"]: "the search for and download of new EMMA versions (GitHub)",
     }
 )
 

@@ -12,7 +12,9 @@ import { EnvHeader, type EnvironmentData } from "./EnvironmentBoard";
  * cajas con borde que parecían botones y no hacían nada (lote «que si pulso el botón pasen
  * cosas», 2026-11-15). Ahora son botones que llevan a su panel de la pestaña, como las anclas de
  * «Radiación». Sin DOM en la suite: se despliega el árbol de elementos y se pulsa cada botón con
- * un `document` falso que apunta qué panel se pidió.
+ * un `document` falso que apunta qué panel se pidió. La pestaña va por páginas de dos filas
+ * (2026-11-16): el botón abre antes la página del panel (`showRowOf`, que sube con `closest`) y
+ * desplaza en el siguiente fotograma, así que se simula `requestAnimationFrame` y se ejecuta al momento.
  */
 
 type Props = Record<string, unknown> & { children?: ReactNode };
@@ -85,8 +87,11 @@ afterEach(() => {
 describe("los bloques de la cabecera de «Entorno» llevan a su panel", () => {
   it("cada bloque es un botón (de teclado) que desplaza hasta su panel", () => {
     const scrolled: string[] = [];
+    vi.stubGlobal("requestAnimationFrame", (run: () => void) => run());
     vi.stubGlobal("document", {
       querySelector: (selector: string) => ({
+        // Fuera de una sección por filas: `showRowOf` no encuentra página que abrir y no cambia nada.
+        closest: () => null,
         scrollIntoView: () => scrolled.push(selector),
       }),
     });
@@ -112,6 +117,7 @@ describe("los bloques de la cabecera de «Entorno» llevan a su panel", () => {
   });
 
   it("si el panel no está montado, pulsar no rompe nada", () => {
+    vi.stubGlobal("requestAnimationFrame", (run: () => void) => run());
     vi.stubGlobal("document", { querySelector: () => null });
     for (const button of buttons(createElement(EnvHeader, { env }))) expect(() => button.click()).not.toThrow();
   });

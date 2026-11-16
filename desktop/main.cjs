@@ -33,6 +33,7 @@ const fs = require("node:fs");
 const http = require("node:http");
 const net = require("node:net");
 const path = require("node:path");
+const handoff = require("./update-handoff.cjs");
 
 const LOOPBACK = "127.0.0.1";
 // Lo que tarda en responder el backend congelado es ~1 s; se deja margen para un
@@ -126,8 +127,8 @@ function shouldRotate(writtenBytes, incomingBytes, limitBytes) {
  * rotacion con un flujo a medio vaciar. Un fallo al escribir o al rotar no tumba la aplicacion:
  * el registro es para diagnosticar, no parte de la funcion.
  */
-function openLog(logDir, limitBytes = MAX_LOG_BYTES) {
-  const current = path.join(logDir, "backend.log");
+function openLog(logDir, limitBytes = MAX_LOG_BYTES, fileName = "backend.log") {
+  const current = path.join(logDir, fileName);
   const previous = `${current}.1`;
   let fd = null;
   let written = 0;
@@ -172,6 +173,8 @@ function startBackend(port, extraEnv = {}) {
   fs.mkdirSync(logDir, { recursive: true });
   const log = openLog(logDir);
   log.write(`\n--- ${new Date().toISOString()} puerto ${port}\n`);
+  const updates = updateDir();
+  fs.mkdirSync(updates, { recursive: true });
 
   backend = spawn(where.command, [...where.args, "--port", String(port)], {
     cwd: where.cwd,
@@ -187,6 +190,10 @@ function startBackend(port, extraEnv = {}) {
       // Esa cache nace vacia: sin red, la meteorologia espacial sale de la instantanea fechada
       // de NASA DONKI del paquete, declarada como tal (app/environment/donki.py).
       EMMA_DONKI_SNAPSHOT: "true",
+      // Actualizaciones («La actualización», más abajo): la versión que corre y la carpeta donde el
+      // backend deja el instalador descargado y la petición de instalarlo.
+      EMMA_APP_VERSION: app.getVersion(),
+      EMMA_UPDATE_DIR: updates,
       ...extraEnv,
     },
   });
@@ -604,6 +611,149 @@ function loadStartupScenario(port) {
   });
 }
 
+// --- La actualización ---------------------------------------------------------------------------
+//
+// Petición del usuario: que el EMMA instalado se actualice a las versiones publicadas como releases.
+// Sin `electron-updater`: saldría a internet desde aquí y se saltaría `backend/app/core/egress.py`
+// (invariante 3 bis). El reparto es este, y el proceso principal no sale a internet en él:
+//   - el backend consulta las releases, baja `EMMA.Setup.X.Y.Z.exe` por egress, lo comprueba y deja
+//     en `updateDir()` el ejecutable y `listo.json` {version, file, sha256, size};
+//   - cuando una persona pulsa «Instalar y reiniciar», el backend escribe `instalar.json`
+//     {version, file, sha256, requested_at};
+//   - aquí se mira cada 2 s si está, se vuelve a comprobar todo (`update-handoff.cjs`: nombre
+//     simple dentro de la carpeta, versión posterior, SHA-256 medido otra vez y igual al de los dos
+//     ficheros) y se lanza el instalador. Sin preload ni IPC: el único traspaso es la carpeta.
+//
+// Lo que hace el instalador NSIS de electron-builder 26.15.3 al pasarle `/S --updated --force-run`
+// (plantillas de `node_modules/app-builder-lib/templates/nsis/`, leídas para esto):
+//   (a) Directorio y datos. Con `perMachine: false`, `initMultiUser` lee la instalación anterior
+//       del registro (`assistedInstaller.nsh` 117-137: HKCU `InstallLocation` -> modo por usuario)
+//       y `setInstallModePerUser` pone `$INSTDIR` en esa carpeta (`multiUser.nsh` 26-28): se
+//       reutiliza aunque se hubiera cambiado al instalar (`/D=` no se pasa). Después desinstala la
+//       versión anterior (`installSection.nsh` 52) llamando a su desinstalador con
+//       `/S /KEEP_APP_DATA ... --updated` siempre que no se pida `--delete-app-data`
+//       (`include/installUtil.nsh` 202-206 y 224); y el desinstalador, con `--updated`, no borra
+//       `%APPDATA%\EMMA` aunque `deleteAppDataOnUninstall: true` (`uninstaller.nsh` 219-230:
+//       `DELETE_APP_DATA_ON_UNINSTALL` solo cuenta con `${ifNot} ${isUpdated}`). Así que el perfil
+//       (ledger, cachés, registros, esta carpeta de actualización) se conserva, y el paquete de
+//       modelos (`%LOCALAPPDATA%\EMMA-modelos`) no lo toca ninguna de las dos. `--updated` en el
+//       instalador nuevo, además, deja los accesos directos como estaban
+//       (`include/installUtil.nsh` 86-93) y cierra el EMMA que siga abierto sin preguntar
+//       (`include/allowOnlyOneInstallerInstance.nsh` 105-120). No hace falta tocar las opciones `nsis`.
+//   (b) Relanzar. El instalador asistido (`oneClick: false`) solo abre la aplicación al acabar en
+//       silencio si lleva `--force-run` (`installSection.nsh` 105-109: `${isForceRun}` y
+//       `${Silent}`); el indicador lo declara `NsisTarget.js` (`flags([... "force-run" ...])`). Por
+//       eso se pasa `--force-run`: la versión nueva la abre el propio instalador, como usuario
+//       (`common.nsh` 123-132, `StartApp`, con `--updated`), cuando ya ha terminado de copiar.
+//   (c) La marca `descargar-modelos`. En `/S` la página de la casilla no se muestra,
+//       `$EmmaModelsWanted` queda vacía y `customInstall` va por la rama que borra la marca
+//       (`build/installer.nsh`); además el desinstalador anterior ya se llevó todo `$INSTDIR`
+//       (`uninstaller.nsh` 164-187). Una actualización no relanza la descarga de 33 GB; quien la
+//       quiera la pide desde «Modelos de IA».
+
+/** La carpeta del traspaso, en el perfil del usuario (la instalación no se puede escribir). */
+function updateDir() {
+  return path.join(app.getPath("userData"), "actualizacion");
+}
+
+// Los argumentos del instalador: silencioso, como actualización (conserva datos y accesos
+// directos) y abriendo la versión nueva al acabar. Ver (a) y (b) arriba.
+const INSTALLER_ARGS = ["/S", "--updated", "--force-run"];
+const UPDATE_POLL_MS = 2_000;
+
+/** Ya se está comprobando o lanzando una actualización: ni dos lanzamientos ni dos comprobaciones. */
+let updating = false;
+let updateTimer = null;
+let mainLog = null;
+
+function logMain(message) {
+  try {
+    if (mainLog === null) {
+      const logDir = path.join(app.getPath("userData"), "logs");
+      fs.mkdirSync(logDir, { recursive: true });
+      mainLog = openLog(logDir, MAX_LOG_BYTES, "main.log");
+    }
+    mainLog.write(`${new Date().toISOString()} ${message}\n`);
+  } catch {
+    // Sin registro se sigue funcionando.
+  }
+}
+
+function discardRequest(dir) {
+  try {
+    fs.rmSync(path.join(dir, handoff.REQUEST_FILE), { force: true });
+  } catch (err) {
+    logMain(`actualizacion: no se pudo borrar ${handoff.REQUEST_FILE}: ${err.message}`);
+  }
+}
+
+/**
+ * Atiende `instalar.json` si está. Un fallo se anota, se borra la petición y EMMA sigue: lo peor
+ * que puede hacer una petición mala es no instalar nada.
+ */
+async function checkUpdateRequest() {
+  if (updating || quitting) return;
+  const dir = updateDir();
+  if (!fs.existsSync(path.join(dir, handoff.REQUEST_FILE))) return;
+  updating = true;
+  let result;
+  try {
+    result = await handoff.validateHandoff(dir, app.getVersion());
+  } catch (err) {
+    result = { ok: false, reason: err.message };
+  }
+  if (!result.ok) {
+    logMain(`actualizacion rechazada: ${result.reason}`);
+    discardRequest(dir);
+    updating = false;
+    return;
+  }
+  // La petición se consume antes de lanzar: la versión nueva no debe volver a encontrarla.
+  discardRequest(dir);
+  if (!app.isPackaged) {
+    // En desarrollo no se instala nada encima de lo que haya instalado en el equipo.
+    logMain(`actualizacion ${result.version} valida; en desarrollo no se lanza el instalador`);
+    updating = false;
+    return;
+  }
+  launchInstaller(result.exe, result.version);
+}
+
+function launchInstaller(exe, version) {
+  logMain(`actualizacion ${version}: se cierra EMMA y se lanza ${path.basename(exe)}`);
+  if (updateTimer !== null) clearInterval(updateTimer);
+  // Igual que al salir: sin el aviso de «servicio detenido» y con todo lo lanzado cerrado.
+  quitting = true;
+  stopServices();
+  try {
+    const child = spawn(exe, INSTALLER_ARGS, {
+      cwd: path.dirname(exe),
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true,
+    });
+    child.on("error", (err) => logMain(`actualizacion: el instalador no arranco: ${err.message}`));
+    child.unref();
+  } catch (err) {
+    logMain(`actualizacion: el instalador no arranco: ${err.message}`);
+  }
+  app.quit();
+}
+
+function watchUpdateRequests() {
+  updateTimer = setInterval(() => void checkUpdateRequest(), UPDATE_POLL_MS);
+}
+
+/** Cierra el backend, el planificador y Ollama una sola vez (al salir o al actualizar). */
+let servicesStopped = false;
+function stopServices() {
+  if (servicesStopped) return;
+  servicesStopped = true;
+  stopPlanner();
+  stopBackend();
+  stopOllama();
+}
+
 async function main() {
   if (!app.requestSingleInstanceLock()) {
     app.quit();
@@ -632,6 +782,12 @@ async function main() {
   if (fs.existsSync(path.join(path.dirname(app.getPath("exe")), "descargar-modelos"))) {
     modelsBackendEnv.EMMA_MODELS_AUTODOWNLOAD = "true";
   }
+  // Una petición de instalar es de la sesión en que se pulsó: si quedó de otra (EMMA se cerró antes
+  // de atenderla), no instala nada al abrir sin que nadie lo vuelva a pedir.
+  if (fs.existsSync(path.join(updateDir(), handoff.REQUEST_FILE))) {
+    logMain(`actualizacion: se descarta un ${handoff.REQUEST_FILE} de una sesion anterior`);
+    discardRequest(updateDir());
+  }
   startBackend(port, {
     ...modelsBackendEnv,
     ...plannerBackendEnv(plannerSetupInfo, plannerPort, summaryPort),
@@ -653,6 +809,7 @@ async function main() {
   }
   // El planificador, después del backend: su base es el ledger del backend.
   if (plannerSetupInfo !== null) startPlanner(plannerSetupInfo, plannerPort, summaryPort, port);
+  watchUpdateRequests();
   await loadStartupScenario(port);
   createWindow(origin);
 }
@@ -667,9 +824,9 @@ app.on("second-instance", () => {
 
 app.on("before-quit", () => {
   quitting = true;
-  stopPlanner();
-  stopBackend();
-  stopOllama();
+  if (updateTimer !== null) clearInterval(updateTimer);
+  // Si una actualización ya los cerró, no se vuelve a hacer (`stopServices` lo recuerda).
+  stopServices();
 });
 
 app.on("window-all-closed", () => app.quit());

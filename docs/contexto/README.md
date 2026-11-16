@@ -2272,3 +2272,31 @@ expediente de riesgos; mutantes en `tests/mutants/cycle_phase_baseline.json`. **
 la RMSSD y la SDNN (sin cifra leída), el primer ciclo sin ciclo cerrado propio, la comparación
 entre tripulantes de `api/habitat.py` (no aplica la fase todavía) y cualquier medida con
 fisiología real de mujeres con ciclo.
+
+### Actualizar el EMMA instalado desde GitHub Releases (2026-11-16, lote «actualizar»)
+
+El usuario pidió que el exe instalado pueda pasar a las versiones nuevas publicadas en
+`github.com/Brillande/EMMA/releases` y que se documente la tecnología. **La especificación v1.1 no
+pide nada sobre actualizar, mantener o distribuir el programa**: buscado en
+`especificacion-tecnica-v1.1.md`, `knowledge-base-v1.md` y `conversacion-ideacion-v1.md`, ninguna
+habla de actualizaciones del software, parches ni versiones de la aplicación (el «mantenimiento» de
+la conversación, §4, es el de los repuestos de la nave). Lo más cercano son dos puntos de la
+especificación y uno de `prioridades-evento.md`, y el cambio se contrasta con ellos:
+
+- **§12, «todo modelo/regla debe estar versionado y disponer de trazabilidad»**: se refiere a las
+  reglas que deciden (`core/versioning.py`, `rules_version`) y sigue igual. Lo nuevo añade la
+  versión de la propia aplicación a la vista (`settings.app_version`, la que pasa Electron) y una
+  prueba que exige el mismo número en `backend/pyproject.toml`, `frontend/package.json`,
+  `desktop/package.json` y `backend/app/main.py`. Actualizar no escribe en el ledger: no es una vía
+  de datos de salud.
+- **§2 y §12, local-first y offline-first**: la comprobación es solo con botón (decisión del usuario,
+  2026-11-16: nunca automática), sale por `core/egress.py` (propósito `app-update`, invariante 3 bis)
+  y, en modo sin red, el panel lo dice y no falla. Instalar exige que una persona pulse «Instalar y
+  reiniciar» (§2, human-in-the-loop, aplicado aquí al programa y no a la clínica).
+- **`prioridades-evento.md`, punto 11, «versión de demo congelada»**: como nada se actualiza solo,
+  un EMMA instalado para enseñarlo se queda en su versión hasta que alguien decida cambiarla.
+
+Guía de uso y de publicación, con el diagrama de secuencia y por qué no se usó `electron-updater`:
+`docs/actualizaciones.md`. Especificación normativa: `compliance/software-update.md`. **Queda
+abierto:** el instalador no lleva firma de código, así que la huella SHA-256 asegura que se instala
+lo publicado pero no quién lo publicó; volver a una versión anterior es manual.

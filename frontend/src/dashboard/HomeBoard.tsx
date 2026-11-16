@@ -1730,7 +1730,7 @@ export function HomeEssential({
   wide = false,
   side = false,
   children,
-}: Piece & { wide?: boolean; side?: boolean; children?: ReactNode }) {
+}: { home: Pick<HomeData, "status">; links?: HomeLinks | undefined; wide?: boolean; side?: boolean; children?: ReactNode }) {
   const [operator] = useOperator();
   const [step, setStep] = useState<"idle" | "sending" | "sent">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -1796,6 +1796,18 @@ export function HomeEssential({
       </Command>
     </section>
   );
+}
+
+/**
+ * «Ayuda urgente» de «Inicio» en cualquier pestaña de las dos consolas (decisión del usuario,
+ * 2026-11-16: «el urgente lo quiero en todas las pestañas copiando el módulo de home»). Es la misma
+ * pieza (`HomeEssential`, a lo ancho), con el mismo aspecto. En una pestaña con la rejilla de la maqueta
+ * (`ref-home`) va tal cual; en un tablero genérico (`host`) va dentro de un envoltorio con la rejilla y
+ * las variables de la maqueta, para que se vea igual que en «Inicio» sin copiar su hoja.
+ */
+export function UrgentHelp({ status, host = false }: { status: CrewStatus; host?: boolean }) {
+  const card = <HomeEssential home={{ status }} wide />;
+  return host ? <div className="section-body ref-home urgent-host">{card}</div> : card;
 }
 
 /** Columna del tripulante: ficha, peligros por letra y bitácora. Personal: la privacidad la tapa entera. */

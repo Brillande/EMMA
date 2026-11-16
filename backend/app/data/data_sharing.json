@@ -349,6 +349,12 @@
         "what": "«Descargar modelos»: el paquete de modelos (Ollama, Whisper, TotalSegmentator, Tesseract) publicado en GitHub, solo cuando la persona lo pide y nunca en modo sin red.",
         "carries": "La dirección de cada fichero del paquete.",
         "hosts": ["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"]
+      },
+      {
+        "purpose": "app-update",
+        "what": "«Actualizar EMMA»: comprobar si hay una versión nueva publicada en GitHub y bajar su instalador, solo cuando la persona lo pide y nunca en modo sin red.",
+        "carries": "La dirección del manifiesto de la versión y la de su instalador.",
+        "hosts": ["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"]
       }
     ],
     "http_clients": [

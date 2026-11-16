@@ -62,6 +62,8 @@ export const UI_PICTOGRAMS = {
   export: "tray-arrow-down",
   // «Modelos de IA» (`components/ModelsPack.tsx`): el paquete de modelos que se baja a este equipo.
   modelsPack: "tray-arrow-down",
+  // «Actualizar EMMA» (`components/AppUpdate.tsx`): el instalador de la versión nueva que se baja.
+  appUpdate: "tray-arrow-down",
   trends: "chart-line",
   change: "chart-line",
   signedLedger: "lock",
@@ -228,8 +230,8 @@ export const UI_SYNONYMS: readonly { readonly concepts: readonly UiConcept[]; re
   { concepts: ["followUp", "searchedNotFound", "search"], why: "buscar con la lupa" },
   { concepts: ["evidence", "document"], why: "una hoja escrita" },
   {
-    concepts: ["received", "export", "modelsPack"],
-    why: "lo que llega a la bandeja: recibido, exportado a un fichero y los modelos descargados",
+    concepts: ["received", "export", "modelsPack", "appUpdate"],
+    why: "lo que llega a la bandeja: recibido, exportado a un fichero, los modelos descargados y el instalador nuevo de EMMA",
   },
   { concepts: ["trends", "change"], why: "la línea de una serie en el tiempo" },
   { concepts: ["docs", "sourceText", "source"], why: "lo leído en la fuente" },

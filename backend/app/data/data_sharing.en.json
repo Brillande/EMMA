@@ -72,6 +72,8 @@
     "Nada nuestro: la petición es la cita de hoy, sin parámetros.": "Nothing of ours: the request is today's quote, without parameters.",
     "Las efemérides «tal día como hoy» de la hoja diaria del planificador (Marplanner); solo con red.": "The «on this day» events of the planner's daily sheet (Marplanner); only with network.",
     "El mes y el día de hoy, y el idioma de la hoja (inglés o español).": "Today's month and day, and the language of the sheet (English or Spanish).",
+    "«Actualizar EMMA»: comprobar si hay una versión nueva publicada en GitHub y bajar su instalador, solo cuando la persona lo pide y nunca en modo sin red.": "«Update EMMA»: check whether a new version is published on GitHub and download its installer, only when the person asks for it and never in offline mode.",
+    "La dirección del manifiesto de la versión y la de su instalador.": "The address of the version's manifest and of its installer.",
     "Las rutas que aceptan el corte del retardo (until). Tierra pide hasta su corte lo que baja; a bordo se piden hasta el suyo las notas que sube Tierra.": "The routes that accept the delay cut-off (until). Earth requests what goes down up to its cut-off; on board, the notes that Earth sends up are requested up to theirs.",
     "De a bordo a Tierra": "From on board to Earth",
     "De Tierra a bordo": "From Earth to on board"

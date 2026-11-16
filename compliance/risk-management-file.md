@@ -1,7 +1,7 @@
 # Archivo de gestión de riesgos — ISO 14971
 
 **Estado:** peligros identificados, controles implementados, riesgo residual declarado.
-**Última revisión:** 2026-09-22
+**Última revisión:** 2026-09-22; el 2026-11-16, la actualización de la aplicación (H15, H25-H28)
 
 Este archivo reúne en un sitio los peligros del sistema y lo que se hace con cada uno. **No
 duplica** los análisis que ya existen: los controles clínicos están razonados uno a uno en
@@ -699,6 +699,8 @@ Los propósitos `planner-quotes` (`zenquotes.io`) y `planner-onthisday` (`en.wik
 
 El propósito `models-pack` (2026-11-15, `app/models_download.py`, «Descargar modelos») baja el paquete de modelos publicado en GitHub (`github.com` y sus almacenes `objects.githubusercontent.com` y `release-assets.githubusercontent.com`, adonde redirige cada fichero) solo cuando la persona lo pide desde «Modelos de IA», y nunca en modo sin red ni con el modo seguro. Solo sale la URL de cada fichero. Lo bajado se comprueba dos veces: cada trozo con el tamaño y el SHA-256 de `emma-modelos-partes.json`, y cada fichero con los de `MANIFIESTO.json`; solo se escriben los ficheros que el manifiesto nombra para esa pieza (una ruta ajena del `tar` invalida la pieza, sin escribir nada fuera de su carpeta), y la pieza solo sustituye a la instalada cuando todo casa. **Residual:** el índice se fía de HTTPS y de la cuenta de GitHub que lo publica: no va firmado. Pruebas: `tests/test_models_download.py` (sin red no sale, trozo alterado, ruta ajena, reanudación, carpeta ajena).
 
+El propósito `app-update` (2026-11-16, panel «Actualizaciones») lee el manifiesto `emma-update.json` de la versión marcada como `latest` en `github.com/Brillande/EMMA` y baja su instalador, con los mismos tres hosts que `models-pack`, solo cuando una persona pulsa «Comprobar» o «Descargar», y nunca en modo sin red ni con el modo seguro. Solo sale la URL de cada fichero. Especificación y modelo de amenazas en [`software-update.md`](software-update.md); peligros H25-H28.
+
 Las efemérides (`astroquery`, que usa `requests`) se autorizan antes de llamar. **Modo seguro**
 (asiento `safe-mode`, `record-integrity.md` §3.20): corta toda salida y deja el modelo local.
 Pruebas: `tests/test_egress.py`, `tests/test_safe_mode.py`; mutantes `egress.json`,
@@ -1368,9 +1370,92 @@ trazan rectos sobre la humedad relativa, y la figura los dibuja sobre la razón 
 101,325 kPa, hasta ~2 puntos más estricto arriba y 0,6 más laxo abajo (cabecera del módulo); y la
 lectura de O2 es la presión parcial de cabina, no la inspirada que pide el requisito.
 
+### H25 — Se instala un instalador corrupto o malicioso
+
+*Gravedad alta.* Añadido el 2026-11-16 con la actualización de la aplicación
+([`software-update.md`](software-update.md)). El instalador sustituye el programa entero: uno
+corrupto deja EMMA sin arrancar (H11), y uno malicioso controla todo lo que EMMA ve y dice.
+
+**Qué puede fallar:** una descarga cortada o alterada en el camino se ejecuta; un fichero se
+sustituye en disco entre la comprobación y el lanzamiento; se publica, con la cuenta de GitHub
+comprometida, un instalador alterado con su huella coherente; una versión antigua con un fallo
+conocido se publica como `latest` para forzar una bajada.
+
+**Controles:** tamaño y SHA-256 del manifiesto antes de dar el fichero por listo, y `listo.json`
+solo después y de forma atómica; el `.partial` nunca se ejecuta; la aplicación de escritorio
+recalcula el SHA-256, exige una versión mayor que la instalada y que el fichero esté dentro de la
+carpeta de actualización justo antes de lanzarlo; el backend no ofrece una versión que no sea mayor
+(`same-version`); la consulta y la descarga salen solo por `core/egress.py`.
+
+**Riesgo residual:** **el instalador no va firmado y el manifiesto viaja por el mismo canal que el
+exe.** La huella protege de la corrupción y de las descargas cortadas, no de quien controla la
+cuenta que publica. Es un límite declarado; la firma de código (o un manifiesto firmado con una
+clave fuera de GitHub) queda pendiente. Un proceso local con permiso de escritura en la carpeta del
+usuario puede preparar un exe y una petición coherentes, pero ya ejecuta código como ese usuario y
+la instalación es por usuario, sin elevación.
+
+### H26 — La actualización corta la vigilancia en mitad de una tarea crítica
+
+*Gravedad media.* Añadido el 2026-11-16. Mientras el instalador corre, EMMA está cerrada: no hay
+análisis ni alertas, y H1 deja de ser probable para ser seguro durante ese intervalo.
+
+**Qué puede fallar:** se instala durante una EVA, con una alerta abierta o mientras alguien lee
+EMMA para decidir; el instalador se corta (corriente, apagado) y la aplicación queda a medias; tras
+la instalación nadie vuelve a abrirla, porque con `/S --updated` el instalador asistido de
+electron-builder no la relanza.
+
+**Controles:** nunca es automático (decisión del usuario): ni comprobación periódica ni instalación
+sin que una persona pulse «Instalar y reiniciar»; descargar y verificar no cierran nada y se pueden
+hacer antes, de modo que el cierre se limita a la instalación; el instalador comprobado se queda en
+la carpeta de actualización y permite reinstalar sin red si la instalación se corta. Con el modo
+seguro activo no se puede pedir la instalación (`safe-mode`, decisión del usuario 2026-11-16,
+`software-update.md` §7).
+
+**Riesgo residual:** elegir el momento es de la persona; fuera del modo seguro, la interfaz no
+comprueba si hay una alerta abierta o una EVA en curso antes de instalar. No hay instalación A/B ni vuelta atrás automática:
+una instalación cortada se recupera a mano. Que EMMA no se vuelva a abrir sola después de instalar
+está leído en la plantilla de electron-builder, no comprobado.
+
+### H27 — Se pierden datos al actualizar
+
+*Gravedad media.* Añadido el 2026-11-16.
+
+**Qué puede fallar:** la desinstalación de la versión anterior borra la carpeta de datos de usuario
+(`deleteAppDataOnUninstall: true` en `desktop/package.json`); el registro de la sesión se pierde al
+cerrar EMMA para instalar.
+
+**Controles:** al instalar sobre una versión existente, el instalador de electron-builder pasa
+siempre `--updated` al desinstalador de la anterior, y con él no borra los datos de usuario (leído
+en `installUtil.nsh` y `uninstaller.nsh` de electron-builder 26.15.3); vale también para la
+reinstalación manual de una versión anterior. El paquete de modelos está fuera de esa carpeta
+(`%LOCALAPPDATA%\EMMA-modelos`).
+
+**Riesgo residual:** **el almacén de la API es en memoria** (`new_store` en `api/routes.py`): el
+ledger de la sesión vive lo que vive el proceso, y cerrar EMMA para actualizar lo termina igual que
+cerrarla por cualquier otra razón. El actualizador no crea esta pérdida, pero la hace más probable.
+La conservación de `userData` con `--updated` no se ha observado en un instalador ejecutado.
+
+### H28 — La versión instalada no entiende lo que dejó la anterior
+
+*Gravedad media.* Añadido el 2026-11-16.
+
+**Qué puede fallar:** una versión nueva lee mal un fichero persistente de la anterior, o una
+vuelta atrás manual lee mal uno de la nueva; el manifiesto cambia de formato y una versión vieja
+lo interpreta a medias.
+
+**Controles:** hoy no hay almacén de salud en disco que migrar (H27); lo persistente son cachés con
+su edad declarada y el paquete de modelos con su `instalado.json`. El manifiesto declara
+`schema: 1` y uno distinto es `bad-manifest`: no se ofrece nada. La versión instalada se lee de un
+solo sitio y una prueba exige la misma en los cuatro ficheros que la declaran.
+
+**Riesgo residual:** el día que el almacén pase a fichero, una versión nueva tendrá que migrarlo o
+negarse a abrirlo, y una vuelta atrás tendrá que poder leerlo: es un requisito escrito
+([`software-update.md`](software-update.md) §8), sin código. Que el instalador acepte bajar de
+versión no se ha comprobado.
+
 ## 4. Riesgo residual global
 
-Los veinticuatro peligros tienen control implementado y **ninguno está cerrado del todo**. Los tres que más
+Los veintiocho peligros tienen control implementado y **ninguno está cerrado del todo**. Los tres que más
 pesan, por orden:
 
 1. **H3 y H12 comparten causa raíz: no hay identidad de operador.** Toda la integridad del registro

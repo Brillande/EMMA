@@ -1,8 +1,7 @@
-import { type ReactNode, Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 
 import { Mark, MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import {
@@ -24,7 +23,8 @@ import { type Fetched, type HomeData } from "../dashboard/HomeBoard";
 import { AreaCurve, MultiTrend, type Reading, Ring, Sparkline } from "../dashboard/HomeCharts";
 import { capitalized } from "../dashboard/HazardCards";
 import { IssArt } from "../dashboard/HomeArt";
-import { NodesFit } from "../dashboard/NodesFit";
+import { type PanelEntry } from "../components/ConsoleTabs";
+import { showRowOf } from "../components/RowPages";
 import { decimalsFor, limitMark, meterScale } from "../habitat/flow";
 import { groupPictogram, parameterPictogram, systemPictogram } from "../habitat/pictograms";
 import "../dashboard/referenceDashboard.css";
@@ -243,9 +243,15 @@ const GROUP_CHIPS: readonly { key: string; label: string; params: readonly strin
   { key: "microbiology", label: tr("Microbios", "Microbes"), params: ["air-microbial", "surface-microbial"] },
 ];
 
-/** Lleva al panel de la pestaña con ese `data-ui` (cada bloque `key` tiene su `env-key`). */
+/**
+ * Lleva al panel de la pestaña con ese `data-ui` (cada bloque `key` tiene su `env-key`). La pestaña va
+ * por páginas de dos filas (2026-11-16): pedir un bloque es querer verlo, así que primero se abre la
+ * página de su fila y, ya pintada, se lleva la vista a él (como las anclas de «Radiación»).
+ */
 function goToPanel(target: string) {
-  document.querySelector(`[data-ui="${target}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+  const find = () => document.querySelector(`[data-ui="${target}"]`);
+  showRowOf(find());
+  requestAnimationFrame(() => find()?.scrollIntoView({ block: "nearest", behavior: "smooth" }));
 }
 
 /** La franja de la maqueta: título, hora de los datos y los bloques con su estado. */
@@ -254,7 +260,7 @@ export function EnvHeader({ env }: Piece) {
   const habitat = habitatOf(env);
   const last = habitat?.latest.reduce((top, item) => Math.max(top, Date.parse(item.effective)), -Infinity) ?? -Infinity;
   return (
-    <section data-ui="env-header" className="ref-card env-header" aria-label={tr("Entorno de la nave", "Spacecraft environment")}>
+    <section data-ui="env-header" data-row-free="" className="ref-card env-header" aria-label={tr("Entorno de la nave", "Spacecraft environment")}>
       <h2 className="env-title">
         <Pictogram name="ridge-environment" />
         <span title={capitalized(status.mission.profile?.display ?? tr("misión", "mission"))}>{tr("Entorno de la nave", "Spacecraft environment")}</span>
@@ -922,35 +928,32 @@ export function EnvCorrelations({ env }: Piece) {
   );
 }
 
-const FOLD = "crew.environment";
-
 /**
  * Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio».
  *
- * Bajo la raya plegable (decisión del usuario, 2026-11-15: lo secundario de cada pestaña, plegado
- * como en «Inicio») van los bloques de detalle. Arriba queda todo lo que avisa: la franja con sus
- * chips y el «Estado ambiental global» nombran cada lectura fuera de límite, y las salidas de 72 h
- * no se pliegan nunca; así, plegar el detalle no esconde ningún aviso que no se vea ya arriba.
+ * La pestaña va por páginas de dos filas (decisión del usuario, 2026-11-16, `RowPages`): las filas de
+ * siempre pasan de dos en dos; la franja es la primera. Las dos primeras filas llevan todo lo que
+ * avisa (estado global, índice, salidas de 72 h); los bloques de detalle van después.
  */
-export function environmentPanels(env: EnvironmentData, active: boolean): ReactNode[] {
-  const folded = (panel: ReactNode) => <Folded id={FOLD}>{panel}</Folded>;
+export function environmentPanels(env: EnvironmentData): PanelEntry[] {
   return [
-    <NodesFit active={active} fixed />,
+    // La franja cuenta como fila (no fija): con el estado de debajo forma la primera página, que es el
+    // aspecto plegado de siempre de la pestaña (en ventana alta, la tendencia baja a una fila propia con
+    // la estación: `environmentBoard.css`, `@media (min-height: 860px)`).
     <EnvHeader env={env} />,
     <EnvGlobal env={env} />,
     <EnvIndex env={env} />,
     <EnvStation />,
     <EnvTrend env={env} />,
     <EnvRisk env={env} />,
-    <FoldDivider id={FOLD} what={tr("Aire, temperatura, luz, ruido, agua, microbios, gravedad, sistemas y correlaciones", "Air, temperature, light, noise, water, microbes, gravity, systems and correlations")} />,
-    folded(<EnvAir env={env} />),
-    folded(<EnvThermal env={env} />),
-    folded(<EnvLight env={env} />),
-    folded(<EnvNoise env={env} />),
-    folded(<EnvWater env={env} />),
-    folded(<EnvMicrobiology env={env} />),
-    folded(<EnvGravity env={env} />),
-    folded(<EnvSystems env={env} />),
-    folded(<EnvCorrelations env={env} />),
+    <EnvAir env={env} />,
+    <EnvThermal env={env} />,
+    <EnvLight env={env} />,
+    <EnvNoise env={env} />,
+    <EnvWater env={env} />,
+    <EnvMicrobiology env={env} />,
+    <EnvGravity env={env} />,
+    <EnvSystems env={env} />,
+    <EnvCorrelations env={env} />,
   ];
 }

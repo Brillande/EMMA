@@ -31,6 +31,7 @@ import {
 } from "./displayModes";
 import { Fold } from "./Fold";
 import { Mark } from "./Mark";
+import { RowPages } from "./RowPages";
 
 /**
  * El armazón de pestañas de cada consola (§5.40): un carril lateral, como el de una tableta, con
@@ -62,16 +63,51 @@ import { Mark } from "./Mark";
  */
 export const RailTopContext = createContext<ReactNode>(null);
 
-/** Una pieza de la lista de paneles: el panel, o el panel marcado como personal. */
-export type PanelEntry = ReactNode | { readonly personal: ReactNode };
+/**
+ * Una pieza de la lista de paneles: el panel, el panel marcado como personal, o (en una pestaña por
+ * filas) el panel fijo que se ve en todas las páginas.
+ */
+export type PanelEntry =
+  | ReactNode
+  | { readonly personal: ReactNode }
+  | { readonly pinned: ReactNode }
+  | { readonly pageBreak: true };
 
 /** Marca un panel como personal: en modo privacidad se tapa aunque su sección quede a la vista. */
-export function personal(panel: ReactNode): PanelEntry {
+export function personal(panel: PanelEntry): PanelEntry {
+  // Lo fijo de una pestaña por filas sigue fijo (en una sección no compartida se tapa igual entero).
+  if (isPinned(panel) || isPersonal(panel) || isPageBreak(panel)) return panel;
   return { personal: panel };
 }
 
 function isPersonal(entry: PanelEntry): entry is { readonly personal: ReactNode } {
   return typeof entry === "object" && entry !== null && !Array.isArray(entry) && "personal" in entry;
+}
+
+/**
+ * En una pestaña por filas (`rowPages`), un panel que no cuenta como fila y se ve en todas las páginas:
+ * una barra (ubicación, anclas) o lo que nunca puede quedar en otra página (HMI §2.7 y §2.8).
+ */
+export function pinned(panel: ReactNode): PanelEntry {
+  return { pinned: panel };
+}
+
+function isPinned(entry: PanelEntry): entry is { readonly pinned: ReactNode } {
+  return typeof entry === "object" && entry !== null && !Array.isArray(entry) && "pinned" in entry;
+}
+
+/**
+ * En una pestaña por filas, dónde acaba la primera página: lo de antes es lo que la pestaña enseñaba
+ * al abrirla (lo que quedaba encima de la raya «Mostrar lo secundario»), con todas sus filas y
+ * columnas; lo de después va en páginas de dos filas (decisión del usuario, 2026-11-16: respetar el
+ * original). Va donde estaba la raya.
+ */
+export function pageBreak(): PanelEntry {
+  return { pageBreak: true };
+}
+
+function isPageBreak(entry: PanelEntry): entry is { readonly pageBreak: true } {
+  return typeof entry === "object" && entry !== null && !Array.isArray(entry) && "pageBreak" in entry;
 }
 
 export interface ConsoleSection {
@@ -98,6 +134,16 @@ export interface ConsoleSection {
   shared?: boolean;
   /** Clases extra del cuerpo de la sección: «Inicio» monta sus paneles en la rejilla de la maqueta. */
   className?: string;
+  /**
+   * Por páginas de dos filas, cada fila con su reparto de siempre (decisión del usuario, 2026-11-16;
+   * `RowPages`). Los `pinned()` se ven en todas las páginas.
+   */
+  rowPages?: boolean;
+  /**
+   * Con `rowPages`, si la primera página toma el aspecto plegado de la hoja (`data-folded`). Por defecto
+   * sí; `false` cuando ese aspecto es de una sola fila y la primera página tiene que enseñar dos.
+   */
+  rowPagesFolded?: boolean;
   panels: readonly PanelEntry[];
 }
 
@@ -396,25 +442,29 @@ export function ConsoleTabs({
                     el lector de pantalla ya oye el nombre en la pestaña que etiqueta el cuerpo. */}
                 {section.className === undefined && (
                   <BoardOnly>
-                    <p className="board-frame-h" aria-hidden="true">
+                    <p className="board-frame-h" aria-hidden="true" data-row-pin="">
                       <Mark pictogram={section.pictogram}>{section.label}</Mark>
                       <SectionArt section={section.key} console={id} />
                     </p>
                   </BoardOnly>
                 )}
                 {section.panels.map((entry, index) => {
-                  const panel = isPersonal(entry) ? entry.personal : entry;
+                  if (isPageBreak(entry)) return <span key={index} data-row-break="" hidden />;
+                  const panel = isPersonal(entry) ? entry.personal : isPinned(entry) ? entry.pinned : entry;
                   // Un hueco de la tabla (`cond && <Panel/>` que no se cumple) no se tapa: no hay nada.
                   if (panel === null || panel === undefined || panel === false) return null;
                   // Sin poder tapar solo los nombres de las frases, lo compartido se tapa entero.
                   const covered =
                     modes.privacy && (section.shared !== true || isPersonal(entry) || !namesMasked);
                   return (
-                    <Slot key={index} covered={covered}>
+                    <Slot key={index} covered={covered} pin={isPinned(entry)}>
                       {panel}
                     </Slot>
                   );
                 })}
+                {section.rowPages === true && (
+                  <RowPages id={`${id}.${section.key}`} label={section.label} folded={section.rowPagesFolded !== false} />
+                )}
               </div>
             );
           })}
@@ -457,9 +507,9 @@ function tabLabel(label: string, short: boolean): ReactNode {
  * (`display: contents`). El árbol es el mismo en los dos casos: poner o quitar la privacidad no
  * desmonta el panel, que queda como estaba (lo que se estaba escribiendo, incluido).
  */
-function Slot({ covered, children }: { covered: boolean; children: ReactNode }) {
+function Slot({ covered, pin = false, children }: { covered: boolean; pin?: boolean; children: ReactNode }) {
   return (
-    <div className={covered ? "slot privacy-cover" : "slot"}>
+    <div className={covered ? "slot privacy-cover" : "slot"} data-row-pin={pin ? "" : undefined}>
       <div
         className={covered ? "slot-body privacy-blur" : "slot-body"}
         inert={covered}

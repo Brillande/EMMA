@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactNode, useCallback, useEffect, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
 
 import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { Command } from "../components/Command";
@@ -6,7 +6,6 @@ import { FieldLabel } from "../components/FieldLabel";
 import { MarkOf } from "../components/Mark";
 import { OperatorInput } from "../components/OperatorInput";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import type { PictogramName } from "../icons/registry";
@@ -34,7 +33,7 @@ import { type GroundSummary, groundSummary } from "../planner/plannerApi";
 import { ImpactBar, MultiTrend, Radar, type Reading, Ring, Sparkline, levelToken } from "../dashboard/HomeCharts";
 import { capitalized } from "../dashboard/HazardCards";
 import { CrewTriangleArt, LightBellArt } from "../dashboard/HomeArt";
-import { NodesFit } from "../dashboard/NodesFit";
+import { type PanelEntry } from "../components/ConsoleTabs";
 import type { AlertActions } from "../dashboard/AlertRow";
 import type { Alert } from "../lib/alerts";
 import { PvtPanel } from "../pvt/PvtPanel";
@@ -310,7 +309,7 @@ function tint(level: string | null) {
 export function IsoHeader({ iso }: Piece) {
   const { status } = iso.home;
   return (
-    <section data-ui="iso-header" className="ref-card iso-header" aria-label={tr("Aislamiento y salud psicosocial", "Isolation and psychosocial health")}>
+    <section data-ui="iso-header" data-row-free="" className="ref-card iso-header" aria-label={tr("Aislamiento y salud psicosocial", "Isolation and psychosocial health")}>
       <h2 className="iso-title">
         <Pictogram name="ridge-isolation" />
         <span>
@@ -528,7 +527,7 @@ export function IsoGlobal({ iso }: Piece) {
   const risk = iso.home.status.domains[BEHAVIORAL];
   const style = level !== null && isLevel(level) ? levelStyle(level) : null;
   return (
-    <section data-ui="iso-global" className="ref-card iso-global" aria-label={tr("Estado global del aislamiento", "Overall isolation status")}>
+    <section data-ui="iso-global" data-row-free="" className="ref-card iso-global" aria-label={tr("Estado global del aislamiento", "Overall isolation status")}>
       <PanelTitle concept="state" className="ref-h">
         {tr("Estado global (aislamiento)", "Overall status (isolation)")}
       </PanelTitle>
@@ -1307,15 +1306,13 @@ function DayBars({ readings, reference, days, label }: { readings: readonly Read
   );
 }
 
-/** La raya de lo secundario de esta pestaña (su elección se guarda en `emma.fold.crew.isolation`). */
-const FOLD = "crew.isolation";
-
 /** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
-export function isolationPanels(iso: IsolationData, active: boolean, decide?: BoardDecisions, control?: IsoAlertControl): ReactNode[] {
+export function isolationPanels(iso: IsolationData, decide?: BoardDecisions, control?: IsoAlertControl): PanelEntry[] {
   return [
-    // Cabe en la ventana, como la maqueta: el ajuste de «Distancia y nodos», siempre puesto y sin
-    // botón («el botón ajustar a pantalla no lo queremos», 2026-11-15).
-    <NodesFit active={active} fixed />,
+    // Por páginas de dos filas (2026-11-16, `RowPages`): la pestaña ya llena la ventana con su letra,
+    // así que el ajuste de «Distancia y nodos» (`NodesFit`) ya no hace falta aquí. La cabecera NO va
+    // fija: comparte la primera fila con el estado global (que ocupa dos filas), y fija dejaba un hueco
+    // de tres columnas que en las páginas siguientes ocupaba la primera tarjeta.
     <IsoHeader iso={iso} />,
     <IsoGlobal iso={iso} />,
     <IsoIndicators iso={iso} />,
@@ -1325,13 +1322,6 @@ export function isolationPanels(iso: IsolationData, active: boolean, decide?: Bo
     <IsoAlerts iso={iso} control={control} />,
     // Lo secundario, plegado por defecto como en «Inicio»: el detalle que explica el estado de
     // arriba sin cambiarlo. Cada panel se envuelve aparte para que `personal()` siga siendo por panel.
-    <FoldDivider
-      id={FOLD}
-      what={tr(
-        "Tendencia, factores, sueño, luz, nutrición, pruebas, progreso, correlaciones y recomendaciones",
-        "Trend, factors, sleep, light, nutrition, tests, progress, correlations and recommendations",
-      )}
-    />,
     ...[
       <IsoTrend iso={iso} />,
       <IsoFactors iso={iso} />,
@@ -1347,6 +1337,6 @@ export function isolationPanels(iso: IsolationData, active: boolean, decide?: Bo
       <IsoTests iso={iso} />,
       <IsoCorrelations iso={iso} />,
       <IsoRecommendations iso={iso} decide={decide} />,
-    ].map((panel) => <Folded id={FOLD}>{panel}</Folded>),
+    ],
   ];
 }

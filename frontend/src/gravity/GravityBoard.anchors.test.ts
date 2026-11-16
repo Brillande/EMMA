@@ -14,7 +14,9 @@ import { GRAVITY_KEYS, GravMusculo, GravTests, type GravityData } from "./Gravit
  * pestañas apartadas de esta versión; ahora llevan a los paneles de la pestaña y salen siempre.
  * Y la casilla «Densidad ósea (DXA)» se apaga, diciendo por qué, cuando no hay densitometría que
  * marcar. Sin DOM en la suite: árbol de elementos y `document` falso para pulsar; el marcado
- * estático para la casilla.
+ * estático para la casilla. La pestaña va por páginas de dos filas (2026-11-16): el botón abre antes
+ * la página del panel (`showRowOf`, que sube con `closest`) y desplaza en el siguiente fotograma, así
+ * que se simula `requestAnimationFrame` y se ejecuta al momento.
  */
 
 type Props = Record<string, unknown> & { children?: ReactNode };
@@ -89,8 +91,10 @@ afterEach(() => {
 describe("«Ver pruebas» y «Plan de contramedidas» llevan a su panel de la pestaña", () => {
   it("salen siempre, sin accesos de la consola, y desplazan hasta las pruebas y los ejercicios", () => {
     const scrolled: string[] = [];
+    vi.stubGlobal("requestAnimationFrame", (run: () => void) => run());
     vi.stubGlobal("document", {
-      querySelector: (selector: string) => ({ scrollIntoView: () => scrolled.push(selector) }),
+      // Fuera de una sección por filas: `showRowOf` no encuentra página que abrir y no cambia nada.
+      querySelector: (selector: string) => ({ closest: () => null, scrollIntoView: () => scrolled.push(selector) }),
     });
     const found = buttons(createElement(GravTests, { grav: data() }));
     expect(found.map((button) => button.label.trim())).toEqual(["Ver pruebas / resultados", "Plan de contramedidas"]);

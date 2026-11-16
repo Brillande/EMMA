@@ -1,3 +1,4 @@
+import { type PanelEntry } from "../components/ConsoleTabs";
 import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useId, useState } from "react";
 
 import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
@@ -5,7 +6,7 @@ import { AvatarSwitch } from "../components/AvatarSwitch";
 import { Command } from "../components/Command";
 import { MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
+import { showRowOf } from "../components/RowPages";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import type { PictogramName } from "../icons/registry";
@@ -20,7 +21,6 @@ import { type Fetched, type HomeData, type HomeLinks, HomeCrew, HomeQuickHazards
 import { ImpactBar, MultiTrend, type Reading, Ring, levelToken } from "../dashboard/HomeCharts";
 import { capitalized } from "../dashboard/HazardCards";
 import { BodyBonesArt, BodyMuscleArt, BodyVesselsArt } from "../dashboard/HomeArt";
-import { NodesFit } from "../dashboard/NodesFit";
 import { dailyMeans, readingsOf, streakDays, windowMean } from "../isolation/IsolationBoard";
 import "../dashboard/referenceDashboard.css";
 import "../isolation/isolationBoard.css";
@@ -680,7 +680,11 @@ const GO: readonly { target: string; text: string; icon: "chart-line" | "dumbbel
 
 function GoLinks() {
   const go = (target: string) => {
-    document.querySelector(`[data-ui="${target}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+    const find = () => document.querySelector(`[data-ui="${target}"]`);
+    // La pestaña va por páginas de dos filas (2026-11-16): pedir las pruebas o el plan es querer verlos,
+    // así que primero se abre la página de su fila y, ya pintada, se lleva la vista a él.
+    showRowOf(find());
+    requestAnimationFrame(() => find()?.scrollIntoView({ block: "nearest", behavior: "smooth" }));
   };
   return (
     <div className="grav-go">
@@ -945,20 +949,14 @@ export function GravExercises({ grav, decide }: Piece & { decide?: BoardDecision
   );
 }
 
-/** La raya de lo secundario de «Gravedad»: su elección se guarda en `emma.fold.crew.gravity`. */
-const FOLD_ID = "crew.gravity";
-
 /** Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio». */
-export function gravityPanels(grav: GravityData, active: boolean, links: HomeLinks | undefined, decide?: BoardDecisions): ReactNode[] {
+export function gravityPanels(grav: GravityData, links: HomeLinks | undefined, decide?: BoardDecisions): PanelEntry[] {
   const home = grav.home;
   return [
-    // El estado y los cuerpos van en un solo bloque (`.grav-main`, rejilla de 12 columnas propia)
-    // por el contrato «lo plegado deja sitio» (lote «responsivo», 2026-11-16): así es siempre la
-    // segunda fila del tablero, la que crece con lo secundario plegado, y dentro decide qué filas
-    // estiran según el ancho del tablero. `NodesFit` va dentro para no ocupar fila propia si la
-    // privacidad tapa su hueco.
-    <div className="grav-main">
-      <NodesFit active={active} fixed />
+    // El estado y los cuerpos van en un solo bloque (`.grav-main`, rejilla de 12 columnas propia):
+    // dentro se reparten según el ancho del tablero. Para las páginas de dos filas (`RowPages`) el
+    // bloque entero es una sola fila, la primera tras la ubicación fija.
+    <div className="grav-main" data-row-group="">
       <GravExposure grav={grav} />
       <GravTransition grav={grav} />
       <HomeCrew home={home} links={links} />
@@ -968,31 +966,12 @@ export function gravityPanels(grav: GravityData, active: boolean, links: HomeLin
       <GravTests grav={grav} />
     </div>,
     <HomeQuickHazards home={home} links={links} />,
-    // Lo secundario se pliega con la raya de «Inicio», plegado de inicio (decisión del usuario,
-    // 2026-11-15). Arriba queda lo que dice el estado: exposición, transición, tripulación, el riesgo
-    // (nunca se pliega), cuerpo, pruebas y los peligros. Debajo, el detalle que lo amplía. Cada panel
-    // va envuelto por separado para que plegado no ocupe celda en la rejilla.
-    <FoldDivider
-      id={FOLD_ID}
-      what={tr(
-        "Entrenamiento, campos gravitatorios, riesgos por transición, predicción y contramedidas",
-        "Training, gravity fields, transition risks, prediction and countermeasures",
-      )}
-    />,
-    <Folded id={FOLD_ID}>
-      <GravTraining grav={grav} />
-    </Folded>,
-    <Folded id={FOLD_ID}>
-      <GravFields grav={grav} />
-    </Folded>,
-    <Folded id={FOLD_ID}>
-      <GravTransitionRisks grav={grav} />
-    </Folded>,
-    <Folded id={FOLD_ID}>
-      <GravPrediction grav={grav} />
-    </Folded>,
-    <Folded id={FOLD_ID}>
-      <GravExercises grav={grav} decide={decide} />
-    </Folded>,
+    // Arriba queda lo que dice el estado: exposición, transición, tripulación, el riesgo, cuerpo,
+    // pruebas y los peligros. Después, el detalle que lo amplía.
+    <GravTraining grav={grav} />,
+    <GravFields grav={grav} />,
+    <GravTransitionRisks grav={grav} />,
+    <GravPrediction grav={grav} />,
+    <GravExercises grav={grav} decide={decide} />,
   ];
 }

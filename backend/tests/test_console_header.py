@@ -62,11 +62,19 @@ GUARDED = {
     "/api/models-pack/check",
     "/api/models-pack/download",
     "/api/models-pack/cancel",
+    # «Actualizar EMMA» (2026-11-16): consultar y bajar salen a internet, bajar e instalar escriben
+    # en disco; otra página del navegador no debe poder lanzarlo.
+    "/api/app-update/check",
+    "/api/app-update/download",
+    "/api/app-update/cancel",
+    "/api/app-update/install",
 }
 # Las cubiertas que no llevan cuerpo (las demás de `GUARDED` lo leen tal cual).
 BODYLESS = {
     "/api/simulate", "/api/comms/preload", "/api/dossier/ntrs/refresh",
     "/api/models-pack/check", "/api/models-pack/cancel",
+    "/api/app-update/check", "/api/app-update/download", "/api/app-update/cancel",
+    "/api/app-update/install",
 }
 # Las cubiertas con cuerpo JSON validado: no las ejecuta una petición simple, pero su contrato
 # pide la cabecera igual (el inventario firmado, 2026-11-14).

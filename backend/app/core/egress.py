@@ -84,6 +84,13 @@ ALLOWLIST: dict[str, frozenset[str]] = {
     "models-pack": frozenset({
         "github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com",
     }),
+    # «Actualizar EMMA» (`app/app_update.py`): el manifiesto `emma-update.json` y el instalador
+    # de la última versión publicada en GitHub, solo cuando la persona lo pide. Solo sale la URL
+    # del fichero, nada de la tripulación; GitHub redirige la descarga a su almacén de ficheros,
+    # y la puerta autoriza también esa segunda petición.
+    "app-update": frozenset({
+        "github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com",
+    }),
 }
 RETRY_TRIES = 3
 RETRY_BASE_S = 0.25
@@ -117,6 +124,15 @@ def set_safe_mode_provider(provider: Callable[[], str | None] | None) -> None:
     """`provider()` devuelve el motivo si el modo seguro está activo, o None."""
     global _safe_mode
     _safe_mode = provider
+
+
+def safe_mode_reason() -> str | None:
+    """El motivo del modo seguro si está activo, o None.
+
+    Para lo que el modo seguro también para sin salir a internet: instalar una versión nueva de
+    EMMA ya descargada (`app_update.Updater.request_install`).
+    """
+    return _safe_mode() if _safe_mode is not None else None
 
 
 _border_lock = threading.Lock()
@@ -207,7 +223,7 @@ def authorize(settings: Settings, purpose: str, url: str, query: str = "") -> No
     if settings.offline:
         _audit(settings, purpose, url, "deny", "modo sin red")
         raise EgressBlocked("el sistema está en modo sin red")
-    reason = _safe_mode() if _safe_mode is not None else None
+    reason = safe_mode_reason()
     if reason is not None:
         _audit(settings, purpose, url, "deny", "modo seguro")
         raise EgressBlocked(f"modo seguro activo: {reason}")

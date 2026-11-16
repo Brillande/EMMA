@@ -1,11 +1,12 @@
-import { type CSSProperties, type ReactNode, Suspense, lazy, useEffect, useState } from "react";
+import { type CSSProperties, Suspense, lazy, useEffect, useState } from "react";
 
 import { AdoptControls, type BoardDecisions, BoardOperator } from "../components/AdoptControls";
 import { LevelBadge } from "../components/LevelBadge";
 import { Mark, MarkOf } from "../components/Mark";
 import { ObservationTypeBadge } from "../components/ObservationTypeBadge";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded, setFoldOpen } from "../components/SecondaryFold";
+import { type PanelEntry, pinned } from "../components/ConsoleTabs";
+import { showRowOf } from "../components/RowPages";
 import { Loading, Unavailable } from "../components/Unavailable";
 import { Pictogram } from "../icons";
 import {
@@ -1329,15 +1330,10 @@ export function RadNav({ rad }: Piece) {
   const { mission } = rad.home.status;
   const go = (target: string) => {
     const find = () => document.querySelector(`[data-ui="${target}"]`);
-    const panel = find();
-    if (panel !== null) {
-      panel.scrollIntoView({ block: "start", behavior: "smooth" });
-      return;
-    }
-    // El ancla apunta a un panel plegado bajo la raya (2026-11-15): pedirlo es querer verlo, así que
-    // se despliega lo secundario y se va a él cuando ya está pintado.
-    setFoldOpen(RAD_FOLD, true);
-    requestAnimationFrame(() => find()?.scrollIntoView({ block: "start", behavior: "smooth" }));
+    // La pestaña va por páginas de dos filas (2026-11-16): pedir un apartado es querer verlo, así que
+    // primero se abre la página de su fila y después se lleva la vista a él.
+    showRowOf(find());
+    requestAnimationFrame(() => find()?.scrollIntoView({ block: "nearest", behavior: "smooth" }));
   };
   return (
     <section data-ui="rad-nav" className="ref-card rad-nav" aria-label={tr("Apartados de radiación", "Radiation sections")}>
@@ -1399,8 +1395,6 @@ export function WeekBars({ rad }: Piece) {
   );
 }
 
-/** La raya de lo secundario de esta sección; la usan los paneles y las anclas de `RadNav`. */
-const RAD_FOLD = "crew.radiation";
 
 /**
  * Todas las piezas, en el orden de la rejilla. `CrewConsole` las monta tras la ubicación de «Inicio».
@@ -1413,9 +1407,9 @@ const RAD_FOLD = "crew.radiation";
  * la ruta, las contramedidas, el historial y las series de 24 h. Cada panel plegado va envuelto por
  * separado para que no ocupe celda; el reparto de columnas de ambos lados está en la CSS.
  */
-export function radiationPanels(rad: RadiationData, links?: HomeLinks, decide?: BoardDecisions): ReactNode[] {
+export function radiationPanels(rad: RadiationData, links?: HomeLinks, decide?: BoardDecisions): PanelEntry[] {
   return [
-    <RadNav rad={rad} />,
+    pinned(<RadNav rad={rad} />),
     <RadSources rad={rad} />,
     <div className="ref-col rad-status-col">
       <RadNow rad={rad} />
@@ -1427,33 +1421,13 @@ export function radiationPanels(rad: RadiationData, links?: HomeLinks, decide?: 
     <RadLimits rad={rad} />,
     <RadShielding rad={rad} />,
     <RadRecommendations rad={rad} decide={decide} />,
-    <FoldDivider
-      id={RAD_FOLD}
-      what={tr("Espectro, efectos, pruebas, ruta, historial y series de 24 h", "Spectrum, effects, tests, route, history and 24 h series")}
-    />,
-    <Folded id={RAD_FOLD}>
-      <RadSpectrum />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadEffects rad={rad} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadTests rad={rad} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadCrew rad={rad} links={links} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadRoute rad={rad} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadManagement rad={rad} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadHistory rad={rad} />
-    </Folded>,
-    <Folded id={RAD_FOLD}>
-      <RadSpaceWeather rad={rad} />
-    </Folded>,
+    <RadSpectrum />,
+    <RadEffects rad={rad} />,
+    <RadTests rad={rad} />,
+    <RadCrew rad={rad} links={links} />,
+    <RadRoute rad={rad} />,
+    <RadManagement rad={rad} />,
+    <RadHistory rad={rad} />,
+    <RadSpaceWeather rad={rad} />,
   ];
 }

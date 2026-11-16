@@ -106,6 +106,17 @@ class Settings(BaseSettings):
     # (`desktop/installer.nsh`, `desktop/main.cjs`). Sin red no sale igualmente (`egress.py`).
     models_autodownload: bool = False
 
+    # «Actualizar EMMA» (`app/app_update.py`). `update_url` es la carpeta de la última versión
+    # publicada en GitHub (aquí sí `latest`: lo que se busca es justo la más reciente), donde
+    # están `emma-update.json` y el instalador. `app_version` es la versión que corre, la pasa la
+    # aplicación de escritorio (`EMMA_APP_VERSION`); sin ella no se puede comparar y la
+    # comprobación lo dice. `update_dir` es donde se deja el instalador descargado y comprobado
+    # (None: `cache_dir/actualizacion`). Sale por `core/egress.py` (propósito `app-update`), solo
+    # cuando la persona lo pide: no hay comprobación al arrancar (decisión del usuario).
+    update_url: str = "https://github.com/Brillande/EMMA/releases/latest/download"
+    app_version: str | None = None
+    update_dir: Path | None = None
+
     # Modelo de lenguaje LOCAL para el borrador de interpretacion (app/interpret/). Solo
     # loopback: el cliente rechaza cualquier otra direccion. El modelo es configurable y no
     # esta validado clinicamente; sin servidor local, la funcion se declara no disponible.

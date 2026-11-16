@@ -7,12 +7,11 @@ import { describe, expect, it } from "vitest";
 
 import { textNodes } from "../advisor/visibleText";
 import { LookContext } from "../components/BoardOnly";
-import { resetFoldsForTests, setFoldOpen } from "../components/SecondaryFold";
 import type { AlertCounts } from "../lib/alerts";
 import type { CrewStatus, Framework, ProfileMatrix, ProfileMatrixCell } from "../lib/api";
 import { formatMinutes } from "../lib/format";
 import { adoptLevelLabels } from "../lib/levels";
-import { ENVIRONMENTS_GROUP, ENV_FOLD, EnvironmentView, aspectTally, environmentSections } from "./Environments";
+import { ENVIRONMENTS_GROUP, EnvironmentView, aspectTally, environmentSections } from "./Environments";
 import { MissionProfilesView } from "../ground/MissionProfilesPanel";
 import { AlertTally, CountPill, DomainLevelTally, HazardCardsView, hazardGroups, hazardLetter } from "./HazardCards";
 import { aspectDisplay, aspectStyle } from "./missionProfile";
@@ -244,10 +243,7 @@ describe("una pestaña por entorno", () => {
   });
 
   it("cada pestaña enseña su columna, aspecto a aspecto, y lo sin fuente tal cual en cian", () => {
-    // Las notas de la matriz van bajo la raya de lo secundario: aquí, desplegada.
-    setFoldOpen(ENV_FOLD, true);
     const html = renderToStaticMarkup(createElement(EnvironmentView, { matrix, profileId: "rover-base" }));
-    resetFoldsForTests();
     const words = textNodes(html);
     for (const word of ["CISLUNAR", "RETARDO", "CAPACIDAD", "RETARDO-CISLUNAR", "NOTA-MATRIZ", "NOTA-DECLARADO", "NOTA-MEDICA"]) {
       expect(words).toContain(word);
@@ -311,7 +307,8 @@ describe("una pestaña por entorno", () => {
     expect(visible).toMatch(/environment-aspect-state"><span class="mark c-cyan"><svg[^>]*data-pictogram="ring-dotted"[^>]*>.*?<\/svg>sin fuente<\/span>/);
     expect(visible).toContain('environment-aspect-state"><span class="mark">leido</span>');
     expect(visible).not.toContain("RETARDO-CISLUNAR");
-    expect(visible).not.toContain("NOTA-DECLARADO");
+    // Las notas de la matriz, al pie y a la vista desde que la pestaña va por páginas (2026-11-16).
+    expect(visible).toContain("NOTA-DECLARADO");
     // La nota de alcance de la matriz («descriptivo…») sigue a la vista.
     expect(visible).toContain("NOTA-MATRIZ");
     // Plegado, pero en el DOM, con su mando por aspecto.
@@ -340,28 +337,22 @@ describe("una pestaña por entorno", () => {
     expect(classic.indexOf("NOTA-MATRIZ")).toBeLessThan(classic.indexOf("environment-aspects"));
   });
 
-  it("las notas de la matriz y las páginas leídas, bajo la raya de lo secundario, plegada de partida", () => {
-    resetFoldsForTests();
+  it("cada entorno va por páginas de dos filas; las notas de la matriz y las páginas leídas, al pie y sin raya", () => {
+    // Por páginas de dos filas (2026-11-16), con un solo panel: no hay nada fijo ni partido.
+    const sections = environmentSections({ matrix, failure: null });
+    expect(sections.every((section) => section.rowPages === true && section.panels.length === 1)).toBe(true);
     for (const look of ["reference", "classic"] as const) {
-      const folded = renderToStaticMarkup(
-        createElement(LookContext.Provider, { value: look }, createElement(EnvironmentView, { matrix, profileId: "mars-transit" })),
-      );
-      expect(folded).toContain('class="ref-divider" data-open="false"');
-      expect(folded).toContain("Notas de la matriz y páginas leídas");
-      for (const word of ["NOTA-DECLARADO", "NOTA-REUTILIZADA", "NOTA-MEDICA", "Pagina"]) expect(folded).not.toContain(word);
-      // Lo de arriba no se pliega: la nota de alcance, «Perfil declarado» y el estado de los aspectos.
-      expect(folded).toContain("NOTA-MATRIZ");
-      expect(folded).toContain("Perfil declarado");
-      expect(folded.indexOf("environment-aspects")).toBeLessThan(folded.indexOf("ref-divider"));
+      for (const profileId of ["leo", "rover-base", "mars-transit"]) {
+        const html = renderToStaticMarkup(
+          createElement(LookContext.Provider, { value: look }, createElement(EnvironmentView, { matrix, profileId })),
+        );
+        // La raya plegada `env` ya no está: las notas, a la vista, debajo de los aspectos.
+        expect(html).not.toContain("ref-divider");
+        expect(html).not.toContain("Notas de la matriz y páginas leídas");
+        for (const word of ["NOTA-DECLARADO", "NOTA-REUTILIZADA", "NOTA-MEDICA", "Pagina"]) expect(html).toContain(word);
+        expect(html.indexOf("environment-aspects")).toBeLessThan(html.indexOf("environment-notes"));
+      }
     }
-    // Una sola raya para todos los entornos: desplegarla en uno la despliega en los demás.
-    setFoldOpen(ENV_FOLD, true);
-    for (const profileId of ["leo", "rover-base", "mars-transit"]) {
-      const open = renderToStaticMarkup(createElement(EnvironmentView, { matrix, profileId }));
-      expect(open).toContain('data-open="true"');
-      for (const word of ["NOTA-DECLARADO", "NOTA-REUTILIZADA", "NOTA-MEDICA", "Pagina"]) expect(open).toContain(word);
-    }
-    resetFoldsForTests();
   });
 
   it("a bordo, un entorno que no es el declarado ofrece declararlo; el declarado y Tierra, no", () => {

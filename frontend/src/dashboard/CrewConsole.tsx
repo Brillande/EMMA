@@ -7,25 +7,16 @@ import { HabitatPanel } from "../habitat/HabitatPanel";
 import { RecommendationList } from "../advisor/RecommendationList";
 import type { BoardDecisions } from "../components/AdoptControls";
 import { BoardOnly } from "../components/BoardOnly";
-import { type ConsoleSection, ConsoleTabs, personal, useStoredSection, visibleSections } from "../components/ConsoleTabs";
+import { type ConsoleSection, ConsoleTabs, personal, pinned, useStoredSection, visibleSections } from "../components/ConsoleTabs";
 import { useDisplayModes } from "../components/DisplayControls";
-import {
-  browserStore,
-  type HomeBlock,
-  readHomeBlock,
-  readHomeSecondary,
-  writeHomeBlock,
-  writeHomeSecondary,
-} from "../components/displayModes";
 import { HomeDiagnostics } from "./HomeDiagnostics";
 import { HomeDistance } from "./HomeDistance";
 import { HomeReserves } from "./HomeReserves";
 import { NodesEmergencyKit } from "./NodesEmergencyKit";
-import { NodesFit } from "./NodesFit";
 import { NodesOutlook } from "./NodesOutlook";
 import "./nodesBoard.css";
 import { FieldLabel } from "../components/FieldLabel";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
+import { setRowsPage } from "../components/RowPages";
 import { LevelBadge } from "../components/LevelBadge";
 import { Mark, MarkOf } from "../components/Mark";
 import { OperatorInput } from "../components/OperatorInput";
@@ -79,8 +70,8 @@ import {
 import { AlertTally, CountPill, DomainLevelTally, HazardCards } from "./HazardCards";
 import {
   HomeCrewColumn,
-  HomeDivider,
   HomeEssential,
+  UrgentHelp,
   hasNewAlert,
   HomeFooter,
   HomeGlobal,
@@ -221,37 +212,18 @@ export function CrewConsole({
   const isolation = useIsolationData(home, section === "isolation");
   const gravity = useGravityData(home, section === "gravity");
   const environment = useEnvironmentData(home, section === "environment");
-  // Lo secundario de «Inicio» (bajo el acceso rápido RIDGE) se pliega con `HomeDivider`; la elección
-  // es de este equipo, como los modos de pantalla, y no toca ningún dato.
-  const [homeSecondary, setHomeSecondary] = useState(() => readHomeSecondary(browserStore()));
-  const toggleHomeSecondary = () => {
-    setHomeSecondary((open) => {
-      writeHomeSecondary(browserStore(), !open);
-      return !open;
-    });
-  };
-  // Los bloques plegables de la pestaña «Distancia y nodos» (maqueta de la ISS, lote «reservas»,
-  // 2026-11-14): cada uno con su separador y recordado por equipo como lo secundario de «Inicio».
-  const [homeBlocks, setHomeBlocks] = useState<Record<HomeBlock, boolean>>(() => ({
-    distance: readHomeBlock(browserStore(), "distance"),
-    reserves: readHomeBlock(browserStore(), "reserves"),
-  }));
-  const toggleHomeBlock = (block: HomeBlock) => {
-    setHomeBlocks((open) => {
-      writeHomeBlock(browserStore(), block, !open[block]);
-      return { ...open, [block]: !open[block] };
-    });
-  };
   const onNodes = section === "nodes";
-  // Una alerta nueva pliega lo secundario sola (2026-11-14): lo principal llena la pantalla mientras
-  // se atiende. Solo pliega, nunca despliega, y no se guarda como elección: quien vuelva a abrirlo lo
-  // tiene abierto hasta la siguiente alerta nueva. Una que se fue y vuelve cuenta como nueva.
-  const seenAlerts = useRef<ReadonlySet<string>>(new Set());
+  // Una alerta nueva devuelve «Inicio» a su primera página (antes plegaba lo secundario, 2026-11-14;
+  // por páginas desde el 2026-11-16): ahí están el marco global y el riesgo, lo que hay que mirar
+  // mientras se atiende. Solo vuelve atrás, nunca adelanta. Una que se fue y vuelve cuenta como nueva.
+  // Las que ya estaban al abrir la consola no son nuevas: si no, cada recarga con una alerta activa
+  // borraría la página que el equipo dejó abierta (se recuerda por equipo, `RowPages`).
+  const seenAlerts = useRef<ReadonlySet<string> | null>(null);
   useEffect(() => {
     const ids = alerts.map((alert) => alert.id);
-    const fresh = hasNewAlert(seenAlerts.current, ids);
+    const fresh = seenAlerts.current !== null && hasNewAlert(seenAlerts.current, ids);
     seenAlerts.current = new Set(ids);
-    if (fresh) setHomeSecondary(false);
+    if (fresh) setRowsPage("crew.home", 0);
   }, [alerts]);
   // Un acceso de «Inicio» solo se enseña si su sección está a la vista: en modo esencial, abrir una
   // no esencial devolvía a «Inicio» sin decir nada (`visibleSections`, efecto de `ConsoleTabs`).
@@ -300,14 +272,13 @@ export function CrewConsole({
     await onProfileDeclared?.();
   };
 
-  // «Qué hacer» de «Peligros y alertas» va plegado bajo su raya (decisión del usuario, 2026-11-15):
-  // es apoyo a la decisión, no una alerta. Pero una recomendación de urgencia inmediata es lo que hay
-  // que hacer con la alerta que la provoca, y su lista completa, con adoptar y no adoptar, solo vive
-  // aquí («Inicio» enseña tres y sin mandos). Con una así no hay raya y el bloque queda a la vista,
-  // sin que una elección guardada lo pueda esconder: nunca se pliega lo que pide actuar ya.
+  // «Qué hacer» de «Peligros y alertas» es apoyo a la decisión, no una alerta: va en su fila, en la
+  // página que le toque (2026-11-16; antes, plegado bajo su raya). Pero una recomendación de urgencia
+  // inmediata es lo que hay que hacer con la alerta que la provoca, y su lista completa, con adoptar y
+  // no adoptar, solo vive aquí («Inicio» enseña tres y sin mandos). Con una así va fija (`pinned`), en
+  // todas las páginas: nunca queda en otra página lo que pide actuar ya.
   const urgentAdvice = recommendations.some((item) => item.urgency === "immediate");
-  const foldAdvice = (panel: ReactNode) =>
-    urgentAdvice ? panel : <Folded id="crew.hazards">{panel}</Folded>;
+  const pinAdvice = (panel: ReactNode) => (urgentAdvice ? pinned(panel) : panel);
 
   // La tabla de la consola: sección → paneles, en el orden en que se ven (§5.40). Un panel nuevo es
   // una línea en la lista de su sección; `personal(…)` lo tapa en modo privacidad aunque su
@@ -324,20 +295,23 @@ export function CrewConsole({
       essential: true,
       shared: true,
       className: "ref-home",
+      // Por páginas de dos filas (2026-11-16): todo lo que antes se desplegaba bajo la raya, cada fila
+      // con su reparto de siempre, y las flechas para pasar de una a otra.
+      rowPages: true,
       panels: [
-        // Con lo secundario plegado, las rutas que siguen al perfil elegido no se ven: la ubicación
-        // dice el retardo de comunicaciones del elegido, como en «Aislamiento».
-        <HomePlaces {...places} aspect={homeSecondary ? undefined : "comm_delay"} />,
+        // Las rutas que siguen al perfil elegido van en la segunda página (tras el acceso rápido): en
+        // la primera no se ven, así que la ubicación dice el retardo de comunicaciones del elegido,
+        // como hacía con lo secundario plegado y como en «Aislamiento».
+        pinned(<HomePlaces {...places} aspect="comm_delay" />),
         personal(<HomeGlobal home={home} links={homeLinks} />),
         personal(<HomeCrewColumn home={home} links={homeLinks} />),
         <HomeRiskColumn home={home} links={homeLinks} />,
         <HomeQuickHazards home={home} links={homeLinks} />,
-        // Lo principal queda arriba; lo secundario, debajo de esta raya y plegable (2026-11-14).
-        <HomeDivider open={homeSecondary} onToggle={toggleHomeSecondary} />,
-        homeSecondary && <HomeRoutes home={home} />,
-        homeSecondary && <HomeFooter home={home} links={homeLinks} />,
-        // El modo esencial no es secundario: plegado lo demás, queda abajo y a lo ancho.
-        !homeSecondary && <HomeEssential home={home} links={homeLinks} wide />,
+        <HomeRoutes home={home} />,
+        // El pie sin «Ayuda urgente»: esa va aparte, fija y a lo ancho.
+        <HomeFooter home={home} links={homeLinks} essential={false} />,
+        // «Ayuda urgente» nunca queda en otra página (HMI §2.7): fija, abajo y a lo ancho.
+        pinned(<HomeEssential home={home} links={homeLinks} wide />),
       ],
     },
     {
@@ -348,7 +322,8 @@ export function CrewConsole({
       label: tr("Radiación", "Radiation"),
       pictogram: uiPictogram("radiation"),
       className: "ref-home rad-home",
-      panels: [<HomePlaces {...places} aspect="radiation_environment" />, ...radiationPanels(radiation, homeLinks, decide)],
+      rowPages: true,
+      panels: [pinned(<HomePlaces {...places} aspect="radiation_environment" />), ...radiationPanels(radiation, homeLinks, decide), pinned(<UrgentHelp status={status} />)],
     },
     {
       // La maqueta «Panel de Aislamiento y Salud Psicosocial ISS» (2026-11-14), con el estilo de
@@ -358,7 +333,11 @@ export function CrewConsole({
       label: tr("Aislamiento", "Isolation"),
       pictogram: "ridge-isolation",
       className: "ref-home iso-home",
-      panels: [<HomePlaces {...places} aspect="comm_delay" />, ...isolationPanels({ ...isolation, links: homeLinks }, section === "isolation", decide, { actions, operator, onOperator: setOperator, privacy: modes.privacy }).map((panel) => personal(panel))],
+      rowPages: true,
+      // Dos filas de datos en la primera página (la cabecera no cuenta, `data-row-free`): su aspecto
+      // plegado era de una sola, así que aquí cada fila va con su reparto de siempre, desplegado.
+      rowPagesFolded: false,
+      panels: [pinned(<HomePlaces {...places} aspect="comm_delay" />), ...isolationPanels({ ...isolation, links: homeLinks }, decide, { actions, operator, onOperator: setOperator, privacy: modes.privacy }).map((panel) => personal(panel)), pinned(<UrgentHelp status={status} />)],
     },
     {
       // La maqueta «Panel EMMA: Salud Gravitacional de la Tripulación» (2026-11-15), con el estilo de
@@ -368,7 +347,8 @@ export function CrewConsole({
       label: tr("Gravedad", "Gravity"),
       pictogram: "ridge-gravity",
       className: "ref-home grav-home",
-      panels: [<HomePlaces {...places} aspect="gravity_regime" />, ...gravityPanels(gravity, section === "gravity", homeLinks, decide).map((panel) => personal(panel))],
+      rowPages: true,
+      panels: [pinned(<HomePlaces {...places} aspect="gravity_regime" />), ...gravityPanels(gravity, homeLinks, decide).map((panel) => personal(panel)), pinned(<UrgentHelp status={status} />)],
     },
     {
       // La maqueta «Panel ambiental EMMA en la ISS» (2026-11-15), con el estilo de «Inicio»: las
@@ -378,21 +358,25 @@ export function CrewConsole({
       label: tr("Entorno", "Environment"),
       pictogram: "ridge-environment",
       className: "ref-home env-home",
-      panels: [<HomePlaces {...places} aspect="day_night_cycle" />, ...environmentPanels(environment, section === "environment").map((panel) => personal(panel))],
+      rowPages: true,
+      // Dos filas de datos en la primera página (la cabecera no cuenta, `data-row-free`): su aspecto
+      // plegado era de una sola, así que aquí cada fila va con su reparto de siempre, desplegado.
+      rowPagesFolded: false,
+      panels: [pinned(<HomePlaces {...places} aspect="day_night_cycle" />), ...environmentPanels(environment).map((panel) => personal(panel)), pinned(<UrgentHelp status={status} />)],
     },
     {
       // La maqueta «Panel médico espacial EMMA para la ISS» (lote «reservas», 2026-11-14): su pestaña
       // propia, no «Inicio» («no tiene que salir en inicio»), con el estilo de «Inicio» y «Radiación»
-      // y la ubicación arriba; cada bloque sigue al perfil elegido y se pliega con su raya.
+      // y la ubicación arriba; cada bloque sigue al perfil elegido. Por páginas de dos filas
+      // (2026-11-16): sin raya de las reservas ni «Ajustar a pantalla», las páginas ya llenan la ventana.
       key: "nodes",
       label: tr("Distancia y nodos", "Distance and nodes"),
       pictogram: uiPictogram("habitat"),
       className: "ref-home nodes-home",
+      rowPages: true,
       panels: [
         // Aquí todo lo de abajo sigue al perfil elegido: sin aspecto propio.
-        <HomePlaces {...places} />,
-        // «Ajustar a pantalla»: la pestaña cabe en la ventana, como la maqueta (`NodesFit`).
-        <NodesFit active={onNodes} />,
+        pinned(<HomePlaces {...places} />),
         // Arriba, como en la maqueta: el marco global compacto, el tripulante y el riesgo
         // (`nodesBoard.css` deja fuera los vitales, la tendencia, la bitácora y las próximas acciones).
         personal(<HomeGlobal home={home} links={homeLinks} />),
@@ -408,23 +392,17 @@ export function CrewConsole({
         />,
         // El diagnóstico no se pliega («el diagnóstico no se oculta», «el botón sobra»).
         personal(<HomeDiagnostics home={home} links={homeLinks} profileId={home.shownRoute} active={onNodes} />),
-        // «Ayuda urgente» al lado del diagnóstico, como «Respuesta a emergencias» en la maqueta.
+        // «Ayuda urgente» al lado del diagnóstico, como «Respuesta a emergencias» en la maqueta, con los
+        // recursos contados: en su fila, como siempre.
         <HomeEssential home={home} links={homeLinks} side>
           <NodesEmergencyKit active={onNodes} />
         </HomeEssential>,
-        <HomeDivider
-          open={homeBlocks.reserves}
-          onToggle={() => toggleHomeBlock("reserves")}
-          name={tr("las reservas", "the reserves")}
-          what={tr("Medicamentos, equipamiento médico y abastecimiento", "Medication, medical equipment and supplies")}
-          // Plegadas, lo de arriba llena la ventana, como en «Inicio».
-          pictogram="clipboard"
-        />,
-        homeBlocks.reserves && (
-          <HomeReserves profileId={home.shownRoute} subject={status.subject} reference={home.reference} active={onNodes} v2 />
-        ),
+        <HomeReserves profileId={home.shownRoute} subject={status.subject} reference={home.reference} active={onNodes} v2 />,
         // La última fila de la maqueta: riesgos de la distancia, correlaciones y escenarios.
         personal(<NodesOutlook home={home} links={homeLinks} profileId={home.shownRoute} active={onNodes} decide={decide} />),
+        // Y el módulo de «Inicio», fijo al pie como en todas las pestañas (2026-11-16): la tarjeta de al lado
+        // del diagnóstico se queda en su fila y columna; esta se ve en todas las páginas.
+        pinned(<UrgentHelp status={status} />),
       ],
     },
     {
@@ -434,6 +412,8 @@ export function CrewConsole({
       essential: true,
       alerts: true,
       shared: true,
+      // Por páginas de dos filas (2026-11-16), cada fila con su reparto de `shell/hazards.css`.
+      rowPages: true,
       panels: [
         // El nivel del backend también en el filete del titular (§5.40, tableta): el mismo
         // `data-level` que las tarjetas de dominio; la palabra y la forma siguen en la insignia.
@@ -449,6 +429,10 @@ export function CrewConsole({
         </section>,
         personal(<SummaryTiles status={status} alerts={alerts.length} />),
         <HazardCards status={status} />,
+        // Las alertas activas, fijas: en todas las páginas y en su sitio, bajo los peligros (HMI §2.7).
+        // Como fila serían la tercera (resumen y baldosas, peligros; más abajo aún en cuerpo estrecho,
+        // donde resumen y baldosas van en filas distintas) y caerían en la segunda página.
+        pinned(
         <section data-ui="alerts" className="panel" aria-label={tr("Alertas", "Alerts")}>
           <PanelTitle concept="alerts">{tr("Alertas activas", "Active alerts")}</PanelTitle>
           {/* Tablero (2026-11-07): los recuentos de F.6.4 de la franja (`counts`), lo sin reconocer y
@@ -488,16 +472,8 @@ export function CrewConsole({
             ))
           )}
         </section>,
-        // Bajo la raya: el resumen, los peligros y las alertas activas quedan siempre arriba.
-        !urgentAdvice && (
-          <FoldDivider
-            id="crew.hazards"
-            name={tr("las recomendaciones", "the recommendations")}
-            what={tr("Qué hacer: recomendaciones y contramedidas", "What to do: recommendations and countermeasures")}
-            pictogram={uiPictogram("recommendations")}
-          />
         ),
-        foldAdvice(
+        pinAdvice(
         <section data-ui="recommendations" className="panel" aria-label={tr("Recomendaciones", "Recommendations")}>
           <PanelTitle concept="recommendations">{tr("Qué hacer", "What to do")}</PanelTitle>
           {/* Tablero (2026-11-07): cuántas recomendaciones hay y cuántos seguimientos siguen abiertos
@@ -540,6 +516,8 @@ export function CrewConsole({
           )}
         </section>,
         ),
+        // «Ayuda urgente» de «Inicio», como en todas las pestañas (2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
@@ -716,7 +694,7 @@ export function CrewConsole({
     // Una pestaña por entorno, tal y como los sirve el backend (`Environments.tsx`); se eligen en la cabecera,
     // bajo «Entorno de la misión» (`headerGroup`), no en el carril.
     // A bordo se puede declarar otro entorno (`DeclareEnvironment`); en Tierra, no.
-    ...environmentSections(environments, declareProfile),
+    ...environmentSections(environments, declareProfile, status),
   ];
 
   return (

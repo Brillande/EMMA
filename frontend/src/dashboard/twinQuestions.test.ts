@@ -129,8 +129,8 @@ describe("en la consola de Tierra (§5.36.3)", () => {
     expect(source).toMatch(/const cut = linkedCut\(groundCut\(status\.data\.reference_time, oneWay\), sync\);/);
     // Se vuelve a pedir también cuando el corte cambia de día (UTC): es el «hoy» del registro; la
     // clave es la compartida con la consola de tripulación (`twinsRefreshKey`, probada aparte).
-    // Desde el lote «plegar» (2026-11-15) va bajo la raya de lo secundario de «Hábitat».
-    const mount = /received !== null && \(\s*(?:<Folded id="ground\.habitat">\s*)?<TwinQuestionsPanel\s+subject=\{status\.subject\}\s+until=\{cut\}\s+refreshKey=\{twinsRefreshKey\(received, cut\)\}/;
+    // Montado tal cual en «Hábitat» (lote «filas», 2026-11-16: sin la envoltura del plegado).
+    const mount = /received !== null && \(\s*<TwinQuestionsPanel\s+subject=\{status\.subject\}\s+until=\{cut\}\s+refreshKey=\{twinsRefreshKey\(received, cut\)\}/;
     expect(source).toMatch(mount);
   });
 

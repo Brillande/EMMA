@@ -338,7 +338,8 @@ def test_the_halt_notice_is_told_in_english(client: TestClient, halt: Path) -> N
     # Las salidas, nombradas en inglés y enlazadas con «and».
     assert "space weather (NASA DONKI)" in text
     assert "ephemeris for the delay to Earth (JPL Horizons)" in text
-    assert " and the planner's on-this-day entries (Wikipedia)." in text
+    assert "the planner's on-this-day entries (Wikipedia), " in text
+    assert " and the search for and download of new EMMA versions (GitHub)." in text
     assert str(halt) in text and "by deleting the file" in text
     assert "EMMA is also in offline mode" in text
     for spanish_word in ("freno", "fichero", "puerta de salida", "clima espacial", " y las "):

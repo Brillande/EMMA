@@ -129,6 +129,24 @@ def test_the_citations_client_passes_every_request_through_the_gate(settings: Se
         client.get("https://api.crossref.org/works/10.1000/xyz")
 
 
+@respx.mock
+def test_the_app_update_reaches_only_github_and_follows_its_redirect(settings: Settings) -> None:
+    """«Actualizar EMMA»: GitHub y su almacén de ficheros, y nada más; la redirección de la
+    descarga también pasa por la puerta (las dos peticiones quedan en la traza)."""
+    latest = "https://github.com/Brillande/EMMA/releases/latest/download/emma-update.json"
+    stored = "https://release-assets.githubusercontent.com/x/emma-update.json"
+    respx.get(latest).mock(return_value=httpx.Response(302, headers={"Location": stored}))
+    respx.get(stored).mock(return_value=httpx.Response(200, json={}))
+    with egress.client(settings, "app-update") as client:
+        assert client.get(latest).status_code == 200
+    assert [line["host"] for line in audit(settings)] == [
+        "github.com", "release-assets.githubusercontent.com"]
+    with pytest.raises(egress.EgressNotAllowed):
+        egress.authorize(settings, "app-update", "https://example.com/EMMA.Setup.0.1.5.exe")
+    with pytest.raises(egress.EgressNotAllowed):
+        egress.authorize(settings, "app-update", "https://api.nasa.gov/emma-update.json")
+
+
 # --------------------------------------------------------------------------- #
 # Señuelos (Polaris `canarios`)
 # --------------------------------------------------------------------------- #

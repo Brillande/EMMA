@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { showRowOf } from "./components/RowPages";
 import { About } from "./About";
 import { Assistant } from "./assistant/Assistant";
 import type { IntentEffects, TabRef } from "./assistant/intents";
@@ -231,6 +232,9 @@ export function App({ look = "classic" }: { look?: ConsoleLook } = {}) {
       if (place.section !== null && !clickTab(tabElement(document, place.console, place.section))) return false;
       const panel = findPanel(document, id);
       if (panel === null) return false;
+      // En una pestaña por filas (`RowPages`) el panel puede estar en otra página: se abre la suya y
+      // se vuelve a mirar en el siguiente intento, ya a la vista.
+      if (showRowOf(panel)) return false;
       reveal(panel);
       lastPanel.current = id;
       then(panel);

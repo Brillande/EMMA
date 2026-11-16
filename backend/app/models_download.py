@@ -38,7 +38,7 @@ import os
 import shutil
 import tarfile
 import threading
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import IO, Any
@@ -382,56 +382,71 @@ class Downloader:
     def _fetch_file(self, client: httpx.Client, url: str, path: Path, size: int, sha: str,
                     *, count: bool = True) -> None:
         """Deja en `path` el fichero comprobado, siguiendo un `.partial` si lo hay."""
-        if path.exists() and path.stat().st_size == size and _sha256(path) == sha:
-            if count:
-                self._add_done(size)
+        fetch_verified(client, url, path, size, sha,
+                       on_bytes=self._add_done if count else None, cancelled=self._cancel.is_set)
+
+
+def fetch_verified(client: httpx.Client, url: str, path: Path, size: int, sha: str, *,
+                   on_bytes: Callable[[int], None] | None = None,
+                   cancelled: Callable[[], bool] | None = None) -> None:
+    """Deja en `path` el fichero comprobado (tamaño y SHA-256), siguiendo un `.partial` si lo hay.
+
+    Un `200` a una petición con `Range` reinicia; si lo bajado no casa, se borra y se intenta una
+    vez más desde cero, y después `PackError("bad-part")`. La comparten «Descargar modelos» y
+    «Actualizar EMMA» (`app/app_update.py`). `on_bytes` recibe lo que avanza (o retrocede) la
+    cuenta; `cancelled` se mira en cada bloque y corta con `Cancelled`.
+    """
+
+    def count(amount: int) -> None:
+        if on_bytes is not None:
+            on_bytes(amount)
+
+    if path.exists() and path.stat().st_size == size and _sha256(path) == sha:
+        count(size)
+        return
+    partial = path.with_name(path.name + ".partial")
+    have = partial.stat().st_size if partial.exists() else 0
+    if have > size:
+        partial.unlink()
+        have = 0
+    count(have)
+    for attempt in range(2):
+        if have < size:
+            headers = {"Range": f"bytes={have}-"} if have else {}
+            try:
+                with client.stream("GET", url, headers=headers,
+                                   timeout=DOWNLOAD_TIMEOUT) as response:
+                    if response.status_code == 404:
+                        raise PackError("not-published", path.name)
+                    if have and response.status_code == 200:
+                        # El servidor no reanuda: se empieza de cero.
+                        count(-have)
+                        have = 0
+                    elif response.status_code not in (200, 206):
+                        raise PackError("network", f"HTTP {response.status_code}")
+                    with partial.open("ab" if have else "wb") as handle:
+                        for chunk in response.iter_bytes(CHUNK):
+                            if cancelled is not None and cancelled():
+                                raise Cancelled
+                            handle.write(chunk)
+                            have += len(chunk)
+                            count(len(chunk))
+                            if have > size:
+                                break
+            except egress.EgressBlocked as exc:
+                raise PackError("blocked", exc.reason) from exc
+            except httpx.HTTPError as exc:
+                raise PackError("network", str(exc)) from exc
+        if have == size and _sha256(partial) == sha:
+            os.replace(partial, path)
             return
-        partial = path.with_name(path.name + ".partial")
-        have = partial.stat().st_size if partial.exists() else 0
-        if have > size:
-            partial.unlink()
-            have = 0
-        if count:
-            self._add_done(have)
-        for attempt in range(2):
-            if have < size:
-                headers = {"Range": f"bytes={have}-"} if have else {}
-                try:
-                    with client.stream("GET", url, headers=headers,
-                                       timeout=DOWNLOAD_TIMEOUT) as response:
-                        if response.status_code == 404:
-                            raise PackError("not-published", path.name)
-                        if have and response.status_code == 200:
-                            # El servidor no reanuda: se empieza de cero.
-                            if count:
-                                self._add_done(-have)
-                            have = 0
-                        elif response.status_code not in (200, 206):
-                            raise PackError("network", f"HTTP {response.status_code}")
-                        with partial.open("ab" if have else "wb") as handle:
-                            for chunk in response.iter_bytes(CHUNK):
-                                self._raise_if_cancelled()
-                                handle.write(chunk)
-                                have += len(chunk)
-                                if count:
-                                    self._add_done(len(chunk))
-                                if have > size:
-                                    break
-                except egress.EgressBlocked as exc:
-                    raise PackError("blocked", exc.reason) from exc
-                except httpx.HTTPError as exc:
-                    raise PackError("network", str(exc)) from exc
-            if have == size and _sha256(partial) == sha:
-                os.replace(partial, path)
-                return
-            # Trozo dañado o de otra versión: se borra y se intenta una vez más desde cero.
-            partial.unlink(missing_ok=True)
-            if count:
-                self._add_done(-have)
-            have = 0
-            if attempt == 1:
-                break
-        raise PackError("bad-part", path.name)
+        # Trozo dañado o de otra versión: se borra y se intenta una vez más desde cero.
+        partial.unlink(missing_ok=True)
+        count(-have)
+        have = 0
+        if attempt == 1:
+            break
+    raise PackError("bad-part", path.name)
 
 
 def _sha256(path: Path) -> str:

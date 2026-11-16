@@ -362,6 +362,43 @@ de los tableros de referencia se deciden con `@container ref-board` (el ancho de
 ni el asistente acoplado) y no con `@media` de ventana, que era lo que descuadraba entre ~1000 y
 ~1700 px. Crecer no cambia ni la letra mínima ni el significado de nada: solo cuánto sitio ocupa.
 
+### 2.8 Pestañas por páginas de dos filas
+
+Decisión del usuario (2026-11-16), tras descartar una rejilla de dos columnas («hay que mantener el
+estilo») y unas páginas de 2 × 2: «respetar la forma visual de las filas, pero limitar a dos y carrusel»;
+«los deslizamientos de derecha a izquierda y viceversa». Sustituye a la raya de §2.7 en todas las pestañas
+montadas de las dos consolas y en las de entorno (`ConsoleSection.rowPages`, `components/RowPages.tsx`).
+
+- **La forma de cada fila no cambia.** No hay rejilla nueva: las filas salen de la hoja de cada pestaña
+  (sus columnas y sus anchos). `RowPages` mira dónde empieza cada panel (`offsetTop`), agrupa en filas los
+  que empiezan a la misma altura y apaga (`data-row-off`) los de las filas que no tocan. Un bloque con
+  rejilla propia que por dentro ocupa varias filas (`data-row-group`, `.grav-main`) cuenta por sus piezas.
+- **La primera página se ve como se veía la pestaña al abrirla** (lo secundario plegado): la sección
+  lleva `data-folded` y `--fold-fill`, y las hojas pintan su aspecto de partida sin tocarlas. Las páginas
+  siguientes son las filas de debajo, como se veían desplegadas.
+- **Dos filas por página, a toda la pantalla:** lo que sobra de alto se reparte en proporción al alto
+  natural de cada fila (una franja fina apenas crece); si el contenido pide más que la ventana, la página
+  se desplaza y la barra de páginas se queda pegada al pie.
+- **Lo fijo** (`pinned()`, `data-row-pin`: la ubicación, la franja de anclas, el título de la sección,
+  «Ayuda urgente», las alertas de «Peligros y alertas», las proyecciones de Tierra) no cuenta como fila y
+  se ve en todas las páginas, en su sitio de la rejilla.
+- **«Ayuda urgente» en todas las pestañas** de las dos consolas y de los entornos (decisión del usuario,
+  2026-11-16: «copiando el módulo de home»): el mismo módulo de «Inicio» (`UrgentHelp`, `HomeEssential` a
+  lo ancho), fijo al pie; si las filas piden más alto que la ventana, se queda pegado justo encima de la
+  barra de páginas. En «Distancia y nodos» se queda además la tarjeta con los recursos contados, en su fila.
+- **Nunca se oculta** lo de §2.7: va fijo o en las dos primeras filas, y **al abrir una pestaña se empieza
+  siempre por la primera página** (una página recordada podría dejar fuera una alerta nueva); una alerta
+  nueva lleva «Inicio» a la primera página.
+- **Paso de página:** flecha a la izquierda y a la derecha (dicen a qué página llevan), «posición / total»
+  y un punto por página, teclas ← y → en la barra, y deslizar con el dedo (no dentro de un deslizador,
+  lienzo, visor o campo); da la vuelta en los dos sentidos (`nextTabIndex`). Apagar una fila no desmonta
+  nada ni cambia ningún dato.
+- **Enlaces:** los botones que llevan a un panel y el asistente («ir a», «léeme») abren antes su página
+  (`showRowOf`).
+- Objetivos táctiles de `--touch`, colores de la paleta (azul, no cian), sin `zoom` ni márgenes negativos.
+  «Ajustar a pantalla» (`NodesFit`, §2.6) sale de las pestañas por filas: las páginas ya llenan la ventana
+  con la letra de siempre.
+
 ## 3. Los referentes
 
 ### NASA Orion (Artemis II)

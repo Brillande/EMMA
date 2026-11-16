@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { Chosen } from "../components/Chosen";
-import { type ConsoleSection, ConsoleTabs, personal, useStoredSection } from "../components/ConsoleTabs";
+import { type ConsoleSection, ConsoleTabs, personal, pinned, useStoredSection } from "../components/ConsoleTabs";
+import { UrgentHelp } from "../dashboard/HomeBoard";
 import { DomainName } from "../components/DomainName";
 import { LevelBadge } from "../components/LevelBadge";
 import { Mark, MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { tr } from "../lib/i18n";
 import { StatTile, StatTiles } from "../components/StatTile";
 import {
@@ -73,11 +73,11 @@ const CHARTED = [
 ];
 
 /**
- * Cuántas de `CHARTED`, en su orden, quedan sobre la raya de «Tendencias» (decisión del usuario,
- * 2026-11-15: lo secundario de cada pestaña, plegado). Las cuatro primeras son las constantes
+ * Cuántas de `CHARTED`, en su orden, van en la primera rejilla de «Tendencias» (2026-11-15; desde el
+ * 2026-11-16, la primera fila de la pestaña por páginas). Las cuatro primeras son las constantes
  * (frecuencia, VFC, tensión, sueño): la primera fila del tablero ancho. Se cuenta por `CHARTED` y no
  * por el orden del catálogo, que es el de `indicators`. Ninguna gráfica lleva aviso propio: las
- * alertas y los riesgos están en «Estado recibido», que no se pliega.
+ * alertas y los riesgos están en «Estado recibido» (el estado y los peligros, en su primera página).
  */
 const TRENDS_ABOVE = 4;
 const trendAbove = (key: string): boolean => {
@@ -231,9 +231,9 @@ export function GroundConsole({
 
   // La tabla de la consola de Tierra, como la de a bordo (§5.40): sección → paneles. La cabecera
   // del retardo queda fuera de las pestañas, siempre a la vista: es lo que define esta consola.
-  // Las gráficas de «Tendencias» que van bajo la raya (`trendAbove`).
+  // Las gráficas de «Tendencias» que van en la segunda rejilla (`trendAbove`).
   const below = indicators.filter((item) => !trendAbove(item.key));
-  // Una gráfica de «Tendencias»: la misma sobre la raya y bajo ella.
+  // Una gráfica de «Tendencias»: la misma en las dos rejillas.
   const trendChart = (indicator: Indicator) => (
     <TrendChart
       key={indicator.key}
@@ -255,6 +255,12 @@ export function GroundConsole({
       essential: true,
       alerts: true,
       shared: true,
+      // Por páginas de dos filas (decisión del usuario, 2026-11-16; `components/RowPages.tsx`). Con el
+      // cuerpo ancho las filas son: el estado; los cinco peligros; las notas (2) con las proyecciones
+      // (10); la comprobación de proyecciones. El estado y los peligros van en la primera página; las
+      // proyecciones pueden traer derivas preocupantes y un aviso de riesgo no se esconde nunca (HMI
+      // §2.7), así que van fijas: se ven en todas las páginas y, en la segunda, siguen junto a las notas.
+      rowPages: true,
       panels: [
         <section data-ui="received-state" className="panel" aria-label={tr("Estado recibido", "Received status")}>
           <PanelTitle concept="received">{tr("Último estado recibido", "Last status received")}</PanelTitle>
@@ -271,78 +277,61 @@ export function GroundConsole({
         received !== null && <HazardCards status={received} />,
         // Lo único que sube (§5.38.1): una nota firmada, que llega a bordo un tiempo de luz después.
         personal(<GroundNotesComposer subject={status.subject} oneWayMinutes={oneWay} />),
-        received !== null && <Predictions predictions={received.predictions} />,
-        // Plegado por defecto, como «Inicio» (decisión del usuario, 2026-11-15): arriba quedan el
-        // estado, los peligros, la nota que sube y las proyecciones (pueden traer derivas
-        // preocupantes, y un aviso de riesgo no se pliega); debajo, la comprobación de lo ya
-        // proyectado, que mira atrás. Sin nada recibido no hay comprobación: tampoco raya.
-        received !== null && (
-          <FoldDivider
-            id="ground.received"
-            what={tr("Comprobación de proyecciones", "Forecast check")}
-          />
-        ),
-        received !== null && (
-          <Folded id="ground.received">
-            <ForecastCheckPanel checks={received.forecast_checks} />
-          </Folded>
-        ),
+        received !== null && pinned(<Predictions predictions={received.predictions} />),
+        // La comprobación de lo ya proyectado, que mira atrás: a todo el ancho, en su propia fila.
+        received !== null && <ForecastCheckPanel checks={received.forecast_checks} />,
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
       key: "history",
       label: tr("Historial", "History"),
       pictogram: uiPictogram("history"),
+      // Por páginas de dos filas (2026-11-16): las tres historias llegadas en su fila de tres y, cada
+      // uno en la suya, la recuperación, el planificador, la línea base y el ciclo. Nada de esto es una
+      // alerta: la recuperación es descriptiva y posvuelo.
+      rowPages: true,
       panels: [
         <ImagingHistory subject={status.subject} oneWayMinutes={oneWay} />,
         <PainHistory subject={status.subject} oneWayMinutes={oneWay} />,
         // La carrera previa declarada a bordo, de solo lectura y con el corte del retardo (§5.36.4).
         // Va antes de la recuperación para que las tres historias llegadas sigan en su fila de tres.
         <MissionHistoryPanel subject={status.subject} oneWayMinutes={oneWay} />,
-        // Plegado por defecto, como «Inicio» (decisión del usuario, 2026-11-15): arriba, lo llegado de
-        // a bordo (ecografías, dolor, misiones previas); debajo, lo que se consulta de vez en cuando.
-        // Nada de lo plegado es una alerta: la recuperación es descriptiva y posvuelo.
-        <FoldDivider
-          id="ground.history"
-          what={tr("Recuperación, planificador, línea base y ciclo", "Recovery, planner, baseline and cycle")}
-        />,
-        <Folded id="ground.history">
-          <RecoveryPanel subject={status.subject} refreshKey={stateKey} />
-        </Folded>,
+        <RecoveryPanel subject={status.subject} refreshKey={stateKey} />,
         // El planificador de a bordo (Marplanner), resumido para el apoyo a la salud mental y con el
         // corte del retardo (decisión del usuario, 2026-11-12; `planner/GroundPlannerPanel.tsx`).
-        <Folded id="ground.history">
-          <GroundPlannerPanel oneWayMinutes={oneWay} />
-        </Folded>,
+        <GroundPlannerPanel oneWayMinutes={oneWay} />,
         // La base que Tierra puede conocer: la de las lecturas llegadas, hasta el corte del retardo.
         // La clave es la de la consola de tripulación, con lo recibido (`baselineRefreshKey`).
         received !== null && (
-          <Folded id="ground.history">
-            <BaselineProfilePanel
-              subject={status.subject}
-              refreshKey={baselineRefreshKey(received)}
-              until={cut ?? undefined}
-            />
-          </Folded>
+          <BaselineProfilePanel
+            subject={status.subject}
+            refreshKey={baselineRefreshKey(received)}
+            until={cut ?? undefined}
+          />
         ),
         // El sexo declarado y el ciclo, de solo lectura y con el corte del retardo (lote «ciclo»).
         received !== null && (
-          <Folded id="ground.history">
-            <CycleSection
-              subject={status.subject}
-              refreshKey={baselineRefreshKey(received)}
-              until={cut ?? undefined}
-              ground
-              phaseBaseline={received.cycle_phase?.reason ?? null}
-            />
-          </Folded>
+          <CycleSection
+            subject={status.subject}
+            refreshKey={baselineRefreshKey(received)}
+            until={cut ?? undefined}
+            ground
+            phaseBaseline={received.cycle_phase?.reason ?? null}
+          />
         ),
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
       key: "trends",
       label: tr("Tendencias", "Trends"),
       pictogram: uiPictogram("trends"),
+      // Por páginas de dos filas (2026-11-16): las dos rejillas de gráficas son una fila cada una, así
+      // que caben en una página.
+      rowPages: true,
       panels: [
         <section data-ui="trends" aria-label={tr("Tendencias", "Trends")}>
           <div className="summary mb-3" data-ui-view="">
@@ -374,31 +363,28 @@ export function GroundConsole({
           )}
           <div className="charts">{indicators.filter((item) => trendAbove(item.key)).map(trendChart)}</div>
         </section>,
-        // Las demás gráficas, bajo la raya (2026-11-15). Llevan el mismo `data-ui` para vestirse
+        // Las demás gráficas, en su propia rejilla (2026-11-15). Llevan el mismo `data-ui` para vestirse
         // igual (`shell/ground-trends.css` acota la rejilla a `[data-ui="trends"] > .charts`) y la
-        // misma ventana de arriba. Sin ninguna por debajo no hay raya.
+        // misma ventana de arriba. Sin ninguna, no hay segunda rejilla.
         below.length > 0 && (
-          <FoldDivider
-            id="ground.trends"
-            what={tr(
-              "Rendimiento, cortisol, linfocitos y dolor",
-              "Performance, cortisol, lymphocytes and pain",
-            )}
-          />
+          <section data-ui="trends" aria-label={tr("Más tendencias", "More trends")}>
+            <div className="charts">{below.map(trendChart)}</div>
+          </section>
         ),
-        below.length > 0 && (
-          <Folded id="ground.trends">
-            <section data-ui="trends" aria-label={tr("Más tendencias", "More trends")}>
-              <div className="charts">{below.map(trendChart)}</div>
-            </section>
-          </Folded>
-        ),
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
       key: "habitat",
       label: tr("Hábitat", "Habitat"),
       pictogram: uiPictogram("habitat"),
+      // Por páginas de dos filas (2026-11-16). Con el cuerpo ancho (`mission.css`) el nivel de misión
+      // (3) y el hábitat (9, dos filas) empiezan en la primera fila y las preguntas de los gemelos caen
+      // bajo el nivel: una página. Más estrecho, cada uno a todo el ancho y las preguntas, que son
+      // análisis de fondo, pasan a la segunda; el nivel y el hábitat, que es el estado que Tierra
+      // vigila, en la primera.
+      rowPages: true,
       panels: [
         // El nivel de misión que Tierra puede conocer: el firmado hasta el corte; solo se mira.
         <MissionModePanel controls={false} until={receivedAt} />,
@@ -409,92 +395,61 @@ export function GroundConsole({
           until={receivedAt}
           onboardUntil={reference}
         />,
-        // Sobre la raya, el nivel de misión y el hábitat con la tripulación, que es el estado que
-        // Tierra vigila; bajo ella, las cinco preguntas de los gemelos, que son análisis de fondo
-        // (decisión del usuario, 2026-11-15). Sin estado recibido no hay preguntas ni raya.
-        received !== null && (
-          <FoldDivider
-            id="ground.habitat"
-            what={tr("Las cinco preguntas de los gemelos", "The five twin questions")}
-          />
-        ),
         // Las cinco preguntas de los gemelos con lo que Tierra tiene: el corte del estado recibido
         // (el mismo que `receivedStatus`); se vuelven a pedir cuando cambia lo recibido o el día
         // (UTC) del corte, que es el «hoy» con que el registro cuenta sus días de espera. La clave
         // es la de la consola de tripulación, con el corte (`twinsRefreshKey`).
         received !== null && (
-          <Folded id="ground.habitat">
-            <TwinQuestionsPanel
-              subject={status.subject}
-              until={cut}
-              refreshKey={twinsRefreshKey(received, cut)}
-            />
-          </Folded>
+          <TwinQuestionsPanel
+            subject={status.subject}
+            until={cut}
+            refreshKey={twinsRefreshKey(received, cut)}
+          />
         ),
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
       key: "framework",
       label: tr("Marco y fuentes", "Framework and sources"),
       pictogram: uiPictogram("nasaFramework"),
+      // Por páginas de dos filas (2026-11-16; reparto en `shell/ground-framework-ledger.css`): el marco
+      // de riesgos de la NASA (9, dos filas) con los perfiles y, debajo de ellos, el coste de medir; en
+      // la segunda página, bancos y conjuntos, e instalaciones, personas y fuentes. Todo es dato fijo
+      // del paquete: ninguna alerta ni estado clínico.
+      rowPages: true,
       panels: [
         <FrameworkPanel />,
-        // Lo secundario, plegado como en «Inicio» (decisión del usuario, 2026-11-15): arriba queda el
-        // marco de riesgos de la NASA, que es lo que la pestaña responde; debajo, el material de
-        // consulta (perfiles, coste, bancos, conjuntos, instalaciones, personas y fuentes), todo dato
-        // fijo del paquete y ninguno una alerta ni un estado clínico.
-        <FoldDivider
-          id="ground.framework"
-          what={tr(
-            "Perfiles, coste de medir, bancos de prueba, conjuntos de datos, instalaciones, personas y fuentes",
-            "Profiles, measurement cost, testbeds, datasets, facilities, people and sources",
-          )}
-        />,
         // Los tres perfiles lado a lado (§5.36.7): dato fijo del paquete, sin el corte del retardo.
-        <Folded id="ground.framework">
-          <MissionProfilesPanel />
-        </Folded>,
-        <Folded id="ground.framework">
-          <MeasurementCostPanel indicators={catalog} />
-        </Folded>,
-        <Folded id="ground.framework">
-          <TestbedsPanel />
-        </Folded>,
-        <Folded id="ground.framework">
-          <DatasetsPanel />
-        </Folded>,
-        <Folded id="ground.framework">
-          <FacilitiesPanel />
-        </Folded>,
-        <Folded id="ground.framework">
-          <PeoplePanel />
-        </Folded>,
-        <Folded id="ground.framework">
-          <ContextSourcesPanel />
-        </Folded>,
+        <MissionProfilesPanel />,
+        <MeasurementCostPanel indicators={catalog} />,
+        <TestbedsPanel />,
+        <DatasetsPanel />,
+        <FacilitiesPanel />,
+        <PeoplePanel />,
+        <ContextSourcesPanel />,
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
       key: "ledger",
       label: tr("Registro y documentos", "Ledger and documents"),
       pictogram: uiPictogram("signedLedger"),
+      // Por páginas de dos filas (2026-11-16): la documentación con la auditoría del registro firmado
+      // en la primera fila (la integridad es propiedad del sistema y un fallo suyo no se esconde
+      // nunca: va en la primera página), lo que se comparte en la segunda fila y la copia de Polaris,
+      // en la página siguiente.
+      rowPages: true,
       panels: [
         <DocsPanel subject={status.subject} until={cut} />,
         audit !== null && <AuditPanel audit={audit} />,
-        // Plegado lo secundario (decisión del usuario, 2026-11-15). La documentación y la auditoría
-        // del registro firmado quedan arriba: la integridad es propiedad del sistema y un fallo suyo
-        // no se esconde nunca. Debajo, la tabla de lo que se comparte y la copia de Polaris.
-        <FoldDivider
-          id="ground.ledger"
-          what={tr("Lo que se comparte y la copia de Polaris", "What is shared and the Polaris copy")}
-        />,
         // La misma tabla que a bordo, sin corte: es del paquete, no un dato que viaje.
-        <Folded id="ground.ledger">
-          <SharingPanel />
-        </Folded>,
-        <Folded id="ground.ledger">
-          <PolarisPanel />
-        </Folded>,
+        <SharingPanel />,
+        <PolarisPanel />,
+        // «Ayuda urgente» de «Inicio» también en Tierra (decisión del usuario, 2026-11-16): fija, al pie.
+        pinned(<UrgentHelp status={status} host />),
       ],
     },
     {
@@ -502,14 +457,15 @@ export function GroundConsole({
       label: tr("Biblioteca", "Library"),
       pictogram: uiPictogram("countermeasureLibrary"),
       // La biblioteca es un dato fijo del paquete, no del estado: no lleva el corte del retardo.
-      // Sin raya plegable (2026-11-15): son dos paneles colocados lado a lado (7 + 5 columnas,
-      // `shell/library-env.css`); plegar las guías dejaría un hueco junto a la biblioteca sin ahorrar
-      // altura, porque la fila la marca el más alto de los dos.
-      panels: [<LibraryPanel />, <GuidesPanel />],
+      // Dos paneles lado a lado (7 + 5 columnas, `shell/library-env.css`): una fila, una página, y la
+      // barra de páginas no se ve; por páginas como las demás (2026-11-16) para que la pestaña se
+      // comporte igual si un día lleva más.
+      rowPages: true,
+      panels: [<LibraryPanel />, <GuidesPanel />, pinned(<UrgentHelp status={status} host />)],
     },
     // Una pestaña por entorno, tal y como los sirve el backend (`dashboard/Environments.tsx`); se eligen en la cabecera,
     // bajo «Entorno de la misión» (`headerGroup`), no en el carril.
-    ...environmentSections(environments),
+    ...environmentSections(environments, undefined, status),
   ];
 
   return (

@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { BoardDetail } from "../components/BoardDetail";
 import { BoardOnly, useLook } from "../components/BoardOnly";
 import { Chosen } from "../components/Chosen";
-import type { ConsoleSection } from "../components/ConsoleTabs";
+import { type ConsoleSection, pinned } from "../components/ConsoleTabs";
+import { UrgentHelp } from "./HomeBoard";
 import { FieldLabel } from "../components/FieldLabel";
 import { Fold } from "../components/Fold";
 import { Mark, MarkOf } from "../components/Mark";
 import { PanelTitle } from "../components/PanelTitle";
-import { FoldDivider, Folded } from "../components/SecondaryFold";
 import { StatTile } from "../components/StatTile";
 import { MatrixCell } from "../ground/MissionProfilesPanel";
 import type { PictogramName } from "../icons/registry";
-import { type MissionProfile, type MissionProfileChange, type ProfileMatrix, missionProfilesApi } from "../lib/api";
+import { type MissionProfile, type MissionProfileChange, type ProfileMatrix, missionProfilesApi, type CrewStatus } from "../lib/api";
 import { formatNumber } from "../lib/format";
 import { tr } from "../lib/i18n";
 import { LOADING_MARK, type RequestOutcome, UNAVAILABLE_MARK, UNKNOWN_PICTOGRAM, requestOutcome } from "../lib/marks";
@@ -65,8 +65,9 @@ import { markTint } from "./TimelinePieces";
  * van detrás de su «Ver detalle», y las notas de la matriz y las páginas leídas, detrás de otro al
  * final. «Perfil declarado», la nota de alcance de la matriz («descriptivo…»), el texto de un perfil
  * desconocido y el mando de declarar no se pliegan. Las notas y las páginas leídas pasaron después
- * (2026-11-15) a la raya de lo secundario, plegada de partida en las dos conchas.
- * En la clásica, todo como antes salvo esa raya.
+ * (2026-11-15) a la raya de lo secundario, y salieron de ella (2026-11-16) cuando las pestañas pasaron
+ * a páginas de dos filas (`rowPages`, `components/RowPages.tsx`): van al pie del panel, a la vista.
+ * En la clásica, todo como antes.
  */
 
 /** Firma la declaración de un entorno; lanza lo que diga el backend para pintar su marca. */
@@ -100,9 +101,6 @@ export function useProfileMatrix(refreshKey?: string, until?: Date): MatrixLoad 
 
 export const ENVIRONMENTS_GROUP = tr("Entornos", "Environments");
 
-/** La raya de lo secundario, compartida por todas las pestañas de entorno de las dos consolas. */
-export const ENV_FOLD = "env";
-
 function environmentPictogram(id: string): PictogramName {
   return profilePictogram(id) ?? UNKNOWN_PICTOGRAM;
 }
@@ -111,7 +109,11 @@ function environmentPictogram(id: string): PictogramName {
  * Las secciones del grupo «Entornos», una por perfil del backend. Mientras la matriz no llega (o si
  * falla) queda una sola pestaña que lo dice, para que el grupo no desaparezca sin explicación.
  */
-export function environmentSections(load: MatrixLoad, declare?: DeclareProfile): ConsoleSection[] {
+/**
+ * `status`: con él, «Ayuda urgente» de «Inicio» va fija al pie de cada entorno (decisión del usuario,
+ * 2026-11-16: en todas las pestañas de las dos consolas).
+ */
+export function environmentSections(load: MatrixLoad, declare?: DeclareProfile, status?: CrewStatus): ConsoleSection[] {
   const { matrix, failure } = load;
   if (matrix === null) {
     return [
@@ -146,7 +148,14 @@ export function environmentSections(load: MatrixLoad, declare?: DeclareProfile):
     ...(profile.declared ? { note: <Chosen chosen>{tr("Perfil declarado", "Declared profile")}</Chosen> } : {}),
     // Inventario de la misión, sin nada personal: a la vista también en privacidad.
     shared: true,
-    panels: [<EnvironmentView matrix={matrix} profileId={profile.id} {...(declare === undefined ? {} : { declare })} />],
+    // Por páginas de dos filas, como las demás pestañas (decisión del usuario, 2026-11-16). La pestaña es
+    // un solo panel y no se parte: las notas de la matriz en un panel aparte serían una segunda fila que
+    // `RowPages` estiraría a media pantalla, más alta y más vacía que como van ahora, al pie del panel;
+    // y los aspectos en otro dejarían la cabecera (título, nota, tablero) estirada a media pantalla
+    // casi vacía. Con un panel, una fila, una página y sin barra de páginas: el panel llena la pantalla
+    // y, si su contenido pide más, la página se desplaza como siempre.
+    rowPages: true,
+    panels: [<EnvironmentView matrix={matrix} profileId={profile.id} {...(declare === undefined ? {} : { declare })} />, ...(status === undefined ? [] : [pinned(<UrgentHelp status={status} host />)])],
   }));
 }
 
@@ -221,31 +230,24 @@ export function EnvironmentView({
           );
         })}
       </dl>
-      {/* Lo secundario de la pestaña, bajo la raya de «Inicio» y plegado de partida (decisión del
-          usuario, 2026-11-15: «reducir los componentes en interfaz con un botón desplegable como el
-          que hay en Inicio en el resto de pestañas»). La pestaña es un solo panel, así que la raya
-          va dentro, encima de lo único secundario: las notas de la matriz y las páginas leídas, que
-          antes iban detrás de su «Ver detalle» (no se pliegan dos veces). Son de la matriz entera,
-          iguales en cada entorno y en las dos consolas: por eso una sola raya, `env`, para todas;
-          plegar una pestaña de entorno las pliega todas. Arriba siguen el estado de cada aspecto,
-          «Perfil declarado», la nota de alcance, el perfil desconocido y el mando de declarar. */}
-      <FoldDivider id={ENV_FOLD} what={tr("Notas de la matriz y páginas leídas", "Matrix notes and pages read")} />
-      <Folded id={ENV_FOLD}>
-        <div className="environment-notes">
-          <p className="secondary">{matrix.declared_note}</p>
-          <p className="secondary">{matrix.reused_note}</p>
-          <p className="secondary">{matrix.medical_note}</p>
-          <p className="secondary">
-            {tr("Páginas leídas:", "Pages read:")}{" "}
-            {matrix.pages_read.map((page, index) => (
-              <span key={page.title}>
-                {index > 0 && " · "}
-                <Source title={page.title} url={page.url} /> (<ReadDates dates={page.read_on} />)
-              </span>
-            ))}
-          </p>
-        </div>
-      </Folded>
+      {/* Las notas de la matriz y las páginas leídas, al pie y a la vista: son de la matriz entera,
+          iguales en cada entorno y en las dos consolas. Estuvieron bajo una raya plegada, `env`
+          (2026-11-15); la quitó el paso a páginas de dos filas (2026-11-16): con la pestaña por
+          páginas, plegar dentro de la página ya no ahorra pantalla. */}
+      <div className="environment-notes">
+        <p className="secondary">{matrix.declared_note}</p>
+        <p className="secondary">{matrix.reused_note}</p>
+        <p className="secondary">{matrix.medical_note}</p>
+        <p className="secondary">
+          {tr("Páginas leídas:", "Pages read:")}{" "}
+          {matrix.pages_read.map((page, index) => (
+            <span key={page.title}>
+              {index > 0 && " · "}
+              <Source title={page.title} url={page.url} /> (<ReadDates dates={page.read_on} />)
+            </span>
+          ))}
+        </p>
+      </div>
     </section>
   );
 }
