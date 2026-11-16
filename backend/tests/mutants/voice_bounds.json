@@ -1,0 +1,35 @@
+{
+ "target": "app/voice.py",
+ "test": [
+  "tests/test_voice.py"
+ ],
+ "mutations": [
+  {
+   "label": "sin tope de duración",
+   "old": "    if ogg_seconds(audio) > MAX_SECONDS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "Opus contado a 16 kHz (la duración sale tres veces mayor)",
+   "old": "        rate = 48_000",
+   "new": "        rate = 16_000"
+  },
+  {
+   "label": "se mira la primera página y no la última",
+   "old": "        last = max(last, granule)",
+   "new": "        last = granule if last < 0 else last"
+  },
+  {
+   "target": "app/api/pain.py",
+   "label": "cualquier tipo de contenido pasa",
+   "old": "    if declared not in VOICE_TYPES:",
+   "new": "    if False:"
+  },
+  {
+   "target": "app/api/pain.py",
+   "label": "varias transcripciones a la vez",
+   "old": "    if _voice_slot.locked():",
+   "new": "    if False:"
+  }
+ ]
+}

@@ -31,6 +31,7 @@ idioma por variable de entorno, como `SRC` y `OUT`), es decisión del usuario y 
 from __future__ import annotations
 
 import os
+import struct
 import tempfile
 from pathlib import Path
 
@@ -67,6 +68,73 @@ _IN_LANGUAGE = (
     "sys.argv = sys.argv[1:]\n"
     "runpy.run_path(sys.argv[0], run_name='__main__')\n"
 )
+
+
+# Lo más largo que se transcribe: una nota de dolor dictada. Los 20 MB de `MAX_BYTES` de Opus a
+# 6 kbit/s son más de siete horas de Whisper en CPU, sin plazo (auditoría run-2,
+# `emma:voice:ogg-transcription-unbounded`).
+MAX_SECONDS = 300.0
+
+
+def ogg_seconds(audio: bytes) -> float:
+    """La duración que declara un Ogg, leída de sus páginas sin descodificar nada.
+
+    La posición de gránulo de la última página es la muestra final: en Opus siempre a 48 kHz
+    (RFC 7845), en Vorbis a la frecuencia de su cabecera de identificación. Otro códec o un Ogg
+    sin páginas legibles: `ValueError`.
+    """
+    if b"OpusHead" in audio[:512]:
+        rate = 48_000
+    elif (at := audio.find(b"\x01vorbis", 0, 512)) >= 0 and len(audio) >= at + 16:
+        rate = struct.unpack_from("<I", audio, at + 12)[0]
+    else:
+        raise ValueError("solo audio Ogg con Opus o Vorbis")
+    if rate <= 0:
+        raise ValueError("frecuencia de muestreo no válida")
+    last = -1
+    at = audio.find(_OGG)
+    while at >= 0 and at + 14 <= len(audio):
+        (granule,) = struct.unpack_from("<q", audio, at + 6)
+        last = max(last, granule)
+        at = audio.find(_OGG, at + 4)
+    if last < 0:
+        raise ValueError("el Ogg no declara su duración")
+    return last / rate
+
+
+# PLAZO DE RELOJ. La guarda de memoria (`memguard.run`, `guarda_memoria.corre` de Polaris) corta
+# por memoria y por CPU parada, no por tiempo: una transcripción que trabaja sin parar no acababa
+# nunca (auditoría run-2, `emma:voice:ogg-transcription-unbounded`). Polaris no se edita aquí, así
+# que el plazo lo pone EMMA envolviendo el comando: este lanzador corre con el mismo Python de voz,
+# arranca el comando de siempre y, pasado el plazo, mata su árbol entero y sale con
+# `DEADLINE_CODE`. La guarda sigue mirando la memoria del árbol, que ahora cuelga del lanzador.
+DEADLINE_CODE = 97
+_WITH_DEADLINE = (
+    "import subprocess, sys\n"
+    "limit = float(sys.argv[1])\n"
+    "proc = subprocess.Popen(sys.argv[2:])\n"
+    "try:\n"
+    "    sys.exit(proc.wait(timeout=limit))\n"
+    "except subprocess.TimeoutExpired:\n"
+    "    if sys.platform == 'win32':\n"
+    "        subprocess.run(['taskkill', '/T', '/F', '/PID', str(proc.pid)], capture_output=True)\n"
+    "    else:\n"
+    "        proc.kill()\n"
+    "    proc.wait()\n"
+    f"    sys.exit({DEADLINE_CODE})\n"
+)
+
+
+def deadline_s(audio_seconds: float) -> float:
+    """El plazo de una transcripción: un minuto de arranque y carga del modelo más tres veces la
+    duración del audio (Whisper `base` en CPU va bastante más rápido que el tiempo real; medido en
+    el portátil, 4-6 s por nota corta). Con `MAX_SECONDS` = 300, como mucho 16 minutos."""
+    return 60.0 + 3.0 * audio_seconds
+
+
+def _with_deadline(command: list[str], seconds: float) -> list[str]:
+    """`command`, lanzado desde el envoltorio que lo mata al pasar `seconds`."""
+    return [str(_python()), "-c", _WITH_DEADLINE, f"{seconds:.0f}", *command]
 
 
 class VoiceUnavailable(RuntimeError):
@@ -121,6 +189,9 @@ def transcribe(audio: bytes) -> str:
         raise ValueError("solo audio Ogg/Opus (.opus, .ogg)")
     if len(audio) > MAX_BYTES:
         raise ValueError(f"audio de más de {MAX_BYTES // 2**20} MB")
+    seconds = ogg_seconds(audio)
+    if seconds > MAX_SECONDS:
+        raise ValueError(f"audio de más de {MAX_SECONDS:.0f} s: se dicta una nota, no una sesión")
     if not ready():
         raise VoiceUnavailable(
             "transcripción no instalada en esta máquina (scripts/install_voice.py)"
@@ -143,10 +214,13 @@ def transcribe(audio: bytes) -> str:
         if language != SCRIPT_LANGUAGE:
             env[LANGUAGE_ENV] = language
         try:
-            done = memguard.run(_command(script, language), CEILING_GB, env=env,
-                                idle_s=IDLE_S)
+            limit = deadline_s(seconds)
+            done = memguard.run(_with_deadline(_command(script, language), limit), CEILING_GB,
+                                env=env, idle_s=IDLE_S)
         except OSError as exc:
             raise VoiceUnavailable(f"Whisper no respondió: {exc}") from exc
+        if done.code == DEADLINE_CODE:
+            raise VoiceUnavailable(f"la transcripción se cortó: pasó de su plazo de {limit:.0f} s")
         if done.killed_for_memory:
             raise VoiceUnavailable(
                 f"la transcripción se cortó: pasó de {CEILING_GB:.0f} GB de memoria"

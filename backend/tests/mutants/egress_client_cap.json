@@ -1,0 +1,29 @@
+{
+ "target": "app/core/egress.py",
+ "test": [
+  "tests/test_egress.py"
+ ],
+ "mutations": [
+  {
+   "label": "el cliente vuelve a ser un httpx.Client sin tope",
+   "old": "    return CappedClient(\n        timeout=settings.request_timeout, follow_redirects=True,\n        event_hooks={\"request\": [check]},\n        max_bytes=MAX_RESPONSE_BYTES if max_bytes is None else max_bytes,\n    )",
+   "new": "    return httpx.Client(\n        timeout=settings.request_timeout, follow_redirects=True,\n        event_hooks={\"request\": [check]},\n    )"
+  },
+  {
+   "label": "el cliente ignora su max_bytes",
+   "old": "        max_bytes=MAX_RESPONSE_BYTES if max_bytes is None else max_bytes,",
+   "new": "        max_bytes=MAX_RESPONSE_BYTES,"
+  },
+  {
+   "label": "el stream también se acota (rompe fetch_verified)",
+   "old": "        if stream:\n            return response\n",
+   "new": ""
+  },
+  {
+   "target": "app/api/imaging.py",
+   "label": "las citas sin su tope propio",
+   "old": "    with egress.client(settings, \"citations\", max_bytes=CITATION_MAX_BYTES) as client:",
+   "new": "    with egress.client(settings, \"citations\") as client:"
+  }
+ ]
+}

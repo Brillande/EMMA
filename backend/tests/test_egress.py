@@ -102,6 +102,58 @@ def test_an_allowed_request_goes_out_and_the_trace_keeps_no_query(settings: Sett
     assert "SECRETO" not in json.dumps(line) and "2026-01-01" not in json.dumps(line)
 
 
+def _gzip_bomb(size: int) -> httpx.Response:
+    import gzip
+
+    return httpx.Response(
+        200, headers={"Content-Encoding": "gzip", "Content-Type": "text/plain"},
+        content=gzip.compress(b"\x00" * size),
+    )
+
+
+@respx.mock
+def test_a_decompressed_response_stops_at_its_cap(settings: Settings) -> None:
+    """Unos kilobytes gzip de un sitio de fuera no se vuelven gigas aquí (auditoría run-2,
+    `emma:egress:unbounded-decompressed-response`): se deja de leer al pasar del tope."""
+    respx.get(DONKI).mock(return_value=_gzip_bomb(4 * 1024 * 1024))
+    with pytest.raises(egress.OversizedResponse):
+        egress.get(settings, "space-weather", DONKI, max_bytes=1024 * 1024)
+
+
+@respx.mock
+def test_below_the_cap_the_body_arrives_decompressed_and_usable(settings: Settings) -> None:
+    import gzip
+
+    respx.get(DONKI).mock(return_value=httpx.Response(
+        200, headers={"Content-Encoding": "gzip", "Content-Type": "application/json"},
+        content=gzip.compress(b'[{"flrID": "x"}]'),
+    ))
+    response = egress.get(settings, "space-weather", DONKI)
+    assert response.json() == [{"flrID": "x"}]
+    assert "content-encoding" not in response.headers
+    assert response.headers["content-type"] == "application/json"
+
+
+@respx.mock
+def test_the_planner_fetch_answers_502_to_a_bomb(settings: Settings) -> None:
+    """Marplanner pide la cita del día por la puerta: un cuerpo inflado da su 502 de siempre."""
+    from app.api.planner import MAX_FETCH_BYTES
+    from app.core.config import get_settings
+    from app.main import app
+
+    url = "https://zenquotes.io/api/today"
+    respx.get(url).mock(return_value=_gzip_bomb(MAX_FETCH_BYTES * 4))
+    app.dependency_overrides[get_settings] = lambda: settings
+    try:
+        response = TestClient(app).post(
+            "/api/planner/fetch", json={"purpose": "planner-quotes", "url": url}
+        )
+    finally:
+        app.dependency_overrides.clear()
+    assert response.status_code == 502
+    assert "demasiado grande" in response.json()["detail"]
+
+
 @respx.mock
 def test_a_transient_error_is_retried_politely(settings: Settings) -> None:
     respx.get(DONKI).mock(side_effect=[httpx.Response(503), httpx.Response(200, json=[])])
@@ -560,3 +612,76 @@ def test_a_brake_removed_between_the_look_and_its_date_does_not_break_the_answer
 def test_the_real_halt_file_lives_in_emma_state() -> None:
     assert polaris.halt_file().is_relative_to(polaris.state_dir())
     assert not polaris.halt_file().is_relative_to(polaris.root())
+
+
+@respx.mock
+def test_the_gated_client_reads_with_a_cap_too(settings: Settings) -> None:
+    """`egress.client` (citas, actualizador, modelos, órbita): `client.get` también para en el
+    tope, ya descomprimido (revisión de seguridad 2026-11-16)."""
+    respx.get(DONKI).mock(return_value=_gzip_bomb(4 * 1024 * 1024))
+    with (
+        egress.client(settings, "space-weather", max_bytes=1024 * 1024) as http,
+        pytest.raises(egress.OversizedResponse),
+    ):
+        http.get(DONKI)
+
+
+@respx.mock
+def test_the_gated_client_still_streams_without_its_cap(settings: Settings) -> None:
+    """`client.stream` pasa tal cual: quien lo abre (`fetch_verified`) pone su propio tope."""
+    import gzip
+
+    body = b"x" * (2 * 1024 * 1024)
+    respx.get(DONKI).mock(return_value=httpx.Response(
+        200, headers={"Content-Encoding": "gzip"}, content=gzip.compress(body)
+    ))
+    with (
+        egress.client(settings, "space-weather", max_bytes=1024) as http,
+        http.stream("GET", DONKI) as response,
+    ):
+        assert b"".join(response.iter_bytes()) == body
+
+
+@respx.mock
+def test_below_the_cap_the_gated_client_answers_as_before(settings: Settings) -> None:
+    respx.get(DONKI).mock(return_value=httpx.Response(200, json={"ok": True}))
+    with egress.client(settings, "space-weather") as http:
+        response = http.get(DONKI)
+    assert response.json() == {"ok": True}
+    response.raise_for_status()
+
+
+@respx.mock
+def test_a_citation_registry_bomb_leaves_the_source_unverified(settings: Settings) -> None:
+    """El comprobador de citas va con `CITATION_MAX_BYTES`: una respuesta inflada no se junta, y
+    la fuente se queda sin comprobar en vez de tumbar la firma."""
+    from app.evidence.citations import UNRESOLVABLE, check_pmid
+    from app.evidence.source_check import CITATION_MAX_BYTES
+
+    respx.route(host="eutils.ncbi.nlm.nih.gov").mock(
+        return_value=_gzip_bomb(CITATION_MAX_BYTES * 2)
+    )
+    with egress.client(settings, "citations", max_bytes=CITATION_MAX_BYTES) as http:
+        verdict = check_pmid(http, "12345678")
+    assert verdict.status == UNRESOLVABLE
+
+
+def test_the_signoff_checks_its_source_with_the_citation_cap(
+    settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """La firma de un borrador pide el cliente con `CITATION_MAX_BYTES`, no con el tope general."""
+    from app.api import imaging
+    from app.evidence.source_check import CITATION_MAX_BYTES
+
+    asked: list[int | None] = []
+    real = egress.client
+
+    def spy(cfg: Settings, purpose: str, *, max_bytes: int | None = None) -> httpx.Client:
+        asked.append(max_bytes)
+        return real(cfg, purpose, max_bytes=max_bytes)
+
+    monkeypatch.setattr(imaging.egress, "client", spy)
+    with respx.mock:
+        respx.route().mock(return_value=httpx.Response(404))
+        imaging._source_check(settings, "PMID 12345678")
+    assert asked == [CITATION_MAX_BYTES]

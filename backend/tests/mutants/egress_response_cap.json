@@ -1,0 +1,23 @@
+{
+ "target": "app/core/egress.py",
+ "test": [
+  "tests/test_egress.py"
+ ],
+ "mutations": [
+  {
+   "label": "sin tope: se junta todo lo descomprimido",
+   "old": "            if total > limit:",
+   "new": "            if False:"
+  },
+  {
+   "label": "el tope se ignora y vale siempre el de por defecto",
+   "old": "    limit = MAX_RESPONSE_BYTES if max_bytes is None else max_bytes",
+   "new": "    limit = MAX_RESPONSE_BYTES"
+  },
+  {
+   "label": "el cuerpo descomprimido conserva su Content-Encoding",
+   "old": "            if key.lower() not in (\"content-encoding\", \"content-length\")",
+   "new": "            if key.lower() not in (\"content-length\",)"
+  }
+ ]
+}

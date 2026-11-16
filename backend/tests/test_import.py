@@ -15,7 +15,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import app.api.routes as routes
-from app.api.routes import new_store, reset_store
+from app.api.routes import get_store, new_store, reset_store
 from app.core.config import Settings, get_settings
 from app.ingest.wearable import WearableAdapter
 from app.main import app
@@ -129,6 +129,42 @@ def test_billion_laughs_is_refused_quickly(client: TestClient) -> None:
 
     assert response.status_code == 422
     assert time.perf_counter() - started < 2.0
+
+
+@pytest.mark.parametrize(
+    "declaration",
+    [
+        '<!ATTLIST Record pad CDATA "{pad}">',
+        "<!ATTLIST Record pad CDATA '{pad}'>",
+        '<!ATTLIST Record pad CDATA #FIXED "{pad}">',
+        '<!ATTLIST Record type CDATA #REQUIRED pad CDATA "{pad}">',
+    ],
+)
+def test_an_attribute_default_is_refused_before_it_multiplies(
+    client: TestClient, declaration: str
+) -> None:
+    """Un valor por defecto se copia en cada elemento sin el atributo: amplifica como una
+    entidad sin declarar ninguna (auditoría run-2,
+    `emma:ingest:apple-health-attlist-default-amplification`). Lo corta `_xml_text`, antes
+    del parseo; el DTD de Apple (`#REQUIRED`) sigue pasando."""
+    bomb = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        f"<!DOCTYPE HealthData [{declaration.format(pad='a' * 8000)}]><HealthData>"
+        + "<Record/>" * 2000
+        + "</HealthData>"
+    ).encode()
+    response = client.post("/api/import/apple-health", content=bomb, headers=XML)
+    assert response.status_code == 422
+    assert "valor por defecto" in response.json()["detail"]
+    assert len(get_store().ledger) == 0
+
+
+def test_the_apple_dtd_without_defaults_still_imports(client: TestClient) -> None:
+    export = _export(_record("HeartRate", "61")).replace(
+        b"#REQUIRED>", b"#REQUIRED>\n<!ATTLIST Record unit CDATA #IMPLIED>"
+        b"\n<!ATTLIST Record kind (a|b) #IMPLIED>"
+    )
+    assert client.post("/api/import/apple-health", content=export, headers=XML).status_code == 201
 
 
 def test_external_entities_are_not_resolved(client: TestClient, tmp_path: Path) -> None:

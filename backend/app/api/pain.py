@@ -7,6 +7,7 @@ firma, el instante de la lectura— se reutiliza de `routes.py`, no se copia.
 
 from __future__ import annotations
 
+import asyncio
 import datetime as dt
 from typing import Annotated, Any, Literal
 
@@ -15,6 +16,7 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 from app import voice
+from app.api.console_header import console_post
 from app.api.routes import (
     SettingsDep,
     StoreDep,
@@ -164,12 +166,24 @@ def voice_status() -> dict[str, object]:
     return {"available": voice.ready(), "model": voice.MODEL}
 
 
-@pain_router.post("/voice")
+# Una transcripción a la vez: cada una es un Whisper en CPU de minutos (auditoría run-2,
+# `emma:voice:ogg-transcription-unbounded`). La segunda recibe 429 y no hace cola.
+_voice_slot = asyncio.Semaphore(1)
+VOICE_TYPES = frozenset({"audio/ogg", "audio/opus"})
+
+
+@pain_router.post("/voice", **console_post())
 async def transcribe_note(request: Request) -> dict[str, object]:
     """Un audio Ogg/Opus a texto, como **borrador** de la nota: no se firma ni se guarda aquí."""
+    declared = request.headers.get("content-type", "").split(";")[0].strip().lower()
+    if declared not in VOICE_TYPES:
+        raise HTTPException(status_code=415, detail="solo audio/ogg o audio/opus")
     raw = await _read_capped(request, voice.MAX_BYTES)
+    if _voice_slot.locked():
+        raise HTTPException(status_code=429, detail="ya hay una transcripción en curso")
     try:
-        text = await run_in_threadpool(voice.transcribe, raw)
+        async with _voice_slot:
+            text = await run_in_threadpool(voice.transcribe, raw)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except voice.VoiceUnavailable as exc:

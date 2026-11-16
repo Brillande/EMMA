@@ -170,7 +170,18 @@ class HapiBodyError(httpx.DecodingError):
 
 
 def _parse_time(value: str) -> dt.datetime:
-    return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    """Con zona o nada: una hora sin zona no entra en la serie ni en su caché (auditoría run-2,
+    `emma:environment:naive-external-timestamp-cache-poison`)."""
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError(f"hora sin zona: {value!r}")
+    return parsed
+
+
+def _cached_time(value: str) -> dt.datetime:
+    """Una hora de la serie guardada; las de antes de exigir zona se toman como UTC."""
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=dt.UTC)
 
 
 def _hapi_time(moment: dt.datetime) -> str:
@@ -319,14 +330,14 @@ def describe(which: Series, payload: CachedPayload, hours: int) -> dict[str, Any
     """El bloque de una serie para la API: valores, unidades, edad y fuente; nada evaluado."""
     dataset = DATASETS[which]
     since = dt.datetime.now(dt.UTC) - dt.timedelta(hours=hours)
-    samples = [row for row in payload.data if _parse_time(row["time"]) >= since]
+    samples = [row for row in payload.data if _cached_time(row["time"]) >= since]
     measured = [
         row for row in samples
         if any(row.get(channel.name) is not None for channel in dataset.channels)
     ]
     last = measured[-1] if measured else None
     last_age = (
-        int((dt.datetime.now(dt.UTC) - _parse_time(last["time"])).total_seconds())
+        int((dt.datetime.now(dt.UTC) - _cached_time(last["time"])).total_seconds())
         if last is not None else None
     )
     return {

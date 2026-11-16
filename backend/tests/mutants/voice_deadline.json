@@ -1,0 +1,33 @@
+{
+ "target": "app/voice.py",
+ "test": [
+  "tests/test_voice.py"
+ ],
+ "mutations": [
+  {
+   "label": "el comando se lanza sin el envoltorio con plazo",
+   "old": "            done = memguard.run(_with_deadline(_command(script, language), limit), CEILING_GB,",
+   "new": "            done = memguard.run(_command(script, language), CEILING_GB,"
+  },
+  {
+   "label": "el lanzador espera sin plazo",
+   "old": "    \"    sys.exit(proc.wait(timeout=limit))\\n\"",
+   "new": "    \"    sys.exit(proc.wait())\\n\""
+  },
+  {
+   "label": "pasado el plazo no se mata nada",
+   "old": "    \"        subprocess.run(['taskkill', '/T', '/F', '/PID', str(proc.pid)], capture_output=True)\\n\"",
+   "new": "    \"        pass\\n\""
+  },
+  {
+   "label": "el corte por plazo se lee como un fallo cualquiera",
+   "old": "        if done.code == DEADLINE_CODE:",
+   "new": "        if False:"
+  },
+  {
+   "label": "el plazo no crece con el audio",
+   "old": "    return 60.0 + 3.0 * audio_seconds",
+   "new": "    return 60.0"
+  }
+ ]
+}

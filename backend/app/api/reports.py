@@ -20,6 +20,7 @@ from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.api.console_header import console_post
 from app.api.mission import latest_identity
 from app.api.routes import (
     CONSOLE_IDENTITY,
@@ -63,7 +64,7 @@ def ocr_status(settings: SettingsDep) -> dict[str, Any]:
     return {"available": True, "engine": engine, "languages": ocr.LANGUAGES, "note": None}
 
 
-@reports_router.post("", status_code=201)
+@reports_router.post("", status_code=201, **console_post())
 async def upload_report(
     request: Request,
     store: StoreDep,
@@ -294,7 +295,11 @@ def report_page(store: StoreDep, ledger_index: int, page: int) -> Response:
         payload, data = store.report_blob(ledger_index)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc.args[0])) from exc
-    images = ocr.page_images(data, str(payload["media_type"]))
+    try:
+        images = ocr.page_images(data, str(payload["media_type"]))
+    except ocr.PageTooLarge as exc:
+        # Guardado antes del tope (2026-11-16): se dice, no se pinta.
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     if not 1 <= page <= len(images):
         raise HTTPException(status_code=404, detail=f"el informe tiene {len(images)} páginas")
     buffer = io.BytesIO()

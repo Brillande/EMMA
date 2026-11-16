@@ -1,0 +1,34 @@
+{
+ "target": "app/reports/deid.py",
+ "test": [
+  "tests/test_report_regex_bounds.py"
+ ],
+ "mutations": [
+  {
+   "label": "las palabras desmesuradas llegan a los patrones de Polaris",
+   "old": "    if _LONG_TOKEN.search(text):",
+   "new": "    if False:"
+  },
+  {
+   "label": "un texto enorme llega entero a los patrones",
+   "old": "    if len(text) > MAX_DEID_CHARS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "la guarda no se mira antes de Polaris",
+   "old": "    refused = _too_long(text)\n",
+   "new": "    refused = None\n"
+  },
+  {
+   "label": "el pasaporte vuelve a los cuantificadores codiciosos",
+   "old": "    r\"(\\b(?:n[º°o]\\.?\\s*de\\s+)?(?:pasaporte|passport|ppte\\.?)\\s*+(?:n[º°o]\\.?\\s*+)?[:#]?\\s*+)\"",
+   "new": "    r\"(\\b(?:n[º°o]\\.?\\s*de\\s+)?(?:pasaporte|passport|ppte\\.?)\\s*(?:n[º°o]\\.?\\s*)?[:#]?\\s*)\""
+  },
+  {
+   "target": "app/reports/labs.py",
+   "label": "las líneas larguísimas llegan al patrón de unidades",
+   "old": "        if len(line) > MAX_LAB_LINE:\n            continue\n",
+   "new": ""
+  }
+ ]
+}

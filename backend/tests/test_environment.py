@@ -215,6 +215,40 @@ def test_network_failure_falls_back_to_cache(
 
 
 @respx.mock
+def test_an_event_time_without_zone_falls_back_and_is_never_cached(
+    settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Una hora sin zona de DONKI no se guarda: antes quedaba en caché y cada `/api/status`
+    lanzaba `TypeError`, también sin red (auditoría run-2,
+    `emma:environment:naive-external-timestamp-cache-poison`). Se trata como una consulta fallida:
+    la caché anterior, con su edad."""
+    monkeypatch.setattr(donki, "FRESH_FOR", dt.timedelta(0))
+    route = respx.get(f"{DONKI_URL}/SEP")
+    route.mock(return_value=httpx.Response(200, json=SEP_PAYLOAD))
+    client = DonkiClient(settings=settings)
+    window = (dt.date(2025, 10, 1), dt.date(2025, 11, 1))
+    client.events(EventType.SEP, *window)
+
+    naive = [{**SEP_PAYLOAD[0], "eventTime": "2025-10-22T00:09"}]
+    route.mock(return_value=httpx.Response(200, json=naive))
+    result = client.events(EventType.SEP, *window)
+    assert result.from_cache
+    assert result.data[0].time.tzinfo is not None
+    # Lo guardado sigue siendo lo bueno: la respuesta ilegible no lo pisó.
+    cached = client.cache.get(f"donki:{EventType.SEP}:{window[0]}:{window[1]}")
+    assert cached is not None and cached.data[0]["time"].endswith("+00:00")
+
+
+def test_a_cache_written_before_the_rule_is_read_as_utc() -> None:
+    event = donki.SolarEvent.from_dict({
+        "event_id": "x", "event_type": "SEP", "time": "2025-10-22T00:09:00",
+        "severity": "high", "instruments": [], "linked_event_ids": [], "flare_class": None,
+        "link": "",
+    })
+    assert event.time == dt.datetime(2025, 10, 22, 0, 9, tzinfo=dt.UTC)
+
+
+@respx.mock
 def test_a_recent_cache_is_used_without_going_out(
     settings: Settings, monkeypatch: pytest.MonkeyPatch
 ) -> None:

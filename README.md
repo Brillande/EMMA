@@ -131,6 +131,7 @@ la 0.1.5.
 |---|---|
 | [0.1.5](https://github.com/Brillande/EMMA/releases/tag/v0.1.5) | La primera con el actualizador («About EMMA» → «Update EMMA»); con el modo seguro no se busca, no se descarga ni se instala. Trae también las pestañas por páginas de dos filas. Desde la 0.1.4 o anteriores se instala a mano una vez |
 | [0.1.6](https://github.com/Brillande/EMMA/releases/tag/v0.1.6) | En la interfaz en inglés, «Ground console» pasa a llamarse **«Earth console»**: selector de consola, menú de secciones, «Distance and nodes», «Predictions» y el asistente de voz, que sigue entendiendo «ground console». En castellano ya era «Consola de Tierra». La primera que llega por el actualizador |
+| [0.1.7](https://github.com/Brillande/EMMA/releases/tag/v0.1.7) | Arreglo de seguridad |
 
 Publicar una versión para que el exe la vea (lo hace el responsable, nunca la aplicación):
 

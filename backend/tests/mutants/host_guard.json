@@ -1,0 +1,48 @@
+{
+ "target": "app/core/host_guard.py",
+ "test": [
+  "tests/test_host_guard.py"
+ ],
+ "mutations": [
+  {
+   "label": "cualquier Host pasa (el rebinding vuelve)",
+   "old": "        if not is_loopback_host(headers.get(\"host\", \"\")):",
+   "new": "        if False:"
+  },
+  {
+   "label": "un Origin ajeno puede escribir",
+   "old": "        if origin is not None and is_write and not is_loopback_origin(origin):",
+   "new": "        if False:"
+  },
+  {
+   "label": "sin Origin se rechaza: el escritorio y el puente de Marplanner dejan de poder escribir",
+   "old": "        if origin is not None and is_write and not is_loopback_origin(origin):",
+   "new": "        if is_write and not is_loopback_origin(origin or \"\"):"
+  },
+  {
+   "label": "se rechaza también leer con Origin ajeno",
+   "old": "        is_write = scope[\"type\"] == \"websocket\" or method not in SAFE_METHODS",
+   "new": "        is_write = True"
+  },
+  {
+   "label": "el nombre se compara sin bajar a minúsculas",
+   "old": "    value = value.strip().lower()",
+   "new": "    value = value.strip()"
+  },
+  {
+   "label": "un puerto no numérico se acepta",
+   "old": "    if sep and not port.isdigit():\n        return None",
+   "new": ""
+  },
+  {
+   "label": "el origen se mira por prefijo y deja pasar localhost.ataque.example",
+   "old": "    return parts.scheme in (\"http\", \"https\") and is_loopback_host(parts.netloc)",
+   "new": "    return value.strip().startswith((\"http://localhost\", \"http://127.0.0.1\", \"http://[::1]\"))"
+  },
+  {
+   "label": "el rechazo por Host sale como 200",
+   "old": "            await _refuse(send, scope, 400, \"Host no permitido: EMMA solo atiende por loopback\")",
+   "new": "            await _refuse(send, scope, 200, \"Host no permitido: EMMA solo atiende por loopback\")"
+  }
+ ]
+}

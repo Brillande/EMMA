@@ -297,6 +297,18 @@ def test_space_weather_offline_returns_503(client: TestClient) -> None:
     assert client.get("/api/space-weather").status_code == 503
 
 
+@pytest.mark.parametrize("days", [1, 37, 364, 1094])
+def test_space_weather_only_takes_its_fixed_windows(client: TestClient, days: int) -> None:
+    """Cada ventana distinta era otra tanda de consultas con la clave del operador (auditoría
+    run-2, `emma:space-weather:lookback-quota-amplification`): se rechaza antes de salir."""
+    assert client.get("/api/space-weather", params={"lookback_days": days}).status_code == 422
+
+
+@pytest.mark.parametrize("days", [30, 90, 365, 1095])
+def test_space_weather_fixed_windows_still_answer(client: TestClient, days: int) -> None:
+    assert client.get("/api/space-weather", params={"lookback_days": days}).status_code == 503
+
+
 def test_radiation_dose_offline_returns_503(client: TestClient) -> None:
     response = client.get(
         "/api/radiation/dose", params={"start": "2022-04-01", "end": "2022-04-02"}

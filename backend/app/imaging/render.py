@@ -19,6 +19,8 @@ import pydicom
 from PIL import Image
 from pydicom.pixels.utils import pixel_array
 
+from app.imaging.dicom import pixel_bytes
+
 
 class UnrenderableError(ValueError):
     """El fotograma no se puede mostrar. El mensaje dice por qué."""
@@ -30,10 +32,16 @@ def frame_png(data: bytes, index: int) -> bytes:
     frames = int(dataset.get("NumberOfFrames", 1) or 1)
     if not 0 <= index < frames:
         raise IndexError(f"el estudio tiene {frames} fotogramas; no existe el {index}")
+    # El mismo tope que al subirlo (`dicom.pixel_bytes`): un estudio guardado antes de él no
+    # reserva aquí un fotograma de gigas.
+    try:
+        pixel_bytes(dataset)
+    except (ValueError, TypeError) as exc:
+        raise UnrenderableError(str(exc)) from exc
     try:
         # Un solo fotograma: descodificar un cine entero para mostrar uno sería lento.
         pixels = pixel_array(dataset, index=index if frames > 1 else None)
-    except (NotImplementedError, RuntimeError, ValueError) as exc:
+    except (NotImplementedError, RuntimeError, ValueError, MemoryError) as exc:
         syntax = dataset.file_meta.get("TransferSyntaxUID", "desconocida")
         raise UnrenderableError(
             f"no se puede descodificar la compresión del estudio ({syntax}): {exc}"

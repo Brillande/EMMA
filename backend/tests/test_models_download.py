@@ -423,3 +423,68 @@ def test_a_cut_download_resumes_on_the_next_start_with_a_piece_installed(
         assert models_pack.autostart(settings) is True
         again.wait(30)
     assert set(installed(tmp_path / "EMMA-modelos")) == {"tesseract", "voice"}
+
+
+@pytest.mark.parametrize(
+    "rel",
+    [
+        "voice/../../fuera.txt", "voice/a/../../../fuera.txt", "voice//vacio.txt", "voice/./x",
+        "voice/C:/Windows/x.dll", "voice/C:x", r"voice/a\..\..\x", "voice", "voice/",
+    ],
+)
+def test_a_manifest_path_cannot_leave_the_pack_folder(tmp_path: Path, rel: str) -> None:
+    """La ruta de cada fichero viene del manifiesto publicado: ni `..`, ni vacíos, ni unidades,
+    ni barras invertidas, ni la carpeta misma (revisión de seguridad, 2026-11-16)."""
+    from app.models_download import PackError, _inside
+
+    with pytest.raises(PackError):
+        _inside(tmp_path / "pieza", rel)
+
+
+def test_an_ordinary_manifest_path_lands_inside(tmp_path: Path) -> None:
+    from app.models_download import _inside
+
+    target = tmp_path / "pieza"
+    assert _inside(target, "voice/bin/whisper.exe") == target / "bin" / "whisper.exe"
+
+
+def _tar_part(tmp_path: Path, name: str, data: bytes) -> Path:
+    import io as _io
+
+    part = tmp_path / "parte.tar"
+    with tarfile.open(part, "w") as tar:
+        info = tarfile.TarInfo(name)
+        info.size = len(data)
+        tar.addfile(info, _io.BytesIO(data))
+    return part
+
+
+def test_extracting_a_climbing_member_writes_nothing_outside(tmp_path: Path) -> None:
+    """Por `_extract`, como en una descarga: el fichero que trepa no llega a escribirse."""
+    from app.models_download import Downloader, PackError
+
+    data = b"fuera"
+    rel = "voice/../../fuera.txt"
+    part = _tar_part(tmp_path, rel, data)
+    target = tmp_path / "staging" / "voice"
+    target.mkdir(parents=True)
+    expected = {rel: (len(data), hashlib.sha256(data).hexdigest())}
+    with pytest.raises(PackError):
+        Downloader()._extract(iter([part]), target, expected, set())
+    assert not (tmp_path / "fuera.txt").exists()
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="enlace de directorio de Windows (junction)")
+def test_a_link_inside_the_folder_cannot_lead_outside(tmp_path: Path) -> None:
+    """Los componentes son limpios, pero un enlace ya presente dentro llevaría fuera: lo mira la
+    ruta resuelta."""
+    import _winapi  # type: ignore[import-not-found]
+
+    from app.models_download import PackError, _inside
+
+    target, outside = tmp_path / "pieza", tmp_path / "fuera"
+    target.mkdir()
+    outside.mkdir()
+    _winapi.CreateJunction(str(outside), str(target / "enlace"))
+    with pytest.raises(PackError):
+        _inside(target, "voice/enlace/x.txt")

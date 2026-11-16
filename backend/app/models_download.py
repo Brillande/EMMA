@@ -139,6 +139,25 @@ def _check_index(index: Any) -> dict[str, Any]:
     return index
 
 
+def _inside(target: Path, rel: str) -> Path:
+    """Dónde va `rel` (`<pieza>/<ruta>`) dentro de `target`, o `PackError` si saldría de él.
+
+    `rel` viene del manifiesto de la versión publicada. Hoy solo lo escribe quien publica, pero
+    unirlo tal cual dejaba que `..`, un componente vacío, una unidad (`C:`) o una ruta absoluta
+    escribieran fuera de la carpeta del paquete (revisión de seguridad, 2026-11-16).
+    """
+    parts = rel.split("/")[1:]
+    if not parts or any(
+        not part or part in (".", "..") or ":" in part or "\\" in part for part in parts
+    ):
+        raise PackError("bad-archive", rel)
+    out = target.joinpath(*parts)
+    root = target.resolve()
+    if not out.resolve().is_relative_to(root) or out.resolve() == root:
+        raise PackError("bad-archive", rel)
+    return out
+
+
 class Downloader:
     """Una descarga a la vez, en un hilo; el estado se lee con `snapshot`."""
 
@@ -325,7 +344,7 @@ class Downloader:
                 source = tar.extractfile(member)
                 if source is None:
                     raise PackError("bad-archive", rel)
-                out = target.joinpath(*rel.split("/")[1:])
+                out = _inside(target, rel)
                 out.parent.mkdir(parents=True, exist_ok=True)
                 digest = hashlib.sha256()
                 with out.open("wb") as handle:

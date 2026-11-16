@@ -72,6 +72,7 @@ import logging
 import struct
 import tempfile
 import unicodedata
+import zlib
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
@@ -86,6 +87,39 @@ HEADER_BYTES = 352
 _VOX_OFFSET_AT = 108
 
 GZIP_MAGIC = b"\x1f\x8b"
+# Lo más que puede ocupar un NIfTI ya descomprimido. El cuerpo de la subida está acotado en bytes
+# (`MAX_VOLUME_BYTES`), pero gzip llega a más de 1000:1: 256 MiB de ceros eran cientos de GiB en
+# memoria (auditoría run-2, `emma:volumes:nifti-gzip-unbounded`). Un TAC de cuerpo entero a
+# 512 × 512 × 1000 en int16 son 512 MiB.
+MAX_NIFTI_BYTES = 1024 * 1024 * 1024
+# Lo más que se lee antes de los vóxeles: cabecera y extensiones. `vox_offset` lo pone el fichero.
+MAX_HEADER_BYTES = 16 * 1024 * 1024
+
+
+class TooLarge(ValueError):
+    """Descomprimido, el volumen pasaría de su tope."""
+
+
+def gunzip_capped(raw: bytes, limit: int | None = None) -> bytes:
+    """`gzip.decompress` que para en `limit` bytes de salida (por defecto `MAX_NIFTI_BYTES`) en
+    vez de reservarlos todos. Varios miembros seguidos se descomprimen como uno, como hace
+    `gzip.decompress`.
+    """
+    limit = MAX_NIFTI_BYTES if limit is None else limit
+    out: list[bytes] = []
+    total = 0
+    data = raw
+    while data:
+        inflater = zlib.decompressobj(wbits=31)
+        chunk = inflater.decompress(data, limit - total + 1)
+        total += len(chunk)
+        out.append(chunk)
+        if total > limit or inflater.unconsumed_tail:
+            raise TooLarge(f"descomprimido pasaría de {limit} bytes")
+        if not inflater.eof:
+            raise zlib.error("gzip truncado")
+        data = inflater.unused_data
+    return b"".join(out)
 # gzip (RFC 1952): el cuarto byte son las banderas. Estas tres marcan texto que el compresor
 # guarda junto a los datos.
 _GZIP_KEEPS = {
@@ -196,7 +230,8 @@ def _before_voxels(raw: bytes) -> bytes:
             head = stream.read(HEADER_BYTES)
             order = "<" if head[:4] == struct.pack("<i", 348) else ">"
             (offset,) = struct.unpack_from(f"{order}f", head, _VOX_OFFSET_AT)
-            return head + stream.read(max(0, int(offset) - HEADER_BYTES))
+            wanted = min(max(0, int(offset) - HEADER_BYTES), MAX_HEADER_BYTES)
+            return head + stream.read(wanted)
     order = "<" if raw[:4] == struct.pack("<i", 348) else ">"
     (offset,) = struct.unpack_from(f"{order}f", raw, _VOX_OFFSET_AT)
     return raw[: max(HEADER_BYTES, int(offset))]
@@ -270,7 +305,7 @@ def _rebuilt(raw: bytes) -> Cleaned:
     import numpy as np
 
     zipped = raw[:2] == GZIP_MAGIC
-    plain = gzip.decompress(raw) if zipped else raw
+    plain = gunzip_capped(raw) if zipped else raw
     # La cabecera, del fichero: la de una imagen cargada con nibabel ya trae `vox_offset` y la
     # escala a su valor de fábrica.
     reader: Any = nib.Nifti1Header

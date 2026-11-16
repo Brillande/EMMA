@@ -116,6 +116,20 @@ def test_a_different_unit_is_not_relabelled_as_pfu() -> None:
         iswa.parse(iswa.DATASETS[iswa.Series.PROTONS], body)
 
 
+def test_a_row_without_zone_is_a_broken_body_not_a_cached_series() -> None:
+    """Una hora sin zona no entra en la serie ni en su caché (auditoría run-2,
+    `emma:environment:naive-external-timestamp-cache-poison`): es un cuerpo roto, y quien
+    consulta usa la serie anterior con su edad."""
+    body = _recorded("goesp_part_flux_P5M")
+    body["data"][0][0] = body["data"][0][0].rstrip("Z")
+    with pytest.raises(iswa.HapiBodyError, match="hora"):
+        iswa.parse(iswa.DATASETS[iswa.Series.PROTONS], body)
+
+
+def test_a_series_cached_before_the_rule_is_read_as_utc() -> None:
+    assert iswa._cached_time("2024-05-11T00:00:00") == dt.datetime(2024, 5, 11, tzinfo=dt.UTC)
+
+
 def test_a_hapi_error_status_is_a_broken_body() -> None:
     body = {"HAPI": "2.0", "status": {"code": 1406, "message": "unknown dataset id"}, "data": []}
     with pytest.raises(iswa.HapiBodyError, match="1200"):

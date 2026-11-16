@@ -1,0 +1,36 @@
+{
+ "target": "app/environment/donki.py",
+ "test": [
+  "tests/test_environment.py",
+  "tests/test_iswa.py"
+ ],
+ "mutations": [
+  {
+   "label": "DONKI acepta horas sin zona",
+   "old": "    if parsed.tzinfo is None:\n        raise ValueError(f\"hora sin zona: {value!r}\")\n    return parsed\n\n\ndef as_utc_if_naive",
+   "new": "    return parsed\n\n\ndef as_utc_if_naive"
+  },
+  {
+   "label": "un evento ilegible se guarda en caché (la normalización vuelve fuera del try)",
+   "old": "            except (KeyError, TypeError, ValueError, AttributeError) as exc:\n                raise httpx.DecodingError(f\"DONKI /{event_type}: evento ilegible: {exc}\") from exc",
+   "new": "            except ZeroDivisionError as exc:\n                raise httpx.DecodingError(f\"DONKI /{event_type}: evento ilegible: {exc}\") from exc"
+  },
+  {
+   "label": "la caché vieja sin zona se lee tal cual",
+   "old": "            time=as_utc_if_naive(dt.datetime.fromisoformat(raw[\"time\"])),",
+   "new": "            time=dt.datetime.fromisoformat(raw[\"time\"]),"
+  },
+  {
+   "target": "app/environment/iswa.py",
+   "label": "iSWA acepta horas sin zona",
+   "old": "    if parsed.tzinfo is None:\n        raise ValueError(f\"hora sin zona: {value!r}\")\n    return parsed\n\n\ndef _cached_time",
+   "new": "    return parsed\n\n\ndef _cached_time"
+  },
+  {
+   "target": "app/environment/iswa.py",
+   "label": "la serie vieja sin zona se lee tal cual",
+   "old": "    return parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=dt.UTC)",
+   "new": "    return parsed"
+  }
+ ]
+}

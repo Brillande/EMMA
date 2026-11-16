@@ -27,7 +27,11 @@ from app.api.routes import new_store, reset_store
 from app.core.config import Settings, get_settings
 from app.core.ledger import Identity, RedactionAuthority
 from app.core.storage import ImagingBlobRow, ObservationStore, TamperedRecordError
-from app.imaging.dicom import NotUltrasoundError, read_ultrasound
+from app.imaging.dicom import (
+    DEFLATED_TRANSFER_SYNTAX as DEFLATED,
+)
+from app.imaging.dicom import NotUltrasoundError, pixel_bytes, read_ultrasound
+from app.imaging.render import UnrenderableError, frame_png
 from app.ingest.fhir import observation
 from app.main import app
 
@@ -180,13 +184,50 @@ def test_a_removed_sequence_counts_once_not_once_per_nested_element() -> None:
     assert read_ultrasound(buffer.getvalue()).removed_elements == base + 1
 
 
-def test_every_deidentified_keyword_is_a_dicom_keyword() -> None:
-    """Un nombre mal escrito en las listas no quitaría nada, y nadie lo notaría."""
+def test_every_kept_keyword_is_a_dicom_keyword() -> None:
+    """Un nombre mal escrito en la lista de lo conservado quitaría algo que hace falta."""
     from pydicom.datadict import tag_for_keyword
 
-    from app.imaging.dicom import _REMOVED, _REPLACED_UIDS
+    from app.imaging.dicom import _KEPT
 
-    assert [k for k in (*_REMOVED, *_REPLACED_UIDS) if tag_for_keyword(k) is None] == []
+    assert [k for k in _KEPT if tag_for_keyword(k) is None] == []
+
+
+def test_what_is_not_on_the_kept_list_does_not_survive_whatever_its_name() -> None:
+    """Lista de lo que se conserva, no de lo que se quita (auditoría run-2,
+    `emma:imaging:deid-profile-incomplete`): atributos de la tabla E.1-1 que la lista vieja no
+    nombraba, texto dentro de una secuencia, superposiciones 60xx, UID no listados y el título AE
+    de la cabecera de fichero."""
+    original = pydicom.dcmread(io.BytesIO(ultrasound_dicom()))
+    original.NamesOfIntendedRecipientsOfResults = "Destinatario^Secreto"
+    original.PatientTelecomInformation = "tel 555-0100"
+    original.ResponsibleOrganization = "Hospital Secreto"
+    original.ReviewerName = "Revisor^Secreto"
+    original.TextComments = "nota de Jane Doe"
+    original.CreatorVersionUID = "1.2.3.4.5.6.7.8.9"
+    item = Dataset()
+    item.PersonName = "Persona^EnContenido"
+    item.TextValue = "texto libre de HOSP-123456"
+    original.ContentSequence = DicomSequence([item])
+    original.add_new(0x60004000, "LT", "superposicion de Jane Doe")
+    # Texto dentro de una secuencia que SÍ se conserva: se quita por su clase de valor.
+    original.SequenceOfUltrasoundRegions[0].add_new(0x00081030, "LO", "estudio de Jane Doe")
+    original.file_meta.SourceApplicationEntityTitle = "ECO_SECRETO"
+    buffer = io.BytesIO()
+    pydicom.dcmwrite(buffer, original, enforce_file_format=True)
+
+    study = read_ultrasound(buffer.getvalue())
+    for leaked in (b"Destinatario", b"555-0100", b"Hospital Secreto", b"Revisor", b"Jane Doe",
+                   b"1.2.3.4.5.6.7.8.9", b"EnContenido", b"HOSP-123456", b"ECO_SECRETO"):
+        assert leaked not in study.data, leaked
+    stored = pydicom.dcmread(io.BytesIO(study.data))
+    # Lo que hace falta sigue: imagen, calibración, fecha y la marca de texto quemado.
+    assert stored.PixelData == bytes(range(256))
+    assert len(stored.SequenceOfUltrasoundRegions) == 1
+    assert stored.SequenceOfUltrasoundRegions[0].PhysicalDeltaX
+    assert stored.AcquisitionDateTime and stored.BurnedInAnnotation == "NO"
+    assert stored.SOPClassUID == US_IMAGE
+    assert study.regions == read_ultrasound(ultrasound_dicom()).regions
 
 
 def test_the_image_itself_is_kept_intact() -> None:
@@ -237,6 +278,63 @@ def test_a_local_time_without_zone_is_not_guessed() -> None:
 def test_only_ultrasound_images_are_accepted(raw: bytes) -> None:
     with pytest.raises(NotUltrasoundError):
         read_ultrasound(raw)
+
+
+def _with_meta(raw: bytes, **attrs: object) -> bytes:
+    """El DICOM de ecografía con atributos cambiados, reescrito tal cual."""
+    ds = pydicom.dcmread(io.BytesIO(raw))
+    for key, value in attrs.items():
+        setattr(ds, key, value)
+    buffer = io.BytesIO()
+    pydicom.dcmwrite(buffer, ds, enforce_file_format=True)
+    return buffer.getvalue()
+
+
+def test_a_deflated_dicom_is_refused_before_inflating() -> None:
+    """Deflated Explicit VR Little Endian: pydicom inflaba el conjunto entero sin tope (auditoría
+    run-2, `emma:imaging:dicom-deflate-unbounded`). Se mira la cabecera de fichero y no se lee
+    más: no se infla nada."""
+    ds = pydicom.dcmread(io.BytesIO(ultrasound_dicom()))
+    ds.file_meta.TransferSyntaxUID = DEFLATED
+    deflated = io.BytesIO()
+    pydicom.dcmwrite(deflated, ds, enforce_file_format=True)
+    with pytest.raises(NotUltrasoundError, match="deflated"):
+        read_ultrasound(deflated.getvalue())
+
+
+@pytest.mark.parametrize(
+    "attrs",
+    [
+        {"Rows": 65535, "Columns": 65535},
+        {"Rows": 4096, "Columns": 4096, "SamplesPerPixel": 3, "BitsAllocated": 16},
+        {"NumberOfFrames": 5_000_000},
+    ],
+)
+def test_declared_dimensions_beyond_the_pixel_budget_are_refused(attrs: dict[str, int]) -> None:
+    """Un RLE de pocos bytes podía declarar 65 535 × 65 535 y pydicom reservaba el fotograma
+    entero al pintarlo (`emma:imaging:rle-frame-preallocation-unbounded-dims`)."""
+    with pytest.raises(NotUltrasoundError, match="tope"):
+        read_ultrasound(_with_meta(ultrasound_dicom(), **attrs))
+
+
+def test_a_real_sized_cine_fits_the_budget() -> None:
+    frame, total = pixel_bytes(_sized(rows=768, columns=1024, samples=3, frames=300))
+    assert frame == 768 * 1024 * 3
+    assert total == frame * 300
+
+
+def _sized(*, rows: int, columns: int, samples: int, frames: int) -> Dataset:
+    ds = Dataset()
+    ds.Rows, ds.Columns, ds.SamplesPerPixel, ds.BitsAllocated = rows, columns, samples, 8
+    ds.NumberOfFrames = frames
+    return ds
+
+
+def test_rendering_a_stored_study_beyond_the_budget_is_refused_without_decoding() -> None:
+    """El mismo tope al pintar: un estudio guardado antes del tope no reserva gigas."""
+    huge = _with_meta(ultrasound_dicom(), Rows=65535, Columns=65535)
+    with pytest.raises(UnrenderableError, match="tope"):
+        frame_png(huge, 0)
 
 
 # --------------------------------------------------------------------------- #

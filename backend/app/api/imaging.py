@@ -16,6 +16,7 @@ from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, ConfigDict, Field
 
 from app import committee_dossier, countersign_rule
+from app.api.console_header import console_post
 from app.api.routes import (
     CONSOLE_IDENTITY,
     SettingsDep,
@@ -28,7 +29,12 @@ from app.core import egress
 from app.core.config import Settings
 from app.core.storage import ObservationStore
 from app.evidence import vault
-from app.evidence.source_check import check_source, offline_checker, registry_checker
+from app.evidence.source_check import (
+    CITATION_MAX_BYTES,
+    check_source,
+    offline_checker,
+    registry_checker,
+)
 from app.evidence.tier import grade
 from app.imaging.dicom import (
     CalibratedRegion,
@@ -119,12 +125,12 @@ def list_protocols() -> dict[str, Any]:
 @imaging_router.post(
     "/studies",
     status_code=201,
-    openapi_extra={
-        "requestBody": {
+    **console_post(
+        requestBody={
             "required": True,
             "content": {"application/dicom": {"schema": {"type": "string", "format": "binary"}}},
         }
-    },
+    ),
 )
 async def upload_study(
     request: Request,
@@ -222,7 +228,7 @@ def _signer_for(source: str) -> str:
     return SIMULATOR_SIGNER if source.split(":", 1)[0] == SIMULATOR_SIGNER else ULTRASOUND_SOURCE
 
 
-@imaging_router.post("/phantom", status_code=201)
+@imaging_router.post("/phantom", status_code=201, **console_post())
 def create_phantom(
     store: StoreDep,
     settings: SettingsDep,
@@ -256,7 +262,7 @@ def list_samples() -> list[dict[str, Any]]:
     return [sample.as_public() for sample in catalog()]
 
 
-@imaging_router.post("/samples/{key}", status_code=201)
+@imaging_router.post("/samples/{key}", status_code=201, **console_post())
 def create_sample(
     store: StoreDep,
     settings: SettingsDep,
@@ -520,7 +526,7 @@ def interpretation_status(settings: SettingsDep) -> dict[str, Any]:
     }
 
 
-@imaging_router.post("/studies/{ledger_index}/draft", status_code=201)
+@imaging_router.post("/studies/{ledger_index}/draft", status_code=201, **console_post())
 def request_draft(store: StoreDep, settings: SettingsDep, ledger_index: int) -> dict[str, Any]:
     """Pide al modelo local un borrador sobre las medidas del estudio.
 
@@ -645,7 +651,8 @@ def _source_check(
         return vault.check(store, index, fragment, store.draft_subject(draft_index), who)
     if settings.offline or not source.strip():
         return check_source(source, offline_checker)
-    with egress.client(settings, "citations") as client:
+    # Un registro de citas responde JSON de kilobytes; la página de doi.org, HTML de unos cientos.
+    with egress.client(settings, "citations", max_bytes=CITATION_MAX_BYTES) as client:
         return check_source(source, registry_checker(client))
 
 

@@ -14286,6 +14286,17 @@ esta unidad propuso cubrirlos todos de una vez —exigir la cabecera en todo mé
 dependencia de router o *middleware*, que es justo lo que la consola ya manda—; es la alternativa
 que se eleva al usuario.
 
+**Cerrado (2026-11-16).** Ellande ordenó arreglar lo que encontrara la revisión de seguridad («busca
+fallos … para arreglar lo que encuentres»; auditoría run-2,
+`emma:api:csrf-simple-post-without-console-header`). Las diez rutas de arriba llevan ya
+`console_post()`; `/api/imaging/studies` conserva su `requestBody` como argumento. `PENDING_SIMPLE`
+y `PENDING_RAW_DECLARED` quedan vacíos y siguen vigilando: un `POST` nuevo que ejecute una petición
+simple sin la cabecera pone en rojo la prueba. Ruta por ruta, no *middleware* global: el puente de
+Marplanner hace `POST` sin la cabecera a sus propias rutas. La consola ya la mandaba en todas
+(`request` y `postVolume`, comprobado en el código) y Marplanner no llama a ninguna. El caso de Vite
+de arriba lo cierra ahora además `core/host_guard.py`: un `POST` con `Origin` de otra página se
+rechaza con 403 antes de llegar a ninguna ruta (`record-integrity.md` §7.5).
+
 #### 5.39.24 Línea base de familia: variantes B y C medidas con LifeSnaps o RELAX
 
 **Conjunto elegido: LifeSnaps** (`lifesnaps-2022`, Zenodo, doi:10.5281/zenodo.7229547), por descarga

@@ -797,10 +797,18 @@ con el mismo `secure_delete` que el resto (§3.6).
 | `_salt` | La pone el ledger, como en todo asiento |
 
 **Antes de guardar se des-identifica** (perfil básico de DICOM PS3.15 con retención de fechas
-completas, códigos DCM 113100 y 113106): nombre, identificadores, centro, operador, etiquetas
-privadas —también en secuencias anidadas— y los UID de estudio, serie e instancia. Lo que entra en la
-cadena no se borra sin lápida, así que lo identificativo no debe entrar. **Límite declarado:** el
-texto quemado en los píxeles no se quita leyendo cabeceras; se registra lo que declara el equipo.
+completas, códigos DCM 113100 y 113106). **Desde el 2026-11-16 por lista de lo que se conserva**
+(`imaging/dicom.py: _KEPT`), no de lo que se quita: en la raíz solo quedan la identidad del objeto,
+el módulo de píxel, el cine, las fechas, la calibración de ecografía, la marca de texto quemado y
+las secuencias de volumen y de referencias; todo lo demás se quita, se llame como se llame. Dentro
+de una secuencia conservada se quita todo valor que pueda llevar texto (PN, LO, LT, SH, ST, UT, UC,
+UR, AE, AS, OB, UN), las etiquetas privadas y los grupos 50xx/60xx. Todo UID que no sea del propio
+estándar (`1.2.840.10008.`) se sustituye, coherente dentro del fichero, y la cabecera de fichero se
+rehace sin su título AE de origen. La lista de prohibidos anterior dejaba pasar otros campos de la
+tabla E.1-1, el texto de `ContentSequence`, las superposiciones y UID no listados bajo el mismo sello
+(auditoría run-2, `emma:imaging:deid-profile-incomplete`). Lo que entra en la cadena no se borra sin
+lápida, así que lo identificativo no debe entrar. **Límite declarado:** el texto quemado en los
+píxeles no se quita leyendo cabeceras; se registra lo que declara el equipo.
 
 **Qué se verifica.**
 
@@ -3217,7 +3225,20 @@ el valor es fijo y público, no identifica a nadie ni autoriza nada, y cualquier
 al puerto la pone y pasa. La «autenticación de operadores» del párrafo de arriba sigue abierta tal
 como está, y todo campo «declarado, sin autenticar» de este documento lo sigue siendo. Tampoco
 cubre toda la API: otros `POST` fuera de `api/routes.py` siguen al alcance de una petición simple
-y están apuntados en `hmi-state-of-the-art.md` §5.39.23, pendientes de decisión.
+y están apuntados en `hmi-state-of-the-art.md` §5.39.23, pendientes de decisión. **Cerrado el
+2026-11-16** por orden de Ellande: esas diez rutas llevan ya la cabecera y la lista de pendientes
+está vacía (§5.39.23, «Cerrado»).
+
+**Solo por loopback: Host y Origin (2026-11-16).** La cabecera no frena el *DNS rebinding*: una
+página cuyo nombre pasa a resolver a 127.0.0.1 es, para el navegador, de mismo origen, lee las
+respuestas y pone `X-EMMA-Console` (auditoría run-2, `emma:api:dns-rebinding-no-host-allowlist`;
+podía forzar `/api/app-update/check` → `/download` → `/install` o el modo seguro). Desde esa fecha
+`backend/app/core/host_guard.py`, por fuera de todo, rechaza con 400 un `Host` que no sea
+`127.0.0.1`, `localhost` o `[::1]` (cualquier puerto; `testserver` en las pruebas) y con 403 toda
+orden que no sea GET/HEAD/OPTIONS con un `Origin` ajeno a loopback. Sin `Origin` pasa: el arranque
+de escritorio, el puente de Marplanner y `curl` no son navegadores. Tampoco esto es autenticación:
+un proceso de la misma máquina sigue llegando al puerto. Pruebas en
+`backend/tests/test_host_guard.py`, campaña `tests/mutants/host_guard.json`.
 
 ### 7.6 Sexta revisión (2026-09-22)
 

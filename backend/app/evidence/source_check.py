@@ -35,6 +35,11 @@ from app.evidence import citations
 Checker = Callable[[list[str]], list[dict[str, str]]]
 
 
+# Lo más que se lee de un registro de citas (PubMed, Crossref, DataCite, ClinicalTrials.gov) o de
+# la página de doi.org: JSON de kilobytes o HTML de cientos. Va en `egress.client(..., max_bytes=)`.
+CITATION_MAX_BYTES = 8 * 1024 * 1024
+
+
 def registry_checker(client: httpx.Client) -> Checker:
     """El comprobador que espera Polaris (`[{entrada, estado}]`), hecho con el de EMMA."""
 

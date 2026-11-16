@@ -1,0 +1,44 @@
+{
+ "target": "app/imaging/dicom.py",
+ "test": [
+  "tests/test_imaging.py"
+ ],
+ "mutations": [
+  {
+   "label": "la sintaxis deflated pasa y pydicom infla sin tope",
+   "old": "    if str(meta.get(\"TransferSyntaxUID\", \"\")) == DEFLATED_TRANSFER_SYNTAX:",
+   "new": "    if False:"
+  },
+  {
+   "label": "no se mira la cabecera antes de leer",
+   "old": "    _refuse_deflated(raw)\n",
+   "new": ""
+  },
+  {
+   "label": "sin tope por fotograma",
+   "old": "    if frame > MAX_FRAME_BYTES:",
+   "new": "    if False:"
+  },
+  {
+   "label": "sin tope por estudio (los fotogramas no cuentan)",
+   "old": "    if total > MAX_STUDY_PIXEL_BYTES:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el color no cuenta en el tamaño del fotograma",
+   "old": "    frame = rows * columns * samples * math.ceil(bits / 8)",
+   "new": "    frame = rows * columns * math.ceil(bits / 8)"
+  },
+  {
+   "label": "la subida no comprueba el presupuesto de píxeles",
+   "old": "    try:\n        pixel_bytes(ds)\n    except (PixelBudgetError, ValueError, TypeError) as exc:\n        raise NotUltrasoundError(str(exc)) from exc\n",
+   "new": ""
+  },
+  {
+   "target": "app/imaging/render.py",
+   "label": "pintar no comprueba el presupuesto de píxeles",
+   "old": "    try:\n        pixel_bytes(dataset)\n    except (ValueError, TypeError) as exc:\n        raise UnrenderableError(str(exc)) from exc\n",
+   "new": ""
+  }
+ ]
+}

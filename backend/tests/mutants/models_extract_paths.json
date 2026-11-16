@@ -1,0 +1,23 @@
+{
+ "target": "app/models_download.py",
+ "test": [
+  "tests/test_models_download.py"
+ ],
+ "mutations": [
+  {
+   "label": "la ruta del manifiesto se une tal cual",
+   "old": "                out = _inside(target, rel)",
+   "new": "                out = target.joinpath(*rel.split(\"/\")[1:])"
+  },
+  {
+   "label": "no se miran los componentes",
+   "old": "        not part or part in (\".\", \"..\") or \":\" in part or \"\\\\\" in part for part in parts",
+   "new": "        False for part in parts"
+  },
+  {
+   "label": "no se comprueba que caiga dentro",
+   "old": "    if not out.resolve().is_relative_to(root) or out.resolve() == root:",
+   "new": "    if False:"
+  }
+ ]
+}

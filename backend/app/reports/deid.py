@@ -68,7 +68,10 @@ _HONORIFIC_NAME = re.compile(rf"\b{_HONORIFIC}{_NAME_WORD}(?:\s+{_NAME_WORD}){{0
 _IBAN = re.compile(r"\b[A-Z]{2}\d{2}(?:[ ]?[A-Z0-9]{4}){2,7}(?:[ ]?[A-Z0-9]{1,3})?\b", re.I)
 _CARD = re.compile(r"(?<![\d-])\d(?:[ -]?\d){12,18}(?![\d-])")
 _PASSPORT = re.compile(
-    r"(\b(?:n[º°o]\.?\s*de\s+)?(?:pasaporte|passport|ppte\.?)\s*(?:n[º°o]\.?\s*)?[:#]?\s*)"
+    # Posesivos (`\s*+`): con dos `\s*` seguidos, un hueco de W espacios sin número detrás se
+    # repartía de W² maneras antes de fallar (auditoría run-2,
+    # `emma:reports:deid-regex-superlinear`).
+    r"(\b(?:n[º°o]\.?\s*de\s+)?(?:pasaporte|passport|ppte\.?)\s*+(?:n[º°o]\.?\s*+)?[:#]?\s*+)"
     r"([A-Z]{1,3}\d{5,9}|\d{6,9}[A-Z]?)\b",
     re.I,
 )
@@ -430,12 +433,34 @@ class Deidentified:
     remaining: tuple[str, ...]
 
 
+# Lo que se le pasa a los patrones de Polaris. Su patrón de correo (`borde._RE_EMAIL`) es
+# cuadrático en una «palabra» larga sin `@`, y se ejecuta en C con el GIL cogido: una página de
+# 20 000 «a» paraba el proceso entero (auditoría run-2, `emma:reports:deid-regex-superlinear`).
+# Polaris no se edita aquí; EMMA no le pasa lo que ningún informe real trae. Se retiene: falla
+# cerrado, como cuando el texto no verifica.
+MAX_DEID_CHARS = 200_000
+MAX_DEID_TOKEN = 256
+_LONG_TOKEN = re.compile(rf"\S{{{MAX_DEID_TOKEN + 1}}}")
+
+
+def _too_long(text: str) -> str | None:
+    """El motivo para no pasar `text` por los patrones, o None."""
+    if len(text) > MAX_DEID_CHARS:
+        return f"texto de más de {MAX_DEID_CHARS} caracteres: no se des-identifica"
+    if _LONG_TOKEN.search(text):
+        return f"una palabra de más de {MAX_DEID_TOKEN} caracteres: no se des-identifica"
+    return None
+
+
 def _pipeline(text: str) -> tuple[Deidentified, tuple[str, ...]]:
     """El resultado y el texto tras cada capa (EMMA antes, Polaris, tratamiento, parentesco).
 
     Las capas intermedias solo sirven para medir qué tapa cada una (`masked_spans`); de un texto
     retenido solo hay la primera.
     """
+    refused = _too_long(text)
+    if refused is not None:
+        return Deidentified("", 0, False, (refused,)), ("",)
     emma_masked, emma_count = _emma_identifiers(text)
     masked, count, verified, reason = _original().de_identificar_verificado(
         emma_masked, ner=ner_ready()

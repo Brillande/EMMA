@@ -50,6 +50,28 @@ DPI = int(_original().DPI)
 TEXT_LAYER_MIN_CHARS = int(_original().TEXT_LAYER_MIN_CHARS)
 MIN_CONFIDENCE = float(_original().CONF_MINIMA)
 MAX_PAGES = 30
+# Píxeles de una página ya pintada, y de todas juntas. El cuerpo está acotado en bytes, pero un PDF
+# declara el tamaño de su página (`MediaBox`) y un TIFF cuántos fotogramas trae: unos kilobytes
+# pedían gigas al pintarlos (auditoría run-2, `emma:reports:pdf-render-unbounded-page-size` y
+# `emma:reports:tiff-frames-before-max-pages`). Un A3 a 300 ppp son 17,4 millones.
+MAX_PAGE_PIXELS = 20_000_000
+MAX_TOTAL_PIXELS = 200_000_000
+
+
+class PageTooLarge(ValueError):
+    """Una página, o todas juntas, pasan del tope de píxeles."""
+
+
+def _budget(width: float, height: float, spent: int) -> int:
+    """Los píxeles gastados tras esta página; `PageTooLarge` si pasa de un tope."""
+    pixels = int(width) * int(height)
+    if pixels > MAX_PAGE_PIXELS:
+        raise PageTooLarge(
+            f"una página de {int(width)} × {int(height)} píxeles pasa del tope de {MAX_PAGE_PIXELS}"
+        )
+    if spent + pixels > MAX_TOTAL_PIXELS:
+        raise PageTooLarge(f"las páginas juntas pasan del tope de {MAX_TOTAL_PIXELS} píxeles")
+    return spent + pixels
 
 WINDOWS_DEFAULT = Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe")
 
@@ -108,21 +130,27 @@ def version(executable: str) -> str:
 def page_images(data: bytes, media_type: str) -> list[Image.Image]:
     """Las páginas como imágenes, a 300 ppp si son de un PDF."""
     kind = MEDIA_TYPES.get(media_type)
+    spent = 0
     if kind == "image":
         image = Image.open(io.BytesIO(data))
         frames = []
-        for index in range(getattr(image, "n_frames", 1)):
+        # Solo las primeras `MAX_PAGES`: antes se convertían todos y luego se cortaba la lista.
+        for index in range(min(getattr(image, "n_frames", 1), MAX_PAGES)):
             image.seek(index)
+            spent = _budget(*image.size, spent)
             frames.append(image.convert("RGB"))
-        return frames[:MAX_PAGES]
+        return frames
     if kind == "pdf":
         import pypdfium2 as pdfium
 
         document = pdfium.PdfDocument(data)
-        return [
-            document[index].render(scale=DPI / 72).to_pil().convert("RGB")
-            for index in range(min(len(document), MAX_PAGES))
-        ]
+        pages = []
+        for index in range(min(len(document), MAX_PAGES)):
+            page = document[index]
+            width, height = page.get_size()  # en puntos: 72 por pulgada
+            spent = _budget(width * DPI / 72, height * DPI / 72, spent)
+            pages.append(page.render(scale=DPI / 72).to_pil().convert("RGB"))
+        return pages
     raise ValueError(f"tipo no admitido: {media_type!r}")
 
 

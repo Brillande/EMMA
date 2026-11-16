@@ -117,6 +117,9 @@ def names() -> dict[str, str]:
     return found
 
 
+MAX_LAB_LINE = 300
+
+
 def extract(text: str) -> dict[str, Any]:
     """Fecha del informe y una lectura por línea reconocida, todas por confirmar.
 
@@ -128,6 +131,12 @@ def extract(text: str) -> dict[str, Any]:
     source = _biomarkers()
     readings: list[dict[str, Any]] = []
     for line in text.splitlines():
+        # Una línea de analítica es corta. El patrón de Polaris (`_RE_CON_UNIDAD`) es cuadrático en
+        # una tira de cifras sin espacios y corre con el GIL cogido (auditoría run-2,
+        # `emma:reports:labs-regex-superlinear`): lo que no puede ser una línea de resultado, no se
+        # le pasa.
+        if len(line) > MAX_LAB_LINE:
+            continue
         parsed = source.parse_line(line)
         if parsed is None:
             continue

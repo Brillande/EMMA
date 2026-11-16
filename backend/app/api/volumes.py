@@ -19,6 +19,7 @@ import tempfile
 import threading
 import uuid
 import zipfile
+import zlib
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -27,6 +28,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 
+from app.api.console_header import console_post
 from app.api.mission import latest_identity
 from app.api.routes import (
     CONSOLE_IDENTITY,
@@ -104,7 +106,7 @@ class _Refused(Exception):
 
 
 # `response_model=None`: el rechazo sale como respuesta propia, con más campos que `detail`.
-@volumes_router.post("", status_code=201, response_model=None)
+@volumes_router.post("", status_code=201, response_model=None, **console_post())
 async def upload_volume(
     request: Request,
     store: StoreDep,
@@ -134,7 +136,12 @@ async def upload_volume(
 def _nifti(raw: bytes) -> Any:
     import nibabel as nib
 
-    data = gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw
+    try:
+        data = privacy.gunzip_capped(raw) if raw[:2] == privacy.GZIP_MAGIC else raw
+    except privacy.TooLarge as exc:
+        raise HTTPException(status_code=413, detail=f"volumen demasiado grande: {exc}") from exc
+    except (zlib.error, EOFError) as exc:
+        raise HTTPException(status_code=422, detail=f"no es un gzip legible: {exc}") from exc
     try:
         return nib.Nifti1Image.from_bytes(data)
     except Exception as exc:  # noqa: BLE001 — cualquier fallo es un volumen ilegible
@@ -388,7 +395,7 @@ def _with_density(store: ObservationStore, segmentation: dict[str, Any]) -> dict
     )
 
 
-@volumes_router.post("/{ledger_index}/segment", status_code=202)
+@volumes_router.post("/{ledger_index}/segment", status_code=202, **console_post())
 def request_segmentation(
     store: StoreDep, settings: SettingsDep, ledger_index: int, preset: str = "higado"
 ) -> dict[str, Any]:
@@ -616,7 +623,7 @@ def list_samples() -> list[dict[str, Any]]:
     return [sample.as_public() for sample in catalog()]
 
 
-@volumes_router.post("/samples/{key}", status_code=201)
+@volumes_router.post("/samples/{key}", status_code=201, **console_post())
 def create_sample(
     store: StoreDep, key: str, subject: Annotated[str, Query(min_length=1)] = "crew-01"
 ) -> dict[str, Any]:

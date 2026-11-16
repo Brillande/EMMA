@@ -1453,6 +1453,52 @@ negarse a abrirlo, y una vuelta atrás tendrá que poder leerlo: es un requisito
 ([`software-update.md`](software-update.md) §8), sin código. Que el instalador acepte bajar de
 versión no se ha comprobado.
 
+### H29 — Un fichero importado pequeño agota la memoria del único proceso que vigila
+
+*Gravedad media.* Añadido el 2026-11-16 (auditoría de seguridad run-2, arreglos por orden de
+Ellande).
+
+**Qué puede fallar:** el cuerpo de cada importación está acotado en bytes, pero lo que sale de
+descomprimirlo o descodificarlo no: un DICOM «deflated» o un RLE que declara 65 535 × 65 535
+píxeles, un NIfTI gzip de alta razón, un PDF con página gigante, un TIFF de miles de fotogramas o
+un export de Apple con atributos por defecto pueden pedir gigas desde unos kilobytes. El backend es
+un solo proceso: si cae, cae también la vigilancia.
+
+**Controles (2026-11-16):**
+- DICOM de ecografía (`imaging/dicom.py`): la sintaxis «deflated» se rechaza mirando solo la
+  cabecera de fichero, antes de inflar; y un tope de bytes descodificados por fotograma
+  (`MAX_FRAME_BYTES`, 64 MiB) y por estudio (`MAX_STUDY_PIXEL_BYTES`, 1 GiB) se comprueba al subir
+  y otra vez al pintar (`imaging/render.py`), para lo guardado antes del tope. Pruebas en
+  `tests/test_imaging.py`, campaña `tests/mutants/dicom_bounds.json`.
+- Apple Health (`api/routes.py: _xml_text`): además de `<!ENTITY`, un `<!ATTLIST` con valor por
+  defecto se rechaza antes del parseo; el DTD real de Apple (`#REQUIRED`/`#IMPLIED`) pasa. Campaña
+  `tests/mutants/apple_health_attlist.json`.
+- NIfTI (`volumes/privacy.py: gunzip_capped`): el gzip se infla por trozos y para al pasar de
+  `MAX_NIFTI_BYTES` (1 GiB) con un 413, sin reservar más; lo usan la subida (`api/volumes.py`) y la
+  limpieza de cabecera. Lo leído antes de los vóxeles se acota a 16 MiB aunque `vox_offset` diga
+  más. Una prueba mide el pico de memoria; campaña `tests/mutants/nifti_gzip_cap.json`.
+- Informes escaneados (`reports/ocr.py: page_images`): cada página se mide antes de pintarla (el
+  `MediaBox` del PDF a 300 ppp, el tamaño de cada fotograma del TIFF) contra 20 millones de píxeles
+  por página y 200 millones en total; el TIFF solo convierte los `MAX_PAGES` primeros fotogramas.
+  422 al subir y al pedir una página guardada antes del tope. Campaña
+  `tests/mutants/report_pages_cap.json`.
+- Dictado de dolor (`voice.py`, `api/pain.py`): solo `audio/ogg`/`audio/opus` (415), como mucho
+  `MAX_SECONDS` (300 s) leídos del gránulo de la última página sin descodificar, y una
+  transcripción a la vez (429 a la segunda). Plazo de reloj (60 s + 3 × la duración, como mucho
+  16 min): la guarda de Polaris no lo tiene, así que EMMA lanza el comando desde un envoltorio que
+  mata su árbol al pasarlo (`voice._WITH_DEADLINE`, código 97, 503 con su motivo). Campañas
+  `tests/mutants/voice_bounds.json` y `voice_deadline.json`.
+- Otras vías del mismo tipo cerradas el mismo día: respuestas de internet descomprimidas sin tope
+  (`core/egress.py`, 64 MiB; 2 MiB para el planificador; también `egress.client`, con 8 MiB para el
+  comprobador de citas y sin cambio en las descargas por `stream`, ya acotadas por el manifiesto), horas sin zona de DONKI/iSWA que tumbaban
+  `/api/status` desde la caché, y ventanas libres de `/api/space-weather` que multiplicaban las
+  consultas con la clave del operador. Y una ruta del manifiesto del paquete de modelos que
+  saliera de su carpeta (`models_download._inside`).
+
+**Riesgo residual:** los topes se eligieron por encima de lo que exporta un equipo real, no
+medidos contra todos los fabricantes: un cine muy largo en color puede rozarlos y se rechazaría
+con su motivo, no en silencio.
+
 ## 4. Riesgo residual global
 
 Los veintiocho peligros tienen control implementado y **ninguno está cerrado del todo**. Los tres que más

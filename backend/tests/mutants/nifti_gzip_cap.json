@@ -1,0 +1,34 @@
+{
+ "target": "app/volumes/privacy.py",
+ "test": [
+  "tests/test_volumes.py"
+ ],
+ "mutations": [
+  {
+   "label": "sin tope: infla hasta donde llegue",
+   "old": "        chunk = inflater.decompress(data, limit - total + 1)",
+   "new": "        chunk = inflater.decompress(data)"
+  },
+  {
+   "label": "pasar del tope no se dice",
+   "old": "        if total > limit or inflater.unconsumed_tail:\n            raise TooLarge(f\"descomprimido pasaría de {limit} bytes\")",
+   "new": "        if False:\n            raise TooLarge(f\"descomprimido pasaría de {limit} bytes\")"
+  },
+  {
+   "label": "un gzip truncado se toma por bueno",
+   "old": "        if not inflater.eof:\n            raise zlib.error(\"gzip truncado\")",
+   "new": ""
+  },
+  {
+   "label": "solo se lee el primer miembro",
+   "old": "        data = inflater.unused_data",
+   "new": "        data = b\"\""
+  },
+  {
+   "target": "app/api/volumes.py",
+   "label": "la subida vuelve a gzip.decompress sin tope",
+   "old": "        data = privacy.gunzip_capped(raw) if raw[:2] == privacy.GZIP_MAGIC else raw",
+   "new": "        data = gzip.decompress(raw) if raw[:2] == privacy.GZIP_MAGIC else raw"
+  }
+ ]
+}

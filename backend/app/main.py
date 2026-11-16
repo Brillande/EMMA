@@ -76,6 +76,7 @@ from app.api.volumes import volumes_router
 from app.assistant import catalog as assistant_catalog
 from app.core import i18n, log_privacy
 from app.core.config import get_settings
+from app.core.host_guard import HostGuardMiddleware
 from app.core.ledger import UntrustedSigner
 from app.core.storage import TamperedRecordError
 from app.evidence import (
@@ -153,7 +154,7 @@ app = FastAPI(
         "Apoyo a la decisión, no prescripción: el sistema informa y recomienda, "
         "no administra terapia ni sustituye el juicio clínico."
     ),
-    version="0.1.6",
+    version="0.1.7",
 )
 
 # En vuelo no hay navegador remoto: el frontend se sirve junto al backend. Esta
@@ -175,6 +176,9 @@ app.add_middleware(
 i18n.set_default(get_settings().lang)
 assistant_catalog.use_set_aside(True)
 app.add_middleware(i18n.LanguageMiddleware)
+# Lo último que se añade va por fuera de todo: un `Host` que no sea loopback (DNS rebinding) o un
+# `Origin` ajeno en lo que escribe no llegan a ninguna ruta (`core/host_guard.py`).
+app.add_middleware(HostGuardMiddleware)
 
 app.include_router(router, prefix="/api")
 app.include_router(imaging_router, prefix="/api")

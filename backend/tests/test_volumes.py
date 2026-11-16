@@ -957,6 +957,52 @@ def test_an_unknown_preloaded_sample_seeds_nothing(client: TestClient) -> None:
     assert len(get_store().ledger) == 0
 
 
+def test_a_gzip_bomb_stops_at_the_cap_without_inflating_it_all(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Una razón de 1000:1 no se infla entera: para en el tope y responde 413 (auditoría run-2,
+    `emma:volumes:nifti-gzip-unbounded`). El tope se baja a 1 MiB para no gastar 1 GiB aquí."""
+    from app.volumes import privacy
+
+    monkeypatch.setattr(privacy, "MAX_NIFTI_BYTES", 1024 * 1024)
+    bomb = gzip.compress(b"\x00" * (8 * 1024 * 1024))
+    assert len(bomb) < 64 * 1024
+    response = post_raw(client, bomb)
+    assert response.status_code == 413, response.text
+    assert len(get_store().ledger) == 0
+
+
+def test_gunzip_capped_never_holds_more_than_the_cap() -> None:
+    """Lo que importa es la memoria: parar DESPUÉS de inflarlo todo no protege de nada."""
+    import tracemalloc
+
+    from app.volumes.privacy import TooLarge, gunzip_capped
+
+    bomb = gzip.compress(b"\x00" * (64 * 1024 * 1024))
+    tracemalloc.start()
+    try:
+        with pytest.raises(TooLarge):
+            gunzip_capped(bomb, limit=1024 * 1024)
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert peak < 8 * 1024 * 1024, peak
+
+
+def test_gunzip_capped_matches_gzip_below_the_cap() -> None:
+    from app.volumes.privacy import TooLarge, gunzip_capped
+
+    one, two = b"primero" * 100, b"segundo" * 100
+    assert gunzip_capped(gzip.compress(one) + gzip.compress(two), limit=10_000) == one + two
+    assert gunzip_capped(gzip.compress(one), limit=len(one)) == one
+    with pytest.raises(TooLarge):
+        gunzip_capped(gzip.compress(one), limit=len(one) - 1)
+    import zlib
+
+    with pytest.raises(zlib.error):
+        gunzip_capped(gzip.compress(one)[:-12], limit=10_000)
+
+
 def test_a_changed_sample_is_refused(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     import shutil
 

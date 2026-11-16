@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.analysis.recovery import BASIS as RECOVERY_BASIS
 from app.analysis.recovery import flight, split
+from app.api.console_header import console_post
 from app.api.routes import _SIMULATOR_SOURCE, SettingsDep, StoreDep, identity_for
 from app.core import i18n
 from app.core.storage import seed_from_simulator
@@ -28,7 +29,7 @@ CITATION = (
 )
 
 
-@replay_router.post("/inspiration4", status_code=201)
+@replay_router.post("/inspiration4", status_code=201, **console_post())
 def replay_inspiration4(store: StoreDep, settings: SettingsDep) -> dict[str, Any]:
     """Añade el hemograma real de los cuatro tripulantes de Inspiration4 (crew-01 a crew-04).
 

@@ -1,0 +1,38 @@
+{
+ "target": "app/reports/ocr.py",
+ "test": [
+  "tests/test_reports.py"
+ ],
+ "mutations": [
+  {
+   "label": "sin tope por página",
+   "old": "    if pixels > MAX_PAGE_PIXELS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "sin tope para todas juntas",
+   "old": "    if spent + pixels > MAX_TOTAL_PIXELS:",
+   "new": "    if False:"
+  },
+  {
+   "label": "el PDF se pinta antes de mirar su tamaño",
+   "old": "            spent = _budget(width * DPI / 72, height * DPI / 72, spent)\n            pages.append(page.render(scale=DPI / 72).to_pil().convert(\"RGB\"))",
+   "new": "            pages.append(page.render(scale=DPI / 72).to_pil().convert(\"RGB\"))\n            spent = _budget(width * DPI / 72, height * DPI / 72, spent)"
+  },
+  {
+   "label": "el PDF se mide en puntos, no en píxeles",
+   "old": "            spent = _budget(width * DPI / 72, height * DPI / 72, spent)",
+   "new": "            spent = _budget(width, height, spent)"
+  },
+  {
+   "label": "el TIFF convierte todos los fotogramas",
+   "old": "        for index in range(min(getattr(image, \"n_frames\", 1), MAX_PAGES)):",
+   "new": "        for index in range(getattr(image, \"n_frames\", 1)):"
+  },
+  {
+   "label": "el TIFF no mira el tamaño de cada fotograma",
+   "old": "            spent = _budget(*image.size, spent)\n",
+   "new": ""
+  }
+ ]
+}

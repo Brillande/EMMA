@@ -1,0 +1,23 @@
+{
+ "target": "app/api/routes.py",
+ "test": [
+  "tests/test_import.py"
+ ],
+ "mutations": [
+  {
+   "label": "los atributos con valor por defecto pasan (la amplificación vuelve)",
+   "old": "    if _ATTLIST_DEFAULT.search(text):",
+   "new": "    if False:"
+  },
+  {
+   "label": "se rechaza todo ATTLIST, también el DTD de Apple",
+   "old": "_ATTLIST_DEFAULT = re.compile(r\"<!ATTLIST\\b[^>]*?[\\\"']\")",
+   "new": "_ATTLIST_DEFAULT = re.compile(r\"<!ATTLIST\\b\")"
+  },
+  {
+   "label": "solo se miran las comillas dobles",
+   "old": "_ATTLIST_DEFAULT = re.compile(r\"<!ATTLIST\\b[^>]*?[\\\"']\")",
+   "new": "_ATTLIST_DEFAULT = re.compile(r\"<!ATTLIST\\b[^>]*?[\\\"]\")"
+  }
+ ]
+}

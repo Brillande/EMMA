@@ -97,13 +97,16 @@ def fetch_for_planner(payload: FetchIn, settings: SettingsDep) -> dict[str, Any]
     """Un GET de Marplanner, por la puerta de EMMA. 403 fuera de lista; 503 sin red o en modo
     seguro; 502 si el sitio de fuera falla."""
     try:
-        response = egress.get(settings, payload.purpose, payload.url)
+        # El tope se aplica al leer, ya descomprimido: no se junta más de lo que se devuelve.
+        response = egress.get(settings, payload.purpose, payload.url, max_bytes=MAX_FETCH_BYTES)
     except egress.EgressNotAllowed as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except egress.EgressBlocked as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except httpx.HTTPStatusError as exc:
         return {"status": exc.response.status_code, "content_type": "", "body": ""}
+    except egress.OversizedResponse as exc:
+        raise HTTPException(status_code=502, detail="respuesta demasiado grande") from exc
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail=f"no se pudo leer: {exc}") from exc
     body = response.content[:MAX_FETCH_BYTES + 1]

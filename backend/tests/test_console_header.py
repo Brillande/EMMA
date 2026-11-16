@@ -68,6 +68,20 @@ GUARDED = {
     "/api/app-update/download",
     "/api/app-update/cancel",
     "/api/app-update/install",
+    # Las que quedaron pendientes en §5.39.23, cubiertas por orden de Ellande (2026-11-16, «busca
+    # fallos … para arreglar lo que encuentres»; auditoría run-2,
+    # `emma:api:csrf-simple-post-without-console-header`). La consola ya manda la cabecera en todo
+    # POST (`frontend/src/lib/api.ts`: `request` y `postVolume`); Marplanner no llama a ninguna.
+    "/api/imaging/phantom",
+    "/api/imaging/samples/{key}",
+    "/api/imaging/studies",
+    "/api/imaging/studies/{ledger_index}/draft",
+    "/api/pain/voice",
+    "/api/replay/inspiration4",
+    "/api/reports",
+    "/api/volumes",
+    "/api/volumes/samples/{key}",
+    "/api/volumes/{ledger_index}/segment",
 }
 # Las cubiertas que no llevan cuerpo (las demás de `GUARDED` lo leen tal cual).
 BODYLESS = {
@@ -75,6 +89,11 @@ BODYLESS = {
     "/api/models-pack/check", "/api/models-pack/cancel",
     "/api/app-update/check", "/api/app-update/download", "/api/app-update/cancel",
     "/api/app-update/install",
+    # Sin `requestBody` en OpenAPI: o no llevan cuerpo, o lo leen tal cual sin declararlo.
+    "/api/imaging/phantom", "/api/imaging/samples/{key}",
+    "/api/imaging/studies/{ledger_index}/draft",
+    "/api/pain/voice", "/api/replay/inspiration4", "/api/reports", "/api/volumes",
+    "/api/volumes/samples/{key}", "/api/volumes/{ledger_index}/segment",
 }
 # Las cubiertas con cuerpo JSON validado: no las ejecuta una petición simple, pero su contrato
 # pide la cabecera igual (el inventario firmado, 2026-11-14).
@@ -84,24 +103,14 @@ JSON_GUARDED = {
 }
 # Los POST sin cuerpo declarado en OpenAPI que una petición simple ejecuta y esta unidad no cubre,
 # todos fuera de `api/routes.py`: sin cuerpo, o con un cuerpo leído tal cual que OpenAPI no declara.
-# Decisión del usuario pendiente (§5.39.23). Un POST nuevo sin cuerpo y sin la cabecera hace fallar
+# Vacío desde 2026-11-16 (§5.39.23). Un POST nuevo sin cuerpo y sin la cabecera hace fallar
 # la prueba de abajo hasta que se cubra o se apunte aquí a sabiendas.
-PENDING_SIMPLE = {
-    "/api/imaging/phantom",
-    "/api/imaging/samples/{key}",
-    "/api/imaging/studies/{ledger_index}/draft",
-    "/api/pain/voice",
-    "/api/replay/inspiration4",
-    "/api/reports",  # sí mira el tipo del cuerpo (415 a `text/plain`), pero sin cabecera
-    "/api/volumes",
-    "/api/volumes/samples/{key}",
-    "/api/volumes/{ledger_index}/segment",
-}
+PENDING_SIMPLE: set[str] = set()
 # Lo único que una petición simple puede declarar de su cuerpo (junto a formulario y multipart).
 TEXT_PLAIN = {"content-type": "text/plain"}
 # Declaran cuerpo en OpenAPI y lo leen tal cual: la prueba de `requestBody` no los ve y la del
-# código fuente sí. Decisión pendiente, como `PENDING_SIMPLE`.
-PENDING_RAW_DECLARED = {"/api/imaging/studies"}
+# código fuente sí. Vacío desde 2026-11-16, como `PENDING_SIMPLE`.
+PENDING_RAW_DECLARED: set[str] = set()
 ANOTHER_PAGE = "http://otra-pagina.example"
 IMPORTS = (
     ("/api/import/apple-health", b"<HealthData></HealthData>"),
@@ -206,11 +215,15 @@ def test_a_json_body_route_needs_no_header_because_a_simple_request_is_not_json(
     cabecera. Por eso la cabecera no va en todos los POST."""
     bare = _bare(client)
     reading = {"key": "heart-rate", "value": 64.0, "subject": "crew-01"}
-    simple = bare.post(
+    # Desde otra página lleva su `Origin` y ya no pasa de la guarda de origen
+    # (`core/host_guard.py`, 2026-11-16); sin él, lo que se mira aquí: no es JSON.
+    foreign = bare.post(
         "/api/observations",
         content=json.dumps(reading),
         headers={**TEXT_PLAIN, "Origin": ANOTHER_PAGE},
     )
+    assert foreign.status_code == 403
+    simple = bare.post("/api/observations", content=json.dumps(reading), headers=TEXT_PLAIN)
     assert simple.status_code == 422
     assert len(get_store().ledger) == 0
     assert bare.post("/api/observations", json=reading).status_code == 201

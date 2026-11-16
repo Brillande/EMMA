@@ -47,74 +47,114 @@ ULTRASOUND_SOP_CLASSES = frozenset(
     }
 )
 
-# Atributos que el perfil básico de PS3.15 (tabla E.1-1) quita o vacía y que aparecen en
-# ecografía. Se buscan a cualquier profundidad, no solo en el nivel raíz.
-_REMOVED = frozenset(
+# LO QUE SE CONSERVA, no lo que se quita (2026-11-16). Hasta entonces se borraba una lista de
+# atributos de la tabla E.1-1 de PS3.15, y todo lo que no estuviera en ella pasaba: otros campos de
+# la tabla, nombres y texto libre dentro de `ContentSequence`, comentarios de superposición (60xx),
+# UID no listados y el título AE de la cabecera de fichero, bajo un sello «PS3.15 Basic Profile»
+# (auditoría run-2, `emma:imaging:deid-profile-incomplete`). Ahora en la raíz solo queda lo que EMMA
+# necesita para mostrar, medir y fechar la imagen; todo lo demás se quita, sea cual sea su nombre.
+_KEPT = frozenset(
     {
-        "AccessionNumber", "AdditionalPatientHistory", "AdmissionID",
-        "AdmittingDiagnosesDescription",
-        "ContentCreatorName", "DerivationDescription", "DeviceSerialNumber", "EthnicGroup",
-        "FrameComments", "ImageComments", "InstitutionAddress", "InstitutionName",
-        "InstitutionalDepartmentName", "IssuerOfPatientID", "MedicalRecordLocator",
-        "MilitaryRank", "NameOfPhysiciansReadingStudy", "Occupation", "OperatorsName",
-        "OtherPatientIDs", "OtherPatientIDsSequence", "OtherPatientNames", "PatientAddress",
-        "PatientAge", "PatientBirthDate", "PatientBirthName", "PatientBirthTime",
-        "PatientComments", "PatientID", "PatientMotherBirthName", "PatientName",
-        "PatientSex", "PatientSize", "PatientTelephoneNumbers", "PatientWeight",
-        "PerformedProcedureStepDescription", "PerformedProcedureStepID",
-        "PerformingPhysicianName", "PhysiciansOfRecord", "ProtocolName",
-        "ReferencedPatientSequence", "ReferringPhysicianAddress", "ReferringPhysicianName",
-        "ReferringPhysicianTelephoneNumbers", "RequestAttributesSequence",
-        "RequestingPhysician", "ResponsiblePerson", "ScheduledProcedureStepID",
-        "SeriesDescription", "StationName", "StudyDescription", "StudyID",
-        # También de la tabla E.1-1 y posibles en un DICOM de ecografía; faltaban, y el fichero
-        # se rotulaba «PS3.15 Basic Profile» (código DCM 113100) llevándolos dentro.
-        "AcquisitionComments", "Allergies", "CountryOfResidence", "CurrentPatientLocation",
-        "ImagingServiceRequestComments", "InstitutionCodeSequence", "MedicalAlerts",
-        "OperatorIdentificationSequence", "OrderCallbackPhoneNumber", "OrderEnteredBy",
-        "OrderEntererLocation", "PatientInsurancePlanCodeSequence",
-        "PatientReligiousPreference", "PatientState", "PerformedLocation",
-        "PerformedStationName", "PerformingPhysicianIdentificationSequence",
-        "PhysiciansOfRecordIdentificationSequence",
-        "PhysiciansReadingStudyIdentificationSequence", "ReasonForTheRequestedProcedure",
-        "ReferringPhysicianIdentificationSequence", "RegionOfResidence",
-        "RequestedProcedureComments", "RequestedProcedureDescription", "RequestedProcedureID",
-        "ScheduledPerformingPhysicianName", "ScheduledProcedureStepLocation", "SpecialNeeds",
-        "StudyComments", "VisitComments",
-        "AcquisitionDeviceProcessingDescription", "ConsultingPhysicianName",
-        "PerformedStationAETitle", "ReasonForStudy", "RequestingService",
-        "ScheduledProcedureStepDescription", "ScheduledStationAETitle", "ScheduledStationName",
-        "VerifyingObserverName",
+        # Identidad del objeto (los UID de instancia se sustituyen abajo) y su clase.
+        "SOPClassUID", "SOPInstanceUID", "StudyInstanceUID", "SeriesInstanceUID",
+        "FrameOfReferenceUID", "SpecificCharacterSet", "ImageType", "Modality", "SeriesNumber",
+        "InstanceNumber", "PatientOrientation", "Laterality", "ImageLaterality",
+        # Tiempo: la opción de retener fechas completas (código DCM 113106).
+        "AcquisitionDateTime", "AcquisitionDate", "AcquisitionTime", "ContentDate", "ContentTime",
+        "StudyDate", "StudyTime", "SeriesDate", "SeriesTime", "TimezoneOffsetFromUTC",
+        # Módulo de píxel y su presentación.
+        "Rows", "Columns", "NumberOfFrames", "SamplesPerPixel", "PhotometricInterpretation",
+        "PlanarConfiguration", "BitsAllocated", "BitsStored", "HighBit", "PixelRepresentation",
+        "PixelData", "PixelAspectRatio", "PixelSpacing", "SmallestImagePixelValue",
+        "LargestImagePixelValue", "WindowCenter", "WindowWidth", "RescaleSlope",
+        "RescaleIntercept", "RedPaletteColorLookupTableDescriptor",
+        "GreenPaletteColorLookupTableDescriptor", "BluePaletteColorLookupTableDescriptor",
+        "RedPaletteColorLookupTableData", "GreenPaletteColorLookupTableData",
+        "BluePaletteColorLookupTableData", "LossyImageCompression", "LossyImageCompressionRatio",
+        "LossyImageCompressionMethod",
+        # Cine.
+        "FrameTime", "FrameTimeVector", "FrameIncrementPointer", "CineRate",
+        "RecommendedDisplayFrameRate", "ActualFrameDuration", "StartTrim", "StopTrim",
+        "PreferredPlaybackSequencing", "FrameDelay",
+        # Ecografía: la calibración, y lo que el equipo declara de texto quemado.
+        "SequenceOfUltrasoundRegions", "BurnedInAnnotation", "RecognizableVisualFeatures",
+        # Volumen de ecografía (Enhanced US Volume) y referencias entre imágenes.
+        "SharedFunctionalGroupsSequence", "PerFrameFunctionalGroupsSequence",
+        "DimensionOrganizationSequence", "DimensionIndexSequence", "DimensionOrganizationType",
+        "ReferencedImageSequence", "SourceImageSequence",
     }
 )
-
-# UIDs de instancia que el perfil sustituye (acción U de la tabla E.1-1), a cualquier
-# profundidad: un UID de estudio enlaza con el sistema del hospital, y el mismo UID repetido en
-# una secuencia de referencias (`ReferencedSOPInstanceUID` de una imagen previa del mismo PACS)
-# enlaza igual. Hasta 2026-11-11 solo se cambiaban los cuatro de la raíz. La sustitución es
-# coherente dentro del fichero: el mismo UID original recibe el mismo nuevo en todas partes, así
-# que una referencia interna sigue apuntando a lo mismo. Los UID de CLASE (`SOPClassUID`,
-# `ReferencedSOPClassUID`) son del estándar, no del paciente, y se quedan.
-_REPLACED_UIDS = frozenset(
-    {
-        "StudyInstanceUID", "SeriesInstanceUID", "SOPInstanceUID", "FrameOfReferenceUID",
-        "ReferencedSOPInstanceUID", "ReferencedFrameOfReferenceUID",
-        "RelatedFrameOfReferenceUID", "InstanceCreatorUID", "ConcatenationUID",
-        "DimensionOrganizationUID", "IrradiationEventUID",
-        "SynchronizationFrameOfReferenceUID", "StorageMediaFileSetUID", "DeviceUID",
-        "UID", "ReferencedSOPInstanceUIDInFile", "FiducialUID", "TargetUID",
-        "ObservationUID", "TrackingUID", "SpecimenUID", "TransactionUID",
-        "PaletteColorLookupTableUID",
-    }
-)
+# Dentro de una secuencia conservada no se mira el nombre (hay cientos posibles), sino la clase de
+# valor: lo que puede llevar un nombre o texto libre se quita. Quedan números, códigos, fechas,
+# UID (sustituidos) y secuencias, que se recorren con la misma regla.
+_TEXT_VRS = frozenset({"PN", "LO", "LT", "SH", "ST", "UT", "UC", "UR", "AE", "AS", "OB", "UN"})
+# Raíz de los UID del propio estándar (clases SOP, sintaxis de transferencia, esquemas de códigos):
+# no son del paciente y se quedan. Todo otro UID se sustituye, coherente dentro del fichero.
+_STANDARD_UID_ROOT = "1.2.840.10008."
 
 # PS3.3 C.8.5.5.1: RegionSpatialFormat 1 = imagen 2D; unidad física 3 = centímetros.
 _SPATIAL_2D = 1
 _CENTIMETRES = 3
 
 
+# Topes de lo que la imagen ocupa ya descodificada. El cuerpo de la petición está acotado
+# (`MAX_IMAGING_BYTES`), pero un RLE de 838 bytes puede declarar 65 535 × 65 535 píxeles y
+# pydicom reserva el fotograma entero al descodificarlo (auditoría run-2,
+# `emma:imaging:rle-frame-preallocation-unbounded-dims`). Una ecografía real ronda
+# 1024 × 768 × 3 (2,4 MB por fotograma); un cine largo, unos cientos de fotogramas.
+MAX_FRAME_BYTES = 64 * 1024 * 1024
+MAX_STUDY_PIXEL_BYTES = 1024 * 1024 * 1024
+# Deflated Explicit VR Little Endian: el conjunto entero va comprimido con zlib y pydicom lo
+# infla sin tope al leerlo (`emma:imaging:dicom-deflate-unbounded`). Ningún ecógrafo lo usa
+# para exportar imagen; se rechaza antes de inflar nada.
+DEFLATED_TRANSFER_SYNTAX = "1.2.840.10008.1.2.1.99"
+
+
 class NotUltrasoundError(ValueError):
     """El fichero no es un DICOM de ecografía que EMMA sepa guardar."""
+
+
+class PixelBudgetError(ValueError):
+    """La imagen declarada, descodificada, no cabe en los topes."""
+
+
+def pixel_bytes(ds: Dataset) -> tuple[int, int]:
+    """(bytes de un fotograma, bytes del estudio) descodificados, según lo que declara la cabecera.
+
+    Lanza `PixelBudgetError` si superan `MAX_FRAME_BYTES` o `MAX_STUDY_PIXEL_BYTES`, y
+    `ValueError` si las dimensiones no son números.
+    """
+    rows, columns = int(ds.get("Rows", 0) or 0), int(ds.get("Columns", 0) or 0)
+    samples = int(ds.get("SamplesPerPixel", 1) or 1)
+    bits = int(ds.get("BitsAllocated", 8) or 8)
+    frames = int(ds.get("NumberOfFrames", 1) or 1)
+    frame = rows * columns * samples * math.ceil(bits / 8)
+    total = frame * frames
+    if frame > MAX_FRAME_BYTES:
+        raise PixelBudgetError(
+            f"un fotograma de {rows} × {columns} ocuparía {frame} bytes descodificado: el tope es "
+            f"{MAX_FRAME_BYTES}"
+        )
+    if total > MAX_STUDY_PIXEL_BYTES:
+        raise PixelBudgetError(
+            f"{frames} fotogramas ocuparían {total} bytes descodificados: el tope es "
+            f"{MAX_STUDY_PIXEL_BYTES}"
+        )
+    return frame, total
+
+
+def _refuse_deflated(raw: bytes) -> None:
+    """Mira la sintaxis de transferencia en la cabecera de fichero, sin leer el conjunto."""
+    fp = io.BytesIO(raw)
+    try:
+        pydicom.filereader.read_preamble(fp, False)
+        meta = pydicom.filereader._read_file_meta_info(fp)
+    except (InvalidDicomError, EOFError, ValueError, TypeError, OSError, KeyError) as exc:
+        raise NotUltrasoundError(f"no es un fichero DICOM legible: {exc}") from exc
+    if str(meta.get("TransferSyntaxUID", "")) == DEFLATED_TRANSFER_SYNTAX:
+        raise NotUltrasoundError(
+            "sintaxis de transferencia «deflated» no admitida: el conjunto va comprimido entero"
+        )
 
 
 @dataclass(frozen=True)
@@ -157,9 +197,10 @@ class UltrasoundStudy:
 
 def read_ultrasound(raw: bytes) -> UltrasoundStudy:
     """Valida, des-identifica y describe un DICOM de ecografía."""
+    _refuse_deflated(raw)
     try:
         ds = pydicom.dcmread(io.BytesIO(raw))
-    except (InvalidDicomError, EOFError, ValueError, TypeError, OSError) as exc:
+    except (InvalidDicomError, EOFError, ValueError, TypeError, OSError, MemoryError) as exc:
         raise NotUltrasoundError(f"no es un fichero DICOM legible: {exc}") from exc
 
     sop_class = str(ds.get("SOPClassUID", ""))
@@ -171,6 +212,10 @@ def read_ultrasound(raw: bytes) -> UltrasoundStudy:
         raise NotUltrasoundError("el DICOM no contiene imagen")
     rows, columns = _positive_int(ds, "Rows"), _positive_int(ds, "Columns")
     frames = _positive_int(ds, "NumberOfFrames") if "NumberOfFrames" in ds else 1
+    try:
+        pixel_bytes(ds)
+    except (PixelBudgetError, ValueError, TypeError) as exc:
+        raise NotUltrasoundError(str(exc)) from exc
 
     acquired = _acquisition_time(ds)
     regions = _calibrated_regions(ds)
@@ -282,35 +327,56 @@ def _calibrated_regions(ds: Dataset) -> tuple[CalibratedRegion, ...]:
 
 
 def _deidentify(ds: Dataset) -> int:
-    """Aplica el perfil básico con retención temporal. Devuelve cuántos elementos quitó."""
+    """Deja solo `_KEPT` en la raíz y, dentro, lo que no es texto. Devuelve cuántos quitó.
+
+    Una secuencia quitada cuenta una vez, no una por cada elemento suyo.
+    """
     removed = 0
-    # Sin `list()`: el recorrido es perezoso y baja a un anidado después de que su padre pasó
-    # por aquí, así que los elementos de una secuencia ya quitada no se cuentan otra vez.
-    for container in _datasets(ds):
-        for keyword in _REMOVED:
-            if keyword in container:
-                del container[keyword]
+    for elem in list(ds):
+        keep = elem.keyword in _KEPT and not elem.tag.is_private
+        if not keep:
+            del ds[elem.tag]
+            removed += 1
+    pending = [
+        item for elem in ds if elem.VR == "SQ" for item in elem.value if isinstance(item, Dataset)
+    ]
+    while pending:
+        current = pending.pop()
+        for elem in list(current):
+            if elem.tag.is_private or elem.VR in _TEXT_VRS or _overlay_or_curve(elem.tag.group):
+                del current[elem.tag]
                 removed += 1
-    private = sum(1 for container in _datasets(ds) for elem in container if elem.tag.is_private)
-    ds.remove_private_tags()  # recorre también las secuencias anidadas
-    removed += private
+            elif elem.VR == "SQ":
+                pending.extend(item for item in elem.value if isinstance(item, Dataset))
 
     replaced: dict[str, str] = {}
 
     def _new(original: str) -> str:
+        if not original or original.startswith(_STANDARD_UID_ROOT):
+            return original
         return replaced.setdefault(original, generate_uid())
 
     for container in list(_datasets(ds)):
-        for keyword in _REPLACED_UIDS:
-            if keyword not in container:
+        for elem in container:
+            if elem.VR != "UI":
                 continue
-            value = container[keyword].value
-            if isinstance(value, str):  # `UID` es un `str`
-                setattr(container, keyword, _new(str(value)) if value else value)
-            elif value:  # multivalor
-                setattr(container, keyword, [_new(str(item)) for item in value])
+            if isinstance(elem.value, str):
+                elem.value = _new(elem.value)
+            elif elem.value:
+                elem.value = [_new(str(item)) for item in elem.value]
+
+    # La cabecera de fichero, rehecha: sin el título AE de origen ni nada más que lo que la
+    # describe; pydicom repone al escribir la versión e identidad de la implementación.
+    meta = ds.file_meta
+    kept_meta = {
+        "MediaStorageSOPClassUID", "MediaStorageSOPInstanceUID", "TransferSyntaxUID",
+        "FileMetaInformationVersion",
+    }
+    for elem in list(meta):
+        if elem.keyword not in kept_meta:
+            del meta[elem.tag]
     if "SOPInstanceUID" in ds:
-        ds.file_meta.MediaStorageSOPInstanceUID = ds.SOPInstanceUID
+        meta.MediaStorageSOPInstanceUID = ds.SOPInstanceUID
 
     ds.PatientIdentityRemoved = "YES"
     ds.DeidentificationMethod = "PS3.15 Basic Profile; Retain Longitudinal Full Dates (EMMA)"
@@ -319,6 +385,11 @@ def _deidentify(ds: Dataset) -> int:
          _code("113106", "Retain Longitudinal Temporal Information Full Dates Option")]
     )
     return removed
+
+
+def _overlay_or_curve(group: int) -> bool:
+    """Grupos 50xx (curvas) y 60xx (superposiciones): llevan texto y no tienen nombre fijo."""
+    return 0x5000 <= group <= 0x50FF or 0x6000 <= group <= 0x60FF
 
 
 def _datasets(ds: Dataset) -> Iterator[Dataset]:

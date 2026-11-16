@@ -1205,16 +1205,28 @@ def _system_declarations(
     return system_declarations(store, until)
 
 
+LOOKBACK_WINDOWS = (30, 90, 365, 1095)
+
+
 @router.get("/space-weather")
 def space_weather(
     settings: SettingsDep,
-    lookback_days: int = Query(default=365, ge=1, le=1095),
+    # Solo estas ventanas (auditoría run-2, `emma:space-weather:lookback-quota-amplification`):
+    # con cualquier número de 1 a 1095, cada valor era otra clave de caché y otra tanda de hasta
+    # 19 consultas a api.nasa.gov con la clave del operador, y un GET de otra página la elegía.
+    # La consola usa la de por defecto.
+    lookback_days: int = Query(default=365, json_schema_extra={"enum": list(LOOKBACK_WINDOWS)}),
 ) -> dict[str, Any]:
     """Eventos solares recientes.
 
     La ventana por defecto es de un ano porque los eventos de particulas solares
     son escasos: pedir "los ultimos 30 dias" devuelve cero la mayoria del tiempo.
     """
+    if lookback_days not in LOOKBACK_WINDOWS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"lookback_days tiene que ser uno de {list(LOOKBACK_WINDOWS)}",
+        )
     end = utc_today()  # DONKI fecha en UTC, como las efemérides
     try:
         payload = DonkiClient(settings=settings).events(
@@ -1709,6 +1721,11 @@ def _capped(readings: Iterable[VitalObservation]) -> list[VitalObservation]:
     return kept
 
 
+# Una declaración de atributo con valor literal (`"…"`/`'…'`, también tras `#FIXED`): el valor
+# por defecto que el parser copia en cada elemento. Las enumeraciones van entre paréntesis.
+_ATTLIST_DEFAULT = re.compile(r"<!ATTLIST\b[^>]*?[\"']")
+
+
 def _xml_text(export: bytes) -> str:
     """El export como texto UTF-8, sin bytes nulos y sin declaraciones de entidad.
 
@@ -1733,6 +1750,15 @@ def _xml_text(export: bytes) -> str:
         raise HTTPException(status_code=422, detail="el export contiene bytes nulos")
     if "<!ENTITY" in text:
         raise HTTPException(status_code=422, detail="el export declara entidades: no se admiten")
+    if _ATTLIST_DEFAULT.search(text):
+        # Un valor por defecto se copia en cada elemento que no trae el atributo: 25 MB de
+        # `<a/>` con un defecto de 8 KB amplifican como una entidad (auditoría run-2,
+        # `emma:ingest:apple-health-attlist-default-amplification`). El DTD de Apple declara
+        # sus atributos `#REQUIRED`/`#IMPLIED`, sin valor: ese sigue pasando.
+        raise HTTPException(
+            status_code=422,
+            detail="el export declara atributos con valor por defecto: no se admiten",
+        )
     return text
 
 

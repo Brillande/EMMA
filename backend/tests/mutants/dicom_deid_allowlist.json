@@ -1,0 +1,43 @@
+{
+ "target": "app/imaging/dicom.py",
+ "test": [
+  "tests/test_imaging.py"
+ ],
+ "mutations": [
+  {
+   "label": "la raíz conserva todo (vuelve la lista de prohibidos vacía)",
+   "old": "        keep = elem.keyword in _KEPT and not elem.tag.is_private",
+   "new": "        keep = not elem.tag.is_private"
+  },
+  {
+   "label": "las etiquetas privadas de la raíz se conservan si su nombre está",
+   "old": "        keep = elem.keyword in _KEPT and not elem.tag.is_private",
+   "new": "        keep = elem.keyword in _KEPT or elem.tag.is_private"
+  },
+  {
+   "label": "dentro de las secuencias conservadas no se quita el texto",
+   "old": "            if elem.tag.is_private or elem.VR in _TEXT_VRS or _overlay_or_curve(elem.tag.group):",
+   "new": "            if elem.tag.is_private or _overlay_or_curve(elem.tag.group):"
+  },
+  {
+   "label": "los UID no se sustituyen",
+   "old": "        return replaced.setdefault(original, generate_uid())",
+   "new": "        return original"
+  },
+  {
+   "label": "los UID del estándar también se sustituyen (la clase SOP se pierde)",
+   "old": "        if not original or original.startswith(_STANDARD_UID_ROOT):",
+   "new": "        if not original:"
+  },
+  {
+   "label": "la cabecera de fichero conserva su título AE",
+   "old": "        if elem.keyword not in kept_meta:\n            del meta[elem.tag]",
+   "new": "        if False:\n            del meta[elem.tag]"
+  },
+  {
+   "label": "la calibración no está entre lo conservado",
+   "old": "        \"SequenceOfUltrasoundRegions\", \"BurnedInAnnotation\", \"RecognizableVisualFeatures\",",
+   "new": "        \"BurnedInAnnotation\", \"RecognizableVisualFeatures\","
+  }
+ ]
+}

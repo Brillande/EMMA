@@ -85,6 +85,30 @@
    "label": "el cliente de la suite nace sin la cabecera",
    "old": "TestClient.__init__ = _init_with_console_header  # type: ignore[method-assign]",
    "new": "pass"
+  },
+  {
+   "target": "app/api/volumes.py",
+   "label": "lanzar TotalSegmentator vuelve a quedar al alcance de otra página",
+   "old": "@volumes_router.post(\"/{ledger_index}/segment\", status_code=202, **console_post())",
+   "new": "@volumes_router.post(\"/{ledger_index}/segment\", status_code=202)"
+  },
+  {
+   "target": "app/api/replay.py",
+   "label": "la réplica de Inspiration4 escribe en el ledger sin cabecera",
+   "old": "@replay_router.post(\"/inspiration4\", status_code=201, **console_post())",
+   "new": "@replay_router.post(\"/inspiration4\", status_code=201)"
+  },
+  {
+   "target": "app/api/pain.py",
+   "label": "el dictado de dolor lee su cuerpo tal cual sin cabecera",
+   "old": "@pain_router.post(\"/voice\", **console_post())",
+   "new": "@pain_router.post(\"/voice\")"
+  },
+  {
+   "target": "app/api/imaging.py",
+   "label": "el fantoma de ecografía se registra sin cabecera",
+   "old": "@imaging_router.post(\"/phantom\", status_code=201, **console_post())",
+   "new": "@imaging_router.post(\"/phantom\", status_code=201)"
   }
  ]
 }

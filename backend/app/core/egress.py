@@ -284,29 +284,107 @@ def _retrying(send: Callable[[], httpx.Response], url: str) -> httpx.Response:
 
 Params = dict[str, Any] | list[tuple[str, Any]]
 
+# Lo más que se acepta de una respuesta YA DESCOMPRIMIDA. httpx descomprime `gzip`/`br`/`deflate`
+# solo y `httpx.get` lo juntaba todo en memoria: unos kilobytes de un sitio de fuera podían ser
+# gigas aquí (auditoría run-2, `emma:egress:unbounded-decompressed-response`; Marplanner lo dispara
+# solo, con la cita del día). La respuesta más grande que pide EMMA (DONKI de un año, efemérides)
+# está muy por debajo.
+MAX_RESPONSE_BYTES = 64 * 1024 * 1024
+
+
+class OversizedResponse(httpx.HTTPError):
+    """La respuesta, descomprimida, pasa de su tope. Se deja de leer en cuanto pasa."""
+
+
+def _capped(streamed: httpx.Response, limit: int) -> httpx.Response:
+    """La respuesta abierta en modo `stream`, leída ya descomprimida hasta `limit` bytes.
+
+    Pasado el tope, `OversizedResponse` sin leer más. Devuelve una respuesta cerrada y entera, sin
+    el `Content-Encoding` ni la longitud de antes (el cuerpo ya va descomprimido).
+    """
+    chunks: list[bytes] = []
+    total = 0
+    for chunk in streamed.iter_bytes():
+        total += len(chunk)
+        if total > limit:
+            raise OversizedResponse(
+                f"la respuesta de {streamed.request.url} pasa de {limit} bytes descomprimida"
+            )
+        chunks.append(chunk)
+    headers = [
+        (key, value) for key, value in streamed.headers.multi_items()
+        if key.lower() not in ("content-encoding", "content-length")
+    ]
+    return httpx.Response(
+        streamed.status_code, headers=headers, content=b"".join(chunks),
+        request=streamed.request, history=streamed.history,
+    )
+
+
+def _read_capped(url: str, params: Params | None, timeout: float, limit: int) -> httpx.Response:
+    """`httpx.get` leyendo por trozos ya descomprimidos y parando al pasar de `limit`."""
+    with httpx.stream("GET", url, params=params, timeout=timeout) as streamed:
+        return _capped(streamed, limit)
+
 
 def get(
     settings: Settings, purpose: str, url: str, *, params: Params | None = None,
+    max_bytes: int | None = None,
 ) -> httpx.Response:
-    """GET autorizado, con reintentos corteses. Sustituye a `httpx.get` en los clientes."""
+    """GET autorizado, con reintentos corteses. Sustituye a `httpx.get` en los clientes.
+
+    Lee como mucho `max_bytes` descomprimidos (por defecto `MAX_RESPONSE_BYTES`): pasado eso,
+    `OversizedResponse`, que es un `httpx.HTTPError` como los demás fallos de red.
+    """
     pairs = list(params.items()) if isinstance(params, dict) else list(params or [])
     # La clave de la API no es contenido que clasificar (y no debe acabar en la traza del borde).
     authorize(settings, purpose, url, " ".join(
         f"{key}={value}" for key, value in pairs if key != "api_key"
     ))
+    limit = MAX_RESPONSE_BYTES if max_bytes is None else max_bytes
     return _retrying(
-        lambda: httpx.get(url, params=params, timeout=settings.request_timeout), url
+        lambda: _read_capped(url, params, settings.request_timeout, limit), url
     )
 
 
-def client(settings: Settings, purpose: str) -> httpx.Client:
-    """Un `httpx.Client` que pasa cada petición por la puerta (para el comprobador de citas)."""
+class CappedClient(httpx.Client):
+    """`httpx.Client` que lee cada respuesta normal ya descomprimida con tope (`max_bytes`).
+
+    La que se abre con `client.stream(...)` pasa tal cual: quien la abre la lee por trozos y pone
+    su propio tope (`models_download.fetch_verified` lo pone en el tamaño del manifiesto). Sin
+    esto, `client.get` juntaba en memoria todo lo que el sitio de fuera descomprimiera (revisión de
+    seguridad 2026-11-16, como `emma:egress:unbounded-decompressed-response` en `get`).
+    """
+
+    def __init__(self, *args: Any, max_bytes: int, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.max_bytes = max_bytes
+
+    def send(
+        self, request: httpx.Request, *, stream: bool = False, **kwargs: Any
+    ) -> httpx.Response:
+        response = super().send(request, stream=True, **kwargs)
+        if stream:
+            return response
+        try:
+            return _capped(response, self.max_bytes)
+        finally:
+            response.close()
+
+
+def client(settings: Settings, purpose: str, *, max_bytes: int | None = None) -> httpx.Client:
+    """Un `httpx.Client` que pasa cada petición por la puerta y lee con tope.
+
+    `max_bytes` (por defecto `MAX_RESPONSE_BYTES`) acota cada respuesta normal descomprimida;
+    `client.stream(...)` no lo lleva y se acota donde se lee.
+    """
 
     def check(request: httpx.Request) -> None:
         authorize(settings, purpose, str(request.url.copy_with(query=None)),
                   request.url.query.decode("ascii", "replace"))
 
-    return httpx.Client(
+    return CappedClient(
         timeout=settings.request_timeout, follow_redirects=True,
         event_hooks={"request": [check]},
+        max_bytes=MAX_RESPONSE_BYTES if max_bytes is None else max_bytes,
     )

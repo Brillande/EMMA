@@ -172,7 +172,7 @@ class SolarEvent:
         return cls(
             event_id=raw["event_id"],
             event_type=EventType(raw["event_type"]),
-            time=dt.datetime.fromisoformat(raw["time"]),
+            time=as_utc_if_naive(dt.datetime.fromisoformat(raw["time"])),
             severity=Severity(raw["severity"]),
             instruments=tuple(raw["instruments"]),
             linked_event_ids=tuple(raw["linked_event_ids"]),
@@ -182,8 +182,21 @@ class SolarEvent:
 
 
 def _parse_time(value: str) -> dt.datetime:
-    """DONKI usa `2025-10-22T00:09Z`, que `fromisoformat` no acepta en 3.10."""
-    return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    """DONKI usa `2025-10-22T00:09Z`, que `fromisoformat` no acepta en 3.10.
+
+    Una hora sin zona se rechaza: comparada luego con una con zona, lanzaba `TypeError` en cada
+    `/api/status`, y guardada en caché lo seguía haciendo sin red (auditoría run-2,
+    `emma:environment:naive-external-timestamp-cache-poison`).
+    """
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError(f"hora sin zona: {value!r}")
+    return parsed
+
+
+def as_utc_if_naive(moment: dt.datetime) -> dt.datetime:
+    """Lo leído de una caché escrita antes de exigir zona: se toma como UTC, que es la de DONKI."""
+    return moment if moment.tzinfo is not None else moment.replace(tzinfo=dt.UTC)
 
 
 def severity_from_flare_class(flare_class: str | None) -> Severity:
@@ -346,6 +359,12 @@ class DonkiClient:
 
         try:
             raw_events = self._fetch(event_type, start, end)
+            # Dentro del mismo `try`: un evento ilegible (hora sin zona, campo que falta) se trata
+            # como un fallo de la consulta, con caché o instantánea, y nunca se guarda.
+            try:
+                events = [normalize(event_type, item) for item in raw_events]
+            except (KeyError, TypeError, ValueError, AttributeError) as exc:
+                raise httpx.DecodingError(f"DONKI /{event_type}: evento ilegible: {exc}") from exc
         except httpx.HTTPError as exc:
             # La red fallo. Un dato viejo con su edad declarada es mucho mejor
             # que ningun dato: el astronauta decide con lo que hay.
@@ -357,7 +376,6 @@ class DonkiClient:
                 f"DONKI inaccesible y sin cache para {event_type}: {exc}"
             ) from exc
 
-        events = [normalize(event_type, item) for item in raw_events]
         serialised = [event.to_dict() for event in events]
         source = f"NASA DONKI /{event_type}"
         stored = self.cache.put(key, serialised, source=source)

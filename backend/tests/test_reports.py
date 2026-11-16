@@ -105,6 +105,71 @@ def upload(client: TestClient, data: bytes, media_type: str = "image/png") -> di
     return body
 
 
+def _pdf_page(width_pt: float, height_pt: float, pages: int = 1) -> bytes:
+    import pypdfium2 as pdfium
+
+    document = pdfium.PdfDocument.new()
+    for _ in range(pages):
+        document.new_page(width_pt, height_pt)
+    buffer = io.BytesIO()
+    document.save(buffer)
+    return buffer.getvalue()
+
+
+def test_a_pdf_page_too_big_to_paint_is_refused_before_painting(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Una `MediaBox` de 200 pulgadas son 60 000 × 60 000 píxeles a 300 ppp (auditoría run-2,
+    `emma:reports:pdf-render-unbounded-page-size`): 422 sin pintar nada."""
+    painted: list[int] = []
+    import pypdfium2 as pdfium
+
+    original = pdfium.PdfPage.render
+    monkeypatch.setattr(
+        pdfium.PdfPage, "render", lambda self, **kw: painted.append(1) or original(self, **kw)
+    )
+    response = client.post(
+        "/api/reports", params={"kind": "analitica", "recorded_by": "CMO"},
+        content=_pdf_page(14_400, 14_400), headers={"Content-Type": "application/pdf"},
+    )
+    assert response.status_code == 422
+    assert "tope" in response.json()["detail"]
+    assert painted == []
+    assert len(get_store().ledger) == 0
+
+
+def test_a4_pages_still_paint_and_the_sum_has_its_own_cap(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert len(ocr.page_images(_pdf_page(595, 842, pages=2), "application/pdf")) == 2
+    monkeypatch.setattr(ocr, "MAX_TOTAL_PIXELS", 10_000_000)
+    with pytest.raises(ocr.PageTooLarge, match="juntas"):
+        ocr.page_images(_pdf_page(595, 842, pages=2), "application/pdf")
+
+
+def _tiff(frames: int, size: tuple[int, int] = (10, 10)) -> bytes:
+    images = [Image.new("1", size) for _ in range(frames)]
+    buffer = io.BytesIO()
+    images[0].save(buffer, format="TIFF", save_all=True, append_images=images[1:])
+    return buffer.getvalue()
+
+
+def test_a_tiff_converts_only_the_pages_it_keeps(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Antes se convertían todos los fotogramas y luego se cortaba a `MAX_PAGES` (auditoría run-2,
+    `emma:reports:tiff-frames-before-max-pages`)."""
+    converted: list[int] = []
+    original = Image.Image.convert
+    monkeypatch.setattr(
+        Image.Image, "convert", lambda self, *a, **k: converted.append(1) or original(self, *a, **k)
+    )
+    pages = ocr.page_images(_tiff(ocr.MAX_PAGES + 20), "image/tiff")
+    assert len(pages) == ocr.MAX_PAGES
+    assert len(converted) == ocr.MAX_PAGES
+
+
+def test_a_tiff_frame_beyond_the_cap_is_refused() -> None:
+    with pytest.raises(ocr.PageTooLarge, match="tope"):
+        ocr.page_images(_tiff(1, size=(5000, 5000)), "image/tiff")
+
+
 def test_without_tesseract_the_report_is_kept_but_has_no_text(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
