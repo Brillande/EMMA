@@ -13,21 +13,31 @@
 .ref-home .res-nutrition { grid-column: span 3; }
 .ref-home .res-resupply { grid-column: span 2; }
 
-/* La maqueta V2 de la ISS (pestaña «Distancia y nodos», 2026-11-14): sin nutrición, 4 / 4 / 4. */
-@media (min-width: 1401px) {
-  .ref-home.nodes-home .res-status,
-  .ref-home.nodes-home .res-medications,
-  .ref-home.nodes-home .res-resupply { grid-column: span 4; }
-}
+/* Los cortes miden el tablero (`@container ref-board`, lote «responsivo», 2026-11-16), no la ventana:
+   el carril y el asistente acoplado le quitan ancho. 1400 / 900 px de ventana eran 1120 / 620 de
+   tablero sin asistente. */
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1120px) {
   .ref-home .res-status,
   .ref-home .res-medications { grid-column: span 6; }
   .ref-home .res-nutrition,
   .ref-home .res-resupply { grid-column: span 6; }
 }
 
-@media (max-width: 900px) {
+/* La maqueta V2 de la ISS (pestaña «Distancia y nodos», 2026-11-14): sin nutrición, 4 / 4 / 4. Son
+   tres tarjetas: a 6 / 6 la tercera se quedaba sola en media fila, así que siguen en tercios hasta
+   820 px de tablero y después el estado va a lo ancho y las otras dos a medias. */
+@container ref-board (min-width: 821px) {
+  .ref-home.nodes-home .res-status,
+  .ref-home.nodes-home .res-medications,
+  .ref-home.nodes-home .res-resupply { grid-column: span 4; }
+}
+
+@container ref-board (max-width: 820px) {
+  .ref-home.nodes-home .res-status { grid-column: span 12; }
+}
+
+@container ref-board (max-width: 620px) {
   .ref-home .res-status,
   .ref-home .res-medications,
   .ref-home .res-nutrition,

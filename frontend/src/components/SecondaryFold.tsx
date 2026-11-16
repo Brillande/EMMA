@@ -102,6 +102,9 @@ export function FoldDivider({
       {...(pictogram === undefined ? {} : { pictogram })}
       // `--home-fill` es cosa de la rejilla de «Inicio»: aquí no se mide.
       fill={false}
+      // Pero lo plegado deja sitio: `data-folded` y `--fold-fill` en la `.section-body`, y cada
+      // tablero decide en su hoja cómo reparte ese alto (lote «responsivo», 2026-11-16).
+      fold
     />
   );
 }

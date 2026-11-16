@@ -3404,6 +3404,9 @@ export type CrewIdentity =
   | { subject: string; declared: true; given_name: string; surnames: string; birth_date: string };
 
 /** El visor web de Polaris (copiado tal cual) sobre una segmentación; `render` es su render.html. */
+/** TAC de ejemplo que todo escenario simulado trae registrado (decision del usuario, 2026-11-15). */
+export const PRELOADED_VOLUME = "higado-1";
+
 export function polarisViewerUrl(segmentation: number, page: "visor" | "render"): string {
   const base = `/api/volumes/segmentations/${segmentation}/polaris/`;
   return page === "visor" ? `${base}index.html` : `${base}render.html?fecha=estudio&ss=2`;
@@ -4110,10 +4113,15 @@ export const api = {
         body: audio,
       }),
   },
-  /** Con `replace`, sustituye la sesion simulada entera: la API se niega si hay datos reales. */
+  /**
+   * Con `replace`, sustituye la sesion simulada entera: la API se niega si hay datos reales. Todo
+   * escenario lleva precargado el TAC de ejemplo del higado (`PRELOADED_VOLUME`), para que
+   * «Distancia y nodos» lo ensene al abrir y tras cambiar de escenario.
+   */
   simulate: (scenario: string, replace = false) =>
     request<{ recorded: number; replaced: boolean }>(
-      `/simulate?scenario=${encodeURIComponent(scenario)}${replace ? "&replace=true" : ""}`,
+      `/simulate?scenario=${encodeURIComponent(scenario)}${replace ? "&replace=true" : ""}` +
+        `&volume_sample=${PRELOADED_VOLUME}`,
       { method: "POST" },
     ),
 };

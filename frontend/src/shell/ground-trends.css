@@ -182,6 +182,57 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Lote «responsivo» (2026-11-16): desde que la raya parte las gráficas en dos rejillas (cuatro arriba
+   y las demás plegadas debajo), cada rejilla suele llevar cuatro. Con tres columnas (cuerpo de 40 a
+   75 rem: ventanas de ~1000 a ~1500 px) eso eran tres y una sola en la segunda fila, con dos tercios
+   de hueco al lado (captura «before-trends-1366x768-folded»). Con cuatro, dos y dos: el mismo número
+   de filas, sin hueco y con cada lienzo más ancho. Solo cuando son exactamente cuatro. */
+@container board (min-width: 40.01rem) and (max-width: 75rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-trends) [data-ui="trends"] > .charts:has(> :nth-child(4):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---- Lo plegado deja sitio (lote «responsivo», 2026-11-16) ---- */
+
+/* Plegado lo secundario, la sección declara su alto libre (`data-folded`, `--fold-fill`; la regla
+   común en `referenceDashboard.css` le da ese alto mínimo), pero las gráficas se quedaban en su fila
+   de 430 px y debajo de la raya quedaba un tercio de pantalla vacío (1672 × 941: 186 px; 2560 × 1300:
+   600 px). Aquí ese alto va a la fila de las gráficas: la rejilla del tablero pasa a cabecera, una
+   fila flexible y la raya; la sección de tendencias se estira en ella, y sus filas de tarjetas
+   (`.charts`) se reparten lo que sobre a partes iguales. La raya queda al pie de la ventana.
+   Desplegado no cambia nada: es solo con `[data-folded="true"]`, que la consulta de contenedor no
+   puede ver porque está en el propio contenedor. */
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"]:has(> .board-frame-h) {
+  grid-template-rows: auto 1fr;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"]:not(:has(> .board-frame-h)) {
+  grid-template-rows: 1fr;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"] [data-ui="trends"] {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"] [data-ui="trends"] > .charts {
+  flex: 1 1 auto;
+  grid-auto-rows: 1fr;
+}
+
+/* El lienzo no crece: su alto lo fija `TrendChart` (170 px en el tablero) y uPlot solo vuelve a medir
+   el ancho. La tarjeta, más alta, se ordena en columna: título y cifras arriba, la leyenda al pie y
+   la gráfica centrada en lo que queda (margen automático, que no toca el ancho que uPlot mide). */
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"] [data-ui="trends"] .series-chart.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-trends[data-folded="true"] [data-ui="trends"] .series-chart > div {
+  margin-block: auto;
+}
+
 /* La tarjeta, con relleno corto: a un tercio de ancho el relleno del panel común comía trazo. */
 :where(.app[data-look="reference"]) [data-ui="trends"] .series-chart.panel {
   padding: 0.55rem 0.7rem 0.6rem;

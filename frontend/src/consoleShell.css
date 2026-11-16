@@ -85,13 +85,58 @@
   padding: 0.4rem 0.6rem 0.5rem;
 }
 
+/* El pie «Acerca de» en una fila (lote «responsivo», 2026-11-16). Con lo secundario plegado el
+   tablero llega al pie de la ventana (`--fold-fill`), y todo lo que la concha pone debajo de `main`
+   obligaba a desplazar la página: «Acerca de EMMA» y «Modelos de IA» uno encima del otro sumaban
+   ~100 px. En una fila son un mando de alto; el que se abre baja a su propia fila con su texto.
+   Con el carril al lado, el pie empieza donde empieza el tablero: debajo del carril van los mandos
+   del asistente (`styles.css`), que ya no ocupan sitio en la página. */
+.app[data-look="reference"] > .about {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.3rem 0.6rem;
+  margin: 0.2rem 0 0.3rem;
+}
+
+.app[data-look="reference"] > .about > details[open] {
+  flex-basis: 100%;
+}
+
+@media (min-width: 761px) {
+  .app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]) > .about {
+    padding-left: calc(0.6rem + var(--rail-w) + 0.6rem);
+  }
+}
+
+/* Lo que la concha ocupa debajo del tablero: el relleno de abajo de `main`, la fila del pie y la
+   parte del asistente que va en la página (`--assistant-flow`, `styles.css`). El tablero plegado lo
+   descuenta de `--fold-fill` (`shell/board.css`), para que tablero, pie y asistente quepan juntos en
+   la ventana sin desplazar la página. */
+.app[data-look="reference"] {
+  --shell-below: calc(0.5rem + 0.2rem + var(--touch) + 0.3rem + var(--assistant-flow, 0px));
+}
+
 /* Carril: la barra lateral de la maqueta, con el conmutador de consola en lo alto (`RailTopContext`). */
 .app[data-look="reference"] .console-layout {
-  grid-template-columns: 15.5rem minmax(0, 1fr);
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
   gap: 0.6rem;
 }
 
+/* Lote «responsivo» (2026-11-16): el ancho del carril se mide con lo que queda de pantalla en vez de
+   ser fijo. Con 15,5 rem a 1024 px y el asistente acoplado (704 px de consola) el tablero se quedaba
+   en unos 440 px y sus rejillas se apilaban; ahora el carril baja hasta 13 rem con unos 900 px de
+   consola y conserva sus 15,5 rem de siempre desde 1300 (por debajo, «Distancia y nodos» y la píldora
+   de alertas pueden ir en dos renglones: se ven enteros). `--dock-taken` es el ancho que se lleva el
+   asistente acoplado (`styles.css`): con él abierto, el carril se mide sobre lo que le queda a la
+   consola. El pie «Acerca de» y los mandos del asistente al pie de la columna del carril
+   (`styles.css`) usan esta misma medida. */
+.app[data-look="reference"] {
+  --rail-w: clamp(13rem, calc(7.375rem + (100vw - var(--dock-taken, 0px)) * 0.1), 15.5rem);
+}
+
 .app[data-look="reference"] .rail {
+  min-width: 0;
   padding: 0.3rem;
   border: 1px solid var(--ref-edge);
   border-radius: 9px;

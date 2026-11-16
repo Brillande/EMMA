@@ -357,10 +357,14 @@ describe("el módulo y su hoja", () => {
     }
   });
 
-  it("reparto 5 / 4 / 3 y a lo ancho por debajo de 1400 px", () => {
+  // Lote «responsivo» (2026-11-16): los cortes miden el tablero (`@container ref-board`), no la
+  // ventana; 1120 px de tablero son los 1400 de ventana de antes menos el carril.
+  it("reparto 5 / 4 / 3 y a lo ancho en un tablero estrecho, medido por contenedor", () => {
     expect(css).toMatch(/\.no-risks \{ grid-column: span 5; \}/);
     expect(css).toMatch(/\.no-corr \{ grid-column: span 4; \}/);
     expect(css).toMatch(/\.no-scen \{ grid-column: span 3; \}/);
-    expect(css).toMatch(/max-width: 1400px[\s\S]*span 12/);
+    expect(css).toMatch(/@container ref-board \(max-width: 1120px\) \{\s*\.ref-home \.no-risks \{ grid-column: span 12; \}/);
+    expect(css).toMatch(/@container ref-board \(max-width: 820px\)[\s\S]*span 12/);
+    expect(css.replace(/\/\*[\s\S]*?\*\//g, "")).not.toMatch(/@media \((max|min)-width/);
   });
 });

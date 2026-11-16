@@ -15,7 +15,17 @@
 .grav-home section.ref-card { display: flex; flex-direction: column; min-width: 0; }
 .grav-home .iso-note { margin-top: auto; }
 
-/* Reparto, como la maqueta. */
+/* Reparto, como la maqueta. El estado y los cuerpos van en `.grav-main`, un bloque de fila entera con su
+   propia rejilla de 12 columnas: es siempre la segunda fila del tablero (tras la ubicación), así que con lo
+   secundario plegado basta con darle a esa fila el alto libre (`1fr`) y repartirlo dentro. */
+.grav-home .grav-main {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: inherit;
+  align-items: stretch;
+  min-width: 0;
+}
 .grav-home .grav-exposure { grid-column: span 4; }
 .grav-home .grav-transition { grid-column: span 3; }
 .grav-home .ref-crew-card { grid-column: span 2; }
@@ -31,14 +41,78 @@
 .grav-home .grav-exercises { grid-column: span 3; }
 .grav-home .nodes-fit[hidden] { display: none; }
 
-@media (max-width: 1400px) {
-  .grav-home > :not(.ref-places) { grid-column: span 6; grid-row: auto; }
+/* Plegado (contrato «lo plegado deja sitio», lote «responsivo» 2026-11-16): la fila de `.grav-main` toma el
+   alto libre y, dentro, crecen las filas de los cuerpos (en la ancha, la segunda; las demás, a su alto). Las
+   reglas sobre la propia sección van por `[data-folded]`: una consulta de contenedor no la alcanza. */
+.section-body.grav-home[data-folded="true"] { grid-template-rows: auto 1fr; }
+.section-body.grav-home[data-folded="true"] .grav-main { grid-template-rows: auto 1fr; }
+
+/* El reparto se mide por el ancho del tablero (`ref-board`), no por la ventana: el tablero es la ventana
+   menos el carril y menos el asistente acoplado, y con `@media` las 12 columnas quedaban apretadas de ~1000
+   a ~1700 px (la tarjeta del tripulante se cortaba). Antes, además, la regla de `max-width: 1400px`
+   apuntaba a los huecos de la consola (`display: contents`) y no movía nada. */
+@container ref-board (max-width: 1299.98px) {
+  /* Tablero medio: estado en una fila de tres; el riesgo junto al cuerpo; circulación junto a las pruebas. */
+  .grav-home .grav-exposure,
+  .grav-home .grav-transition,
+  .grav-home .ref-crew-card,
+  .grav-home .grav-risk,
+  .grav-home .grav-tests { grid-column: span 4; }
   .grav-home .grav-musculo,
-  .grav-home .grav-cardio { grid-column: span 12; }
+  .grav-home .grav-cardio { grid-column: span 8; }
+  .grav-home .ref-quick { grid-column: span 12; }
+  .grav-home .grav-training { grid-column: span 8; }
+  .grav-home .grav-fields,
+  .grav-home .grav-transition-risks,
+  .grav-home .grav-prediction,
+  .grav-home .grav-exercises { grid-column: span 4; }
+  .section-body.grav-home[data-folded="true"] .grav-main { grid-template-rows: auto 1fr 1fr; }
 }
 
-@media (max-width: 760px) {
-  .grav-home > * { grid-column: span 12 !important; }
+@container ref-board (max-width: 899.98px) {
+  /* Tablero estrecho: el estado en dos filas y cada sistema a lo ancho. */
+  .grav-home .grav-exposure,
+  .grav-home .grav-risk { grid-column: span 7; }
+  .grav-home .grav-transition,
+  .grav-home .ref-crew-card { grid-column: span 5; }
+  .grav-home .grav-musculo,
+  .grav-home .grav-cardio,
+  .grav-home .grav-tests,
+  .grav-home .grav-training { grid-column: span 12; }
+  .grav-home .grav-fields,
+  .grav-home .grav-transition-risks,
+  .grav-home .grav-prediction,
+  .grav-home .grav-exercises { grid-column: span 6; }
+  .section-body.grav-home[data-folded="true"] .grav-main { grid-template-rows: auto auto 1fr 1fr auto; }
+}
+
+@container ref-board (max-width: 559.98px) {
+  .grav-home .grav-main > *,
+  .grav-home .ref-quick,
+  .grav-home .grav-training,
+  .grav-home .grav-fields,
+  .grav-home .grav-transition-risks,
+  .grav-home .grav-prediction,
+  .grav-home .grav-exercises { grid-column: 1 / -1; }
+  .section-body.grav-home[data-folded="true"] .grav-main { grid-template-rows: none; }
+  /* Muy estrecho: lista, cuerpos y zonas, uno debajo de otro; circulación encima de sus medidas. */
+  .grav-home .grav-musculo-body,
+  .grav-home .grav-cardio-body { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* La tarjeta del tripulante (de «Inicio») en su columna estrecha: la hora de misión parte línea en vez de
+   salirse por la derecha. */
+.grav-home .ref-crew-info { min-width: 0; }
+.grav-home .ref-kv { grid-template-columns: auto minmax(0, 1fr); }
+.grav-home .ref-kv dd { min-width: 0; overflow-wrap: anywhere; }
+.grav-home .ref-kv .ref-pill { white-space: nowrap; }
+/* En la rejilla ancha más justa (dos columnas de ~230 px) el retrato cede algo de sitio al estado. */
+@container ref-board (min-width: 1300px) and (max-width: 1499.98px) {
+  .grav-home .ref-crew-card .ref-avatar { width: 3rem; }
+  /* Y en el sistema musculoesquelético, los botones de figura uno sobre otro: la columna de zonas se
+     estrecha y el ancho que suelta va a los cuerpos. */
+  .grav-home .grav-musculo-body { grid-template-columns: minmax(10rem, 1.25fr) minmax(12rem, 1.8fr) minmax(8rem, 1.05fr); }
+  .grav-home .grav-avatar { flex-wrap: wrap; }
 }
 
 /* Título y exposición. */
@@ -101,9 +175,35 @@
 
 .grav-sub { margin: 0 0 0.25rem; font-size: 0.82rem; font-weight: 600; }
 
-/* Los cuerpos: el lienzo de 152 × 310 de `BodyArt`, encogido con `zoom`, y el dibujo encima. */
-.grav-figure { margin: 0; display: grid; justify-items: center; gap: 0.1rem; }
-.grav-figure-box { position: relative; width: 152px; height: 310px; zoom: 0.76; }
+/* Los cuerpos: el lienzo de 152 × 310 de `BodyArt` y el dibujo encima (`viewBox` 0 0 152 310), en una caja
+   con esa proporción. Antes la caja era fija de 152 × 310 px encogida con `zoom` (0,76 → 0,8 a fuerza de
+   vueltas) y la de circulación ampliada con un margen negativo: no seguía al tablero. Ahora el escenario
+   (`.grav-stage`) es un contenedor de tamaño y cada figura toma el alto que haya (`cqh`), con el ancho por
+   proporción y sin pasar del ancho del escenario (`cqw`): crece cuando lo secundario se pliega y encoge sin
+   salirse en tableros estrechos. El alto mínimo del escenario es el de la vuelta 17 (zoom 0,8: 248 px). */
+.grav-home { --grav-cap: 1.25rem; }
+.grav-stage {
+  --n: 1;
+  container-type: size;
+  min-width: 0;
+  min-height: calc(15.5rem + var(--grav-cap));
+  display: flex;
+  justify-content: center;
+  /* Centradas: si el escenario es más alto que lo que el ancho deja crecer, el hueco se reparte. */
+  align-items: center;
+  gap: 0.5rem;
+}
+.grav-stage:has(> .grav-figure + .grav-figure) { --n: 2; }
+.grav-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.1rem; min-width: 0; }
+.grav-figure-box {
+  --fig-h: min(calc(100cqh - var(--grav-cap)), calc((100cqw - (var(--n) - 1) * 0.5rem) / var(--n) * 310 / 152));
+  position: relative;
+  flex: none;
+  height: var(--fig-h);
+  width: calc(var(--fig-h) * 152 / 310);
+}
+/* El lienzo de `referenceDashboard.css` es de 152 × 310 px centrado: aquí llena la caja, como el dibujo. */
+.grav-figure-box > :is(.ref-body-canvas, .ref-body-vector) { top: 0; left: 0; width: 100%; height: 100%; transform: none; }
 .grav-figure .ref-body-canvas,
 .grav-figure .ref-body-vector { z-index: 0; }
 .grav-figure[data-look="bone"] .ref-body-canvas,
@@ -132,13 +232,18 @@
 .grav-vessels .grav-heart { fill: var(--c-red); stroke: color-mix(in srgb, var(--c-yellow) 60%, var(--c-red)); stroke-width: 1; filter: drop-shadow(0 0 4px var(--c-red)); }
 
 /* Musculoesquelético: lista, dos cuerpos y zonas. */
+/* Lista, escenario de los dos cuerpos y zonas, en fracciones: el escenario no tiene ancho propio (es un
+   contenedor de tamaño) y las figuras se ajustan a lo que le toque. */
 .grav-musculo-body {
   display: grid;
-  grid-template-columns: minmax(11.5rem, 1.4fr) auto auto minmax(8rem, 0.9fr);
+  /* Las zonas nunca por debajo de su mínimo (los dos botones de figura en una línea: antes se salían). */
+  grid-template-columns: minmax(10rem, 1.25fr) minmax(12rem, 1.8fr) minmax(11rem, 1.05fr);
   gap: 0.5rem;
   align-items: center;
   flex: 1;
 }
+.grav-musculo-body > .grav-stage,
+.grav-cardio-body > .grav-stage { align-self: stretch; }
 .grav-zones ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.3rem; font-size: 0.82rem; }
 .grav-zones li { display: grid; grid-template-columns: minmax(0, 1fr) 3rem auto; gap: 0.35rem; align-items: center; }
 .grav-zones li > :nth-child(2):last-child { grid-column: 2 / -1; }
@@ -146,7 +251,7 @@
 .grav-avatar .command { padding: 0.12rem 0.45rem; font-size: 0.76rem; }
 
 /* Cardiovascular. */
-.grav-cardio-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.6rem; align-items: center; flex: 1; }
+.grav-cardio-body { display: grid; grid-template-columns: minmax(8rem, 0.7fr) minmax(0, 1fr); gap: 0.6rem; align-items: center; flex: 1; }
 .grav-cardio-side { display: grid; gap: 0.5rem; min-width: 0; }
 .grav-chart .ref-multitrend > svg { max-height: 5rem; }
 
@@ -194,10 +299,8 @@
 .grav-home .ref-hazard { min-height: 0; padding: 0.3rem 0.45rem; }
 .grav-home .ref-hazard-text { min-width: 0; }
 .grav-home .ref-hazard-name { display: block; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.grav-home .grav-figure-box { zoom: 0.68; }
 .grav-home .grav-musculo-body,
 .grav-home .grav-cardio-body { align-items: start; }
-.grav-home .grav-figure-box { zoom: 0.6; }
 .grav-home .grav-phases { gap: 0.05rem; font-size: 0.8rem; }
 .grav-home .grav-transition .iso-note { white-space: nowrap; -webkit-line-clamp: 1; line-clamp: 1; }
 .grav-home .grav-checks { gap: 0.12rem; font-size: 0.8rem; }
@@ -221,11 +324,8 @@
 .grav-home .grav-training .iso-note { display: none; }
 .grav-home .grav-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0.5rem; }
 .grav-home .grav-phases li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.grav-home .grav-figure-box { zoom: 0.56; }
-.grav-home .grav-figure-box { zoom: 0.64; }
 .grav-home .grav-chart .ref-multitrend > svg { max-height: none; width: 100%; height: 4.2rem; }
 .grav-home .grav-transition-risks .ref-multitrend > svg { max-height: none; width: 100%; height: 3.4rem; }
-.grav-home .grav-figure-box { zoom: 0.6; }
 .grav-home .grav-chart .ref-multitrend > svg { height: 3.3rem; }
 .grav-home .grav-transition-risks .ref-multitrend > svg { height: 3rem; }
 .grav-home .ref-quick .ref-quick-row { width: 100%; flex: 1; }
@@ -328,8 +428,6 @@
 .grav-vessels .grav-coronary { fill: none; stroke: color-mix(in srgb, var(--c-yellow) 70%, var(--c-text)); stroke-width: 0.45; opacity: 0.85; stroke-linecap: round; }
 .grav-bones .grav-smallbones line { stroke-width: 0.85; }
 .grav-bones .grav-knuckle { fill: var(--c-text); }
-/* Vuelta 8: los cuerpos, más grandes; la fila la fija la rejilla, no ellos (medido: hasta 0,8 cabe). */
-.grav-home .grav-figure-box { zoom: 0.74; }
 /* Vuelta 9: halo de cada figura y la peana de luz bajo los pies, como en la maqueta (adorno). */
 .grav-figure[data-look="muscle"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-red) 70%, transparent)); }
 .grav-figure[data-look="bone"] :is(.ref-body-canvas, .ref-body-vector) { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c-cyan) 60%, transparent)); }
@@ -418,8 +516,6 @@
 .grav-vessels .grav-aorta { stroke-width: 2.4; }
 .grav-vessels .grav-pulmonary { stroke-width: 2.1; }
 .grav-bones .grav-bone { stroke-width: 2.2; }
-/* Vuelta 17: los cuerpos llenan su tarjeta como en la maqueta (medido: a 0,8 la pestaña no crece). */
-.grav-home .grav-figure-box { zoom: 0.8; }
 /* Vuelta 18: sin peana bajo los pies; la maqueta no la tiene (era un añadido nuestro). */
 .grav-figure-box::after { display: none; }
 /* Vuelta 19: agujeros de la pelvis apenas esbozados (no «ojos») y pulmones más abiertos. */
@@ -538,10 +634,19 @@
 .grav-vessels .grav-vein path { stroke-width: 1; opacity: 0.8; }
 /* Bucle 4, vuelta 26: en la maqueta la figura de circulación va más grande y encuadrada de la cabeza a medio muslo
    (se ven mejor el corazón y los vasos del tronco). Aquí igual: la caja recorta por abajo, con un fundido. */
-/* La caja conserva su alto (el lienzo y el dibujo de los vasos se colocan respecto a ella: al acortarla, el dibujo
-   encogía y el cuerpo no, y dejaban de casar); lo de abajo se desvanece con la máscara y el hueco se recupera con
-   el margen negativo. */
-.grav-home .grav-cardio .grav-figure-box { zoom: 1.15; margin-bottom: -102px; -webkit-mask-image: linear-gradient(to bottom, var(--c-bg) 58%, transparent 67%); mask-image: linear-gradient(to bottom, var(--c-bg) 58%, transparent 67%); }
+/* Responsivo (2026-11-16): antes, caja entera ampliada con `zoom: 1.15` y el hueco recuperado con un margen
+   negativo. Ahora la caja muestra solo ese encuadre (208 de los 310 de alto, lo que se veía) y el lienzo y el
+   dibujo de los vasos, juntos, miden el cuerpo entero y se recortan por abajo: siguen casando a cualquier
+   tamaño. El fundido es el mismo (del 58 % al 67 % del cuerpo = del 86 % al 100 % del encuadre). */
+.grav-home .grav-cardio .grav-stage { min-height: calc(15rem + var(--grav-cap)); }
+.grav-home .grav-cardio .grav-figure-box {
+  --fig-h: min(calc(100cqh - var(--grav-cap)), calc(100cqw * 208 / 152));
+  width: calc(var(--fig-h) * 152 / 208);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, var(--c-bg) 86%, transparent 100%);
+  mask-image: linear-gradient(to bottom, var(--c-bg) 86%, transparent 100%);
+}
+.grav-home .grav-cardio .grav-figure-box > :is(.ref-body-canvas, .ref-body-vector, .grav-art) { height: calc(100% * 310 / 208); bottom: auto; }
 /* Bucle 4, vuelta 27: el corazón de la maqueta es más anaranjado y claro que rojo oscuro. */
 .grav-vessels .grav-heart-mid { stop-color: oklch(from var(--c-red) calc(l - 0.07) calc(c + 0.09) calc(h + 20)); }
 .grav-vessels .grav-heart-lo { stop-color: oklch(from var(--c-red) calc(l - 0.24) calc(c + 0.07) calc(h + 8)); }

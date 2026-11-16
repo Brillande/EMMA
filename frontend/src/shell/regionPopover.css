@@ -12,7 +12,9 @@
   z-index: 30;
   top: 0;
   left: calc(100% + 0.5rem);
-  width: min(30rem, calc(100vw - 2rem));
+  /* Sin pasar del ancho que deja el asistente acoplado (`--dock-taken`, `styles.css`): con él abierto
+     la ficha se metía por debajo de su columna, que va encima. */
+  width: min(30rem, calc(100vw - var(--dock-taken, 0px) - 2rem));
   max-height: min(36rem, 80vh);
   overflow: auto;
   padding: 0.6rem 0.75rem;

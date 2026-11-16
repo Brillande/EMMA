@@ -118,17 +118,35 @@
   --span: 2;
 }
 
-:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > :is([data-ui="predictions"], [data-ui="forecast-check"])) {
-  --span: 5;
-  --span-mid: 6;
-}
-
 /* Lote «plegar» (decisión del usuario, 2026-11-15): la comprobación de proyecciones va plegada bajo la
    raya de lo secundario. Sin ella en la fila, las proyecciones toman su sitio (10 junto a las 2 de las
-   notas; en el intermedio, todo el ancho) en vez de dejar un hueco de 5 columnas. */
-:where(.app[data-look="reference"]) #ground-panel-received:not(:has([data-ui="forecast-check"])) > .slot:has(> .slot-body > [data-ui="predictions"]) {
+   notas; en el intermedio, todo el ancho) en vez de dejar un hueco de 5 columnas.
+   Lote «responsivo» (2026-11-16): desplegada, la comprobación tampoco vuelve a esa fila —la raya va
+   entre las dos—, así que la regla ya no espera a que falte. Antes, al desplegar, las proyecciones
+   volvían a 5 columnas (6 en el intermedio) con medio tablero vacío al lado, y la comprobación, sola
+   bajo la raya, a 5 con 7 vacías (capturas a 1366 y 760 px). Ahora va a todo el ancho: el anillo a la
+   izquierda y una fila por indicador a su lado. */
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="predictions"]) {
   --span: 10;
   --span-mid: 12;
+}
+
+:where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="forecast-check"]) {
+  --span: 12;
+  --span-mid: 12;
+}
+
+/* Entre 64 y 80 rem de tablero (una ventana de 1100 a 1500 px con el carril), las notas a 2 columnas
+   medían 180 px y partían su título en dos renglones; a 3, junto a las proyecciones a 9 (que siguen
+   con sus barras al lado del texto). Por encima de 80 rem, el reparto de arriba. */
+@container board (min-width: 64.01rem) and (max-width: 80rem) {
+  :where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="ground-notes-composer"]) {
+    --span: 3;
+  }
+
+  :where(.app[data-look="reference"] #ground-panel-received) > .slot:has(> .slot-body > [data-ui="predictions"]) {
+    --span: 9;
+  }
 }
 
 @container board (min-width: 64.01rem) {
@@ -139,6 +157,68 @@
 
   :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received .panel[data-ui="received-state"] > .domains > .domain:has(> .drivers) {
     grid-column: span 2;
+  }
+}
+
+/* ---- Lote «responsivo» (2026-11-16): plegado, lo que queda llena la vista ----
+   Lo que se vio (capturas del 2026-11-16 a 2560 × 1440, plegado): bajo la raya quedaban 370 px de
+   tablero vacío, porque la regla común (`referenceDashboard.css`) estira la sección hasta el pie de la
+   ventana (`--fold-fill`) pero las filas, todas `auto` y con `align-content: start`, no lo recogían. Aquí
+   las filas se escriben enteras —la cabecera de la sección (`.board-frame-h`), el estado, los cinco
+   peligros, las notas, las proyecciones y la raya— y la flexible es la de las proyecciones: el sobrante
+   va a la fila de abajo, con las proyecciones siempre arriba y a la vista (nada se estira por encima de
+   ellas). Con el cuerpo ancho las notas y las proyecciones van en la misma fila: las dos cruzan la cuarta
+   y la quinta (la cuarta queda en cero) y llegan juntas al pie. En el intermedio y el estrecho, cada una
+   en su fila, y crecen las proyecciones. Una consulta de contenedor no alcanza al propio `.section-body`,
+   así que la tabla de filas va por `data-folded` y la colocación de cada panel, en la consulta.
+   Solo con las cinco piezas presentes (sin estado recibido no hay raya; un panel que falta movería las
+   filas): si falta una, el tablero mide lo que su contenido, como antes. Desplegado, nada cambia. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="received-state"]):has(> .slot > .slot-body > [data-ui="hazards"]):has(> .slot > .slot-body > [data-ui="ground-notes-composer"]):has(> .slot > .slot-body > [data-ui="predictions"]) {
+  grid-template-rows: auto auto auto auto 1fr auto;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="received-state"]):has(> .slot > .slot-body > [data-ui="hazards"]):has(> .slot > .slot-body > [data-ui="ground-notes-composer"]):has(> .slot > .slot-body > [data-ui="predictions"]) > .slot:has(> .slot-body > [data-ui="ground-notes-composer"]) {
+  grid-row: 4;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="received-state"]):has(> .slot > .slot-body > [data-ui="hazards"]):has(> .slot > .slot-body > [data-ui="ground-notes-composer"]):has(> .slot > .slot-body > [data-ui="predictions"]) > .slot:has(> .slot-body > [data-ui="predictions"]) {
+  grid-row: 5;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="received-state"]):has(> .slot > .slot-body > [data-ui="hazards"]):has(> .slot > .slot-body > [data-ui="ground-notes-composer"]):has(> .slot > .slot-body > [data-ui="predictions"]) > .slot:has(> .slot-body > .ref-divider) {
+  grid-row: 6;
+}
+
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="received-state"]):has(> .slot > .slot-body > [data-ui="hazards"]):has(> .slot > .slot-body > [data-ui="ground-notes-composer"]):has(> .slot > .slot-body > [data-ui="predictions"]) > .slot:has(> .slot-body > :is([data-ui="ground-notes-composer"], [data-ui="predictions"])) {
+    grid-row: 4 / span 2;
+  }
+}
+
+/* «Historial», plegado (mismo lote): sobre la raya solo quedan las tres historias llegadas, tarjetas
+   cortas en el escenario en curso (120 px), y a 1672 × 941 dejaban 580 px de tablero vacío. Las tres
+   reparten el alto a partes iguales: con el cuerpo ancho, en su fila de tres, cruzan las tres filas
+   flexibles y llegan juntas al pie; en el intermedio y el estrecho, una bajo otra, cada una en la suya. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-history[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="ultrasound-received"]):has(> .slot > .slot-body > [data-ui="pain-history"]):has(> .slot > .slot-body > [data-ui="ground-mission-history"]) {
+  grid-template-rows: auto 1fr 1fr 1fr auto;
+}
+
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-history[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="ultrasound-received"]):has(> .slot > .slot-body > [data-ui="pain-history"]):has(> .slot > .slot-body > [data-ui="ground-mission-history"]) > .slot:has(> .slot-body > .ref-divider) {
+  grid-row: 5;
+}
+
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-history[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="ultrasound-received"]):has(> .slot > .slot-body > [data-ui="pain-history"]):has(> .slot > .slot-body > [data-ui="ground-mission-history"]) > .slot:has(> .slot-body > :is([data-ui="ultrasound-received"], [data-ui="pain-history"], [data-ui="ground-mission-history"])) {
+    grid-row: 2 / span 3;
+  }
+}
+
+/* Lote «responsivo» (2026-11-16): de 64 a 80 rem de tablero, las tarjetas de dominio a cinco por fila
+   medían 150 px en sus 9 columnas y partían «Neuro-ocular» y «Musculoesquelético» (captura a 1366 px);
+   ahí, cuatro por fila. Va después de la regla de cinco para ganarle con la misma especificidad. */
+@container board (min-width: 64.01rem) and (max-width: 80rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-received .panel[data-ui="received-state"] > .domains {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -189,6 +269,15 @@
 :where(.app[data-look="reference"]:not([data-low-vision="on"]) #ground-panel-habitat) .panel[data-ui="habitat"] > .hypotheses:not([role]):has(+ .grid-2) {
   align-self: stretch;
   grid-auto-rows: 1fr;
+}
+
+/* Plegado (lote «responsivo», 2026-11-16): sin las preguntas de los gemelos quedan la cabecera de la
+   sección, el nivel de misión, el hábitat y la raya, cada uno a todo el ancho (las parejas de
+   `mission.css` piden que estén las preguntas). El sobrante, si lo hay, va al hábitat, que es el
+   estado que Tierra vigila: el nivel no se estira. Con el escenario en curso el hábitat mide más que
+   la vista (1250-2300 px) y esto no cambia nada; cuenta con poco llegado o en pantallas altas. */
+:where(.app[data-look="reference"]:not([data-low-vision="on"])) #ground-panel-habitat[data-folded="true"]:has(> .board-frame-h):has(> .slot > .slot-body > [data-ui="mission-level"]):has(> .slot > .slot-body > [data-ui="habitat"]):not(:has(> .slot > .slot-body > [data-ui="twin-questions"])) {
+  grid-template-rows: auto auto 1fr auto;
 }
 
 /* Las preguntas de los gemelos, en la columna estrecha: el título de cada una a la letra del cuerpo
@@ -281,6 +370,17 @@
   border-bottom: 1px solid color-mix(in srgb, var(--ref-edge) 45%, transparent);
   font-size: 0.875rem;
   line-height: 1.25;
+}
+
+/* A todo el ancho (bajo la raya, lote «responsivo»), una sola columna de filas estiraba el nombre a
+   2000 px con el tramo y la marca en la otra punta: con más de 64 rem de tablero, las filas en
+   columnas de al menos 24 rem, cada nombre cerca de su tramo. */
+@container board (min-width: 64.01rem) {
+  :where(.app[data-look="reference"]) .panel[data-ui="forecast-check"] .forecast-rows {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+    column-gap: 1.4rem;
+    align-content: start;
+  }
 }
 
 /* Sin tramo (todo a cero), la marca sigue en la última columna. */

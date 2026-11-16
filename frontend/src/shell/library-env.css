@@ -676,3 +676,60 @@
   font-size: 0.875rem;
   line-height: 1.35;
 }
+
+/* ---- Lo plegado deja sitio (lote «responsivo», 2026-11-16) ----
+
+   Con las notas de la matriz y las páginas leídas plegadas (la raya `env`, dentro del panel), la
+   sección lleva `data-folded` y el alto libre hasta el pie de la ventana (`--fold-fill`), pero el
+   panel seguía midiendo lo suyo: a 1672 × 941 quedaban 100 px vacíos debajo y a 2560 × 1440 unos
+   800 (capturas). Aquí ese alto pasa al panel (la fila de debajo de la cabecera del tablero es
+   flexible) y, dentro, a los mosaicos de los aspectos, que es lo que queda: sus filas se estiran a
+   partes iguales y cada mosaico centra lo suyo; la raya baja al pie. Las dos consolas y todos los
+   entornos comparten la raya, así que la regla es la misma para todas las pestañas `env-*`.
+
+   Sin sitio libre (ventana baja, cuerpo estrecho) el `1fr` y el crecimiento miden cero y todo queda
+   como plegado sin esto. Desplegado, nada cambia. El panel pasa a columna flexible solo plegado, y
+   sus hijos pierden el margen de arriba para que el hueco entre ellos sea el de siempre (en una
+   columna flexible los márgenes no se funden). */
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"]) {
+  grid-template-rows: auto minmax(auto, 1fr);
+}
+
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"])
+  .panel[data-ui="environment-profile"] {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"])
+  .panel[data-ui="environment-profile"]
+  > * + * {
+  margin-top: 0;
+}
+
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"])
+  .panel[data-ui="environment-profile"]
+  > dl.environment-aspects {
+  flex: 1 0 auto;
+  align-content: stretch;
+}
+
+/* Cuerpo muy ancho (≥ 100 rem, una pantalla de 2560 px): los diez aspectos en dos filas de cinco y no
+   en una de diez. En una sola fila, cada mosaico se estiraba a 970 px de alto: columnas vacías con el
+   dibujo perdido en medio (captura). Un tope de alto por fila (`minmax(auto, 20rem)`) se probó y no
+   vale: con el alto del panel aún sin fijar, las filas crecían al tope y el panel se salía de la
+   ventana a 1672 × 941. */
+@container board (min-width: 100rem) {
+  :where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"])
+    .panel[data-ui="environment-profile"]
+    > dl.environment-aspects {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+:where(.app[data-look="reference"] :is([id^="crew-panel-env-"], [id^="ground-panel-env-"])[data-folded="true"])
+  .panel[data-ui="environment-profile"]
+  dl.environment-aspects
+  > div {
+  align-content: center;
+}

@@ -29,7 +29,14 @@
 .rad-home .rad-shielding { grid-column: span 4; }
 .rad-home .rad-recommendations { grid-column: span 3; }
 
-@media (max-width: 1400px) {
+/*
+ * Lote «responsivo» (2026-11-16): los repartos se miden por el ancho del tablero (`@container
+ * ref-board`), no por la ventana. El tablero es la ventana menos el carril (15,5 rem) y menos el
+ * asistente acoplado; con `@media (max-width: 1400px)` una ventana de 1500 px y el asistente abierto
+ * dejaba ~850 px para cuatro tarjetas por fila. Umbrales: rejilla ancha desde 1250 px de tablero
+ * (ventana de ~1500 sin asistente), por parejas por debajo y todo a lo ancho por debajo de 640 px.
+ */
+@container ref-board (max-width: 1249px) {
   .rad-home .rad-spectrum,
   .rad-home .rad-exposure,
   .rad-home .rad-route,
@@ -47,10 +54,6 @@
   .rad-home .rad-tests,
   .rad-home .rad-management,
   .rad-home .rad-recommendations { grid-column: span 6; }
-}
-
-@media (max-width: 900px) {
-  .rad-home > * { grid-column: span 12 !important; }
 }
 
 .rad-home small {
@@ -690,7 +693,7 @@
   margin: 0.15rem 0 0;
 }
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1249px) {
   .rad-home .rad-status-col,
   .rad-home .rad-effects,
   .rad-home .rad-crew { grid-column: span 6; }
@@ -706,9 +709,10 @@
   font-size: 0.92rem;
 }
 
-/* A ≤1400 px, por parejas que suman 12 en el orden de la tabla (ronda 5): sin tarjetas huérfanas. */
+/* Tablero estrecho (< 1250 px), por parejas que suman 12 en el orden de la tabla (ronda 5): sin
+   tarjetas huérfanas. */
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1249px) {
   .rad-home .rad-spectrum { grid-column: span 7; }
   .rad-home .rad-sources { grid-column: span 5; }
   .rad-home .rad-status-col { grid-column: span 5; }
@@ -725,10 +729,6 @@
   .rad-home .rad-space-weather { grid-column: span 7; }
   .rad-home .rad-shielding { grid-column: span 7; }
   .rad-home .rad-recommendations { grid-column: span 5; }
-}
-
-@media (max-width: 900px) {
-  .rad-home > * { grid-column: span 12 !important; }
 }
 
 /* Ronda 7 (2026-11-14, «la foto de ejemplo tiene bastantes más cosas»). */
@@ -1152,18 +1152,116 @@
  * Lo secundario plegado bajo la raya (decisión del usuario, 2026-11-15). El orden de la rejilla
  * cambió: arriba lo de un vistazo, abajo el fondo. Estos repartos hacen que cada lado sume 12 por
  * fila sin depender del otro, porque con la raya plegada lo de abajo no existe. La raya ocupa su fila
- * entera (`.ref-divider`, `grid-column: 1 / -1`); a ≤900 px la regla `> *` le da también las 12.
+ * entera (`.ref-divider`, `grid-column: 1 / -1`).
  */
 
-@media (min-width: 1401px) {
+@container ref-board (min-width: 1250px) {
   /* Arriba: fuentes 3 + estado 2 + ahora 3 + dosis 4 | exposición 5 + límites 3 + refugio 4 | recomendaciones. */
   .rad-home .rad-recommendations { grid-column: span 12; }
   /* Abajo: espectro 4 + efectos 5 + pruebas 3 | tripulante 4 + ruta 5 + gestión 3 | historial 4 + series 8. */
   .rad-home .rad-space-weather { grid-column: span 8; }
 }
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1249px) {
   /* Por parejas en el nuevo orden: fuentes 7 + estado 5 … y abajo espectro 5 + efectos 7. */
   .rad-home .rad-sources { grid-column: span 7; }
   .rad-home .rad-spectrum { grid-column: span 5; }
+}
+
+/*
+ * Tablero de menos de 640 px (ventana estrecha, o media con el asistente acoplado): todo a lo ancho.
+ * Antes era `.rad-home > *`, que no alcanzaba a los paneles: cada uno va dentro del `Slot` de
+ * `ConsoleTabs` (`display: contents`), así que el hijo directo no es la celda. Se nombran las
+ * celdas; los paneles de dentro de la columna de estado no son celdas y no se tocan.
+ */
+@container ref-board (max-width: 639px) {
+  .rad-home :is(.ref-places, .ref-subplace, .rad-nav, .rad-sources, .rad-status-col, .rad-weather-now, .rad-dosimetry, .rad-exposure, .rad-limits, .rad-shielding, .rad-recommendations, .rad-spectrum, .rad-effects, .rad-tests, .rad-crew, .rad-route, .rad-management, .rad-history, .rad-space-weather) {
+    grid-column: span 12;
+  }
+}
+
+/*
+ * Lo plegado deja sitio (lote «responsivo», 2026-11-16): con lo secundario plegado, la raya pone en la
+ * sección `data-folded` y `--fold-fill`, y `referenceDashboard.css` la estira hasta el pie de la
+ * ventana. Sin esto, ese alto quedaba vacío bajo la raya. Aquí se reparte entre los paneles de arriba.
+ *
+ * Las filas: ubicación y anclas a su medida (`max-content`, que no se estira); las dos siguientes —
+ * las dos filas de tarjetas de la rejilla ancha (fuentes, estado, entorno, dosis | exposición,
+ * límites, refugio)— se quedan con el alto libre, a partes iguales. Son las únicas `auto`, y
+ * `align-content: stretch` solo estira esas; con `1fr` no valía: sin alto libre, la rejilla igualaba
+ * las dos filas a la más alta y alargaba la página. Las recomendaciones y la raya siguen a su medida
+ * (`grid-auto-rows`), así la raya acaba al pie. El número de filas no depende del ancho: en la
+ * rejilla por parejas crecen las dos primeras (fuentes y estado | entorno y dosis), y apilado no
+ * sobra alto. La plantilla va sobre la propia sección, que es
+ * el contenedor: ahí no llega una consulta `@container`, y no hace falta.
+ *
+ * Dentro de cada tarjeta crece lo que admite crecer —listas que se reparten el alto, la curva de la
+ * tasa de dosis, la tabla de límites, la columna de planetas—; nada cambia de texto ni de color.
+ * Desplegado no hay `data-folded` y todo mide lo de siempre.
+ */
+.section-body.ref-home.rad-home[data-folded="true"] {
+  grid-template-rows: max-content max-content auto auto;
+  grid-auto-rows: max-content;
+  align-content: stretch;
+}
+
+.rad-home[data-folded="true"] :is(.rad-sources, .rad-weather-now, .rad-dosimetry, .rad-exposure, .rad-limits, .rad-shielding) {
+  display: flex;
+  flex-direction: column;
+}
+
+.rad-home[data-folded="true"] .rad-source-list {
+  flex: 1;
+  justify-content: space-evenly;
+}
+
+.rad-home[data-folded="true"] .rad-levels ul {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.rad-home[data-folded="true"] .rad-weather-now .rad-kv {
+  flex: 1;
+  align-content: space-evenly;
+}
+
+/* La dosimetría: la fila de la curva se queda con lo que sobra y la curva la llena. */
+.rad-home[data-folded="true"] .rad-dose-grid {
+  flex: 1;
+  align-items: stretch;
+}
+
+.rad-home[data-folded="true"] .rad-dosimetry .rad-kv {
+  grid-template-rows: auto minmax(1.4rem, 1fr);
+}
+
+/* La curva, absoluta en su celda: así no aporta alto propio (por su `viewBox` pediría más sin sitio). */
+.rad-home[data-folded="true"] .rad-dosimetry .rad-spark-row {
+  position: relative;
+  align-self: stretch;
+  min-height: 1.4rem;
+}
+
+.rad-home[data-folded="true"] .rad-dosimetry .rad-spark-row .ref-spark {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+
+.rad-home[data-folded="true"] .rad-ring-col {
+  justify-content: center;
+}
+
+.rad-home[data-folded="true"] .rad-places {
+  flex: 1;
+}
+
+.rad-home[data-folded="true"] .rad-limits .rad-table {
+  flex: 1;
+}
+
+.rad-home[data-folded="true"] .rad-shield-grid {
+  flex: 1;
 }

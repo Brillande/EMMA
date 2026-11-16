@@ -353,6 +353,15 @@ que el pliegue tiene tres límites:
 - **Reversible y recordado por equipo** (`emma.fold.<pestaña>`); plegar no cambia ningún dato. Los
   accesos que llevan a un panel plegado (navegación de «Radiación») lo despliegan antes de ir.
 
+**Lo plegado deja sitio y el tablero se mide por su ancho** (decisión del usuario, 2026-11-16: «hazlo
+responsivo porque hay partes que se descuadran, y [cuando] el botón oculta algo lo que queda se adapta
+para ocupar lo que hay de pantalla»). Con lo secundario plegado, la raya marca su `.section-body` con
+`data-folded="true"` y `--fold-fill` (el alto libre hasta el pie de la ventana) y cada hoja reparte ese
+alto entre lo que queda; desplegado, el tablero mide lo que mida su contenido. Los repartos de columnas
+de los tableros de referencia se deciden con `@container ref-board` (el ancho del tablero, sin el carril
+ni el asistente acoplado) y no con `@media` de ventana, que era lo que descuadraba entre ~1000 y
+~1700 px. Crecer no cambia ni la letra mínima ni el significado de nada: solo cuánto sitio ocupa.
+
 ## 3. Los referentes
 
 ### NASA Orion (Artemis II)

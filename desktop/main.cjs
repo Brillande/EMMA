@@ -583,7 +583,9 @@ function loadStartupScenario(port) {
         host: LOOPBACK,
         port,
         method: "POST",
-        path: `/api/simulate?scenario=${encodeURIComponent(STARTUP_SCENARIO)}`,
+        // Con el TAC de ejemplo del hígado ya segmentado (decisión del usuario, 2026-11-15: «tiene
+        // que salir precargado» en «Distancia y nodos»; el mismo que pide la consola).
+        path: `/api/simulate?scenario=${encodeURIComponent(STARTUP_SCENARIO)}&volume_sample=higado-1`,
         headers: { "X-EMMA-Console": "1" },
         timeout: 120_000,
       },

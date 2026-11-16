@@ -513,26 +513,28 @@ export function GroundConsole({
   ];
 
   return (
-    <>
-      <DelayBanner
-        oneWay={oneWay}
-        earthMet={earthMet}
-        onboardMet={onboardMet}
-        link={link}
-        linkError={early?.error ?? null}
-        sync={sync}
-      />
-      <ConsoleTabs
-        id="ground"
-        label={tr("Secciones de la consola de Tierra", "Ground console sections")}
-        sections={sections}
-        counts={counts}
-        header={<ActiveEnvironment profile={status.mission.profile} />}
-        headerGroup={ENVIRONMENTS_GROUP}
-        stored={section}
-        onChoose={setSection}
-      />
-    </>
+    <ConsoleTabs
+      id="ground"
+      label={tr("Secciones de la consola de Tierra", "Ground console sections")}
+      sections={sections}
+      counts={counts}
+      header={<ActiveEnvironment profile={status.mission.profile} />}
+      headerGroup={ENVIRONMENTS_GROUP}
+      // El retardo encabeza la columna de los tableros, no la página: así el carril empieza donde el
+      // de la tripulación y no se sale de la ventana (lote «responsivo», 2026-11-16).
+      lead={
+        <DelayBanner
+          oneWay={oneWay}
+          earthMet={earthMet}
+          onboardMet={onboardMet}
+          link={link}
+          linkError={early?.error ?? null}
+          sync={sync}
+        />
+      }
+      stored={section}
+      onChoose={setSection}
+    />
   );
 }
 

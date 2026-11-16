@@ -41,6 +41,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from app import polaris
+from app.core import i18n
 from app.volumes import geometry
 
 VOXEL_MM = 2.0
@@ -192,6 +193,40 @@ PRESETS: dict[str, Preset] = {
         ram_gb_fixed=6.0,
     ),
 }
+
+
+def _bone_english(mask: str) -> str:
+    """"vertebrae_T5" → "T5 vertebra"; "rib_left_3" → "Left rib 3"."""
+    if mask.startswith("vertebrae_"):
+        return f"{mask.removeprefix('vertebrae_')} vertebra"
+    if mask.startswith("rib_"):
+        _, side, number = mask.split("_")
+        return f"{side.capitalize()} rib {number}"
+    bone, _, side = mask.partition("_")
+    name = {"clavicula": "clavicle", "hip": "hip bone"}.get(bone, bone)
+    return f"{side.capitalize()} {name}" if side else name.capitalize()
+
+
+# El inglés de lo que la consola enseña de una segmentación (decisión del usuario, 2026-11-15: la
+# interfaz en inglés no enseña el hígado en castellano). Lo firmado sigue en castellano; el inglés
+# se pone al servir, con `i18n.loc` (`api/volumes.py: _localized`).
+i18n.en_many({
+    "Hígado": "Liver",
+    "Vasos hepáticos": "Hepatic vessels",
+    "Porta y esplénica": "Portal and splenic veins",
+    "Vena cava inferior": "Inferior vena cava",
+    "Vesícula": "Gallbladder",
+    "Órbitas y nervios ópticos": "Orbits and optic nerves",
+    "Globo ocular derecho": "Right eyeball",
+    "Globo ocular izquierdo": "Left eyeball",
+    "Cristalino derecho": "Right lens",
+    "Cristalino izquierdo": "Left lens",
+    "Nervio óptico derecho": "Right optic nerve",
+    "Nervio óptico izquierdo": "Left optic nerve",
+    "Esqueleto (TAC de cuerpo entero)": "Skeleton (whole-body CT)",
+    UNVALIDATED: "automatic segmentation, not validated",
+    **{bone_display(mask): _bone_english(mask) for mask in BONES},
+})
 
 MaskLoader = Callable[[str], NDArray[np.bool_] | None]
 

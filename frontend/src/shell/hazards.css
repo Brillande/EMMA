@@ -367,6 +367,34 @@
   box-shadow: 0 0 4px var(--ref-glow);
 }
 
+/* «Qué cuesta comprobarlo» (`alert-check-cost`) va dentro de la línea de una recomendación. En la fila
+   flexible quedaba como un elemento más, apretado a la derecha del texto (111 px a 760 de ventana), y
+   su lista se salía del panel y la recortaba la concha. Baja a su propia línea, a lo ancho (lote
+   «responsivo», 2026-11-16). */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers > li {
+  flex-wrap: wrap;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row .drivers > li > details {
+  flex: 1 0 100%;
+  min-width: 0;
+}
+
+/* Y sus líneas se leen como texto corrido, no como fila flexible: el nombre del indicador, lo que se
+   sabe y lo que falta se parten por palabras dentro del ancho del panel. El punto sigue al margen. */
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row details .drivers > li {
+  display: block;
+  position: relative;
+  padding-left: 0.95rem;
+}
+
+:where(.app[data-look="reference"] .panel[data-ui="alerts"]) .alert-row details .drivers > li::before {
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  margin-top: 0.3em;
+}
+
 /* Lo que se dijo sobre la alerta (suprimida, inhibida, descartada), en una caja aparte de los motivos;
    no tenía borde, así que aquí nace. */
 :where(.app[data-look="reference"] .panel[data-ui="alerts"]) .annunciation,
@@ -803,10 +831,12 @@
   font-size: 1.5rem;
 }
 
-/* Cuerpo de menos de 66 rem (a 1300 px de ventana mide unos 1000 px): a un quinto de siete columnas
+/* Cuerpo de menos de 68 rem (a 1300 px de ventana mide unos 1000 px): a un quinto de siete columnas
    cada baldosa medía 108 px, con la unidad y el rótulo partidos (visto en captura). Ahí vuelve el
-   reparto de antes: 6 + 6 y las baldosas en dos filas (2 + 3). */
-@container board (max-width: 66rem) {
+   reparto de antes: 6 + 6 y las baldosas en dos filas (2 + 3). El corte era 66 rem; a 1366 px de
+   ventana el cuerpo mide unos 1070 px (66,9 rem) y las cinco baldosas en fila partían «40,0 de 180»
+   y «computed locally» en tres renglones (captura del lote «responsivo», 2026-11-16): sube a 68. */
+@container board (max-width: 68rem) {
   :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(> .slot-body > [data-ui="summary"]),
   :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(.stat-tiles) {
     --span: 6;
@@ -826,8 +856,17 @@
   }
 }
 
-/* Cuerpo estrecho: vuelve el reparto automático de `styles.css` (dos o una por fila). */
+/* Cuerpo estrecho: vuelve el reparto automático de `styles.css` (dos o una por fila). Y el resumen y
+   las baldosas, uno encima del otro a todo el ancho (lote «responsivo», 2026-11-16): a 6 + 6 entre
+   44 y 48 rem (ventanas de 1024 y de 760 px) las baldosas iban de dos en dos en su media fila, con la
+   quinta sola y un hueco al lado; a lo ancho caben las cinco en una fila. */
 @container board (max-width: 48rem) {
+  :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(> .slot-body > [data-ui="summary"]),
+  :where(.app[data-look="reference"] #crew-panel-hazards) > .slot:has(.stat-tiles) {
+    --span: 12;
+    --span-mid: 12;
+  }
+
   :where(.app[data-look="reference"] #crew-panel-hazards) .stat-tile:nth-child(n) {
     grid-column: auto;
   }
@@ -930,4 +969,45 @@
   flex: 1 1 4rem;
   width: 4rem;
   min-width: 4rem;
+}
+
+/* ==== Lo plegado deja sitio (lote «responsivo», 2026-11-16) ====
+
+   Con «Qué hacer» plegado bajo su raya, `FoldDivider` marca la sección con `data-folded` y
+   `--fold-fill` (el alto libre hasta el pie de la ventana), y `referenceDashboard.css` le da ese alto
+   mínimo. Sin reparto, el sobrante quedaba debajo de la raya: a 2560 × 1440, unos 500 px de nada
+   bajo «Alertas activas» (captura). Aquí va a las alertas, que es lo que queda abajo y lo que nunca
+   se pliega: su fila es la única flexible y la raya baja al pie de la ventana.
+
+   Filas escritas en la propia sección porque una consulta de contenedor no alcanza a la rejilla que
+   la contiene: 1 la cabecera del tablero, 2 y 3 el resumen y las baldosas (en cuerpo ancho comparten
+   fila y abarcan las dos; en estrecho, una cada uno), 4 los peligros, 5 las alertas (`1fr`) y 6 la
+   raya. El `1fr` se mide contra el alto mínimo de la sección: sin sitio libre (ventana baja, muchas
+   alertas) mide lo de siempre. Con una recomendación inmediata no hay raya ni `data-folded`, y nada
+   de esto rige. */
+:where(.app[data-look="reference"] #crew-panel-hazards[data-folded="true"]) {
+  grid-template-rows: auto auto auto auto minmax(auto, 1fr) auto;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards[data-folded="true"]) > .slot:has(> .slot-body > [data-ui="alerts"]) {
+  grid-row: 5;
+}
+
+:where(.app[data-look="reference"] #crew-panel-hazards[data-folded="true"]) > .slot:has(> .slot-body > .ref-divider) {
+  grid-row: 6;
+}
+
+/* Las alertas, estiradas: su contenido sigue arriba, en el orden de siempre, y el marco llega al pie. */
+:where(.app[data-look="reference"] #crew-panel-hazards[data-folded="true"]) .panel[data-ui="alerts"] {
+  align-content: start;
+}
+
+/* Cuerpo ancho (> 48 rem, donde el resumen y las baldosas comparten fila): los dos abarcan las filas 2
+   y 3, así la 3 no deja hueco. Con baja visión `board.css` los pone a todo el ancho, uno encima del
+   otro, y se quedan en una fila cada uno. */
+@container board (width > 48rem) {
+  :where(.app[data-look="reference"]:not([data-low-vision="on"]) #crew-panel-hazards[data-folded="true"])
+    > .slot:is(:has(> .slot-body > [data-ui="summary"]), :has(.stat-tiles)) {
+    grid-row: 2 / span 2;
+  }
 }

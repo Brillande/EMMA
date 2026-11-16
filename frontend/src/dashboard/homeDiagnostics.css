@@ -9,13 +9,16 @@
  * que es dato (`--lvl`, las marcas) conserva el color de su tabla.
  */
 
-/* Reparto: a la izquierda de «Ayuda urgente», como en la maqueta; debajo de 1400 px, a lo ancho. */
+/* Reparto: a la izquierda de «Ayuda urgente», como en la maqueta; con un tablero de 1120 px o menos,
+   a lo ancho. Los cortes miden el tablero (`@container ref-board`, lote «responsivo», 2026-11-16), no
+   la ventana: el carril y el asistente acoplado le quitan ancho (1400 / 1100 / 640 px de ventana eran
+   1120 / 820 / 360 de tablero sin asistente). */
 
 .dx-frame {
   grid-column: span 9;
 }
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1120px) {
   .dx-frame { grid-column: span 12; }
 }
 
@@ -25,11 +28,11 @@
   gap: 0.4rem;
 }
 
-@media (max-width: 1100px) {
+@container ref-board (max-width: 820px) {
   .dx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 640px) {
+@container ref-board (max-width: 360px) {
   .dx-grid { grid-template-columns: 1fr; }
 }
 
@@ -315,7 +318,7 @@ button.dx-test:focus-visible {
   justify-content: center;
 }
 
-@media (max-width: 1400px) {
+@container ref-board (max-width: 1120px) {
   :where(.app[data-look="reference"]) .section-body.ref-home .ref-emergency.ref-emergency-side { grid-column: span 12; }
 }
 

@@ -130,6 +130,7 @@ from app.ingest.simulator import (
     evidence_report,
 )
 from app.ingest.wearable import BLE_RR_WINDOW, EARLIEST_IMPORTED_READING, WearableAdapter
+from app.volumes.samples import catalog as sample_catalog
 
 router = APIRouter()
 
@@ -1942,6 +1943,11 @@ def load_simulation(
     # primer dia de la regla) para ver en la consola el ajuste por fase. El simulador no firma
     # inicios de regla ni el sexo: se declaran aparte, como los declararia la tripulante.
     cycle: bool = False,
+    # TAC DE EJEMPLO PRECARGADO (decisión del usuario, 2026-11-15: el hígado «tiene que salir
+    # precargado» en «Distancia y nodos»). Una clave de `GET /api/volumes/samples`: se registra
+    # para crew-01, con su segmentación, dentro del mismo almacén que el escenario; así un cambio
+    # de escenario no lo pierde. Sin ella, como siempre: ningún volumen.
+    volume_sample: str | None = Query(default=None, min_length=1),
 ) -> dict[str, Any]:
     """Carga una serie simulada en el almacen, o lo sustituye por una nueva.
 
@@ -1983,7 +1989,16 @@ def load_simulation(
             for item in simulators
         )
         cabin_count = len(target.record_habitat(list(cabin.generate(days=days)), identity))
+        if volume_sample is not None:
+            # Importado aquí: `api/volumes.py` importa este módulo.
+            from app.api.volumes import record_sample
+
+            record_sample(target, volume_sample, simulator.crew.subject_id)
         return count, cabin_count
+
+    if volume_sample is not None and volume_sample not in {s.key for s in sample_catalog()}:
+        # Antes de sembrar nada: una clave mala no deja el almacén a medias.
+        raise HTTPException(status_code=404, detail=f"no hay ejemplo {volume_sample!r}")
 
     described = {
         **simulator.describe(),

@@ -58,7 +58,7 @@ describe("la consola la manda", () => {
     const fetched = stubFetch({ recorded: 1, replaced: true });
     await api.simulate("nominal", true);
     const [url, init] = fetched.mock.calls[0] ?? [];
-    expect(url).toBe("/api/simulate?scenario=nominal&replace=true");
+    expect(url).toBe("/api/simulate?scenario=nominal&replace=true&volume_sample=higado-1");
     expect(headerOf(init)).toBe(CONSOLE_HEADER_VALUE);
   });
 

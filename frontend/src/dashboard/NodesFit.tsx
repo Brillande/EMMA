@@ -63,6 +63,18 @@ export function nextZoom(available: number, measured: number, zoom: number): num
   return Math.min(1, Math.max(FIT_MIN, available / natural));
 }
 
+/**
+ * El zoom que se aplica de verdad. Con el lote «responsivo» (2026-11-16) los repartos de las hojas se
+ * miden por el ancho del tablero (`@container ref-board`), y ese ancho depende del zoom (`room / zoom`):
+ * cerca de un umbral, encoger ensancha el tablero, la rejilla pasa a la disposición ancha y baja, el
+ * siguiente ajuste agranda, vuelve a la estrecha… y la pestaña parpadea sin fin (visto en «Gravedad» a
+ * 1707×900: 0,98 ↔ 0,93 cada 120 ms). Por eso, cuando lo único que ha cambiado es el propio tablero,
+ * el ajuste solo encoge; agrandar queda para cuando cambia la ventana o el pliegue (`mayGrow`).
+ */
+export function allowedZoom(next: number, current: number, mayGrow: boolean): number {
+  return mayGrow ? next : Math.min(next, current);
+}
+
 function clear(board: HTMLElement) {
   board.style.removeProperty("zoom");
   board.style.removeProperty("width");
@@ -84,18 +96,25 @@ export function NodesFit({ active, fixed = false }: { active: boolean; fixed?: b
       return;
     }
     let frame = 0;
+    // Lo que puede justificar agrandar: la ventana o el pliegue. Cuando cambia solo el tablero (por
+    // el propio zoom), únicamente se encoge (`allowedZoom`).
+    let lastCause: string | null = null;
     const fit = () => {
       frame = 0;
       if (window.innerWidth < FIT_FROM_WIDTH || board.offsetParent === null) {
         clear(board);
+        lastCause = null;
         return;
       }
       board.dataset.fit = "true";
+      const cause = `${window.innerWidth}x${window.innerHeight}:${board.dataset.folded ?? ""}`;
+      const mayGrow = cause !== lastCause;
+      lastCause = cause;
       let zoom = Number(board.style.zoom) || 1;
       for (let pass = 0; pass < 5; pass += 1) {
         const rect = board.getBoundingClientRect();
         const available = window.innerHeight - rect.top - BOTTOM_MARGIN_PX;
-        const next = nextZoom(available, rect.height, zoom);
+        const next = allowedZoom(nextZoom(available, rect.height, zoom), zoom, mayGrow);
         if (Math.abs(next - zoom) < 0.004) break;
         zoom = next;
         board.style.zoom = String(zoom);

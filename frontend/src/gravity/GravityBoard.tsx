@@ -489,16 +489,21 @@ export function GravMusculo({ grav }: Piece) {
               <MeasureRow key={k} grav={grav} k={k} change={k !== "loading-impacts" && k !== "ntx-telopeptide"} />
             ))}
           </ul>
-          {show.muscle && (
-            <StyledBody look="muscle" label={tr("Músculo", "Muscle")}>
-              <BodyMuscleArt figure={figure} />
-            </StyledBody>
-          )}
-          {show.bone && (
-            <StyledBody look="bone" label={tr("Esqueleto", "Skeleton")}>
-              <BodyBonesArt figure={figure} marks={marks} />
-            </StyledBody>
-          )}
+          {/* El escenario de los dos cuerpos: una caja medida (`container-type: size`) en la que cada
+              figura toma el alto que haya y su ancho por proporción, para que crezcan cuando lo
+              secundario se pliega y encojan sin salirse en tableros estrechos (lote «responsivo»). */}
+          <div className="grav-stage">
+            {show.muscle && (
+              <StyledBody look="muscle" label={tr("Músculo", "Muscle")}>
+                <BodyMuscleArt figure={figure} />
+              </StyledBody>
+            )}
+            {show.bone && (
+              <StyledBody look="bone" label={tr("Esqueleto", "Skeleton")}>
+                <BodyBonesArt figure={figure} marks={marks} />
+              </StyledBody>
+            )}
+          </div>
           <div className="grav-zones">
             <h3 className="grav-sub">{tr("Zonas con densitometría", "Sites with densitometry")}</h3>
             <ul>
@@ -573,9 +578,11 @@ export function GravCardio({ grav }: Piece) {
         <Pending item={grav.series} />
       ) : (
         <div className="grav-cardio-body">
-          <StyledBody look="vessels" label={tr("Circulación", "Circulation")}>
-            <BodyVesselsArt figure={figure} />
-          </StyledBody>
+          <div className="grav-stage">
+            <StyledBody look="vessels" label={tr("Circulación", "Circulation")}>
+              <BodyVesselsArt figure={figure} />
+            </StyledBody>
+          </div>
           <div className="grav-cardio-side">
             <ul className="iso-latest grav-list">
               <MeasureRow grav={grav} k="heart-rate" change={false} />
@@ -945,14 +952,21 @@ const FOLD_ID = "crew.gravity";
 export function gravityPanels(grav: GravityData, active: boolean, links: HomeLinks | undefined, decide?: BoardDecisions): ReactNode[] {
   const home = grav.home;
   return [
-    <NodesFit active={active} fixed />,
-    <GravExposure grav={grav} />,
-    <GravTransition grav={grav} />,
-    <HomeCrew home={home} links={links} />,
-    <GravRisk grav={grav} />,
-    <GravMusculo grav={grav} />,
-    <GravCardio grav={grav} />,
-    <GravTests grav={grav} />,
+    // El estado y los cuerpos van en un solo bloque (`.grav-main`, rejilla de 12 columnas propia)
+    // por el contrato «lo plegado deja sitio» (lote «responsivo», 2026-11-16): así es siempre la
+    // segunda fila del tablero, la que crece con lo secundario plegado, y dentro decide qué filas
+    // estiran según el ancho del tablero. `NodesFit` va dentro para no ocupar fila propia si la
+    // privacidad tapa su hueco.
+    <div className="grav-main">
+      <NodesFit active={active} fixed />
+      <GravExposure grav={grav} />
+      <GravTransition grav={grav} />
+      <HomeCrew home={home} links={links} />
+      <GravRisk grav={grav} />
+      <GravMusculo grav={grav} />
+      <GravCardio grav={grav} />
+      <GravTests grav={grav} />
+    </div>,
     <HomeQuickHazards home={home} links={links} />,
     // Lo secundario se pliega con la raya de «Inicio», plegado de inicio (decisión del usuario,
     // 2026-11-15). Arriba queda lo que dice el estado: exposición, transición, tripulación, el riesgo

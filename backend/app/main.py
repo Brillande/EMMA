@@ -152,7 +152,7 @@ app = FastAPI(
         "Apoyo a la decisión, no prescripción: el sistema informa y recomienda, "
         "no administra terapia ni sustituye el juicio clínico."
     ),
-    version="0.1.0",
+    version="0.1.4",
 )
 
 # En vuelo no hay navegador remoto: el frontend se sirve junto al backend. Esta

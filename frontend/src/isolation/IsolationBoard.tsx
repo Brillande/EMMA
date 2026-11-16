@@ -1340,8 +1340,11 @@ export function isolationPanels(iso: IsolationData, active: boolean, decide?: Bo
       <IsoSleep iso={iso} />,
       <IsoLight iso={iso} />,
       <IsoNutrition iso={iso} />,
-      <IsoTests iso={iso} />,
+      // La constancia antes que las pruebas (lote «responsivo», 2026-11-16): así la fila de sueño,
+      // luz y nutrición se cierra con ella (3 + 3 + 3 + 3) y las pruebas (6) abren la siguiente con
+      // correlaciones y recomendaciones; en el orden de antes la fila quedaba con un hueco de 3.
       <IsoProgress iso={iso} />,
+      <IsoTests iso={iso} />,
       <IsoCorrelations iso={iso} />,
       <IsoRecommendations iso={iso} decide={decide} />,
     ].map((panel) => <Folded id={FOLD}>{panel}</Folded>),

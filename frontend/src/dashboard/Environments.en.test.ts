@@ -12,10 +12,10 @@ import { describe, expect, it } from "vitest";
 import type { EphemerisCoverage, MissionProfile, ProfileMatrix, ProfileMatrixCell } from "../lib/api";
 import { language } from "../lib/i18n";
 import { REFUSED_MARK } from "../lib/marks";
+import { setFoldOpen } from "../components/SecondaryFold";
 import { ActiveEnvironment, ENV_FOLD, ENVIRONMENTS_GROUP, EnvironmentView, environmentSections } from "./Environments";
 import { AspectStatus, EphemerisCoverageView, MissionBoardWarnings, ReadDates } from "./MissionProfileView";
 import { routeFigures } from "./missionProfile";
-import { resetFoldsForTests, setFoldOpen } from "../components/SecondaryFold";
 
 const cell = (over: Partial<ProfileMatrixCell> = {}): ProfileMatrixCell => ({
   key: "comm_delay",
@@ -77,12 +77,9 @@ describe("«Entornos» en inglés", () => {
   });
 
   it("la vista de un entorno: lo propio en inglés y lo del backend tal cual", () => {
-    // Las notas de la matriz y las páginas leídas van bajo la raya de lo secundario: se abre para
-    // verlas (plegado de partida, decisión del usuario del 2026-11-15).
+    // Las notas de la matriz van bajo la raya de lo secundario (lote «plegar»): desplegada, para leerlas.
     setFoldOpen(ENV_FOLD, true);
     const html = renderToStaticMarkup(createElement(EnvironmentView, { matrix, profileId: "perfil-a", declare: async () => {} }));
-    setFoldOpen(ENV_FOLD, false);
-    resetFoldsForTests();
     // El recuento («1 de 2») lo antepone el anillo, que no es de esta unidad; aquí, su rótulo.
     expect(html).toContain('aspects read in a source"');
     expect(html).toContain('aria-label="Aspects by state"');

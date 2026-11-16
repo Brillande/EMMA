@@ -3153,6 +3153,9 @@ article.hazard > p .num {
    (`.c-*`): la regla del texto secundario los deja fuera. */
 .app[data-low-vision="on"] {
   zoom: 1.25;
+  /* Lo medido en px de la ventana (`--fold-fill`) se divide entre el `zoom` dentro de lo ampliado,
+     como las medidas del asistente: si no, el tablero plegado mediría 1,25 veces lo que queda. */
+  --shell-zoom: 1.25;
 }
 
 .app[data-low-vision="on"] .pictogram {
@@ -3346,6 +3349,10 @@ article.hazard > p .num {
   --assistant-bar-h: 68px;
   --assistant-bottom: var(--assistant-bar-h);
   --assistant-touch: 44px;
+  --dock-taken: 0px;
+  /* Lo que el asistente ocupa en la página, debajo del tablero (lote «responsivo»): lo que tapa abajo,
+     salvo cuando no va en el flujo (acoplado, o cerrado al pie de la columna del carril). */
+  --assistant-flow: var(--assistant-bottom);
 }
 
 .app[data-low-vision="on"] {
@@ -3367,11 +3374,16 @@ article.hazard > p .num {
   --assistant-bottom: var(--assistant-sheet-h);
 }
 
-@media (min-width: 1280px) {
-  .app {
-    --assistant-dock-w: 400px;
-  }
+/* Acoplado, el asistente crece con la ventana en vez de saltar de 320 a 400 px a 1280 (lote
+   «responsivo», 2026-11-16): a 1280-1400 px esos 400 px dejaban el tablero en unos 600. Ahora va de
+   288 px (1024) a 400 (desde unos 1570 px), y el tablero conserva su ancho útil en medio. Baja visión
+   sigue con sus medidas: allí todo va dividido entre el `zoom`. `--dock-taken` es lo que se lleva de
+   ancho mientras está acoplado (0 si no): el carril y las fichas flotantes se miden sin él. */
+.app:not([data-low-vision="on"]) {
+  --assistant-dock-w: clamp(288px, calc(24vw + 24px), 400px);
+}
 
+@media (min-width: 1280px) {
   .app[data-low-vision="on"] {
     --assistant-dock-w: 320px;
   }
@@ -3404,14 +3416,25 @@ article.hazard > p .num {
 }
 
 /* El carril, pegado bajo la franja, no se mete debajo de la barra o la hoja: descuenta su alto.
-   Solo cuando el carril es fijo (más de 760 px y sin la vista de lado). */
+   Solo cuando el carril es fijo (más de 760 px y sin la vista de lado). `--rail-room-below` es lo que
+   el carril deja libre abajo: en la concha de la maqueta, además, lo que la concha pone bajo el
+   tablero (`--shell-below`, `consoleShell.css`), para que el carril no sea más largo que un tablero
+   plegado que llega justo al pie y no obligue él a desplazar la página (lote «responsivo»). */
+.app {
+  --rail-room-below: var(--assistant-bottom);
+}
+
+.app[data-look="reference"] {
+  --rail-room-below: max(var(--assistant-bottom), var(--shell-below, 0px));
+}
+
 @media (min-width: 761px) {
   .app:not([data-rotation="90"]):not([data-rotation="270"]):has(> .assistant) .rail {
-    max-height: calc(100dvh - var(--strip-h, 0px) - 16px - var(--assistant-bottom));
+    max-height: calc(100dvh - var(--strip-h, 0px) - 16px - var(--rail-room-below));
   }
 
   .app[data-low-vision="on"]:not([data-rotation="90"]):not([data-rotation="270"]):has(> .assistant) .rail {
-    max-height: calc(80dvh - var(--strip-h, 0px) - 16px - var(--assistant-bottom));
+    max-height: calc(80dvh - var(--strip-h, 0px) - 16px - var(--rail-room-below));
   }
 }
 
@@ -3421,6 +3444,7 @@ article.hazard > p .num {
   .app:not([data-rotation]):has(> .assistant[data-open="true"]) {
     padding-right: var(--assistant-dock-w);
     --assistant-bottom: 0px;
+    --dock-taken: var(--assistant-dock-w);
   }
 
   .app:not([data-rotation]) > .assistant[data-open="true"] {
@@ -3432,6 +3456,28 @@ article.hazard > p .num {
     height: auto;
     border-top: 0;
     border-left: 1px solid var(--c-line);
+  }
+}
+
+/* Cerrado y con el carril al lado, en la concha de la maqueta, los mandos del asistente van al pie de
+   la columna del carril, que ya les reserva su alto (`shell/assistant-about.css`), y a su derecha la
+   franja es transparente. Aun así la barra ocupaba su alto en la página (100 px con los dos mandos)
+   debajo del pie «Acerca de», y con lo secundario plegado el tablero, que llega al pie de la ventana,
+   obligaba a desplazar (lote «responsivo», 2026-11-16). Ahora sube su propio alto con un margen
+   negativo: pegada abajo como siempre, encima del hueco del carril, sin empujar nada; el pie «Acerca
+   de» empieza a la derecha de esa columna (`consoleShell.css`). La columna de los mandos sigue el
+   ancho del carril (`--rail-w`), que ya no es fijo. */
+@media (min-width: 761px) {
+  .app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]):has(> .assistant:not([data-open="true"])) {
+    --assistant-flow: 0px;
+  }
+
+  .app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]) > .assistant:not([data-open="true"]) {
+    margin-top: calc(-1 * var(--assistant-bar-h));
+  }
+
+  .app[data-look="reference"]:not([data-rotation="90"], [data-rotation="270"]):has(.console-layout[data-rail="side"]) > .assistant:not([data-open="true"]) > .assistant-head {
+    width: calc(var(--rail-w) + 0.6rem);
   }
 }
 

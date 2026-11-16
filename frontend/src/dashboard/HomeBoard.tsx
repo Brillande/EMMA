@@ -1582,6 +1582,31 @@ export function hasNewAlert(previous: ReadonlySet<string>, current: readonly str
   return current.some((id) => !previous.has(id));
 }
 
+/** Lo que la raya toca de la sección: basta con esto para probarlo sin navegador. */
+export interface FoldRoomTarget {
+  style: Pick<CSSStyleDeclaration, "setProperty" | "removeProperty">;
+  dataset: DOMStringMap;
+}
+
+/** El alto libre bajo el tablero, en px enteros y nunca negativo: de su `top` al pie de la ventana. */
+export function foldRoom(viewportHeight: number, top: number): number {
+  return Math.max(0, Math.floor(viewportHeight - top - FILL_BOTTOM_PX));
+}
+
+/** Plegado: la sección declara el sitio que deja (`--fold-fill`, y `--home-fill` si es la que mide). */
+export function markFoldRoom(board: FoldRoomTarget, room: number, fill: boolean): void {
+  board.dataset.folded = "true";
+  if (fill) board.style.setProperty("--home-fill", `${room}px`);
+  board.style.setProperty("--fold-fill", `${room}px`);
+}
+
+/** Desplegado (o la raya se va): la sección vuelve a medir lo que mida su contenido. */
+export function clearFoldRoom(board: FoldRoomTarget, fill: boolean): void {
+  if (fill) board.style.removeProperty("--home-fill");
+  board.style.removeProperty("--fold-fill");
+  delete board.dataset.folded;
+}
+
 /**
  * El mismo separador sirve para los bloques plegables de debajo (2026-11-14, lote «reservas»):
  * «Distancia y nodos», «Diagnóstico integrado», «Reservas». Solo el primero mide `--home-fill`
@@ -1593,6 +1618,7 @@ export function HomeDivider({
   name = tr("lo secundario", "the secondary content"),
   what = tr("Rutas espaciales, divulgación y extensión", "Space routes, outreach and extension"),
   fill = true,
+  fold = false,
   pictogram = "layers-stack",
 }: {
   open: boolean;
@@ -1600,24 +1626,33 @@ export function HomeDivider({
   name?: string;
   what?: string;
   fill?: boolean;
+  /**
+   * Contrato «lo plegado deja sitio» (lote «responsivo», 2026-11-16): con lo secundario plegado,
+   * la `.section-body` lleva `data-folded="true"` y `--fold-fill` (el alto libre hasta el pie de la
+   * ventana), para que cada tablero reparta ese alto entre lo que queda. `fill` sigue siendo la
+   * medida propia de «Inicio» y «Nodos» (`--home-fill`), que ya tienen sus reglas.
+   */
+  fold?: boolean;
   pictogram?: Parameters<typeof Command>[0]["pictogram"];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Solo una raya mide: las demás no tocan la propiedad (si la borraran, desharían lo de la primera).
     // Cuando la que mide deja de medir, la limpieza de su efecto anterior la quita.
-    if (!fill) return;
+    if (!fill && !fold) return;
     const board = ref.current?.closest<HTMLElement>(".section-body");
     if (!board) return;
+    const clear = () => clearFoldRoom(board, fill);
     if (open) {
-      board.style.removeProperty("--home-fill");
+      clear();
       return;
     }
+    board.dataset.folded = "true";
     const measure = () => {
       // Escondido (otra pestaña abierta) no hay nada que medir: su `top` sería 0.
       if (board.offsetParent === null) return;
       const top = board.getBoundingClientRect().top + window.scrollY;
-      board.style.setProperty("--home-fill", `${Math.max(0, Math.floor(window.innerHeight - top - FILL_BOTTOM_PX))}px`);
+      markFoldRoom(board, foldRoom(window.innerHeight, top), fill);
     };
     measure();
     window.addEventListener("resize", measure);
@@ -1626,9 +1661,9 @@ export function HomeDivider({
     return () => {
       window.removeEventListener("resize", measure);
       observer?.disconnect();
-      board.style.removeProperty("--home-fill");
+      clear();
     };
-  }, [open, fill]);
+  }, [open, fill, fold]);
   return (
     <div ref={ref} className="ref-divider" data-open={open ? "true" : "false"} data-fill={fill ? "true" : undefined}>
       <span className="ref-divider-line" aria-hidden="true" />

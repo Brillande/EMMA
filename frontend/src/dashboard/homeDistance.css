@@ -12,7 +12,10 @@
 .ref-home .dist-comms { grid-column: span 7; }
 .ref-home .dist-sync { grid-column: span 5; }
 
-@media (max-width: 1400px) {
+/* Cortes por el ancho del tablero (`@container ref-board`, lote «responsivo», 2026-11-16): 1120 px de
+   tablero son los 1400 de ventana de antes menos el carril, y con el asistente acoplado se apila a
+   tiempo en vez de apretar las tres columnas de la distancia. */
+@container ref-board (max-width: 1120px) {
   .ref-home .dist-comms,
   .ref-home .dist-sync { grid-column: span 12; }
 }
@@ -29,7 +32,7 @@
   gap: 0.4rem;
 }
 
-@media (max-width: 900px) {
+@container ref-board (max-width: 620px) {
   .dist-grid,
   .dist-sync-grid { grid-template-columns: 1fr; }
 }

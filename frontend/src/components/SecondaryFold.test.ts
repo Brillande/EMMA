@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { PreferenceStore } from "./displayModes";
+import { type FoldRoomTarget, clearFoldRoom, foldRoom, markFoldRoom } from "../dashboard/HomeBoard";
 import { FoldDivider, Folded, foldKey, readFold, resetFoldsForTests, setFoldOpen, writeFold } from "./SecondaryFold";
 
 /**
@@ -59,5 +60,50 @@ describe("FoldDivider y Folded", () => {
     expect(renderToStaticMarkup(createElement(FoldDivider, { id: "crew.t", what: "x" }))).toContain("Ocultar lo secundario");
     expect(renderToStaticMarkup(createElement(Folded, { id: "crew.t", children: panel }))).toContain("panel secundario");
     expect(renderToStaticMarkup(createElement(Folded, { id: "crew.u", children: panel }))).toBe("");
+  });
+});
+
+describe("lo plegado deja sitio (lote «responsivo»)", () => {
+  function fakeBoard(): FoldRoomTarget & { props: Map<string, string> } {
+    const props = new Map<string, string>();
+    return {
+      props,
+      dataset: {},
+      style: {
+        setProperty: (name: string, value: string | null) => void props.set(name, value ?? ""),
+        removeProperty: (name: string) => {
+          const old = props.get(name) ?? "";
+          props.delete(name);
+          return old;
+        },
+      },
+    };
+  }
+
+  it("el alto libre va del tablero al pie de la ventana, entero y nunca negativo", () => {
+    expect(foldRoom(941, 120)).toBe(811);
+    expect(foldRoom(941, 120.7)).toBe(810);
+    expect(foldRoom(600, 900)).toBe(0);
+  });
+
+  it("plegada, la sección declara `data-folded` y `--fold-fill`; `--home-fill` solo la que mide", () => {
+    const board = fakeBoard();
+    markFoldRoom(board, 700, false);
+    expect(board.dataset.folded).toBe("true");
+    expect(board.props.get("--fold-fill")).toBe("700px");
+    expect(board.props.has("--home-fill")).toBe(false);
+    markFoldRoom(board, 650, true);
+    expect(board.props.get("--home-fill")).toBe("650px");
+  });
+
+  it("desplegada, la sección lo olvida todo; otra raya sin `fill` no borra `--home-fill`", () => {
+    const board = fakeBoard();
+    markFoldRoom(board, 700, true);
+    clearFoldRoom(board, false);
+    expect(board.dataset.folded).toBeUndefined();
+    expect(board.props.has("--fold-fill")).toBe(false);
+    expect(board.props.get("--home-fill")).toBe("700px");
+    clearFoldRoom(board, true);
+    expect(board.props.has("--home-fill")).toBe(false);
   });
 });

@@ -22,6 +22,24 @@
  * `.slot` en `display: contents`, así que ninguna regla de abajo sobre `.iso-home > …` la alcanza.
  */
 
+/*
+ * Lote «responsivo» (2026-11-16): los repartos se miden por el ancho del TABLERO (`@container
+ * ref-board`), no de la ventana. El tablero es la ventana menos el carril (15,5 rem) y menos el
+ * asistente acoplado, y con `NodesFit` (zoom 0,9) algo más ancho: a 1366 px de ventana mide unos
+ * 1090 px y a 1024, unos 750. Antes los cortes eran `@media` de ventana y además escritos como
+ * `.iso-home > …`, que no alcanzaba a ningún panel (van dentro de `.slot` en `display: contents`):
+ * por debajo de 1400 px seguían las cuatro columnas de 3 y a 760 px quedaban tarjetas de 180 px.
+ *
+ * Cuatro repartos, ninguno con huecos (cada fila suma 12):
+ *   ancho (≥ 75 rem)      cabecera 9 + estado global 3 (alto, dos filas); indicadores, riesgo y
+ *                         alertas 3 + 3 + 3; debajo, filas de cuatro paneles de 3 y la de pruebas 6 + 3 + 3.
+ *   medio (50-75 rem)     cabecera 12; estado global 4 (alto, dos filas) a la izquierda, indicadores 8
+ *                         arriba a la derecha y riesgo y alertas 4 + 4 debajo; lo secundario de 6 en 6.
+ *   dos columnas (36-50)  cabecera 12; cuatro paneles de 6 en dos filas; lo secundario igual.
+ *   estrecho (< 36 rem)   una columna.
+ * El estado global solo es alto donde tiene al lado dos filas que lo llenan: el `span 2` de antes,
+ * con las columnas apiladas, dejaba un hueco debajo de sus vecinos.
+ */
 .iso-home .iso-header { grid-column: span 9; }
 .iso-home .iso-global { grid-column: span 3; grid-row: span 2; }
 .iso-home .iso-indicators { grid-column: span 3; }
@@ -39,16 +57,42 @@
 .iso-home .iso-recommendations { grid-column: span 3; }
 .iso-home .iso-alerts { grid-column: span 3; }
 
-
-
-@media (max-width: 1400px) {
-  .iso-home > :not(.ref-places) { grid-column: span 6; grid-row: auto; }
-  .iso-home .iso-header,
+@container ref-board (max-width: 75rem) {
+  .iso-home .iso-header { grid-column: span 12; }
+  .iso-home .iso-global { grid-column: span 4; grid-row: span 2; }
+  .iso-home .iso-indicators { grid-column: span 8; }
+  .iso-home :is(.iso-risk, .iso-alerts) { grid-column: span 4; }
+  .iso-home
+    :is(.iso-trend, .iso-factors, .iso-mood, .iso-interactions, .iso-sleep, .iso-light, .iso-nutrition, .iso-progress, .iso-correlations, .iso-recommendations) {
+    grid-column: span 6;
+  }
   .iso-home .iso-tests { grid-column: span 12; }
 }
 
-@media (max-width: 900px) {
-  .iso-home > * { grid-column: span 12 !important; }
+@container ref-board (max-width: 50rem) {
+  .iso-home :is(.iso-global, .iso-indicators, .iso-risk, .iso-alerts) { grid-column: span 6; grid-row: auto; }
+}
+
+@container ref-board (max-width: 36rem) {
+  .iso-home :is([class*="iso-"].ref-card, .iso-header) { grid-column: span 12; grid-row: auto; }
+}
+
+/*
+ * Lo plegado deja sitio (lote «responsivo»): con lo secundario plegado, la sección mide hasta el pie
+ * de la ventana (`--fold-fill`, `referenceDashboard.css`) y aquí se reparte ese alto. Filas: la
+ * ubicación de «Inicio», la cabecera, DOS filas `1fr` para los cuatro paneles que quedan y la raya.
+ * En el reparto ancho los indicadores, el riesgo y las alertas ocupan las dos filas `1fr` y el estado
+ * global, además, la de la cabecera; en el medio y el de dos columnas cada par de paneles se queda
+ * con una. Estrecho, la pila ya pasa del alto de la ventana y las filas miden su contenido.
+ * Es una regla sobre la propia sección (no cabe en `@container`), y vale para todos los repartos.
+ */
+.section-body.iso-home[data-folded="true"] {
+  grid-template-rows: auto auto 1fr 1fr auto;
+}
+
+@container ref-board (width > 75rem) {
+  .section-body.iso-home[data-folded="true"] .iso-global { grid-row: span 3; }
+  .section-body.iso-home[data-folded="true"] :is(.iso-indicators, .iso-risk, .iso-alerts) { grid-row: span 2; }
 }
 
 .iso-home small { font-size: 0.74rem; font-weight: 400; }
@@ -266,7 +310,9 @@
 
 .iso-alert-list .iso-alert-act { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; }
 
-@media (max-width: 1100px) {
+/* Las pruebas van a 12 columnas salvo en el reparto ancho, así que solo el tablero estrecho las
+   aprieta: allí, tres por fila. */
+@container ref-board (max-width: 36rem) {
   .iso-test-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
@@ -528,13 +574,12 @@
 
 /* El interruptor «Ajustar a pantalla» en la fila del título (está antes en el DOM), a su izquierda. */
 .iso-home .nodes-fit { grid-column: span 2; display: flex; justify-content: flex-end; align-items: center; }
-@media (max-width: 1400px) { .iso-home .nodes-fit { display: none; } }
+@container ref-board (max-width: 75rem) { .iso-home .nodes-fit { display: none; } }
 
 .iso-home .iso-crew-art { max-height: 4.4rem; }
 .iso-home .ref-radar { max-height: 8rem; }
 .iso-home .ref-multitrend > svg { max-height: 5rem; }
 .iso-home .iso-test-name small { display: none; }
-@media (max-width: 1400px) { .iso-home .iso-header { grid-column: span 12; } }
 
 .iso-home .ref-multitrend > svg { max-height: none; }
 .iso-home .ref-multitrend-tick { font-size: 10px; }
@@ -605,3 +650,54 @@
 
 /* El ajuste va sin botón: su hueco no ocupa sitio en la rejilla. */
 .iso-home .nodes-fit[hidden] { display: none; }
+
+/*
+ * Plegado (lote «responsivo»): las tarjetas que quedan crecen con sus filas `1fr`, y su contenido se
+ * reparte el alto en vez de quedarse arriba con un hueco debajo, como los vitales de «Inicio». Solo
+ * cambia el tamaño y el espacio: ni texto, ni color, ni qué se muestra. Las gráficas con tope de
+ * alto (tendencia, radar) están todas en lo plegado, así que aquí no hay tope que soltar: crece el
+ * anillo de los indicadores y se espacian las listas.
+ */
+.section-body.iso-home[data-folded="true"] .iso-indicators { container-type: inline-size; }
+
+.section-body.iso-home[data-folded="true"] .iso-index {
+  flex: 1;
+  align-content: center;
+}
+
+.section-body.iso-home[data-folded="true"] .iso-latest { gap: 0.5rem; }
+
+/* El estado global: el bloque del nivel crece (con tope) y los recuentos bajan al pie. */
+.section-body.iso-home[data-folded="true"] .iso-global .iso-hero {
+  flex: 1 1 auto;
+  max-height: 14rem;
+  justify-content: center;
+}
+
+.section-body.iso-home[data-folded="true"] .iso-global-facts { margin-top: auto; }
+
+/* El riesgo: la píldora y la escala, juntas al centro entre el título y la nota del pie. */
+.section-body.iso-home[data-folded="true"] .iso-risk-pill { margin-top: auto; }
+.section-body.iso-home[data-folded="true"] .iso-risk-scale { margin-bottom: auto; }
+.section-body.iso-home[data-folded="true"] .iso-risk .iso-note { margin-top: 0; }
+
+/* Reparto ancho: tarjetas altas y estrechas. El anillo pasa encima de su lista y crece con el ancho
+   de la tarjeta; la píldora del riesgo y su escala, más grandes. */
+@container ref-board (width > 75rem) {
+  .section-body.iso-home[data-folded="true"] .iso-index {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-body.iso-home[data-folded="true"] .iso-index .ref-ring {
+    width: clamp(6.8rem, 55cqi, 13rem);
+    height: clamp(6.8rem, 55cqi, 13rem);
+  }
+
+  .section-body.iso-home[data-folded="true"] .iso-index .ref-ring strong { font-size: 3.4rem; }
+  .section-body.iso-home[data-folded="true"] .iso-latest { justify-self: stretch; }
+  .section-body.iso-home[data-folded="true"] .iso-risk-pill { font-size: 1.35rem; padding: 0.5rem 0.9rem; }
+  .section-body.iso-home[data-folded="true"] .iso-risk-pill svg { width: 1.5rem; height: 1.5rem; }
+  .section-body.iso-home[data-folded="true"] .iso-risk-scale ol { height: 1rem; }
+}

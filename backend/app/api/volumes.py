@@ -37,6 +37,7 @@ from app.api.routes import (
     _recorded_or_422,
     identity_for,
 )
+from app.core import i18n
 from app.core.ledger import sha256_hex
 from app.core.storage import ObservationStore, TamperedRecordError
 from app.volumes import (
@@ -243,10 +244,27 @@ def list_volumes(
         phase = contrast_phase.describe(declared, study, CONSOLE_IDENTITY)
         study["contrast_phase"] = phase
         study["segmentations"] = [
-            _with_phase(_with_density(store, _with_spine_review(store, segmentation)), phase)
+            _localized(
+                _with_phase(_with_density(store, _with_spine_review(store, segmentation)), phase)
+            )
             for segmentation in store.volume_segmentations(int(study["ledger_index"]))
         ]
     return studies
+
+
+def _localized(segmentation: dict[str, Any]) -> dict[str, Any]:
+    """Nombres y estado en el idioma de quien lee (`assets` registra su inglés). Lo firmado
+    sigue en castellano: esto solo cambia la copia que se sirve."""
+    out = {**segmentation}
+    for field in ("preset_nombre", "estado"):
+        if isinstance(out.get(field), str):
+            out[field] = i18n.loc(out[field])
+    out["estructuras"] = [
+        {**item, "nombre": i18n.loc(item["nombre"])}
+        if isinstance(item.get("nombre"), str) else item
+        for item in out.get("estructuras", [])
+    ]
+    return out
 
 
 def _with_phase(segmentation: dict[str, Any], phase: dict[str, Any]) -> dict[str, Any]:
@@ -605,11 +623,22 @@ def create_sample(
     """Registra un TAC de ejemplo con su segmentación precalculada. Firmado como simulado: es un
     paciente de un dataset, no un tripulante."""
     try:
-        sample, ct_raw, archive = load_sample(key)
+        study, segmentation = record_sample(store, key, subject)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc.args[0])) from exc
     except SampleFileChanged as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ledger_index": study, "segmentation": segmentation}
+
+
+def record_sample(store: ObservationStore, key: str, subject: str) -> tuple[int, int]:
+    """(índice del estudio, índice de la segmentación) del TAC de ejemplo `key` ya registrado.
+
+    Aparte de la ruta porque el escenario simulado lo precarga (`POST /api/simulate` con
+    `volume_sample`): la consola tiene que enseñar el hígado al abrir, sin pasos de más
+    (decisión del usuario, 2026-11-15). Lanza `KeyError` o `SampleFileChanged`.
+    """
+    sample, ct_raw, archive = load_sample(key)
     image = _nifti(ct_raw)
     study_payload = {
         **_study_payload(image, ct_raw, sample.modality, subject, SAMPLE_SOURCE, "demo"),
@@ -631,4 +660,4 @@ def create_sample(
     segmentation = store.record_volume_segmentation(
         payload, archive, identity_for(SEGMENTER_SIGNER)
     )
-    return {"ledger_index": study.index, "segmentation": segmentation.index}
+    return study.index, segmentation.index

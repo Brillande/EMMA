@@ -223,6 +223,95 @@
   }
 }
 
+/* Franja estrecha (lote «responsivo», 2026-11-16). Qué se vio: con la marca a todo el alto a la
+   izquierda y los dos pisos a su derecha, cuando la franja mide menos de ~1500 px los mandos se
+   apretaban en una columna junto al título y la cabecera crecía hasta 129 px a 1366, 195 a 1024 y
+   315 a 1024 con el asistente acoplado (el 41 % de la ventana, encima de todo). Ahora, estrecha, la
+   franja se reparte en filas: arriba la marca, el título y la línea de lectura; debajo, a todo el
+   ancho, los mandos y los iconos. Los pisos se disuelven (`display: contents`, son cajas sin papel
+   para el lector de pantalla) y el orden visual es el del documento salvo el título, que sube junto
+   a la marca. El nombre largo de la marca sale de la vista, como el lema: es rótulo, no dato, y
+   «EMMA» sigue a la vista. Estrecha es: ventana de menos de 1500 px; o hasta 1900 px con el
+   asistente acoplado (se lleva hasta 400 px) o con baja visión (todo ×1,25). Nada se recorta: cada
+   fila se parte en renglones si no cabe. La línea de lectura baja a su propia fila si junto a la marca
+   le quedan menos de 30 rem (con 4 renglones a 736 px), y los mandos y los iconos se reparten como una
+   sola fila (sus dos grupos, también `display: contents`): antes «Modo seguro» bajaba solo a su fila. */
+@media (max-width: 1499px) {
+  .app[data-look="reference"] .strip.strip-masthead {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .app[data-look="reference"] .strip-masthead :is(.masthead-main, .masthead-bar) {
+    display: contents;
+  }
+
+  .app[data-look="reference"] .strip-masthead .masthead-long {
+    display: none;
+  }
+
+  .app[data-look="reference"] .strip-masthead .title {
+    order: 1;
+  }
+
+  .app[data-look="reference"] .strip-masthead .masthead-status {
+    order: 2;
+    flex: 1 1 30rem;
+  }
+
+  .app[data-look="reference"] .strip-masthead .masthead-motto {
+    order: 3;
+  }
+
+  .app[data-look="reference"] .strip-masthead .masthead-tools {
+    order: 4;
+    flex: 1 1 100%;
+    row-gap: 4px;
+  }
+
+  .app[data-look="reference"] .strip-masthead .masthead-tools > :is(.strip-controls, .masthead-icons) {
+    display: contents;
+  }
+}
+
+@media (min-width: 1500px) and (max-width: 1899px) {
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip.strip-masthead {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead :is(.masthead-main, .masthead-bar) {
+    display: contents;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .masthead-long {
+    display: none;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .title {
+    order: 1;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .masthead-status {
+    order: 2;
+    flex: 1 1 30rem;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .masthead-motto {
+    order: 3;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .masthead-tools {
+    order: 4;
+    flex: 1 1 100%;
+    row-gap: 4px;
+  }
+
+  .app[data-look="reference"]:is([data-low-vision="on"], :has(> .assistant[data-open="true"])) .strip-masthead .masthead-tools > :is(.strip-controls, .masthead-icons) {
+    display: contents;
+  }
+}
+
 /* Los mandos y los iconos, pegados a la derecha de la fila. */
 .app[data-look="reference"] .masthead-tools {
   display: flex;

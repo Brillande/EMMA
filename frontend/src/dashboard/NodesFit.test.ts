@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FIT_MIN, NODES_FIT_KEY, nextZoom, readNodesFit, writeNodesFit } from "./NodesFit";
+import { FIT_MIN, NODES_FIT_KEY, allowedZoom, nextZoom, readNodesFit, writeNodesFit } from "./NodesFit";
 
 function memory(initial: Record<string, string> = {}) {
   const items = new Map(Object.entries(initial));
@@ -37,5 +37,17 @@ describe("«Ajustar a pantalla» de «Distancia y nodos»", () => {
     expect(store.getItem(NODES_FIT_KEY)).toBe("false");
     expect(readNodesFit(store)).toBe(false);
     expect(readNodesFit(null)).toBe(true);
+  });
+});
+
+describe("sin parpadeo (lote «responsivo»)", () => {
+  it("si solo ha cambiado el tablero, el ajuste encoge pero no agranda", () => {
+    expect(allowedZoom(0.93, 0.98, false)).toBe(0.93);
+    expect(allowedZoom(0.98, 0.93, false)).toBe(0.93);
+  });
+
+  it("con otra ventana u otro pliegue, agranda si cabe", () => {
+    expect(allowedZoom(0.98, 0.93, true)).toBe(0.98);
+    expect(allowedZoom(1, 0.9, true)).toBe(1);
   });
 });

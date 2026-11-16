@@ -248,10 +248,32 @@
   border-top: 1px solid color-mix(in srgb, var(--c-line) 70%, transparent);
 }
 
-/* En pantalla estrecha `styles.css` pone la clave encima de su definición (mismo punto de corte):
-   entonces la línea va solo sobre la clave, que abre la fila. Los selectores repiten los de arriba
-   (solo sus `dd`) para empatar en especificidad y ganar por orden. */
-@media (max-width: 640px) {
+/* En un tablero estrecho la clave va encima de su definición, y entonces la línea va solo sobre la
+   clave, que abre la fila. `styles.css` apila la `.kv` por ventana (≤ 640 px); aquí se mide el
+   tablero (lote «responsivo», 2026-11-16): el carril y el asistente acoplado lo estrechan sin que la
+   ventana baje de 640 px, y con la clave al lado a la definición le quedaban unos píxeles. A 640 px
+   de ventana el tablero ya mide menos de 40 rem, así que esta consulta cubre también aquel caso. Los
+   selectores del filete repiten los de arriba (solo sus `dd`) para empatar en especificidad y ganar
+   por orden. */
+@container board (max-width: 40rem) {
+  :where(.app[data-look="reference"])
+    :is(
+      .panel[data-ui="framework"],
+      .panel[data-ui="mission-profiles"],
+      .panel[data-ui="measurement-cost"],
+      .panel[data-ui="testbeds"],
+      .panel[data-ui="datasets"],
+      .panel[data-ui="facilities"],
+      .panel[data-ui="people"],
+      .panel[data-ui="context-sources"],
+      .panel[data-ui="docs"],
+      .panel[data-ui="audit"],
+      .panel[data-ui="polaris"]
+    )
+    .kv {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   :where(.app[data-look="reference"])
     :is(
       .panel[data-ui="framework"],
@@ -1136,6 +1158,50 @@
 
 .app[data-low-vision="on"] #ground-panel-framework > .slot:has(> .slot-body > [data-ui="framework"]) {
   grid-row: auto;
+}
+
+/* ---- Lo plegado deja sitio (lote «responsivo», 2026-11-16) ---- */
+
+/* Plegado lo secundario, en «Marco y fuentes» solo queda el marco de NASA, y seguía en sus nueve
+   columnas y sus dos filas: las tres columnas de la derecha, que eran de los perfiles y el coste (ya
+   plegados), se quedaban vacías, y con la pista flexible tercera (arriba) el sobrante iba a la fila
+   de la raya (capturas «before-framework-*-folded»: a 1672 × 941 el marco, estrujado en 9/12, se
+   salía 95 px de la vista; a 2560 × 1300 sobraba un cuarto de ancho). Plegado, el marco ocupa la fila
+   entera y la pista flexible es la suya; la raya va en la fila implícita de debajo, al pie de la
+   ventana (`--fold-fill`). Desplegado, el reparto de la cuarta ronda, sin cambios. El selector lleva
+   el atributo para ganar a las reglas de arriba, también a la de baja visión. */
+:where(.app[data-look="reference"]) #ground-panel-framework[data-folded="true"]:has(> .board-frame-h) {
+  grid-template-rows: auto 1fr;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-framework[data-folded="true"]:not(:has(> .board-frame-h)) {
+  grid-template-rows: 1fr;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-framework[data-folded="true"] > .slot:has(> .slot-body > [data-ui="framework"]) {
+  --span: 12;
+  --span-mid: 12;
+  grid-row: auto;
+}
+
+/* «Registro y documentos»: la documentación va a cinco columnas para dejar siete a la auditoría. Sin
+   auditoría (aún no llegada o no disponible, `audit !== null` en `GroundConsole`) la documentación se
+   quedaba en sus cinco y el resto de la fila, vacío (captura «before-ledger-1672x941-folded»): sola,
+   ocupa la fila. Con la auditoría a la vista, el reparto de siempre. */
+:where(.app[data-look="reference"]) #ground-panel-ledger:not(:has(> .slot > .slot-body > [data-ui="audit"])) > .slot:has(> .slot-body > [data-ui="docs"]) {
+  --span: 12;
+}
+
+/* Plegado, la documentación y la auditoría (que nunca se pliega: la integridad del registro queda
+   siempre arriba) se estiran en una fila flexible hasta la raya, que queda al pie de la ventana;
+   a 1672 × 941 debajo quedaban 444 px vacíos. Las tarjetas se alargan con el fondo de la sección; lo
+   de dentro no cambia de sitio. */
+:where(.app[data-look="reference"]) #ground-panel-ledger[data-folded="true"]:has(> .board-frame-h) {
+  grid-template-rows: auto 1fr;
+}
+
+:where(.app[data-look="reference"]) #ground-panel-ledger[data-folded="true"]:not(:has(> .board-frame-h)) {
+  grid-template-rows: 1fr;
 }
 
 /* Las listas que pasan del centenar de filas (las organizaciones, las fuentes del contexto), en

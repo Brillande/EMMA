@@ -25,6 +25,18 @@
   container-name: board;
 }
 
+/* Lo plegado deja sitio, descontando la concha (lote «responsivo», 2026-11-16). `--fold-fill` (y
+   `--home-fill`, el mismo número) es el alto desde el tablero hasta el pie de la ventana, pero debajo
+   de `main` la concha pone su relleno, el pie «Acerca de» y, según el modo, la barra o la hoja del
+   asistente: llenando todo `--fold-fill` el tablero empujaba eso fuera y la página se desplazaba sin
+   necesidad. Aquí el alto mínimo es lo medido menos `--shell-below` (`consoleShell.css`), dividido
+   antes entre el `zoom` de baja visión (`--shell-zoom`, `styles.css`), porque se midió en px de la
+   ventana. Vale para todos los tableros, «Inicio» y «Nodos» incluidos: la especificidad (0,5,1) gana
+   a sus reglas de `min-height` con `:has()` (0,5,0), que dan el mismo alto sin descontar. */
+.app[data-look="reference"] main .section-body[data-folded="true"]:not([hidden]) {
+  min-height: max(0px, calc(var(--fold-fill, 0px) / var(--shell-zoom, 1) - var(--shell-below, 0px)));
+}
+
 :where(.app[data-look="reference"]) .section-body:not(.ref-home) > .slot {
   display: grid;
   min-width: 0;

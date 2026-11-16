@@ -168,6 +168,7 @@ export function ConsoleTabs({
   counts,
   header,
   headerGroup,
+  lead,
   stored,
   onChoose,
 }: {
@@ -184,6 +185,12 @@ export function ConsoleTabs({
    * entornos se eligen donde se dice el entorno de la misión (`dashboard/Environments.tsx`).
    */
   headerGroup?: string;
+  /**
+   * Lo que va encima de todas las secciones, en la columna de los tableros (no encima del carril):
+   * el retardo de Tierra. Fuera de `.console-layout` empujaba hacia abajo el carril fijo, que
+   * entonces se salía de la ventana (lote «responsivo», 2026-11-16).
+   */
+  lead?: ReactNode;
   stored: string | null;
   onChoose: (key: string) => void;
 }) {
@@ -348,6 +355,7 @@ export function ConsoleTabs({
         {board && <EarthNightArt />}
       </nav>
       <div className="console-panels">
+        {lead}
         {modes.essential && (
           <p className="panel mode-notice">
             <Mark pictogram={uiPictogram("essential")}>

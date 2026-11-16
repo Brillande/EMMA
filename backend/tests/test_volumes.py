@@ -918,6 +918,45 @@ def test_a_sample_enters_as_simulated_with_its_viewer_files(client: TestClient) 
     assert get_store().reading_signers() == {"simulator"}
 
 
+def test_the_scenario_preloads_the_liver_sample_and_keeps_it_on_change(
+    client: TestClient,
+) -> None:
+    """Decisión del usuario (2026-11-15): el hígado «tiene que salir precargado» en «Distancia y
+    nodos». Va con el escenario, en su mismo almacén, y un cambio de escenario no lo pierde."""
+    headers = {"X-EMMA-Console": "1"}
+    params = {"scenario": "nominal", "days": 2, "volume_sample": "higado-1"}
+    assert client.post("/api/simulate", params=params, headers=headers).status_code == 201
+    [study] = client.get("/api/volumes", params={"subject": "crew-01"}).json()
+    assert study["sample"] == "higado-1"
+    [segmentation] = study["segmentations"]
+    assert segmentation["preset"] == "higado"
+    replaced = client.post(
+        "/api/simulate", params={**params, "replace": "true"}, headers=headers
+    )
+    assert replaced.status_code == 201, replaced.text
+    assert len(client.get("/api/volumes", params={"subject": "crew-01"}).json()) == 1
+
+
+def test_the_liver_reads_in_english_but_stays_signed_in_spanish(client: TestClient) -> None:
+    assert client.post("/api/volumes/samples/higado-1").status_code == 201
+    [study] = client.get("/api/volumes", headers={"X-EMMA-Lang": "en"}).json()
+    [segmentation] = study["segmentations"]
+    assert segmentation["preset_nombre"] == "Liver"
+    assert segmentation["estado"] == "automatic segmentation, not validated"
+    assert segmentation["estructuras"][0]["nombre"] == "Liver"
+    [spanish] = client.get("/api/volumes", headers={"X-EMMA-Lang": "es"}).json()
+    assert spanish["segmentations"][0]["preset_nombre"] == "Hígado"
+
+
+def test_an_unknown_preloaded_sample_seeds_nothing(client: TestClient) -> None:
+    response = client.post(
+        "/api/simulate", params={"days": 2, "volume_sample": "no-existe"},
+        headers={"X-EMMA-Console": "1"},
+    )
+    assert response.status_code == 404
+    assert len(get_store().ledger) == 0
+
+
 def test_a_changed_sample_is_refused(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     import shutil
 
