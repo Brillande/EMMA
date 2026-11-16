@@ -116,6 +116,15 @@ nada: una versión nueva se instala con su instalador desde un USB. Con el **mod
 se busca, no se descarga y **tampoco se instala** lo ya descargado. El actualizador nunca baja de
 versión; volver a una anterior es ejecutar a mano su instalador.
 
+**Comprobado instalado (2026-11-16).** Sobre un EMMA 0.1.4 con el actualizador, «Install and
+restart» con el instalador de la [v0.1.5](https://github.com/Brillande/EMMA/releases/tag/v0.1.5):
+EMMA se cerró a los 5 s, se instaló sin ventanas y volvió a abrirse sola como 0.1.5 a los 33 s,
+con los datos del planificador intactos, la carpeta de actualización vacía y sin relanzar la
+descarga de modelos. Después, la 0.1.5 instalada leyó el `emma-update.json` publicado y respondió
+«al día». La descarga del instalador desde GitHub la cubren las pruebas
+(`backend/tests/test_app_update.py`, sin red); se verá de verdad con la primera versión después de
+la 0.1.5.
+
 Publicar una versión para que el exe la vea (lo hace el responsable, nunca la aplicación):
 
 ```bash

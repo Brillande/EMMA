@@ -204,6 +204,11 @@ def _read_notes(args: argparse.Namespace) -> str:
 
 
 def main(argv: list[str] | None = None, root: Path = ROOT) -> int:
+    # La consola de Windows escribe en cp1252: unas notas con «→» tiraban el simulacro al
+    # imprimir el manifiesto (pasó al publicar la 0.1.5, 2026-11-16).
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     p = argparse.ArgumentParser(description="Publica el instalador de EMMA en GitHub.")
     notes = p.add_mutually_exclusive_group(required=True)
     notes.add_argument("--notes", help="texto corto de la versión")
