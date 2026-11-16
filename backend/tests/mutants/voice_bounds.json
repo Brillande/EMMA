@@ -6,7 +6,7 @@
  "mutations": [
   {
    "label": "sin tope de duración",
-   "old": "    if ogg_seconds(audio) > MAX_SECONDS:",
+   "old": "    if seconds > MAX_SECONDS:",
    "new": "    if False:"
   },
   {

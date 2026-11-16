@@ -14428,6 +14428,12 @@ los reparte en secciones de un carril lateral, con el contenido al lado:
   abre la primera y queda como elegida (si no, una pestaña de entorno guardada que llega después
   con su petición haría saltar la consola sola mientras alguien lee las alertas). Elegir un momento en la crónica («Misión y hábitat») abre «Cuerpo» y lleva el
   modo anatómico a la vista, como antes (§5.35.8).
+  En la aplicación de escritorio, `localStorage` va por origen (`http://127.0.0.1:<puerto>`), así
+  que el puerto es fijo (47613, `PREFERRED_PORT` en `desktop/main.cjs`, 2026-11-16). Hasta la
+  0.1.7 era uno al azar en cada arranque, y cada sesión empezaba sin preferencias: idioma en
+  inglés, sin baja visión ni plegados, y en la primera página de cada pestaña. Por eso la app no se
+  veía como la web. Si el 47613 está ocupado, se cae a un puerto libre: esa sesión arranca, pero sin
+  lo guardado.
 - **Montaje.** Una sección se monta la primera vez que se abre y sigue montada, oculta, al cambiar
   de pestaña: ir a reconocer una alerta no pierde una medida guiada, una prueba PVT en curso ni un
   borrador. Al abrir la consola ya no se lanzan las peticiones de todos sus paneles a la vez

@@ -36,6 +36,11 @@ const path = require("node:path");
 const handoff = require("./update-handoff.cjs");
 
 const LOOPBACK = "127.0.0.1";
+// Puerto fijo de la interfaz. El origen (`http://127.0.0.1:<puerto>`) es la llave del
+// `localStorage`: con un puerto al azar en cada arranque, la app olvidaba idioma, baja visión,
+// plegados y página de cada pestaña, y se veía distinta de la web. Si está ocupado, se cae a uno
+// libre y esa sesión arranca sin preferencias, pero arranca.
+const PREFERRED_PORT = 47_613;
 // Lo que tarda en responder el backend congelado es ~1 s; se deja margen para un
 // disco lento o un antivirus que inspeccione el ejecutable la primera vez.
 const STARTUP_TIMEOUT_MS = 60_000;
@@ -65,12 +70,16 @@ function locations() {
   };
 }
 
-function freePort() {
+/** El puerto pedido si está libre; 0 pide uno cualquiera al sistema. */
+function freePort(wanted = 0) {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.unref();
-    server.on("error", reject);
-    server.listen(0, LOOPBACK, () => {
+    server.on("error", (error) => {
+      if (wanted !== 0) freePort(0).then(resolve, reject);
+      else reject(error);
+    });
+    server.listen(wanted, LOOPBACK, () => {
       const { port } = /** @type {import("node:net").AddressInfo} */ (server.address());
       server.close(() => resolve(port));
     });
@@ -762,7 +771,7 @@ async function main() {
   await app.whenReady();
   if (app.isPackaged) Menu.setApplicationMenu(null);
 
-  const port = await freePort();
+  const port = await freePort(PREFERRED_PORT);
   const origin = `http://${LOOPBACK}:${port}`;
   lockDown(origin);
   const plannerSetupInfo = plannerSetup();

@@ -13,6 +13,7 @@ import {
 import type { PictogramName } from "../icons/registry";
 import { type AlertCounts } from "../lib/alerts";
 import { formatNumber } from "../lib/format";
+import { tr } from "../lib/i18n";
 import { LEVELS, LEVEL_ORDER, type Level } from "../lib/levels";
 import { uiPictogram } from "../lib/uiMarks";
 import { EarthNightArt, SectionArt } from "../dashboard/HomeArt";
@@ -546,11 +547,11 @@ export function TabAlerts({ counts }: { counts: AlertCounts }) {
   return (
     <span className="tab-alerts">
       <Mark pictogram={top.pictogram} color={top.color}>
-        <span className="num">{formatNumber(active)}</span> activas
+        <span className="num">{formatNumber(active)}</span> {tr("activas", "active")}
       </Mark>
       {counts.unacknowledged > 0 && (
         <Mark pictogram="box-empty" className="secondary">
-          sin reconocer <span className="num">{formatNumber(counts.unacknowledged)}</span>
+          {tr("sin reconocer", "unacknowledged")} <span className="num">{formatNumber(counts.unacknowledged)}</span>
         </Mark>
       )}
     </span>

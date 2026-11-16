@@ -30,11 +30,14 @@ from app.core import i18n
 from app.core.config import get_settings
 from app.interpret import llm as llm_module
 from tests.conftest import ENGLISH_HEADERS
+from tests.test_voice import ogg_opus
 
 LLM = "http://127.0.0.1:11434"
 MODEL = get_settings().assistant_model
 EVAL = Path(__file__).resolve().parent / "data" / "assistant_nl_eval_en.json"
-OGG = b"OggS" + b"\x00" * 64
+# Un Ogg/Opus que declara su duración: `voice.transcribe` rechaza el que no la lee
+# (auditoría run-2, `emma:voice:ogg-transcription-unbounded`).
+OGG = ogg_opus(4.0)
 _SPANISH_ONLY = re.compile(r"[áéíóúñ¿¡]", re.IGNORECASE)
 
 
@@ -721,7 +724,11 @@ def test_whisper_runs_the_polaris_script_in_the_language_of_the_request(
     assert voice.transcribe(OGG) == "hello"
     with i18n.use("en"):
         assert voice.transcribe(OGG) == "hello"
-    (spanish, spanish_env), (english, english_env) = calls
+    (wrapped_es, spanish_env), (wrapped_en, english_env) = calls
+    # Los dos van dentro del lanzador con plazo de reloj; lo de abajo mira el comando de dentro.
+    for wrapped in (wrapped_es, wrapped_en):
+        assert wrapped[1:3] == ["-c", voice._WITH_DEADLINE]
+    spanish, english = wrapped_es[4:], wrapped_en[4:]
     # En castellano, su script tal cual, sin nada en medio y sin la variable.
     assert len(spanish) == 3 and spanish[1].endswith("transcribe_audios.py")
     assert spanish[2] == voice.MODEL and voice.LANGUAGE_ENV not in spanish_env

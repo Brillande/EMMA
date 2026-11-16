@@ -33,11 +33,14 @@ from app.core.config import Settings, get_settings
 from app.interpret import llm as llm_module
 from app.main import app
 from app.pain.catalog import ZONES
+from tests.test_voice import ogg_opus
 
 LLM = "http://127.0.0.1:11434"
 MODEL = get_settings().assistant_model
 REPO = Path(__file__).resolve().parents[2]
-OGG = b"OggS" + b"\x00" * 64
+# Un Ogg/Opus que declara su duración: `voice.transcribe` rechaza el que no la lee
+# (auditoría run-2, `emma:voice:ogg-transcription-unbounded`).
+OGG = ogg_opus(4.0)
 
 
 @pytest.fixture(autouse=True)
