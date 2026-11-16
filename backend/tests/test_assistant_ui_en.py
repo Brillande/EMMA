@@ -20,7 +20,7 @@ from app.assistant import catalog
 DATA = Path(__file__).resolve().parents[1] / "app" / "data"
 
 # Rótulos fijados entre unidades: la interfaz traduce las mismas pestañas y modos.
-CONSOLE_LABELS = {"crew": "Crew console", "ground": "Ground console"}
+CONSOLE_LABELS = {"crew": "Crew console", "ground": "Earth console"}
 SECTION_LABELS = {
     "crew": {
         "home": "Home", "radiation": "Radiation", "isolation": "Isolation", "gravity": "Gravity",

@@ -582,7 +582,7 @@ def test_without_a_model_an_english_turn_answers_in_english(seeded: TestClient) 
     assert say(seeded, "be quiet")["reply"] == "I will be quiet."
     assert say(seeded, "scroll down")["reply"] == "Scrolling down."
     assert say(seeded, "switch to the ground console")["reply"] == \
-        "Switching to the ground console."
+        "Switching to the earth console."
     assert say(seeded, "zzzz qqqq")["reply"] == i18n._registry[turn.NOT_UNDERSTOOD]
     # El contexto se compone en el idioma de cada petición, también el que está en caché.
     english = say(seeded, "how much radiation dose do I have?")

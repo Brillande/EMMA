@@ -164,7 +164,7 @@ export function commsNodes(
     }));
   const ground: CommsNode = {
     key: "ground",
-    name: tr("Consola de Tierra", "Ground console"),
+    name: tr("Consola de Tierra", "Earth console"),
     where: tr("Tierra", "Earth"),
     delay: figure,
     link:

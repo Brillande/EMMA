@@ -64,7 +64,7 @@ export type { ConsoleLook };
 
 const CONSOLES: Record<ConsoleKey, string> = {
   crew: tr("Consola de tripulación", "Crew console"),
-  ground: tr("Consola de Tierra", "Ground console"),
+  ground: tr("Consola de Tierra", "Earth console"),
 };
 
 // El dibujo de cada consola, en su pestaña y en el titulo de la franja: el casco para quien

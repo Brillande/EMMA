@@ -77,7 +77,7 @@ export function Predictions({
           <span className="num">{formatNumber(minor)}</span>{" "}
           {tr(
             "derivas más, reales pero que no preocupan; se ven en la consola de Tierra.",
-            "more drifts, real but not worrying; they are shown in the Ground console.",
+            "more drifts, real but not worrying; they are shown in the Earth console.",
           )}
         </p>
       )}

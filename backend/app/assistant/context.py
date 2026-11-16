@@ -90,7 +90,7 @@ class AssistantContext:
         parts: list[str] = []
         if self.cut is not None:
             parts.append(tr(f"Consola de Tierra: datos recibidos hasta {_when(self.cut)}.",
-                            f"Ground console: data received up to {_when(self.cut)}."))
+                            f"Earth console: data received up to {_when(self.cut)}."))
         if self.empty_reason:
             parts.append(self.empty_reason)
         if self.summary:

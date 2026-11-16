@@ -1,6 +1,6 @@
 [project]
 name = "emma-backend"
-version = "0.1.5"
+version = "0.1.6"
 description = "EMMA — Environment and Medical Monitoring Assistant. Monitoreo autonomo de salud para misiones de larga duracion."
 requires-python = ">=3.11"
 license = { text = "AGPL-3.0-or-later" }

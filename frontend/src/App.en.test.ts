@@ -22,7 +22,7 @@ describe("la carcasa en inglés", () => {
 
   it("las dos consolas y su grupo se nombran en inglés", () => {
     expect(html).toMatch(/data-console="crew">.*?<\/svg>Crew console<\/span>/);
-    expect(html).toMatch(/data-console="ground">.*?<\/svg>Ground console<\/span>/);
+    expect(html).toMatch(/data-console="ground">.*?<\/svg>Earth console<\/span>/);
     expect(html).toContain('role="tablist" aria-label="Consoles"');
     expect(html).not.toContain("Consola de tripulación");
     expect(html).not.toContain("Consola de Tierra");

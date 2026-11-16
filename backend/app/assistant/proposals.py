@@ -67,7 +67,7 @@ GROUND_REFUSAL = (
 )
 i18n.en(NOT_SIGNED, "Nothing has been signed: say «confirm» or press Confirm to sign it")
 i18n.en(GROUND_REFUSAL, (
-    "From the Ground console I do not prepare entries by voice: the diary, pain, "
+    "From the Earth console I do not prepare entries by voice: the diary, pain, "
     "acknowledgements, the mission level, the mission environment and safe mode are signed on "
     "board."
 ))

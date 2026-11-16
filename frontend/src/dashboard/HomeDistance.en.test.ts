@@ -50,7 +50,7 @@ describe("«Distancia y comunicaciones» en inglés", () => {
       "Communication delay",
       "one way, to Earth · computed locally (SPICE)",
       "Communication nodes",
-      "Ground console",
+      "Earth console",
       "Relays: no nodes declared in EMMA",
       'aria-label="Distances from Earth"',
     ]) {
@@ -119,7 +119,7 @@ describe("las palabras de la lógica en inglés", () => {
   it("los nodos y el modo de trabajo", () => {
     const nodes = commsNodes("crew-01", [{ subject: "crew-02" }] as never, { kind: "absent", mark: null as never, word: "x", text: null }, SYNC);
     expect(nodes.map((node) => node.where)).toEqual(["module not declared", "Earth"]);
-    expect(nodes[1]?.name).toBe("Ground console");
+    expect(nodes[1]?.name).toBe("Earth console");
     expect(nodes[1]?.link?.word).toBe("link restored");
     const sharing = (offline: boolean): Fetched<Sharing> =>
       ({ state: "ready", value: { internet: { offline, offline_text: "t" } } }) as unknown as Fetched<Sharing>;

@@ -71,7 +71,7 @@ wearable · simulador · test PVT · diario · ecografía · informe escaneado
 
 **EN** — A measurement comes in, gets signed, is compared against that same person and ends up as
 a recommendation with its evidence — on the crew console and, after the light delay, on the
-ground console.
+Earth console.
 
 ```
 wearable · simulator · PVT test · diary · ultrasound · scanned report
@@ -79,7 +79,7 @@ wearable · simulator · PVT test · diary · ultrasound · scanned report
    → hash-chained, signed ledger (core/ledger.py)
    → personal baseline + trend + risk scaled by light time (analysis/, environment/)
    → recommendation citing its evidence (advisor/, evidence/)
-   → crew console · ground console with the delay applied (api/, frontend/)
+   → crew console · Earth console with the delay applied (api/, frontend/)
 ```
 
 *Notas:* es el camino que describe `CLAUDE.md` («El camino de un dato»). Decir los cinco peligros

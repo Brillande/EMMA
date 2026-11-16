@@ -44,7 +44,7 @@ prescribe, and it does not replace the flight surgeon.
   baseline, what context changed, why it may matter, what to check, what evidence supports it — and
   links recommendations to NASA Human Research Program risks and OSDR studies, or labels them as
   demo.
-- **Two consoles:** a crew console with a clickable human figure, and a ground console that shows
+- **Two consoles:** a crew console with a clickable human figure, and an Earth console that shows
   the same information only after the light delay. Both are laid out for tablets (touch targets of
   48 px), with a high-contrast mode for glare and screen-reader support.
 - **A voice assistant, "EMMA", that runs locally:** the crew can talk to it hands-free (it listens

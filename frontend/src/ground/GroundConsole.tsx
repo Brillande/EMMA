@@ -471,7 +471,7 @@ export function GroundConsole({
   return (
     <ConsoleTabs
       id="ground"
-      label={tr("Secciones de la consola de Tierra", "Ground console sections")}
+      label={tr("Secciones de la consola de Tierra", "Earth console sections")}
       sections={sections}
       counts={counts}
       header={<ActiveEnvironment profile={status.mission.profile} />}

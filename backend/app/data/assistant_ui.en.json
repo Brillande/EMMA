@@ -12,14 +12,16 @@
       "about": "The on-board console: the status of whoever uses it, their alerts, their log and their tests."
     },
     "ground": {
-      "label": "Ground console",
+      "label": "Earth console",
       "aliases": [
+        "earth console",
+        "earth",
         "ground console",
         "ground",
         "mission control",
         "houston"
       ],
-      "about": "The Ground console: what has arrived from on board with the light delay, the history and the trends."
+      "about": "The Earth console: what has arrived from on board with the light delay, the history and the trends."
     }
   },
   "sections": {
@@ -1801,7 +1803,7 @@
         "received ultrasounds",
         "ultrasounds received"
       ],
-      "about": "On the Ground console, the ultrasounds that have already arrived from the spacecraft, with their measurements and the signs noted. Read-only."
+      "about": "On the Earth console, the ultrasounds that have already arrived from the spacecraft, with their measurements and the signs noted. Read-only."
     },
     "pain-history": {
       "label": "Reported pain",
@@ -1809,7 +1811,7 @@
         "reported pain",
         "pain reported"
       ],
-      "about": "On the Ground console, the reported pain that has already arrived: by body area, the current intensity, the previous one and where it is heading. Read-only."
+      "about": "On the Earth console, the reported pain that has already arrived: by body area, the current intensity, the previous one and where it is heading. Read-only."
     },
     "sharing": {
       "label": "What is shared and what is not",

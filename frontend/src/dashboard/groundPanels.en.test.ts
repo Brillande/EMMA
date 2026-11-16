@@ -32,7 +32,7 @@ describe("paneles de Tierra del tablero, en inglés", () => {
     expect(html).not.toMatch(/Proyecciones|sube|baja|semanas|margen/);
 
     const few = render(createElement(Predictions, { predictions, onlyConcerning: true }));
-    expect(few).toContain("more drifts, real but not worrying; they are shown in the Ground console.");
+    expect(few).toContain("more drifts, real but not worrying; they are shown in the Earth console.");
     expect(few).not.toContain("derivas");
   });
 
